@@ -1,0 +1,70 @@
+{
+  "title": "杭州卡恩新型建材有限公司",
+  "nav": {
+    "home": "首页",
+    "products": "产品",
+    "oem": "OEM服务",
+    "about": "关于我们",
+    "contact": "联系我们",
+    "main_navigation": "主导航",
+    "toggle_menu": "切换菜单"
+  },
+  "language": {
+    "zh": "中文",
+    "en": "English",
+    "ru": "Русский"
+  },
+  "theme": {
+    "light": "浅色模式",
+    "dark": "深色模式",
+    "system": "系统模式"
+  },
+  "footer": {
+    "company": "杭州卡恩新型建材有限公司",
+    "rights": "© 2025 杭州卡恩新型建材有限公司。版权所有。",
+    "links": {
+      "title": "快捷链接",
+      "products": "产品",
+      "about": "关于我们",
+      "contact": "联系我们"
+    },
+    "contact": {
+      "title": "联系方式",
+      "address": "地址",
+      "phone": "电话",
+      "email": "电子邮箱",
+      "address_value": "浙江省杭州市余杭区东湖街道星桥路18号星尚国际广场",
+      "phone_value": "+86 571-88888888",
+      "email_value": "info@karn-materials.com"
+    }
+  },
+  "cta": {
+    "contact": "联系我们",
+    "learn_more": "了解更多",
+    "view_products": "查看产品",
+    "submit": "提交",
+    "send_message": "发送消息",
+    "download": "下载"
+  },
+  "admin": {
+    "login": "管理员登录",
+    "logout": "退出登录"
+  },
+  "admin_panel": "管理后台",
+  "back_to_list": "返回列表",
+  "no_data": "暂无数据",
+  "search": "搜索",
+  "save": "保存",
+  "cancel": "取消",
+  "confirm": "确认",
+  "delete": "删除",
+  "edit": "编辑",
+  "add": "添加",
+  "view": "查看",
+  "loading": "加载中...",
+  "success": "操作成功",
+  "error": "操作失败",
+  "required": "此字段为必填项",
+  "switch_language": "切换语言",
+  "switch_theme": "切换主题"
+}

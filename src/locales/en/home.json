@@ -1,0 +1,32 @@
+{
+  "meta_description": "Hangzhou Karn New Building Materials Co., Ltd. is a professional manufacturer of wallpaper adhesive powder, offering high-quality products and OEM services.",
+  "hero": {
+    "title": "Professional Wallpaper Adhesive Manufacturer",
+    "subtitle": "Providing high-quality, eco-friendly, and easy-to-use wallpaper adhesive products with customized OEM manufacturing services for global clients"
+  },
+  "products": {
+    "title": "Our Products",
+    "subtitle": "Discover our premium wallpaper adhesive powder series, providing perfect solutions for your decoration needs",
+    "view_all": "View All Products"
+  },
+  "why_us": {
+    "title": "Why Choose Us",
+    "subtitle": "We are committed to providing the highest quality wallpaper adhesive products and exceptional customer service",
+    "quality": {
+      "title": "Product Quality",
+      "description": "Our products are made from premium raw materials and undergo rigorous quality testing to ensure each batch meets international standards"
+    },
+    "experience": {
+      "title": "Industry Experience",
+      "description": "With over 15 years of experience in wallpaper adhesive production, we deeply understand market needs and continuously innovate our products"
+    },
+    "service": {
+      "title": "Customer Service",
+      "description": "We provide comprehensive customer support, including product consultation, technical guidance, and after-sales service to ensure customer satisfaction"
+    }
+  },
+  "cta": {
+    "title": "Start Collaboration",
+    "description": "Whether you're looking for wholesale purchasing or OEM custom production, we can provide the best solution for you. Contact us to start your customization journey."
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "meta_description": "Hangzhou Karn New Building Materials Co., Ltd. is a professional wallpaper adhesive powder manufacturer dedicated to providing high-quality, eco-friendly products and OEM/ODM services.",
+  "hero": {
+    "title": "About Hangzhou Karn New Building Materials Co., Ltd.",
+    "subtitle": "Your Trusted Wallpaper Adhesive Specialist"
+  },
+  "company": {
+    "title": "Company Profile",
+    "paragraph1": "Established in 2010, Hangzhou Karn New Building Materials Co., Ltd. is a company specializing in the research, development, production, and sales of wallpaper adhesive powder. After years of development, we have become a well-known high-quality wallpaper adhesive supplier in the industry.",
+    "paragraph2": "We have modern production equipment and a professional R&D team, providing high-performance, environmentally friendly wallpaper adhesive products to global customers. Karn's products are highly recognized by customers for their excellent adhesion, ease of use, and environmental characteristics.",
+    "paragraph3": "In addition to our standard product series, we also provide comprehensive OEM/ODM services, customizing product formulations, packaging, and branding according to specific customer requirements. As a socially responsible company, we are always committed to environmentally friendly production and sustainable development."
+  },
+  "advantages": {
+    "title": "Our Advantages",
+    "subtitle": "Why Global Customers Choose Karn's Wallpaper Adhesive Products",
+    "quality": {
+      "title": "Quality Assurance",
+      "description": "We employ a rigorous quality control system with each batch of products undergoing multi-stage testing to ensure compliance with international quality standards."
+    },
+    "experience": {
+      "title": "Professional Experience",
+      "description": "With 15 years of industry experience, our technical team is proficient in wallpaper adhesive formula development and production processes."
+    },
+    "eco": {
+      "title": "Environmental Commitment",
+      "description": "Our products use renewable plant starch as the main raw material, are low-pollution, non-toxic, and safe, meeting international environmental standards."
+    },
+    "service": {
+      "title": "Comprehensive Service",
+      "description": "We provide full-spectrum support from product development and technical assistance to after-sales service, ensuring customer satisfaction."
+    }
+  },
+  "history": {
+    "title": "Company Development History",
+    "subtitle": "Key milestones from founding to becoming an industry leader",
+    "events": {
+      "founding": "Company established in Hangzhou, Zhejiang, focusing on the development and production of wallpaper adhesive powder.",
+      "expansion": "Expanded production facilities and introduced advanced automated production lines, significantly increasing production capacity.",
+      "international": "Began expanding into international markets with products exported to countries in Asia, Europe, and North America.",
+      "present": "Developed a new generation of environmentally friendly wallpaper adhesive products, strengthening global market presence and brand building."
+    }
+  },
+  "certifications": {
+    "title": "Certifications",
+    "subtitle": "Our products and production processes comply with international standard certifications",
+    "iso9001": "ISO 9001 Quality Management System Certification ensures our production processes and product quality meet international standards.",
+    "iso14001": "ISO 14001 Environmental Management System Certification demonstrates our commitment and practice in environmental protection.",
+    "ce": "CE Certification indicates that our products comply with safety, health, and environmental protection requirements for the European Union market."
+  },
+  "cta": {
+    "title": "Ready to Start Cooperation?",
+    "description": "Whether you need high-quality wallpaper adhesive products or are looking for OEM/ODM services, we can provide the best solution for you.",
+    "products": "View Products",
+    "contact": "Contact Us"
+  }
+}

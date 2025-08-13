@@ -1,0 +1,45 @@
+{
+  "meta_description": "联系浙江卡恩新型建材有限公司，了解我们的壁纸胶粉产品和OEM服务，或者获取技术支持和客户服务。",
+  "hero": {
+    "title": "联系我们",
+    "subtitle": "无论您有任何疑问、产品咨询或合作意向，我们的团队随时为您提供支持"
+  },
+  "info": {
+    "title": "联系信息",
+    "description": "欢迎通过以下方式与我们联系，我们会尽快回复您的咨询。",
+    "address": {
+      "title": "公司地址"
+    },
+    "phone": {
+      "title": "电话号码"
+    },
+    "email": {
+      "title": "电子邮箱"
+    },
+    "hours": {
+      "title": "工作时间",
+      "weekdays": "周一至周五",
+      "saturday": "周六",
+      "sunday": "周日",
+      "closed": "休息"
+    }
+  },
+  "form": {
+    "title": "留言咨询",
+    "name": "姓名",
+    "company": "公司名称",
+    "email": "电子邮箱",
+    "phone": "电话号码",
+    "country": "国家/地区",
+    "subject": "主题",
+    "message": "留言内容",
+    "required": "此字段为必填项",
+    "email_invalid": "请输入有效的电子邮箱地址",
+    "submitting": "提交中...",
+    "success": "您的留言已成功提交！我们将尽快与您联系。",
+    "error": "提交失败，请稍后重试或直接联系我们。"
+  },
+  "map": {
+    "title": "我们的位置"
+  }
+}
