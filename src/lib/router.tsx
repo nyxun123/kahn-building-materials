@@ -153,7 +153,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  // 前端路由 - 使用Layout组件
+  // 前端页面路由
   {
     path: '/:lang',
     element: <Layout />,
@@ -208,7 +208,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  // 默认路由重定向
+  // 重定向路由
   {
     path: '/',
     element: <Navigate to="/zh" replace />,
@@ -237,4 +237,6 @@ export const router = createBrowserRouter([
     path: '*',
     element: <Navigate to="/zh" replace />,
   },
-]);
+], {
+  basename: import.meta.env.PROD ? '/kahn-building-materials' : undefined,
+});
