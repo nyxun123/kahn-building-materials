@@ -237,6 +237,4 @@ export const router = createBrowserRouter([
     path: '*',
     element: <Navigate to="/zh" replace />,
   },
-], {
-  basename: import.meta.env.PROD ? '/kahn-building-materials' : undefined,
-});
+]);
