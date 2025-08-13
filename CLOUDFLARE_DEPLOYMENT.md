@@ -9,7 +9,6 @@
 3. 准备好以下环境变量的值：
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_ANON_KEY`
-   - `VITE_RECAPTCHA_SITE_KEY`
 
 ## 部署步骤
 
@@ -47,7 +46,6 @@
 ```
 VITE_SUPABASE_URL=您的Supabase项目URL
 VITE_SUPABASE_ANON_KEY=您的Supabase匿名密钥
-VITE_RECAPTCHA_SITE_KEY=您的reCAPTCHA站点密钥
 ```
 
 ### 6. 部署项目

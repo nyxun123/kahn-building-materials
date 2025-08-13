@@ -51,7 +51,6 @@ cp .env.example .env
 ```env
 VITE_SUPABASE_URL=你的Supabase项目URL
 VITE_SUPABASE_ANON_KEY=你的Supabase匿名密钥
-VITE_RECAPTCHA_SITE_KEY=你的reCAPTCHA站点密钥
 ```
 
 ### 启动开发服务器

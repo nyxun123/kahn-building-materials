@@ -11,5 +11,4 @@ directory = "dist"
 # Environment variables for Cloudflare Pages
 # These will be set in the Cloudflare dashboard
 # VITE_SUPABASE_URL
-# VITE_SUPABASE_ANON_KEY  
-# VITE_RECAPTCHA_SITE_KEY
+# VITE_SUPABASE_ANON_KEY
