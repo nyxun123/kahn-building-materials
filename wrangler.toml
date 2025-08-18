@@ -2,13 +2,6 @@ name = "kahn-building-materials"
 compatibility_date = "2024-01-01"
 pages_build_output_dir = "dist"
 
-[env.production]
-name = "kahn-building-materials"
-
-[build]
-command = "pnpm run build:cloudflare"
-directory = "dist"
-
 # Environment variables for Cloudflare Pages
 # These will be set in the Cloudflare dashboard
 # VITE_SUPABASE_URL
