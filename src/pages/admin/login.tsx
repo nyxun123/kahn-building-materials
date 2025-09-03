@@ -42,25 +42,34 @@ const Login = () => {
 
     setIsLoading(true);
     try {
-      // 直接使用本地认证，无需API
-      if (email.toLowerCase() === 'niexianlei0@gmail.com' && password === 'XIANche041758') {
+      // 使用 Cloudflare Workers + D1 数据库认证
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || '登录请求失败');
+      }
+
+      const result = await response.json();
+
+      if (result.user) {
         // 存储用户信息到 localStorage
         localStorage.setItem('admin-auth', JSON.stringify({
-          user: {
-            id: 'admin-1',
-            email: email.toLowerCase(),
-            name: '管理员',
-            role: 'admin'
-          },
+          user: result.user,
           token: `admin-${Date.now()}`,
           loginTime: new Date().toISOString()
         }));
         
         toast.success('登录成功！');
         navigate('/admin/dashboard');
-        return;
       } else {
-        throw new Error('邮箱或密码错误');
+        throw new Error('认证失败');
       }
     } catch (error: any) {
       console.error('Login error:', error);
