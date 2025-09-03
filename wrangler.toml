@@ -5,8 +5,8 @@ compatibility_date = "2024-01-01"
 # D1 数据库配置
 [[d1_databases]]
 binding = "DB"
-database_name = "kahn-contact-db"
-database_id = "YOUR_DATABASE_ID"
+database_name = "kaneshuju"
+database_id = "1017f91b-e6f1-42d9-b9c3-5f32904be73a"
 
 # R2 存储配置
 [[r2_buckets]]
