@@ -2,18 +2,17 @@ name = "kahn-building-materials"
 pages_build_output_dir = "dist"
 compatibility_date = "2024-01-01"
 
-# D1 数据库配置
-[[d1_databases]]
+[env.production]
+# D1 数据库配置 - 生产环境
+[[env.production.d1_databases]]
 binding = "DB"
 database_name = "kaneshuju"
 database_id = "1017f91b-e6f1-42d9-b9c3-5f32904be73a"
 
-# R2 存储配置
-[[r2_buckets]]
+# R2 存储配置 - 生产环境
+[[env.production.r2_buckets]]
 binding = "BUCKET"
 bucket_name = "kahn-images"
 
 [env.production.vars]
-VITE_SUPABASE_URL = "https://your-project.supabase.co"
-VITE_SUPABASE_ANON_KEY = "your-anon-key"
-VITE_API_BASE_URL = "https://your-api.cloudflare.dev"
+ENVIRONMENT = "production"

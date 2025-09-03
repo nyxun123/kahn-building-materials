@@ -133,75 +133,48 @@ async function handleContactAPI(request, env) {
       });
     }
     
-    // 智能存储：优先D1，降级到Workers内存存储
-    const contactData = {
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-      name: data.name.trim(),
-      email: data.email.trim().toLowerCase(),
-      company: data.company?.trim() || '',
-      phone: data.phone?.trim() || '',
-      message: data.message.trim(),
-      created_at: new Date().toISOString(),
-      ip: request.headers.get('cf-connecting-ip') || 'unknown',
-      user_agent: request.headers.get('user-agent') || 'unknown',
-      status: 'new',
-      is_read: false
-    };
+    // 纯D1数据库存储 - 专业方案
+    if (!env.DB) {
+      return new Response(JSON.stringify({
+        code: 500,
+        message: 'D1数据库未配置，请联系技术支持'
+      }), {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
 
     try {
-      // 优先尝试D1数据库
-      if (env.DB) {
-        const result = await env.DB.prepare(`
-          INSERT INTO contacts (name, email, phone, company, message, ip_address, user_agent)
-          VALUES (?, ?, ?, ?, ?, ?, ?)
-        `).bind(
-          contactData.name,
-          contactData.email,
-          contactData.phone,
-          contactData.company,
-          contactData.message,
-          contactData.ip,
-          contactData.user_agent
-        ).run();
-        
-        console.log('✅ D1数据库存储成功:', result);
-        contactData.id = result.meta.last_row_id.toString();
-        
-        await sendNotification(contactData, env);
-        
-        return new Response(JSON.stringify({
-          code: 200,
-          message: '消息提交成功，我们将尽快回复您',
-          data: { id: contactData.id, submitted_at: contactData.created_at, storage: 'D1' }
-        }), {
-          status: 200,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-          }
-        });
-      }
-    } catch (dbError) {
-      console.log('D1数据库未配置，使用内存存储:', dbError.message);
-    }
-    
-    // 降级到Workers KV或内存存储
-    try {
-      // 发送通知
-      await sendNotification(contactData, env);
+      // 插入联系数据到D1数据库
+      const result = await env.DB.prepare(`
+        INSERT INTO contacts (name, email, phone, company, message, ip_address, user_agent)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `).bind(
+        data.name.trim(),
+        data.email.trim().toLowerCase(),
+        data.phone?.trim() || '',
+        data.company?.trim() || '',
+        data.message.trim(),
+        request.headers.get('cf-connecting-ip') || 'unknown',
+        request.headers.get('user-agent') || 'unknown'
+      ).run();
       
-      // 尝试存储到KV
-      if (env.CONTACT_KV) {
-        await env.CONTACT_KV.put(`contact:${contactData.id}`, JSON.stringify(contactData));
-        console.log('✅ KV存储成功');
-      } else {
-        console.log('✅ 内存存储模式');
-      }
+      console.log('✅ D1数据库存储成功:', result);
+      
+      // 发送通知
+      await sendNotification(data, env);
       
       return new Response(JSON.stringify({
         code: 200,
         message: '消息提交成功，我们将尽快回复您',
-        data: { id: contactData.id, submitted_at: contactData.created_at, storage: 'KV/Memory' }
+        data: { 
+          id: result.meta.last_row_id, 
+          submitted_at: new Date().toISOString(),
+          storage: 'D1_DATABASE'
+        }
       }), {
         status: 200,
         headers: {
@@ -209,11 +182,12 @@ async function handleContactAPI(request, env) {
           'Access-Control-Allow-Origin': '*'
         }
       });
-    } catch (storageError) {
-      console.error('存储失败:', storageError);
+
+    } catch (dbError) {
+      console.error('D1数据库错误:', dbError);
       return new Response(JSON.stringify({
         code: 500,
-        message: '提交失败，请稍后重试'
+        message: `数据库存储失败: ${dbError.message}`
       }), {
         status: 500,
         headers: {
@@ -426,21 +400,55 @@ async function handleAdminLogin(request, env) {
       });
     }
     
-    // 零配置认证系统 - 立即可用
-    if (email.toLowerCase() === 'niexianlei0@gmail.com' && password === 'XIANche041758') {
-      console.log('✅ 管理员认证成功');
-      
+    // 纯D1数据库认证 - 专业方案
+    if (!env.DB) {
       return new Response(JSON.stringify({
-        user: {
-          id: 'admin-1',
-          email: email.toLowerCase(),
-          name: '管理员',
-          role: 'admin'
-        },
-        authType: 'DIRECT'
+        error: { message: 'D1数据库未配置，请联系技术支持' }
       }), {
-        status: 200,
-        headers: {
+        status: 500,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+
+    try {
+      const result = await env.DB.prepare(`
+        SELECT * FROM admins WHERE email = ? AND password_hash = ?
+      `).bind(email.toLowerCase(), password).first();
+      
+      if (result) {
+        // 更新最后登录时间
+        await env.DB.prepare(`
+          UPDATE admins SET last_login = CURRENT_TIMESTAMP WHERE id = ?
+        `).bind(result.id).run();
+        
+        console.log('✅ D1数据库认证成功');
+        
+        return new Response(JSON.stringify({
+          user: {
+            id: result.id,
+            email: result.email,
+            name: result.name,
+            role: result.role
+          },
+          authType: 'D1_DATABASE'
+        }), {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          }
+        });
+      }
+    } catch (dbError) {
+      console.error('D1认证失败:', dbError);
+      return new Response(JSON.stringify({
+        error: { message: `数据库认证失败: ${dbError.message}` }
+      }), {
+        status: 500,
+        headers: { 
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*'
         }
@@ -493,47 +501,54 @@ async function handleGetContacts(request, env) {
     const limit = parseInt(url.searchParams.get('limit') || '20');
     const offset = (page - 1) * limit;
     
-    if (env.DB) {
-      try {
-        // 获取联系数据
-        const contacts = await env.DB.prepare(`
-          SELECT id, name, email, phone, company, message, created_at, status, is_read
-          FROM contacts 
-          ORDER BY created_at DESC 
-          LIMIT ? OFFSET ?
-        `).bind(limit, offset).all();
-        
-        // 获取总数
-        const countResult = await env.DB.prepare(`
-          SELECT COUNT(*) as total FROM contacts
-        `).first();
-        
-        return new Response(JSON.stringify({
-          data: contacts.results || [],
-          pagination: {
-            page,
-            limit,
-            total: countResult?.total || 0,
-            totalPages: Math.ceil((countResult?.total || 0) / limit)
-          }
-        }), {
-          status: 200,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-          }
-        });
-      } catch (dbError) {
-        console.error('D1查询失败:', dbError);
-        throw new Error('数据库查询失败');
-      }
-    } else {
-      // 降级到空数据
+    // 纯D1数据库查询
+    if (!env.DB) {
       return new Response(JSON.stringify({
-        data: [],
-        pagination: { page: 1, limit: 20, total: 0, totalPages: 0 }
+        error: { message: 'D1数据库未配置' }
+      }), {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+
+    try {
+      // 获取联系数据
+      const contacts = await env.DB.prepare(`
+        SELECT id, name, email, phone, company, message, created_at, status, is_read
+        FROM contacts 
+        ORDER BY created_at DESC 
+        LIMIT ? OFFSET ?
+      `).bind(limit, offset).all();
+      
+      // 获取总数
+      const countResult = await env.DB.prepare(`
+        SELECT COUNT(*) as total FROM contacts
+      `).first();
+      
+      return new Response(JSON.stringify({
+        data: contacts.results || [],
+        pagination: {
+          page,
+          limit,
+          total: countResult?.total || 0,
+          totalPages: Math.ceil((countResult?.total || 0) / limit)
+        }
       }), {
         status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    } catch (dbError) {
+      console.error('D1查询失败:', dbError);
+      return new Response(JSON.stringify({
+        error: { message: `数据库查询失败: ${dbError.message}` }
+      }), {
+        status: 500,
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*'
