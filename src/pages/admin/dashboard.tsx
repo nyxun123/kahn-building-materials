@@ -1,35 +1,32 @@
 import { Helmet } from 'react-helmet-async';
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
-  const { t } = useTranslation('admin');
-  
   return (
     <>
       <Helmet>
-        <title>{t('dashboard.title')} | 杨州卡恩新型建材有限公司</title>
+        <title>控制面板 | 杨州卡恩新型建材有限公司</title>
       </Helmet>
 
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6">{t('dashboard.title')}</h1>
-        <p className="text-lg mb-8">{t('dashboard.welcome', { name: '管理员' })}</p>
+        <h1 className="text-2xl font-bold mb-6">控制面板</h1>
+        <p className="text-lg mb-8">欢迎回来，管理员</p>
         
-        <h2 className="text-xl font-semibold mb-4">{t('dashboard.overview')}</h2>
+        <h2 className="text-xl font-semibold mb-4">概览</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-blue-500">
             <div className="text-3xl font-bold mb-2">24</div>
-            <div className="text-gray-500 dark:text-gray-400">{t('dashboard.products_count')}</div>
+            <div className="text-gray-500 dark:text-gray-400">产品数量</div>
           </div>
           
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-green-500">
             <div className="text-3xl font-bold mb-2">12</div>
-            <div className="text-gray-500 dark:text-gray-400">{t('dashboard.messages_count')}</div>
+            <div className="text-gray-500 dark:text-gray-400">留言数量</div>
           </div>
           
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-amber-500">
             <div className="text-3xl font-bold mb-2">5</div>
-            <div className="text-gray-500 dark:text-gray-400">{t('dashboard.unread_messages')}</div>
+            <div className="text-gray-500 dark:text-gray-400">未读留言</div>
           </div>
         </div>
         
@@ -37,9 +34,9 @@ const Dashboard = () => {
           <div className="md:col-span-2">
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">{t('dashboard.recent_messages')}</h2>
-                <Link to="/admin/messages" className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
-                  {t('dashboard.view_all')} &rarr;
+                <h2 className="text-xl font-semibold">最近留言</h2>
+                <Link to="/admin/contacts" className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                  查看全部 &rarr;
                 </Link>
               </div>
               
@@ -57,26 +54,26 @@ const Dashboard = () => {
           
           <div>
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-4">{t('dashboard.quick_actions')}</h2>
+              <h2 className="text-xl font-semibold mb-4">快捷操作</h2>
               <div className="space-y-3">
                 <Link to="/admin/products" className="block w-full">
                   <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
-                    {t('dashboard.add_product')}
+                    添加新产品
                   </button>
                 </Link>
                 <Link to="/admin/products" className="block w-full">
                   <button className="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors">
-                    {t('dashboard.manage_products')}
+                    管理产品
                   </button>
                 </Link>
-                <Link to="/admin/messages" className="block w-full">
+                <Link to="/admin/contacts" className="block w-full">
                   <button className="w-full bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 transition-colors">
-                    {t('dashboard.manage_messages')}
+                    管理留言
                   </button>
                 </Link>
                 <Link to="/admin/content" className="block w-full">
                   <button className="w-full bg-amber-600 text-white py-2 px-4 rounded hover:bg-amber-700 transition-colors">
-                    {t('dashboard.edit_content')}
+                    编辑网站内容
                   </button>
                 </Link>
               </div>
