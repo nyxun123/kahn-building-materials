@@ -21,32 +21,47 @@ const AdminLayout = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // 检查用户是否登录
-    const checkSession = async () => {
+    // 检查Supabase认证状态
+    const checkAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error || !session) {
           navigate('/admin/login');
+        } else {
+          // 验证是否为管理员权限
+          const { data: profile } = await supabase
+            .from('admin_users')
+            .select('is_active')
+            .eq('email', session.user.email)
+            .single();
+            
+          if (!profile?.is_active) {
+            await supabase.auth.signOut();
+            navigate('/admin/login');
+          }
         }
       } catch (error) {
-        console.error('Session check error:', error);
+        console.error('Auth check error:', error);
         navigate('/admin/login');
       } finally {
         setIsLoading(false);
       }
     };
 
-    checkSession();
+    checkAuth();
 
-    // 订阅认证状态变化
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT' || !session) {
-        navigate('/admin/login');
+    // 监听认证状态变化
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (!session) {
+          navigate('/admin/login');
+        }
       }
-    });
+    );
 
     return () => {
-      subscription.unsubscribe();
+      authListener.subscription.unsubscribe();
     };
   }, [navigate]);
 

@@ -3,7 +3,9 @@ import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { RiAddLine, RiSearchLine, RiEdit2Line, RiDeleteBin6Line } from 'react-icons/ri';
+import { RiAddLine, RiSearchLine, RiEdit2Line, RiDeleteBin6Line, RiRefreshLine, RiBugLine } from 'react-icons/ri';
+import { ConnectionTest } from '@/components/ConnectionTest';
+import { useProducts } from '@/hooks/useRealtimeData';
 import { supabase } from '@/lib/supabase';
 import type { Database } from '@/lib/database.types';
 
@@ -11,37 +13,12 @@ type Product = Database['public']['Tables']['products']['Row'];
 
 const Products = () => {
   const { t } = useTranslation('admin');
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: products, loading, error, refetch, connectionStatus } = useProducts();
   const [searchQuery, setSearchQuery] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('sort_order', { ascending: true })
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        throw error;
-      }
-
-      setProducts(data || []);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      toast.error('加载产品列表失败');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDebug, setShowDebug] = useState(false);
 
   const handleDeleteClick = (product: Product) => {
     setProductToDelete(product);
@@ -51,6 +28,7 @@ const Products = () => {
   const handleConfirmDelete = async () => {
     if (!productToDelete) return;
 
+    setIsDeleting(true);
     try {
       const { error } = await supabase
         .from('products')
@@ -61,14 +39,12 @@ const Products = () => {
         throw error;
       }
 
-      setProducts((prevProducts) => 
-        prevProducts.filter((p) => p.id !== productToDelete.id)
-      );
       toast.success(t('products.delete_success'));
     } catch (error) {
       console.error('Error deleting product:', error);
       toast.error(t('products.delete_error'));
     } finally {
+      setIsDeleting(false);
       setShowDeleteConfirm(false);
       setProductToDelete(null);
     }
@@ -89,12 +65,6 @@ const Products = () => {
       if (error) {
         throw error;
       }
-
-      setProducts((prevProducts) =>
-        prevProducts.map((p) =>
-          p.id === product.id ? { ...p, is_active: !p.is_active } : p
-        )
-      );
       
       toast.success(t('products.update_success'));
     } catch (error) {
@@ -119,15 +89,37 @@ const Products = () => {
 
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-          <h1 className="text-2xl font-bold mb-4 sm:mb-0">{t('products.title')}</h1>
-          <Link
-            to="/admin/products/new"
-            className="flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
-          >
-            <RiAddLine className="mr-2" />
-            {t('products.add_new')}
-          </Link>
+          <div>
+            <h1 className="text-2xl font-bold mb-4 sm:mb-0">{t('products.title')}</h1>
+            <button
+              onClick={() => setShowDebug(!showDebug)}
+              className="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 flex items-center"
+            >
+              <RiBugLine className="mr-1" size={16} />
+              {showDebug ? '隐藏调试信息' : '显示调试信息'}
+            </button>
+          </div>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={refetch}
+              disabled={loading}
+              className="flex items-center px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors disabled:opacity-50"
+              title="刷新数据"
+            >
+              <RiRefreshLine className="mr-1" />
+              刷新
+            </button>
+            <Link
+              to="/admin/products/new"
+              className="flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+            >
+              <RiAddLine className="mr-2" />
+              {t('products.add_new')}
+            </Link>
+          </div>
         </div>
+
+        <ConnectionTest show={showDebug} />
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
@@ -147,9 +139,40 @@ const Products = () => {
             <div className="flex items-center justify-center p-8">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
             </div>
+          ) : error ? (
+            <div className="p-8 text-center">
+              <div className="text-red-500 mb-4">
+                <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="font-semibold">数据库连接失败</p>
+                <p className="text-sm mt-1 text-gray-600 dark:text-gray-400">
+                  {error.message}
+                </p>
+                <p className="text-xs mt-2 text-gray-500">
+                  请检查网络连接或联系技术支持
+                </p>
+              </div>
+              <button
+                onClick={refetch}
+                className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+              >
+                <RiRefreshLine className="mr-2" />
+                重试
+              </button>
+            </div>
           ) : filteredProducts.length === 0 ? (
             <div className="p-8 text-center text-gray-500 dark:text-gray-400">
               {searchQuery ? '没有找到匹配的产品' : t('products.no_products')}
+              <div className="mt-4">
+                <Link
+                  to="/admin/products/new"
+                  className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
+                >
+                  <RiAddLine className="mr-2" />
+                  添加第一个产品
+                </Link>
+              </div>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -232,9 +255,10 @@ const Products = () => {
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-md shadow-sm text-sm font-medium hover:bg-red-700"
+                disabled={isDeleting}
+                className="px-4 py-2 bg-red-600 text-white rounded-md shadow-sm text-sm font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {t('products.confirm')}
+                {isDeleting ? '删除中...' : t('products.confirm')}
               </button>
             </div>
           </div>

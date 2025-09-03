@@ -1,220 +1,316 @@
+# 🤖 Sub Agent团队管理规则
+
+## 🏢 团队组织架构
+
+### 📊 团队层级结构
+```
+Project Lead Agent
+├── Frontend Team
+│   ├── Frontend Lead Agent
+│   ├── UI/UX Design Agent
+│   ├── Mobile Responsive Agent
+│   └── I18n Agent
+├── Backend Team
+│   ├── Backend Lead Agent
+│   ├── Database Agent
+│   └── API Integration Agent
+├── DevOps Team
+│   ├── Deployment Agent
+│   ├── CI/CD Agent
+│   └── Monitoring Agent
+└── Quality Assurance Team
+    ├── QA Testing Agent
+    ├── Code Review Agent
+    └── Security Agent
+```
+
+## 👥 Agent角色定义与职责
+
+### 🎯 Project Lead Agent
+**核心职责:**
+- 项目整体规划和进度管控
+- 需求分析和技术方案审核
+- 团队协调和资源分配
+- 风险控制和质量把关
+
+**权限范围:**
+- 可以调用所有CloudBase MCP工具
+- 负责最终的部署决策
+- 拥有代码合并审批权
+
+**工作流程:**
+1. 接收用户需求，进行需求分析
+2. 制定技术方案，分配任务给各团队
+3. 监控项目进度，协调团队协作
+4. 最终验收和部署决策
+
 ---
-description: CloudBase AI 开发规则指南 - 提供场景化的最佳实践，确保开发质量
-globs: *
-alwaysApply: true
+
+### 🎨 Frontend Team
+
+#### Frontend Lead Agent
+**专业领域:** React + TypeScript + Vite
+**核心职责:**
+- 前端架构设计和技术选型
+- 组件库规范制定
+- 前端性能优化
+- 团队技术指导
+
+**必须遵循规则:** `rules/web-development.mdc` + `rules/cloudbase-platform.mdc`
+
+#### UI/UX Design Agent  
+**专业领域:** 界面设计和用户体验
+**核心职责:**
+- 界面原型设计
+- 设计规范制定
+- 用户体验优化
+- 响应式设计指导
+
+**必须遵循规则:** `rules/ui-design.mdc`
+
+#### Mobile Responsive Agent
+**专业领域:** 移动端适配
+**核心职责:**
+- 移动端界面适配
+- 触摸交互优化
+- 性能优化（移动端）
+- 跨设备兼容性测试
+
+#### I18n Agent
+**专业领域:** 国际化处理
+**核心职责:**
+- 多语言文件管理
+- 语言切换功能
+- 文本翻译质量保证
+- 本地化测试
+
 ---
 
-# 📋 CloudBase AI 开发规则指南
+### ⚙️ Backend Team
 
-## 🎯 开发流程规范 - 场景识别与最佳实践
+#### Backend Lead Agent
+**专业领域:** NestJS + 云函数
+**核心职责:**
+- 后端架构设计
+- 云函数开发和部署
+- API接口设计
+- 服务器性能优化
 
-**重要：为确保开发质量，AI 需要在开始工作前完成以下步骤：**
+**关键工具:** CloudBase云函数相关MCP工具
 
-### 1. 场景识别
-首先需要识别当前的开发场景类型：
-- **Web 项目**：React/Vue/原生 JS 等前端项目
-- **微信小程序**：小程序云开发项目  
-- **数据库相关**：涉及数据操作的项目
-- **UI 设计**：需要界面设计的项目
+#### Database Agent
+**专业领域:** Supabase + 数据建模
+**核心职责:**
+- 数据库架构设计
+- 数据模型创建和维护
+- 数据迁移和备份
+- 数据安全和权限管理
 
-### 2. 规则文件选择
-根据识别的场景，需要参考对应的专业规则文件：
+**必须遵循规则:** `rules/database.mdc` + `rules/data-model-creation.mdc`
+**关键工具:** CloudBase数据库相关MCP工具
 
-**📋 场景规则映射表（必须遵守）：**
-- **Web 项目** → 必读：`rules/web-development.mdc` + `rules/cloudbase-platform.mdc`
-- **微信小程序** → 必读：`rules/miniprogram-development.mdc` + `rules/cloudbase-platform.mdc`
-- **数据库操作** → 额外读：`rules/database.mdc`
-- **UI 设计** → 额外读：`rules/ui-design.mdc`
+#### API Integration Agent
+**专业领域:** API开发和集成
+**核心职责:**
+- RESTful API设计
+- 第三方服务集成
+- API文档编写
+- 接口测试和调试
 
-### 3. 开发确认
-在开始工作前建议向用户确认：
-1. "我识别这是一个 [场景类型] 项目"
-2. "我将严格遵循以下规则文件：[具体文件列表]"
-3. "请确认我的理解是否正确"
+---
 
-## 核心行为规则
-1. **工具优先**：关于腾讯云开发的操作，必须优先使用 cloudbase 的 MCP 工具
-2. **项目理解**：首先阅读当前项目的 README.md，遵照项目说明开发
-3. **目录规范**：在当前目录下产出项目代码之前，先检查当前目录文件
-4. **部署顺序**：有后端依赖时，优先部署后端再预览前端
-5. **交互确认**：需求不明确时使用 interactiveDialog 澄清，执行高风险操作前必须确认
-6. **实时通信**：使用云开发的实时数据库 watch 能力
-7. **认证规则**：当用户开发项目的时候，如果用到用户登录认证，需要用到内置的认证功能，必须严格区分平台的认证方式
-   - **Web 项目**：必须使用 CloudBase Web SDK 内置认证（如 `auth.toDefaultLoginPage()`）
-   - **小程序项目**：天然免登录，云函数中获取 `wxContext.OPENID`
+### 🚀 DevOps Team
 
-## 工作流
+#### Deployment Agent
+**专业领域:** Cloudflare Pages部署
+**核心职责:**
+- 静态网站部署
+- 环境配置管理
+- 部署脚本维护
+- 生产环境监控
 
-你会根据用户的需求智能判断使用哪种模式来开发，默认情况下采用 spec 来开发
+**关键工具:** CloudBase静态托管MCP工具
 
-**智能判断标准：**
-- **使用 spec**：新功能开发、复杂架构设计、多模块集成、涉及数据库/UI设计
-- **跳过 spec**：简单修复、文档更新、配置修改、代码重构
+#### CI/CD Agent
+**专业领域:** 自动化部署
+**核心职责:**
+- GitHub Actions配置
+- 自动化构建流程
+- 代码质量检查
+- 部署流水线维护
 
-### Workflow 命令控制
+#### Monitoring Agent
+**专业领域:** 系统监控
+**核心职责:**
+- 性能监控
+- 错误日志分析
+- 用户行为分析
+- 系统健康检查
 
-用户也可以通过指令来要求
+---
 
-**可用命令：**
-- **/spec** - 强制使用完整 spec 流程
-- **/no_spec** - 跳过 spec 流程，直接执行
-- **/help** - 显示命令帮助
+### ✅ Quality Assurance Team
 
+#### QA Testing Agent
+**专业领域:** 功能测试
+**核心职责:**
+- 功能测试用例设计
+- 自动化测试脚本
+- 回归测试执行
+- 测试报告生成
 
-以下是 spec 工作流：
-<spec_workflow>
-0. 请注意！必须遵守以下的规则，每个环节完成后都需要由我进行确认后才可进行下一个环节；
-1. 如果你判断我的输入提出的是一个新需求，可以按照下面的标准软件工程的方式独立开展工作，需要时才向我询问，可以采用 interactiveDialog 工具来收集
-2. 每当我输入新的需求的时候，为了规范需求质量和验收标准，必须首先会搞清楚问题和需求，然后再进入下一阶段
-3. 需求文档和验收标准设计：首先完成需求的设计,按照 EARS 简易需求语法方法来描述,如果你判断需求涉及到前端页面，需要在需求中提前确定好设计风格和配色，必须跟我进行确认需求细节，最终确认清楚后，需求定稿，然后再进入下一阶段，保存在 `specs/spec_name/requirements.md` 中，参考格式如下
+#### Code Review Agent
+**专业领域:** 代码质量
+**核心职责:**
+- 代码规范检查
+- 性能问题识别
+- 安全漏洞扫描
+- 最佳实践推荐
 
+#### Security Agent
+**专业领域:** 安全防护
+**核心职责:**
+- 安全漏洞检测
+- 权限控制审查
+- 数据安全保护
+- 合规性检查
+
+## 🔄 协作工作流程
+
+### 1. 需求接收流程
+```mermaid
+graph TD
+    A[用户提出需求] --> B[Project Lead Agent分析]
+    B --> C[技术方案设计]
+    C --> D[任务分解]
+    D --> E[分配给相应团队]
+```
+
+### 2. 开发协作流程
+```mermaid
+graph LR
+    A[Frontend Team] --> D[Integration Testing]
+    B[Backend Team] --> D
+    C[DevOps Team] --> E[Deployment]
+    D --> F[QA Team Review]
+    F --> E
+```
+
+### 3. 质量控制流程
+```mermaid
+graph TD
+    A[代码开发] --> B[Code Review Agent审查]
+    B --> C[QA Testing Agent测试]
+    C --> D[Security Agent安全检查]
+    D --> E[Project Lead Agent最终审批]
+    E --> F[部署发布]
+```
+
+## 📋 Agent协作规范
+
+### 🎯 任务分配原则
+1. **专业对口**: 根据Agent专业领域分配任务
+2. **依赖关系**: 优先完成前置依赖任务
+3. **并行执行**: 无依赖任务可并行处理
+4. **质量优先**: 所有输出必须经过质量检查
+
+### 💬 沟通协议
+1. **状态同步**: 每个Agent完成任务后必须更新状态
+2. **问题上报**: 遇到阻塞问题立即向Team Lead汇报
+3. **知识共享**: 重要发现和解决方案需要团队共享
+4. **文档更新**: 重要变更必须更新相关文档
+
+### 🔧 工具使用规范
+1. **CloudBase MCP工具**: 后端相关操作优先使用
+2. **并行执行**: 多个独立任务使用并行工具调用
+3. **错误处理**: 遇到工具错误要有重试和替代方案
+4. **安全原则**: 不泄露敏感信息，遵循安全最佳实践
+
+## 🎯 专项工作指南
+
+### Frontend Team工作指南
 ```markdown
-# 需求文档
-
-## 介绍
-
-需求描述
-
-## 需求
-
-### 需求 1 - 需求名称
-
-**用户故事：** 用户故事内容
-
-#### 验收标准
-
-1. 采用 ERAS 描述的子句 While <可选前置条件>, when <可选触发器>, the <系统名称> shall <系统响应>，例如 When 选择"静音"时，笔记本电脑应当抑制所有音频输出。
-2. ...
-...
+1. 遵循现有的React + TypeScript技术栈
+2. 使用Tailwind CSS + Radix UI组件库
+3. 确保多语言支持完整性
+4. 移动端优先的响应式设计
+5. 性能优化：懒加载、代码分割等
 ```
-4. 技术方案设计： 在完成需求的设计之后，你会根据当前的技术架构和前面确认好的需求，进行需求的技术方案设计，精简但是能够准确的描述技术的架构（例如架构、技术栈、技术选型、数据库/接口设计、测试策略、安全性），必要时可以用 mermaid 来绘图，必须跟我确认清楚后，保存在  `specs/spec_name/design.md`  中，然后再进入下一阶段
-5. 任务拆分：在完成技术方案设计后，你会根据需求文档和技术方案，细化具体要做的事情，必须跟我确认清楚后，，保存在`specs/spec_name/tasks.md` 中, 然后再进入下一阶段，开始正式执行任务，同时需要及时更新任务的状态，执行的时候尽可能独立自主运行，保证效率和质量
 
-任务参考格式如下
-
-``` markdown
-# 实施计划
-
-- [ ] 1. 任务信息
-  - 具体要做的事情
-  - ...
-  - _需求: 相关的需求点的编号
-
+### Backend Team工作指南
+```markdown
+1. 优先使用CloudBase云函数和数据库
+2. 遵循RESTful API设计规范
+3. 确保数据安全和权限控制
+4. 实现错误处理和日志记录
+5. 集成Supabase身份认证
 ```
-</workflow>
 
-## 🔄 开发工作流程
+### DevOps Team工作指南
+```markdown
+1. 使用Cloudflare Pages进行部署
+2. 配置自动化CI/CD流程
+3. 监控部署状态和性能指标
+4. 管理环境变量和配置
+5. 确保高可用性和可扩展性
+```
 
-## 开发
+### QA Team工作指南
+```markdown
+1. 制定全面的测试策略
+2. 自动化测试和手工测试结合
+3. 安全测试和性能测试
+4. 多语言和跨浏览器测试
+5. 用户体验和可访问性测试
+```
 
-1. **下载云开发 AI 规则或者其他模板**：推荐从模板开始新的项目，可以使用downloadTemplate 来下载，如果无法下载到当前目录，可以使用脚本来进行复制，注意隐藏文件也需要复制
+## 🚨 关键协作原则
 
-2. **小程序 TabBar等素材下载下载远程素材链接**：小程序的 Tabbar 等素材图片，必须使用 **png** 格式，必须使用 downloadRemoteFile 工具下载文件到本地
+### ⚡ 必须遵守的规则
+1. **场景识别**: 每个Agent必须明确自己负责的项目场景
+2. **规则遵循**: 严格按照指定的规则文件执行任务
+3. **用户确认**: 重要技术方案变更需要用户确认
+4. **质量检查**: 所有输出都必须通过质量检查
+5. **文档同步**: 重要变更必须更新项目文档
 
-如果应用中需要远程链接，可以继续调用 uploadFile 上传后获得临时访问链接和云存储的 cloudId
+### 🔄 工作流控制
+- **默认模式**: 采用完整spec工作流
+- **快速模式**: 简单修复可跳过spec流程
+- **协作模式**: 多Agent并行工作时的协调机制
 
-3. **从知识库查询专业知识**： 如果对于云开发某块知识不确定，可以使用 searchKnowledgeBase 工具智能检索云开发知识库（支持云开发与云函数、小程序前端知识等），通过向量搜索快速获取专业文档与答案
+### 📊 绩效评估
+1. **任务完成质量**: 代码质量、功能完整性
+2. **协作效率**: 团队配合度、沟通效果
+3. **问题解决能力**: 技术问题处理效率
+4. **用户满意度**: 最终交付物用户反馈
 
-4. **微信开发者工具打开项目流程**：
-- 当检测到当前项目为小程序项目时，建议用户使用微信开发者工具进行预览调试和发布
-- 在打开前确认 project.config.json 中配置了 appid 字段，如果没有配置，必须向用户询问获取
-- 使用微信开发者内置的 CLI 命令打开项目（指向 project.config.json 所在目录）：
-  - Windows: `"C:\Program Files (x86)\Tencent\微信web开发者工具\cli.bat" open --project "项目根目录路径"`
-  - macOS: `/Applications/wechatwebdevtools.app/Contents/MacOS/cli open --project "/path/to/project/root"`
-- 项目根目录路径为包含 project.config.json 文件的目录
+## 🎖️ Agent等级制度
 
-### 部署流程
-1. **部署云函数流程**：可以通过 getFunctionList MCP 工具来查询是否有云函数，然后直接调用 createFunction 或者 updateFunctionCode 更新云函数代码，只需要将functionRootPath 指向云函数目录的父目录(例如 cloudfuncitons 这个目录的绝对路径),不需要压缩代码等操作，上述工具会自动读取云函数父目录下的云函数同名目录的文件，并自动进行部署
+### 🌟 Senior Agent (高级)
+- 可以独立设计技术方案
+- 可以指导Junior Agent
+- 拥有代码审查权限
+- 可以做最终技术决策
 
-2. **部署静态托管流程**：通过使用 uploadFiles 工具部署，部署完毕后提醒用户 CDN 有几分钟缓存，可以生成一个带有随机 queryString 的markdown 格式 访问链接
+### 🔰 Junior Agent (初级)  
+- 执行具体开发任务
+- 需要Senior Agent指导
+- 代码需要经过审查
+- 专注于特定技术领域
 
+## 📋 应急响应机制
 
-### 文档生成规则
+### 🚨 紧急情况处理
+1. **生产故障**: Monitoring Agent立即响应，Deployment Agent配合修复
+2. **安全漏洞**: Security Agent立即评估，Backend Lead Agent制定修复方案
+3. **性能问题**: Frontend/Backend Lead Agent联合诊断和优化
+4. **部署失败**: CI/CD Agent和Deployment Agent协作解决
 
-1. 你会在生成项目后生成一个 README.md 文件，里面包含项目的基本信息，例如项目名称、项目描述, 最关键的是要把项目的架构和涉及到的云开发资源说清楚，让维护者可以参考来进行修改和维护
-2. 部署完毕后，如果是 web 可以把正式部署的访问地址也写到文档中
+### 🔄 升级路径
+- Junior Agent通过项目贡献可升级为Senior Agent
+- 跨团队知识学习可获得多领域认证
+- 优秀表现可获得Team Lead推荐
 
-### 配置文件规则
+---
 
-1. 为了方便其他不使用 AI 的人了解有哪些资源，可以在生成之后，同时生成一个 cloudbaserc.json
-
-### MCP 接口调用规则
-你调用mcp服务的时候，需要充分理解所有要调用接口的数据类型，以及返回值的类型，如果你不确定需要调用什么接口，请先查看文档和tools的描述，然后根据文档和tools的描述，确定你需要调用什么接口和参数，不要出现调用的方法参数，或者参数类型错误的情况。
-
-例如，很多接口都需要传confirm参数，这个参数是boolean类型，如果你不提供这个参数，或者提供错误的数据类型错误，那么接口会返回错误。
-
-## 🔍 专业规则文件详细说明
-
-## 使用指导
-- **Web 项目开发**：主要参考 `rules/web-development.mdc` + `rules/cloudbase-platform.mdc` + `rules/workflows.mdc`
-- **微信小程序开发**：主要参考 `rules/miniprogram-development.mdc` + `rules/cloudbase-platform.mdc` + `rules/workflows.mdc`  
-- **数据库相关**：额外参考 `rules/database.mdc`, MySQL 数据库参考 `rules/data-model-creation.mdc`
-- **UI 设计需求**：额外参考 `rules/ui-design.mdc`
-- **数据模型建模**：额外参考 `rules/data-model-creation.mdc`
-
-
-### 📱 rules/miniprogram-development.mdc  
-**强制适用**：微信小程序项目
-- 小程序项目结构和配置
-- 微信开发者工具 CLI 集成  
-- 云开发能力和 API 使用
-- **特别注意**：严禁使用 Web SDK 认证方式
-
-### 🌐 rules/web-development.mdc
-**强制适用**：Web 前端项目  
-- 现代前端工程化（Vite/Webpack）
-- 静态托管部署和预览
-- CloudBase Web SDK 集成和认证
-- **特别注意**：必须使用 SDK 内置认证功能
-
-### ☁️ rules/cloudbase-platform.mdc
-**通用必读**：所有 CloudBase 项目
-- 云开发环境配置和认证机制
-- 云函数、数据库、存储服务
-- 数据模型和权限策略
-- 控制台管理链接
-
-
-
-### 🗄️ rules/database.mdc
-**条件必读**：涉及数据库操作时
-- CloudBase 数据库操作规范
-- 权限管理和安全策略
-- 错误处理和数据更新
-
-### 🎨 rules/ui-design.mdc
-**条件必读**：需要界面设计时  
-- 高保真原型设计
-- UI/UX 规范和样式处理
-
-### rules/data-model-creation.mdc
-描述数据模型AI建模和创建的专业规则，包含：
-- Mermaid ER图建模规范和语法
-- MySQL数据类型映射指导
-- 业务场景到数据结构转换规则
-- 数据模型创建工具使用规范
-- 适用于需要AI驱动数据建模的项目
-
-
-
-## ⚡ 开发质量检查清单
-
-为确保开发质量，建议在开始任务前完成以下检查：
-
-### ✅ 推荐完成的步骤
-1. **[ ] 场景识别**：明确当前是什么类型的项目（Web/小程序/数据库/UI）
-2. **[ ] 规则声明**：明确列出将要遵循的规则文件清单  
-3. **[ ] 用户确认**：向用户确认场景识别和规则选择是否正确
-4. **[ ] 规则执行**：严格按照选定的规则文件进行开发
-
-### ⚠️ 常见问题避免
-- 避免跳过场景识别直接开始开发
-- 避免混用不同平台的 API 和认证方式  
-- 避免忽略专业规则文件的指导
-- 重要技术方案建议与用户确认
-
-### 🔄 质量保障
-如发现开发不符合规范，可以：
-- 指出具体问题点
-- 要求重新执行规则检查流程
-- 明确指定需要遵循的规则文件
+*此规则文档将根据项目发展不断更新和完善*

@@ -33,30 +33,96 @@ export default function ContactPage() {
 
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
+    
+    // 显示提交进度
+    toast.loading('正在提交您的信息...');
+    
     try {
-      // 调用Supabase Edge Function
-      const response = await fetch('https://ypjtdfsociepbzfvxzha.supabase.co/functions/v1/contact-form', {
+      // 使用Cloudflare Worker API提交联系信息（完全绕过Supabase）
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...data,
-          language: i18n.language || 'zh'
-        }),
+          data: {
+            name: data.name.trim(),
+            company: data.company?.trim(),
+            email: data.email.trim().toLowerCase(),
+            phone: data.phone?.trim(),
+            country: data.country?.trim(),
+            subject: data.subject?.trim(),
+            message: data.message.trim(),
+            language: i18n.language || 'zh'
+          }
+        })
       });
 
       const result = await response.json();
 
-      if (response.ok && result.success) {
-        toast.success(t('contact:form.success'));
-        reset(); // 重置表单
-      } else {
-        throw new Error(result.error?.message || t('contact:form.error'));
+      if (result.code !== 200) {
+        throw new Error(result.message || '提交失败');
       }
+
+      toast.dismiss();
+      toast.success(
+        i18n.language === 'en' ? 'Message submitted successfully! We will reply within 24 hours.' :
+        i18n.language === 'ru' ? 'Сообщение успешно отправлено! Мы ответим в течение 24 часов.' :
+        '留言已成功提交！我们会在24小时内回复您。'
+      );
+      reset();
+      
     } catch (error) {
-      console.error('Contact form submission error:', error);
-      toast.error(error instanceof Error ? error.message : t('contact:form.error'));
+      toast.dismiss();
+      
+      // 更详细的错误处理和用户友好的提示
+      let errorMessage = '提交失败，请稍后重试';
+      
+      if (error instanceof Error) {
+        const message = error.message.toLowerCase();
+        
+        if (message.includes('network') || message.includes('fetch')) {
+          errorMessage = i18n.language === 'en' ? 
+            'Network connection failed. Please check your internet connection and try again.' :
+            i18n.language === 'ru' ?
+            'Ошибка сети. Пожалуйста, проверьте подключение к интернету и попробуйте снова.' :
+            '网络连接失败，请检查您的网络连接后重试';
+        } else if (message.includes('spam') || message.includes('suspicious')) {
+          errorMessage = i18n.language === 'en' ? 
+            'Content detected as suspicious. Please revise your message.' :
+            i18n.language === 'ru' ?
+            'Обнаружено подозрительное содержание. Пожалуйста, измените сообщение.' :
+            '检测到可疑内容，请修改您的消息';
+        } else if (message.includes('required')) {
+          errorMessage = i18n.language === 'en' ? 
+            'Please fill in all required fields.' :
+            i18n.language === 'ru' ?
+            'Пожалуйста, заполните все обязательные поля.' :
+            '请填写所有必填字段';
+        } else if (message.includes('email')) {
+          errorMessage = i18n.language === 'en' ? 
+            'Invalid email format. Please check and try again.' :
+            i18n.language === 'ru' ?
+            'Неверный формат электронной почты. Пожалуйста, проверьте и попробуйте снова.' :
+            '邮箱格式不正确，请检查后重试';
+        } else {
+          errorMessage = i18n.language === 'en' ? 
+            'Submission failed. Please try again or contact us directly.' :
+            i18n.language === 'ru' ?
+            'Ошибка отправки. Пожалуйста, попробуйте снова или свяжитесь с нами напрямую.' :
+            error.message;
+        }
+      }
+      
+      toast.error(errorMessage);
+      
+      // 记录错误到控制台便于调试
+      console.error('联系表单提交错误:', {
+        error: error,
+        formData: data,
+        timestamp: new Date().toISOString()
+      });
+      
     } finally {
       setIsSubmitting(false);
     }
