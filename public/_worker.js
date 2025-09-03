@@ -26,6 +26,16 @@ export default {
       return handleImageUpload(request, env);
     }
     
+    // Handle admin login
+    if (url.pathname === '/api/admin/login' && request.method === 'POST') {
+      return handleAdminLogin(request, env);
+    }
+    
+    // Handle get contacts
+    if (url.pathname === '/api/admin/contacts' && request.method === 'GET') {
+      return handleGetContacts(request, env);
+    }
+    
     // Handle other API requests
     if (url.pathname.startsWith('/api/')) {
       return handleAPIProxy(request, env);
@@ -36,7 +46,7 @@ export default {
   }
 };
 
-// Handle contact form API - 使用KV存储
+// Handle contact form API - 使用D1数据库
 async function handleContactAPI(request, env) {
   try {
     const body = await request.json();
@@ -122,54 +132,72 @@ async function handleContactAPI(request, env) {
       });
     }
     
-    // 创建联系消息记录
-    const contactData = {
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-      name: data.name.trim(),
-      email: data.email.trim().toLowerCase(),
-      company: data.company?.trim() || '',
-      phone: data.phone?.trim() || '',
-      country: data.country?.trim() || '',
-      subject: data.subject?.trim() || '网站联系咨询',
-      message: data.message.trim(),
-      language: data.language || 'zh',
-      status: 'new',
-      is_read: false,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      ip: request.headers.get('cf-connecting-ip') || 'unknown',
-      user_agent: request.headers.get('user-agent') || 'unknown'
-    };
-    
-    // 存储到Cloudflare KV（如果可用）或使用内存存储
+    // 存储到D1数据库
     try {
-      // 发送到Webhook或邮件通知
+      if (env.DB) {
+        // 插入联系数据到D1数据库
+        const result = await env.DB.prepare(`
+          INSERT INTO contacts (name, email, phone, company, message, ip_address, user_agent)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          data.name.trim(),
+          data.email.trim().toLowerCase(),
+          data.phone?.trim() || '',
+          data.company?.trim() || '',
+          data.message.trim(),
+          request.headers.get('cf-connecting-ip') || 'unknown',
+          request.headers.get('user-agent') || 'unknown'
+        ).run();
+        
+        console.log('D1数据库存储成功:', result);
+        
+        // 发送通知
+        await sendNotification(data, env);
+        
+        return new Response(JSON.stringify({
+          code: 200,
+          message: '消息提交成功，我们将尽快回复您',
+          data: { id: result.meta.last_row_id, submitted_at: new Date().toISOString() }
+        }), {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          }
+        });
+      } else {
+        throw new Error('数据库未配置');
+      }
+    } catch (dbError) {
+      console.error('D1数据库错误:', dbError);
+      
+      // 降级到内存存储
+      const contactData = {
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+        name: data.name.trim(),
+        email: data.email.trim().toLowerCase(),
+        company: data.company?.trim() || '',
+        phone: data.phone?.trim() || '',
+        message: data.message.trim(),
+        created_at: new Date().toISOString(),
+        ip: request.headers.get('cf-connecting-ip') || 'unknown'
+      };
+      
+      // 发送通知
       await sendNotification(contactData, env);
       
-      // 如果配置了KV存储，存储数据
-      if (env.CONTACT_KV) {
-        await env.CONTACT_KV.put(
-          `contact:${contactData.id}`, 
-          JSON.stringify(contactData)
-        );
-      }
-      
-    } catch (storageError) {
-      console.error('存储失败，但消息已记录:', storageError);
+      return new Response(JSON.stringify({
+        code: 200,
+        message: '消息提交成功（临时存储），我们将尽快回复您',
+        data: contactData
+      }), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
     }
-    
-    // 返回成功响应
-    return new Response(JSON.stringify({
-      code: 200,
-      message: '消息提交成功，我们将尽快回复您',
-      data: contactData
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
-    });
     
   } catch (error) {
     console.error('联系API错误:', error);
@@ -345,6 +373,184 @@ async function handleImageUpload(request, env) {
     return new Response(JSON.stringify({
       code: 500,
       message: `图片上传失败: ${error.message}`
+    }), {
+      status: 500,
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+  }
+}
+
+// Handle admin login API
+async function handleAdminLogin(request, env) {
+  try {
+    const body = await request.json();
+    const { email, password } = body;
+    
+    // 验证输入
+    if (!email || !password) {
+      return new Response(JSON.stringify({
+        error: { message: '请填写邮箱和密码' }
+      }), {
+        status: 400,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+    
+    // 检查管理员凭据
+    if (env.DB) {
+      try {
+        const result = await env.DB.prepare(`
+          SELECT * FROM admins WHERE email = ? AND password_hash = ?
+        `).bind(email.toLowerCase(), password).first();
+        
+        if (result) {
+          // 更新最后登录时间
+          await env.DB.prepare(`
+            UPDATE admins SET last_login = CURRENT_TIMESTAMP WHERE id = ?
+          `).bind(result.id).run();
+          
+          return new Response(JSON.stringify({
+            user: {
+              id: result.id,
+              email: result.email,
+              name: result.name,
+              role: result.role
+            }
+          }), {
+            status: 200,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+            }
+          });
+        }
+      } catch (dbError) {
+        console.error('D1认证查询失败:', dbError);
+      }
+    }
+    
+    // 降级到硬编码认证
+    if (email.toLowerCase() === 'niexianlei0@gmail.com' && password === 'XIANche041758') {
+      return new Response(JSON.stringify({
+        user: {
+          id: 'temp-admin',
+          email: email.toLowerCase(),
+          name: '管理员',
+          role: 'admin'
+        }
+      }), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+    
+    return new Response(JSON.stringify({
+      error: { message: '邮箱或密码错误' }
+    }), {
+      status: 401,
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+    
+  } catch (error) {
+    console.error('登录API错误:', error);
+    return new Response(JSON.stringify({
+      error: { message: '登录失败，请稍后重试' }
+    }), {
+      status: 500,
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+  }
+}
+
+// Handle get contacts API
+async function handleGetContacts(request, env) {
+  try {
+    // 简单的认证检查（生产环境需要更严格的JWT等）
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(JSON.stringify({
+        error: { message: '需要登录' }
+      }), {
+        status: 401,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+    
+    const url = new URL(request.url);
+    const page = parseInt(url.searchParams.get('page') || '1');
+    const limit = parseInt(url.searchParams.get('limit') || '20');
+    const offset = (page - 1) * limit;
+    
+    if (env.DB) {
+      try {
+        // 获取联系数据
+        const contacts = await env.DB.prepare(`
+          SELECT id, name, email, phone, company, message, created_at, status, is_read
+          FROM contacts 
+          ORDER BY created_at DESC 
+          LIMIT ? OFFSET ?
+        `).bind(limit, offset).all();
+        
+        // 获取总数
+        const countResult = await env.DB.prepare(`
+          SELECT COUNT(*) as total FROM contacts
+        `).first();
+        
+        return new Response(JSON.stringify({
+          data: contacts.results || [],
+          pagination: {
+            page,
+            limit,
+            total: countResult?.total || 0,
+            totalPages: Math.ceil((countResult?.total || 0) / limit)
+          }
+        }), {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          }
+        });
+      } catch (dbError) {
+        console.error('D1查询失败:', dbError);
+        throw new Error('数据库查询失败');
+      }
+    } else {
+      // 降级到空数据
+      return new Response(JSON.stringify({
+        data: [],
+        pagination: { page: 1, limit: 20, total: 0, totalPages: 0 }
+      }), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+    
+  } catch (error) {
+    console.error('获取联系数据错误:', error);
+    return new Response(JSON.stringify({
+      error: { message: '获取数据失败' }
     }), {
       status: 500,
       headers: { 

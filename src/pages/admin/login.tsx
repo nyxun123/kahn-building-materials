@@ -42,38 +42,45 @@ const Login = () => {
 
     setIsLoading(true);
     try {
-      // 优先尝试Supabase认证
+      // 使用 Cloudflare Workers API 认证
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.user) {
+        // 存储用户信息到 localStorage
+        localStorage.setItem('admin-auth', JSON.stringify({
+          user: result.user,
+          token: `admin-${Date.now()}`,
+          loginTime: new Date().toISOString()
+        }));
+        
+        toast.success('登录成功！');
+        navigate('/admin/dashboard');
+      } else {
+        throw new Error(result.error?.message || '登录失败');
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      
+      // 降级到本地临时认证
       try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (error) {
-          throw error;
-        }
-
-        if (data.user) {
-          toast.success('登录成功！');
-          navigate('/admin/dashboard');
-          return;
-        }
-      } catch (supabaseError) {
-        console.log('Supabase登录失败，使用临时认证:', supabaseError);
-        
-        // Supabase失败时使用临时认证
         const tempResult = await TempAuth.login(email, password);
-        
         if (tempResult.success) {
-          toast.success('登录成功！（临时模式）');
+          toast.success('登录成功！（离线模式）');
           navigate('/admin/dashboard');
         } else {
           throw new Error(tempResult.error || '登录失败');
         }
+      } catch (fallbackError: any) {
+        toast.error('登录失败，请检查用户名和密码');
       }
-    } catch (error: any) {
-      console.error('Login error:', error);
-      toast.error(error.message || '登录失败，请检查用户名和密码');
     } finally {
       setIsLoading(false);
     }
