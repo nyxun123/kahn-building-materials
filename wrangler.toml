@@ -9,10 +9,5 @@ binding = "DB"
 database_name = "kaneshuju"
 database_id = "1017f91b-e6f1-42d9-b9c3-5f32904be73a"
 
-# R2 存储配置 - 生产环境
-[[env.production.r2_buckets]]
-binding = "BUCKET"
-bucket_name = "kahn-images"
-
 [env.production.vars]
 ENVIRONMENT = "production"
