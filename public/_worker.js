@@ -426,59 +426,18 @@ async function handleAdminLogin(request, env) {
       });
     }
     
-    // 智能认证：D1数据库 + 硬编码降级
-    try {
-      // 尝试D1数据库认证
-      if (env.DB) {
-        try {
-          const result = await env.DB.prepare(`
-            SELECT * FROM admins WHERE email = ? AND password_hash = ?
-          `).bind(email.toLowerCase(), password).first();
-          
-          if (result) {
-            // 更新最后登录时间
-            await env.DB.prepare(`
-              UPDATE admins SET last_login = CURRENT_TIMESTAMP WHERE id = ?
-            `).bind(result.id).run();
-            
-            console.log('✅ D1数据库认证成功');
-            
-            return new Response(JSON.stringify({
-              user: {
-                id: result.id,
-                email: result.email,
-                name: result.name,
-                role: result.role
-              },
-              authType: 'D1_DATABASE'
-            }), {
-              status: 200,
-              headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-              }
-            });
-          }
-        } catch (dbError) {
-          console.log('D1认证查询失败，使用降级认证:', dbError.message);
-        }
-      }
-    } catch (error) {
-      console.log('D1数据库不可用，使用降级认证:', error.message);
-    }
-    
-    // 降级到硬编码认证（确保始终可用）
+    // 零配置认证系统 - 立即可用
     if (email.toLowerCase() === 'niexianlei0@gmail.com' && password === 'XIANche041758') {
-      console.log('✅ 硬编码认证成功');
+      console.log('✅ 管理员认证成功');
       
       return new Response(JSON.stringify({
         user: {
-          id: 'admin-fallback',
+          id: 'admin-1',
           email: email.toLowerCase(),
           name: '管理员',
           role: 'admin'
         },
-        authType: 'FALLBACK'
+        authType: 'DIRECT'
       }), {
         status: 200,
         headers: {
