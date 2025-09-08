@@ -16,15 +16,15 @@ export default function OemPage() {
       </Helmet>
 
       {/* 英雄区 */}
-      <section className="bg-gradient-to-r from-blue-900 to-blue-700 dark:from-blue-950 dark:to-blue-800 py-24 md:py-32">
+      <section className="bg-gradient-to-r from-green-500 to-green-700 dark:from-green-600 dark:to-green-800 py-24 md:py-32">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-6">
             {t('oem:hero.title')}
           </h1>
-          <p className="text-blue-100 text-lg md:text-xl max-w-3xl mx-auto mb-8">
+          <p className="text-white/90 text-lg md:text-xl max-w-3xl mx-auto mb-8">
             {t('oem:hero.subtitle')}
           </p>
-          <Button asChild size="lg" className="bg-white text-blue-700 hover:bg-blue-50">
+          <Button asChild size="lg" className="bg-white text-green-600 hover:bg-white/90">
             <Link to="/contact">
               {t('oem:hero.cta')}
             </Link>
@@ -209,15 +209,15 @@ export default function OemPage() {
       </section>
 
       {/* 行动召唤区 CTA */}
-      <section className="py-16 md:py-24 bg-gradient-to-r from-blue-900 to-blue-700 dark:from-blue-950 dark:to-blue-800 text-white">
+      <section className="py-16 md:py-24 bg-gradient-to-r from-primary to-accent dark:from-primary dark:to-accent text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl md:text-3xl font-bold mb-6">
             {t('oem:cta.title')}
           </h2>
-          <p className="max-w-2xl mx-auto text-blue-100 mb-8">
+          <p className="max-w-2xl mx-auto text-white/90 mb-8">
             {t('oem:cta.description')}
           </p>
-          <Button asChild size="lg" className="bg-white text-blue-700 hover:bg-blue-50">
+          <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90">
             <Link to="/contact">
               {t('oem:cta.button')}
               <ArrowRight className="ml-2 h-4 w-4" />

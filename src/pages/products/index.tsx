@@ -3,11 +3,24 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { ArrowRight } from 'lucide-react';
+import { getApiUrl, API_CONFIG } from '@/lib/config';
 
-import { supabase } from '@/lib/supabase';
-import type { Database } from '@/lib/database.types';
-
-type Product = Database['public']['Tables']['products']['Row'];
+// 使用D1 API
+interface Product {
+  id: number;
+  product_code: string;
+  name_zh: string;
+  name_en: string;
+  name_ru: string;
+  description_zh: string;
+  description_en: string;
+  description_ru: string;
+  image_url: string;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
 
 export default function ProductsPage() {
   const { t, i18n } = useTranslation(['common', 'products']);
@@ -19,16 +32,24 @@ export default function ProductsPage() {
       setIsLoading(true);
       
       try {
-        const { data, error } = await supabase
-          .from('products')
-          .select('*')
-          .eq('is_active', true)
-          .order('sort_order', { ascending: true });
-
-        if (error) throw error;
-        setProducts(data || []);
+        // 使用公开产品API
+        const response = await fetch(getApiUrl(API_CONFIG.PATHS.PRODUCTS));
+        
+        if (!response.ok) {
+          throw new Error('获取产品失败');
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          setProducts(result.data);
+        } else {
+          console.error('获取产品失败:', result.message);
+          setProducts([]);
+        }
       } catch (error) {
         console.error('获取产品失败:', error);
+        setProducts([]);
       } finally {
         setIsLoading(false);
       }
@@ -59,12 +80,12 @@ export default function ProductsPage() {
       </Helmet>
 
       {/* 页面标题区 */}
-      <section className="bg-gradient-to-r from-blue-900 to-blue-700 dark:from-blue-950 dark:to-blue-800 py-16 md:py-24">
+      <section className="bg-gradient-to-r from-green-500 to-green-700 dark:from-green-600 dark:to-green-800 py-16 md:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             {t('products:title')}
           </h1>
-          <p className="text-blue-100 text-lg max-w-2xl mx-auto">
+          <p className="text-white/90 text-lg max-w-2xl mx-auto">
             {t('products:subtitle')}
           </p>
         </div>

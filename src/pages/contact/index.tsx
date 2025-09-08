@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { getApiUrl, API_CONFIG } from '@/lib/config';
 
 interface ContactFormData {
   name: string;
@@ -39,7 +40,7 @@ export default function ContactPage() {
     
     try {
       // 使用Cloudflare Worker API提交联系信息（完全绕过Supabase）
-      const response = await fetch('/api/contact', {
+      const response = await fetch(getApiUrl(API_CONFIG.PATHS.CONTACT), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -136,12 +137,12 @@ export default function ContactPage() {
       </Helmet>
 
       {/* 页面标题区 */}
-      <section className="bg-gradient-to-r from-blue-900 to-blue-700 dark:from-blue-950 dark:to-blue-800 py-16 md:py-24">
+      <section className="bg-gradient-to-r from-green-500 to-green-700 dark:from-green-600 dark:to-green-800 py-16 md:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             {t('contact:hero.title')}
           </h1>
-          <p className="text-blue-100 text-lg max-w-2xl mx-auto">
+          <p className="text-white/90 text-lg max-w-2xl mx-auto">
             {t('contact:hero.subtitle')}
           </p>
         </div>
