@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-zh="联系我们 - 杭州卡恩新型建材有限公司" data-en="Contact - Karn New Building Materials" data-ru="Контакты - Карн Новые Строительные Материалы">Contact - Karn New Building Materials</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">Karn Materials</a>
+                
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link" data-zh="首页" data-en="Home" data-ru="Главная">Home</a></li>
+                    <li><a href="product.html" class="nav-link" data-zh="产品" data-en="Products" data-ru="Продукты">Products</a></li>
+                    <li><a href="about.html" class="nav-link" data-zh="关于我们" data-en="About Us" data-ru="О Нас">About Us</a></li>
+                    <li><a href="contact.html" class="nav-link active" data-zh="联系我们" data-en="Contact" data-ru="Контакты">Contact</a></li>
+                </ul>
+                
+                <div class="language-switcher">
+                    <button class="lang-btn" onclick="switchLanguage('zh')">中</button>
+                    <button class="lang-btn active" onclick="switchLanguage('en')">EN</button>
+                    <button class="lang-btn" onclick="switchLanguage('ru')">RU</button>
+                </div>
+                
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1 data-zh="联系我们" data-en="Contact Us" data-ru="Свяжитесь С Нами">Contact Us</h1>
+            <p data-zh="随时为您提供专业的墙纸胶粉解决方案" data-en="Ready to provide professional wallpaper adhesive solutions anytime" data-ru="Готовы предоставить профессиональные решения для клеевого порошка обоев в любое время">Ready to provide professional wallpaper adhesive solutions anytime</p>
+        </div>
+    </section>
+
+    <!-- Contact Methods -->
+    <section class="section" style="background: #f8f9fa;">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-zh="联系方式" data-en="Contact Methods" data-ru="Способы Связи">Contact Methods</h2>
+                <p data-zh="多种方式快速联系我们" data-en="Multiple ways to contact us quickly" data-ru="Несколько способов быстро связаться с нами">Multiple ways to contact us quickly</p>
+            </div>
+            
+            <div class="grid grid-3">
+                <div class="card contact-card">
+                    <div class="contact-icon" style="background: linear-gradient(135deg, #25D366, #128C7E);">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div style="padding: 2rem; text-align: center;">
+                        <h3 data-zh="WhatsApp" data-en="WhatsApp" data-ru="WhatsApp">WhatsApp</h3>
+                        <p style="font-size: 1.2rem; font-weight: 600; color: #2c3e50; margin: 1rem 0;">+86 132 1615 6841</p>
+                        <a href="https://wa.me/8613216156841" class="contact-button" onclick="trackContactClick('WhatsApp')" style="background: #25D366; color: white;">
+                            <span data-zh="立即联系" data-en="Contact Now" data-ru="Связаться Сейчас">Contact Now</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card contact-card">
+                    <div class="contact-icon" style="background: linear-gradient(135deg, #EA4335, #4285F4);">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div style="padding: 2rem; text-align: center;">
+                        <h3 data-zh="邮箱" data-en="Email" data-ru="Электронная Почта">Email</h3>
+                        <p style="font-size: 1.1rem; font-weight: 600; color: #2c3e50; margin: 1rem 0; word-break: break-all;">export@karnchina.com</p>
+                        <a href="mailto:export@karnchina.com" class="contact-button" onclick="trackContactClick('Email')" style="background: #EA4335; color: white;">
+                            <span data-zh="发送邮件" data-en="Send Email" data-ru="Отправить Email">Send Email</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card contact-card">
+                    <div class="contact-icon" style="background: linear-gradient(135deg, #07C160, #FFFFFF); color: #07C160;">
+                        <i class="fab fa-weixin"></i>
+                    </div>
+                    <div style="padding: 2rem; text-align: center;">
+                        <h3 data-zh="微信" data-en="WeChat" data-ru="WeChat">WeChat</h3>
+                        <p data-zh="扫码添加商务微信" data-en="Scan to add business WeChat" data-ru="Отсканируйте для добавления делового WeChat">Scan to add business WeChat</p>
+                        <div style="width: 120px; height: 120px; background: linear-gradient(135deg, #f1f3f4, #e8eaed); border-radius: 8px; margin: 1rem auto; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #666;">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Inquiry Form -->
+    <section class="section">
+        <div class="container">
+            <div class="grid grid-2" style="gap: 4rem; align-items: flex-start;">
+                <div>
+                    <div class="section-title" style="text-align: left; margin-bottom: 2rem;">
+                        <h2 data-zh="快速询盘" data-en="Quick Inquiry" data-ru="Быстрый Запрос">Quick Inquiry</h2>
+                        <p data-zh="填写以下表单，我们将在24小时内回复您" data-en="Fill out the form below, we'll respond within 24 hours" data-ru="Заполните форму ниже, мы ответим в течение 24 часов">Fill out the form below, we'll respond within 24 hours</p>
+                    </div>
+                    
+                    <form class="contact-form">
+                        <div class="grid grid-2" style="gap: 1.5rem;">
+                            <div class="form-group">
+                                <label class="form-label" for="name" data-zh="您的姓名" data-en="Your Name" data-ru="Ваше Имя">Your Name *</label>
+                                <input type="text" id="name" name="name" class="form-input" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="email" data-zh="邮箱地址" data-en="Email Address" data-ru="Адрес Электронной Почты">Email Address *</label>
+                                <input type="email" id="email" name="email" class="form-input" required>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-2" style="gap: 1.5rem;">
+                            <div class="form-group">
+                                <label class="form-label" for="phone" data-zh="联系电话" data-en="Phone Number" data-ru="Номер Телефона">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" class="form-input">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="country" data-zh="国家/地区" data-en="Country/Region" data-ru="Страна/Регион">Country/Region *</label>
+                                <input type="text" id="country" name="country" class="form-input" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="quantity" data-zh="需求数量" data-en="Required Quantity" data-ru="Требуемое Количество">Required Quantity</label>
+                            <input type="text" id="quantity" name="quantity" class="form-input" placeholder="e.g., 1 ton, 500kg, 100 bags">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="message" data-zh="详细需求" data-en="Detailed Requirements" data-ru="Подробные Требования">Detailed Requirements</label>
+                            <textarea id="message" name="message" class="form-textarea" rows="5" placeholder="Please describe your specific requirements including specifications, packaging requirements, delivery time, etc."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="submit-button" data-zh="发送询盘" data-en="Send Inquiry" data-ru="Отправить Запрос">
+                            <i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i>
+                            Send Inquiry
+                        </button>
+                    </form>
+                </div>
+                
+                <div>
+                    <div class="section-title" style="text-align: left; margin-bottom: 2rem;">
+                        <h2 data-zh="公司信息" data-en="Company Information" data-ru="Информация о Компании">Company Information</h2>
+                        <p data-zh="直接联系我们的详细信息" data-en="Direct contact information for our company" data-ru="Прямая контактная информация для нашей компании">Direct contact information for our company</p>
+                    </div>
+                    
+                    <div class="card" style="padding: 2rem;">
+                        <div style="margin-bottom: 2rem;">
+                            <h4 style="color: #3AA655; margin-bottom: 1rem; display: flex; align-items: center;">
+                                <i class="fas fa-building" style="margin-right: 0.5rem;"></i>
+                                <span data-zh="公司名称" data-en="Company Name" data-ru="Название Компании">Company Name</span>
+                            </h4>
+                            <p style="font-weight: 600;">Hangzhou Karn New Building Materials Co., Ltd.</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 2rem;">
+                            <h4 style="color: #3AA655; margin-bottom: 1rem; display: flex; align-items: center;">
+                                <i class="fas fa-map-marker-alt" style="margin-right: 0.5rem;"></i>
+                                <span data-zh="公司地址" data-en="Office Address" data-ru="Адрес Офиса">Office Address</span>
+                            </h4>
+                            <p>Xiaoshan Economic & Technological Development Zone</p>
+                            <p>Hangzhou, Zhejiang, China</p>
+                            <p>Postal Code: 311200</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 2rem;">
+                            <h4 style="color: #3AA655; margin-bottom: 1rem; display: flex; align-items: center;">
+                                <i class="fas fa-clock" style="margin-right: 0.5rem;"></i>
+                                <span data-zh="工作时间" data-en="Working Hours" data-ru="Рабочее Время">Working Hours</span>
+                            </h4>
+                            <p data-zh="周一至周五 8:30-17:30 (GMT+8)" data-en="Monday-Friday 8:30-17:30 (GMT+8)" data-ru="Понедельник-Пятница 8:30-17:30 (GMT+8)">Monday-Friday 8:30-17:30 (GMT+8)</p>
+                        </div>
+                        
+                        <div>
+                            <h4 style="color: #3AA655; margin-bottom: 1rem; display: flex; align-items: center;">
+                                <i class="fas fa-globe" style="margin-right: 0.5rem;"></i>
+                                <span data-zh="服务范围" data-en="Service Coverage" data-ru="Область Обслуживания">Service Coverage</span>
+                            </h4>
+                            <p data-zh="全球30+国家出口经验" data-en="Export experience to 30+ countries worldwide" data-ru="Экспортный опыт в более чем 30 стран мира">Export experience to 30+ countries worldwide</p>
+                        </div>
+                    </div>
+                    
+                    <div style="height: 250px; background: linear-gradient(135deg, #e8f5e8, #f0f8f0); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #3AA655; font-size: 3rem; margin-top: 2rem;">
+                        <i class="fas fa-map"></i>
+                        <p style="margin-left: 1rem; font-size: 1rem;">Location Map</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <h3 class="footer-title" data-zh="联系信息" data-en="Contact Info" data-ru="Контактная Информация">Contact Info</h3>
+                    <div class="footer-info">
+                        <p><strong data-zh="杭州卡恩新型建材有限公司" data-en="Hangzhou Karn New Building Materials Co., Ltd." data-ru="Карн Новые Строительные Материалы ООО">Hangzhou Karn New Building Materials Co., Ltd.</strong></p>
+                        <p><i class="fas fa-map-marker-alt"></i> <span data-zh="地址：中国浙江杭州" data-en="Address: Hangzhou, Zhejiang, China" data-ru="Адрес: Ханчжоу, Чжэцзян, Китай">Address: Hangzhou, Zhejiang, China</span></p>
+                        <p><i class="fas fa-phone"></i> WhatsApp: +86 132 1615 6841</p>
+                        <p><i class="fas fa-envelope"></i> export@karnchina.com</p>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="footer-title" data-zh="快速链接" data-en="Quick Links" data-ru="Быстрые Ссылки">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html" data-zh="首页" data-en="Home" data-ru="Главная">Home</a></li>
+                        <li><a href="product.html" data-zh="产品" data-en="Products" data-ru="Продукты">Products</a></li>
+                        <li><a href="about.html" data-zh="关于我们" data-en="About Us" data-ru="О Нас">About Us</a></li>
+                        <li><a href="contact.html" data-zh="联系我们" data-en="Contact" data-ru="Контакты">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="footer-title" data-zh="业务联系" data-en="Business Contact" data-ru="Деловые Контакты">Business Contact</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://wa.me/8613216156841" onclick="trackContactClick('WhatsApp')">WhatsApp Business</a></li>
+                        <li><a href="mailto:export@karnchina.com" onclick="trackContactClick('Email')">Email Inquiry</a></li>
+                        <li><a href="contact.html" data-zh="在线询盘" data-en="Online Inquiry" data-ru="Онлайн Запрос">Online Inquiry</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p data-zh="© 2024 杭州卡恩新型建材有限公司. 版权所有." data-en="© 2024 Hangzhou Karn New Building Materials Co., Ltd. All Rights Reserved." data-ru="© 2024 Карн Новые Строительные Материалы ООО. Все права защищены.">© 2024 Hangzhou Karn New Building Materials Co., Ltd. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
