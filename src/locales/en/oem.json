@@ -1,0 +1,69 @@
+{
+  "meta_description": "Hangzhou Karn New Building Materials Co., Ltd. provides high-quality wallpaper adhesive powder OEM/ODM services, including product development, custom manufacturing, and global logistics.",
+  "hero": {
+    "title": "OEM/ODM Manufacturing Services",
+    "subtitle": "We provide professional wallpaper adhesive powder customization services for global brands, from formula development and production to packaging design, meeting all your brand requirements.",
+    "cta": "Design Your Product"
+  },
+  "services": {
+    "title": "Our OEM Services",
+    "subtitle": "We offer comprehensive OEM/ODM services, from product development to global logistics, ensuring your products meet market demands.",
+    "development": {
+      "title": "Product Development",
+      "description": "Our technical team can develop custom formulations based on your specific requirements, including eco-friendly formulas, high-strength options, and various types of wallpaper adhesives."
+    },
+    "manufacturing": {
+      "title": "Custom Manufacturing",
+      "description": "Our modern production facilities can manufacture at scale according to your brand specifications, while ensuring product consistency and high quality."
+    },
+    "logistics": {
+      "title": "Global Logistics",
+      "description": "We provide complete logistics solutions, including warehousing, packaging, and international shipping, ensuring your products are delivered timely and safely worldwide."
+    }
+  },
+  "process": {
+    "title": "OEM Collaboration Process",
+    "subtitle": "Our OEM process is simple and efficient, ensuring perfect execution at every stage from concept to delivery of your branded products.",
+    "steps": {
+      "consultation": {
+        "title": "Requirements Consultation",
+        "description": "Our sales and technical teams communicate deeply with you to understand your product requirements, target markets, and budget."
+      },
+      "development": {
+        "title": "Product Development",
+        "description": "Our R&D team develops custom formulations based on your needs and provides samples for testing and evaluation."
+      },
+      "production": {
+        "title": "Mass Production",
+        "description": "Once the product formula is confirmed, we begin mass production with strict quality control throughout the process."
+      },
+      "delivery": {
+        "title": "Packaging & Logistics",
+        "description": "We package according to your brand guidelines and deliver products to their destination through reliable logistics channels."
+      }
+    }
+  },
+  "advantages": {
+    "title": "Why Choose Our OEM Services",
+    "subtitle": "Hangzhou Karn New Building Materials Co., Ltd. has years of OEM/ODM manufacturing experience, providing quality wallpaper adhesive products for global brands.",
+    "items": {
+      "facilities": {
+        "title": "Advanced Production Facilities",
+        "description": "Our factory is equipped with the most advanced production equipment and automation systems, capable of efficiently producing wallpaper adhesive powder products in various specifications."
+      },
+      "team": {
+        "title": "Professional R&D Team",
+        "description": "Our R&D team consists of industry experts with extensive formula development experience, capable of meeting special requirements for different markets."
+      },
+      "experience": {
+        "title": "Rich International Experience",
+        "description": "We have provided private label manufacturing services to brands in multiple countries worldwide, familiar with international market requirements and standards, ensuring your products meet global market demands."
+      }
+    }
+  },
+  "cta": {
+    "title": "Ready to Start Your OEM Project?",
+    "description": "Contact our professional team to discuss your private label production needs. We will provide you with customized solutions and detailed quotations.",
+    "button": "Contact Us Now"
+  }
+}

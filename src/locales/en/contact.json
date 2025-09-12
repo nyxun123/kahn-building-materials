@@ -1,0 +1,45 @@
+{
+  "meta_description": "Contact Hangzhou Karn New Building Materials Co., Ltd. to learn about our wallpaper adhesive products and OEM services, or to get technical support and customer service.",
+  "hero": {
+    "title": "Contact Us",
+    "subtitle": "Whether you have questions, product inquiries, or partnership opportunities, our team is ready to assist you"
+  },
+  "info": {
+    "title": "Contact Information",
+    "description": "Feel free to get in touch with us through any of the following means, and we'll get back to you as soon as possible.",
+    "address": {
+      "title": "Address"
+    },
+    "phone": {
+      "title": "Phone Number"
+    },
+    "email": {
+      "title": "Email"
+    },
+    "hours": {
+      "title": "Business Hours",
+      "weekdays": "Monday to Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday",
+      "closed": "Closed"
+    }
+  },
+  "form": {
+    "title": "Send Us a Message",
+    "name": "Name",
+    "company": "Company",
+    "email": "Email",
+    "phone": "Phone",
+    "country": "Country",
+    "subject": "Subject",
+    "message": "Message",
+    "required": "This field is required",
+    "email_invalid": "Please enter a valid email address",
+    "submitting": "Submitting...",
+    "success": "Your message has been submitted successfully! We will contact you soon.",
+    "error": "Submission failed, please try again later or contact us directly."
+  },
+  "map": {
+    "title": "Our Location"
+  }
+}

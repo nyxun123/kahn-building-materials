@@ -1,0 +1,17 @@
+# Cloudflare Pages Configuration
+# This file configures the build and deployment settings for Cloudflare Pages
+
+[build]
+command = "pnpm install && pnpm run build"
+publish = "dist"
+
+[build.environment]
+NODE_VERSION = "18"
+PNPM_VERSION = "8"
+
+# Environment variables will be set in Cloudflare Dashboard
+# VITE_SUPABASE_URL
+# VITE_SUPABASE_ANON_KEY
+
+# Compatibility settings
+compatibility_date = "2024-01-01"

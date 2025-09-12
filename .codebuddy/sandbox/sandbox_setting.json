@@ -1,0 +1,20 @@
+{
+  "path": "/Users/nll/Documents/可以用的网站",
+  "desc": "KARN wallpaper adhesive manufacturer website with admin system",
+  "id": "46cc65b770bd47f3b2caf472e2f071e7",
+  "data": {
+    "spaceKey": "46cc65b770bd47f3b2caf472e2f071e7",
+    "connections": {
+      "webIDE": "https://46cc65b770bd47f3b2caf472e2f071e7.ap-singapore.cloudstudio.club",
+      "preview": "https://46cc65b770bd47f3b2caf472e2f071e7--{port}.ap-singapore.cloudstudio.club",
+      "api": "https://46cc65b770bd47f3b2caf472e2f071e7--api.ap-singapore.cloudstudio.club",
+      "pty": "https://46cc65b770bd47f3b2caf472e2f071e7--pty.ap-singapore.cloudstudio.club"
+    }
+  },
+  "config": {
+    "api": "https://46cc65b770bd47f3b2caf472e2f071e7--api.ap-singapore.cloudstudio.club",
+    "pty": "https://46cc65b770bd47f3b2caf472e2f071e7--pty.ap-singapore.cloudstudio.club",
+    "region": "ap-shanghai",
+    "spaceKey": "46cc65b770bd47f3b2caf472e2f071e7"
+  }
+}

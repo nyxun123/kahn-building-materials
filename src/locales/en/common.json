@@ -1,0 +1,70 @@
+{
+  "title": "Hangzhou Karn New Building Materials Co., Ltd.",
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "oem": "OEM Services",
+    "about": "About Us",
+    "contact": "Contact",
+    "main_navigation": "Main Navigation",
+    "toggle_menu": "Toggle Menu"
+  },
+  "language": {
+    "zh": "中文",
+    "en": "English",
+    "ru": "Русский"
+  },
+  "theme": {
+    "light": "Light Mode",
+    "dark": "Dark Mode",
+    "system": "System Mode"
+  },
+  "footer": {
+    "company": "Hangzhou Karn New Building Materials Co., Ltd.",
+    "rights": "© 2025 Hangzhou Karn New Building Materials Co., Ltd. All rights reserved.",
+    "links": {
+      "title": "Quick Links",
+      "products": "Products",
+      "about": "About Us",
+      "contact": "Contact Us"
+    },
+    "contact": {
+      "title": "Contact Info",
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email",
+      "address_value": "No. 18, Xingqiao Road, Donghu Street, Yuhang District, Hangzhou, Zhejiang Province, China",
+      "phone_value": "+86 571-88888888",
+      "email_value": "info@karn-materials.com"
+    }
+  },
+  "cta": {
+    "contact": "Contact Us",
+    "learn_more": "Learn More",
+    "view_products": "View Products",
+    "submit": "Submit",
+    "send_message": "Send Message",
+    "download": "Download"
+  },
+  "admin": {
+    "login": "Admin Login",
+    "logout": "Logout"
+  },
+  "admin_panel": "Admin Panel",
+  "back_to_list": "Back to List",
+  "no_data": "No Data",
+  "search": "Search",
+  "save": "Save",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "delete": "Delete",
+  "edit": "Edit",
+  "add": "Add",
+  "view": "View",
+  "loading": "Loading...",
+  "success": "Success",
+  "error": "Error",
+  "required": "This field is required",
+  "switch_language": "Switch Language",
+  "switch_theme": "Switch Theme"
+}
