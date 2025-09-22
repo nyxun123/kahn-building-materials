@@ -105,27 +105,43 @@ class D1ApiClient {
   }
 
   private loadAuthToken() {
-    // 从 localStorage 获取认证信息
-    const cloudAuth = localStorage.getItem('admin-auth');
-    const tempAuth = localStorage.getItem('temp-admin-auth');
-    
-    if (cloudAuth) {
-      const authData = JSON.parse(cloudAuth);
-      this.authToken = authData.token;
-    } else if (tempAuth) {
-      this.authToken = 'temp-admin-token';
+    try {
+      const cloudAuth = localStorage.getItem('admin-auth');
+      if (cloudAuth) {
+        const authData = JSON.parse(cloudAuth);
+        this.authToken = authData?.token || 'admin-session';
+        return;
+      }
+
+      if (localStorage.getItem('temp-admin-auth')) {
+        this.authToken = 'temp-admin-token';
+        return;
+      }
+
+      this.authToken = null;
+    } catch (error) {
+      console.warn('读取 admin-auth 失败:', error);
+      this.authToken = null;
     }
   }
 
-  private async makeRequest<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
-    const headers = {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    };
+  private buildHeaders(initialHeaders: HeadersInit = {}): Headers {
+    this.loadAuthToken();
 
-    if (this.authToken) {
-      headers['Authorization'] = `Bearer ${this.authToken}`;
+    const headers = new Headers(initialHeaders);
+    if (!headers.has('Content-Type')) {
+      headers.set('Content-Type', 'application/json');
     }
+
+    if (this.authToken && !headers.has('Authorization')) {
+      headers.set('Authorization', `Bearer ${this.authToken}`);
+    }
+
+    return headers;
+  }
+
+  private async makeRequest<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+    const headers = this.buildHeaders(options.headers);
 
     try {
       const response = await fetch(`${this.baseUrl}/api${endpoint}`, {

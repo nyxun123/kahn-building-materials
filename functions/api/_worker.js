@@ -2791,23 +2791,51 @@ async function handlePublicProducts(request, env) {
     }
 
     try {
-      // 获取激活的产品数据
-      const products = await env.DB.prepare(`
+      const rawProducts = await env.DB.prepare(`
         SELECT id, product_code, name_zh, name_en, name_ru,
                description_zh, description_en, description_ru,
-               image_url, is_active, sort_order, created_at, updated_at,
-               price_range, features_zh, features_en, features_ru,
-               specifications_zh, specifications_en, specifications_ru,
-               applications_zh, applications_en, applications_ru,
-               packaging_options_zh, packaging_options_en, packaging_options_ru
-        FROM products 
-        WHERE is_active = 1
+               image_url, gallery_images,
+               category, price_range, status, is_active,
+               sort_order, created_at, updated_at,
+               features_zh, features_en, features_ru,
+               specifications_zh, specifications_en, specifications_ru
+        FROM products
+        WHERE is_active = 1 AND status = 'published'
         ORDER BY sort_order ASC, created_at DESC
       `).all();
-      
+
+      const parseList = (value, fallback = []) => {
+        if (!value) return fallback;
+        if (Array.isArray(value)) return value;
+        if (typeof value === 'string') {
+          const trimmed = value.trim();
+          if (!trimmed) return fallback;
+          try {
+            const parsed = JSON.parse(trimmed);
+            if (Array.isArray(parsed)) {
+              return parsed;
+            }
+          } catch (_) {
+            return trimmed.split(/\r?\n/).map(item => item.trim()).filter(Boolean);
+          }
+        }
+        return fallback;
+      };
+
+      const products = (rawProducts.results || []).map((product) => ({
+        ...product,
+        gallery_images: parseList(product.gallery_images, product.image_url ? [product.image_url] : []),
+        features_zh: parseList(product.features_zh),
+        features_en: parseList(product.features_en),
+        features_ru: parseList(product.features_ru),
+        specifications_zh: parseList(product.specifications_zh),
+        specifications_en: parseList(product.specifications_en),
+        specifications_ru: parseList(product.specifications_ru),
+      }));
+
       return new Response(JSON.stringify({
         success: true,
-        data: products.results || []
+        data: products
       }), {
         status: 200,
         headers: {
@@ -3593,7 +3621,15 @@ async function handleGetSingleProductByCode(request, env, productCode) {
     try {
       // 通过产品代码查询产品
       const product = await env.DB.prepare(`
-        SELECT * FROM products WHERE product_code = ? AND is_active = 1
+        SELECT id, product_code, name_zh, name_en, name_ru,
+               description_zh, description_en, description_ru,
+               image_url, gallery_images,
+               category, price_range, status, is_active,
+               sort_order, created_at, updated_at,
+               features_zh, features_en, features_ru,
+               specifications_zh, specifications_en, specifications_ru
+        FROM products
+        WHERE product_code = ? AND is_active = 1 AND status = 'published'
       `).bind(productCode).first();
 
       if (!product) {
@@ -3609,9 +3645,38 @@ async function handleGetSingleProductByCode(request, env, productCode) {
         });
       }
 
+      const parseList = (value, fallback = []) => {
+        if (!value) return fallback;
+        if (Array.isArray(value)) return value;
+        if (typeof value === 'string') {
+          const trimmed = value.trim();
+          if (!trimmed) return fallback;
+          try {
+            const parsed = JSON.parse(trimmed);
+            if (Array.isArray(parsed)) {
+              return parsed;
+            }
+          } catch (_) {
+            return trimmed.split(/\r?\n/).map(item => item.trim()).filter(Boolean);
+          }
+        }
+        return fallback;
+      };
+
+      const normalizedProduct = {
+        ...product,
+        gallery_images: parseList(product.gallery_images, product.image_url ? [product.image_url] : []),
+        features_zh: parseList(product.features_zh),
+        features_en: parseList(product.features_en),
+        features_ru: parseList(product.features_ru),
+        specifications_zh: parseList(product.specifications_zh),
+        specifications_en: parseList(product.specifications_en),
+        specifications_ru: parseList(product.specifications_ru),
+      };
+
       return new Response(JSON.stringify({
         success: true,
-        data: product
+        data: normalizedProduct
       }), {
         status: 200,
         headers: {
