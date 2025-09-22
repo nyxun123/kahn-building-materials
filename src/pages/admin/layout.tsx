@@ -1,186 +1,180 @@
-import { useEffect, useState } from 'react';
-import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { supabase } from '@/lib/supabase';
-import { BiMenu, BiX } from 'react-icons/bi';
-import { Toaster } from 'react-hot-toast';
+import { PropsWithChildren } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useGetIdentity, useLogout } from "@refinedev/core";
 import {
-  RiDashboardLine,
-  RiProductHuntLine,
-  RiMessage2Line,
-  RiFileTextLine,
-  RiLogoutBoxLine,
-  RiGlobalLine
-} from 'react-icons/ri';
+  Card,
+  Title,
+  Text,
+  Metric,
+  Divider,
+  Flex,
+} from "@tremor/react";
+import {
+  LayoutDashboard,
+  Package2,
+  MessagesSquare,
+  FileText,
+  Building2,
+  LogOut,
+  Globe,
+} from "lucide-react";
+import { AdminProvider } from "./refine/admin-provider";
 
-const AdminLayout = () => {
-  const { t } = useTranslation('admin');
-  const navigate = useNavigate();
+const NAV_ITEMS = [
+  {
+    label: "仪表盘",
+    description: "查看整体指标与实时数据",
+    path: "/admin/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    label: "产品管理",
+    description: "维护产品信息与上下架状态",
+    path: "/admin/products",
+    icon: Package2,
+  },
+  {
+    label: "客户留言",
+    description: "查看并回复联系表单",
+    path: "/admin/messages",
+    icon: MessagesSquare,
+  },
+  {
+    label: "内容管理",
+    description: "多语言内容与模块文案",
+    path: "/admin/content",
+    icon: FileText,
+  },
+  {
+    label: "公司信息",
+    description: "企业介绍与资质资料",
+    path: "/admin/company-info",
+    icon: Building2,
+  },
+];
+
+type Identity = {
+  id: string;
+  name?: string;
+  email?: string;
+};
+
+const Shell = ({ children }: PropsWithChildren) => {
   const location = useLocation();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // 检查Supabase认证状态
-    const checkAuth = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error || !session) {
-          navigate('/admin/login');
-        } else {
-          // 验证是否为管理员权限
-          const { data: profile } = await supabase
-            .from('admin_users')
-            .select('is_active')
-            .eq('email', session.user.email)
-            .single();
-            
-          if (!profile?.is_active) {
-            await supabase.auth.signOut();
-            navigate('/admin/login');
-          }
-        }
-      } catch (error) {
-        console.error('Auth check error:', error);
-        navigate('/admin/login');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
-
-    // 监听认证状态变化
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (!session) {
-          navigate('/admin/login');
-        }
-      }
-    );
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, [navigate]);
-
-  const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-      navigate('/admin/login');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
-
-  // 检查当前路由是否激活
-  const isActive = (path: string) => {
-    return location.pathname === path || location.pathname.startsWith(`${path}/`);
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  const menuItems = [
-    { path: '/admin/dashboard', icon: <RiDashboardLine size={20} />, label: t('sidebar.dashboard') },
-    { path: '/admin/products', icon: <RiProductHuntLine size={20} />, label: t('sidebar.products') },
-    { path: '/admin/messages', icon: <RiMessage2Line size={20} />, label: t('sidebar.messages') },
-    { path: '/admin/content', icon: <RiFileTextLine size={20} />, label: t('sidebar.content') },
-  ];
+  const navigate = useNavigate();
+  const { data: identity } = useGetIdentity<Identity>();
+  const { mutate: logout } = useLogout();
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
-      {/* 移动端侧边栏遮罩 */}
-      {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
-
-      {/* 侧边栏 */}
-      <aside 
-        className={`fixed inset-y-0 left-0 z-30 w-64 bg-white dark:bg-gray-800 shadow-lg transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 ease-in-out`}
-      >
-        <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-            <h1 className="text-xl font-bold text-gray-800 dark:text-white">管理后台</h1>
-            <button 
-              className="p-1 lg:hidden" 
-              onClick={() => setIsSidebarOpen(false)}
-            >
-              <BiX size={24} className="text-gray-600 dark:text-gray-300" />
-            </button>
+    <div className="min-h-screen bg-slate-100 text-slate-900">
+      <div className="flex min-h-screen">
+        <aside className="hidden w-80 shrink-0 border-r border-slate-200 bg-white/95 backdrop-blur lg:flex lg:flex-col">
+          <div className="px-6 py-8">
+            <Title className="text-2xl font-semibold text-slate-900">KARN 后台</Title>
+            <Text className="mt-2 text-sm text-slate-500">
+              使用 Tremor + Refine 提供的高效管理体验
+            </Text>
           </div>
-          
-          <nav className="flex-1 px-2 py-4 overflow-y-auto">
-            <ul className="space-y-2">
-              {menuItems.map((item) => (
-                <li key={item.path}>
-                  <Link
-                    to={item.path}
-                    className={`flex items-center px-4 py-3 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 ${isActive(item.path) ? 'bg-gray-100 dark:bg-gray-700 text-primary dark:text-primary-foreground font-medium' : ''}`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <span className="mr-3">{item.icon}</span>
-                    <span>{item.label}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          <Divider className="mb-4" />
+          <nav className="flex-1 space-y-3 px-4 pb-6">
+            {NAV_ITEMS.map((item) => {
+              const isActive = location.pathname.startsWith(item.path);
+              const Icon = item.icon;
+              return (
+                <Card
+                  key={item.path}
+                  decoration={isActive ? "top" : undefined}
+                  decorationColor="indigo"
+                  className={`cursor-pointer border transition hover:shadow-sm ${
+                    isActive ? "border-indigo-200 bg-indigo-50" : "border-transparent"
+                  }`}
+                  onClick={() => navigate(item.path)}
+                >
+                  <Flex alignItems="start" justifyContent="start">
+                    <div className={`rounded-md p-2 ${isActive ? "bg-indigo-500/10" : "bg-slate-100"}`}>
+                      <Icon className={`h-5 w-5 ${isActive ? "text-indigo-600" : "text-slate-500"}`} />
+                    </div>
+                    <div>
+                      <Text className="font-semibold text-slate-900">{item.label}</Text>
+                      <Text className="text-xs text-slate-500">{item.description}</Text>
+                    </div>
+                  </Flex>
+                </Card>
+              );
+            })}
           </nav>
-          
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
-            <Link
-              to="/"
-              className="flex items-center px-4 py-3 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-              target="_blank"
-            >
-              <span className="mr-3"><RiGlobalLine size={20} /></span>
-              <span>{t('sidebar.view_site')}</span>
-            </Link>
-            
-            <button
-              onClick={handleLogout}
-              className="flex w-full items-center px-4 py-3 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <span className="mr-3"><RiLogoutBoxLine size={20} /></span>
-              <span>{t('sidebar.logout')}</span>
-            </button>
+          <div className="border-t border-slate-200 p-6">
+            <Text className="text-xs uppercase tracking-wide text-slate-400">当前用户</Text>
+            <Metric className="mt-2 text-base text-slate-900">
+              {identity?.name || identity?.email || "管理员"}
+            </Metric>
+            <Text className="text-xs text-slate-500">{identity?.email}</Text>
+            <div className="mt-4 flex gap-2">
+              <button
+                type="button"
+                onClick={() => window.open("/", "_blank")}
+                className="flex flex-1 items-center justify-center gap-2 rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-600 transition hover:border-indigo-300 hover:text-indigo-600"
+              >
+                <Globe className="h-4 w-4" />
+                前往官网
+              </button>
+              <button
+                type="button"
+                onClick={() => logout({})}
+                className="flex items-center justify-center gap-2 rounded-md bg-slate-900 px-3 py-2 text-sm text-white shadow-sm transition hover:bg-slate-700"
+              >
+                <LogOut className="h-4 w-4" />
+                退出
+              </button>
+            </div>
           </div>
-        </div>
-      </aside>
+        </aside>
 
-      {/* 主内容区 */}
-      <div className="flex-1 flex flex-col lg:ml-64">
-        {/* 顶部导航栏 */}
-        <header className="bg-white dark:bg-gray-800 shadow-sm z-10 lg:hidden">
-          <div className="px-4 py-3 flex items-center justify-between">
-            <button 
-              className="p-1" 
-              onClick={() => setIsSidebarOpen(true)}
-            >
-              <BiMenu size={24} className="text-gray-600 dark:text-gray-300" />
-            </button>
-            <h1 className="text-lg font-semibold text-gray-800 dark:text-white">管理后台</h1>
-            <div className="w-6"></div> {/* 占位元素保持布局对称 */}
+        <main className="flex flex-1 flex-col">
+          <header className="border-b border-slate-200 bg-white/70 px-6 py-4 backdrop-blur">
+            <Flex justifyContent="between" alignItems="center">
+              <div>
+                <Title className="text-xl text-slate-900">
+                  {NAV_ITEMS.find((item) => location.pathname.startsWith(item.path))?.label || "仪表盘"}
+                </Title>
+                <Text className="text-sm text-slate-500">
+                  欢迎回来，{identity?.name || identity?.email || "管理员"}
+                </Text>
+              </div>
+              <div className="flex items-center gap-3 lg:hidden">
+                <button
+                  type="button"
+                  onClick={() => window.open("/", "_blank")}
+                  className="rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-600"
+                >
+                  官网
+                </button>
+                <button
+                  type="button"
+                  onClick={() => logout({})}
+                  className="rounded-md bg-slate-900 px-3 py-2 text-sm text-white"
+                >
+                  退出
+                </button>
+              </div>
+            </Flex>
+          </header>
+
+          <div className="flex-1 bg-slate-50 p-4 md:p-6">
+            <div className="mx-auto w-full max-w-6xl space-y-6">{children}</div>
           </div>
-        </header>
-
-        {/* 页面内容 */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
-          <Toaster position="top-center" />
-          <Outlet />
         </main>
       </div>
     </div>
   );
 };
+
+const AdminLayout = () => (
+  <AdminProvider>
+    <Shell>
+      <Outlet />
+    </Shell>
+  </AdminProvider>
+);
 
 export default AdminLayout;

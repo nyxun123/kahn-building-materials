@@ -18,6 +18,7 @@ const AdminProductsPage = lazy(() => import('@/pages/admin/products'));
 const AdminProductEditPage = lazy(() => import('@/pages/admin/product-edit'));
 const AdminMessagesPage = lazy(() => import('@/pages/admin/messages'));
 const AdminContentPage = lazy(() => import('@/pages/admin/content'));
+const AdminCompanyInfoPage = lazy(() => import('@/pages/admin/company-info'));
 
 // 加载中组件
 const LoadingFallback = () => (
@@ -97,6 +98,14 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
       },
+      {
+        path: 'company-info',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <AdminCompanyInfoPage />
+          </Suspense>
+        ),
+      },
     ],
   },
   {
@@ -148,6 +157,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <AdminContentPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'company-info',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <AdminCompanyInfoPage />
           </Suspense>
         ),
       },

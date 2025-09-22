@@ -1,10 +1,4 @@
 import { useEffect, useState, useCallback } from 'react';
-import { supabase, checkConnection, initializeDatabase } from '@/lib/supabase';
-import type { Database } from '@/lib/database.types';
-
-type Product = Database['public']['Tables']['products']['Row'];
-type ContactMessage = Database['public']['Tables']['contact_messages']['Row'];
-type PageContent = Database['public']['Tables']['page_contents']['Row'];
 
 interface UseRealtimeDataOptions {
   tableName: string;
@@ -29,39 +23,41 @@ export function useRealtimeData<T>({
       setLoading(true);
       setConnectionStatus('连接数据库...');
 
-      // 验证数据库连接
-      const health = await checkConnection();
-      if (!health.success) {
-        setConnectionStatus(`连接失败: ${health.error}`);
-        throw new Error(`数据库连接失败: ${health.error}`);
+      // 构建API URL
+      let apiUrl = `/api/${tableName}`;
+      
+      // 添加查询参数
+      const queryParams = new URLSearchParams();
+      if (limit) queryParams.append('limit', limit.toString());
+      
+      // 应用过滤条件
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          queryParams.append(key, value.toString());
+        }
+      });
+      
+      // 应用排序
+      if (orderBy.column) {
+        queryParams.append('order', `${orderBy.column}.${orderBy.ascending ? 'asc' : 'desc'}`);
+      }
+      
+      if (queryParams.toString()) {
+        apiUrl += `?${queryParams.toString()}`;
       }
 
       setConnectionStatus('查询数据中...');
 
-      let query = supabase
-        .from(tableName)
-        .select('*')
-        .limit(limit);
-
-      // 应用过滤条件
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          query = query.eq(key, value);
-        }
-      });
-
-      // 应用排序
-      query = query.order(orderBy.column, { ascending: orderBy.ascending });
-
-      const { data: result, error: fetchError } = await query;
-
-      if (fetchError) {
-        console.error(`❌ 加载${tableName}失败:`, fetchError);
-        setConnectionStatus(`查询失败: ${fetchError.message}`);
-        throw new Error(`加载失败: ${fetchError.message} (${fetchError.code || '未知错误'})`);
+      const response = await fetch(apiUrl);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
       }
-
-      const finalData = result || [];
+      
+      const result = await response.json();
+      
+      const finalData = Array.isArray(result) ? result : (result.data || []);
       setData(finalData);
       setError(null);
       setConnectionStatus(`成功加载 ${finalData.length} 条记录`);
@@ -79,55 +75,18 @@ export function useRealtimeData<T>({
 
   useEffect(() => {
     // 初始化数据库连接
-    initializeDatabase().then(({ connected, products }) => {
-      if (connected) {
-        setConnectionStatus(`初始化成功，找到 ${products.length} 个产品`);
-      } else {
-        setConnectionStatus('初始化失败');
-      }
-    });
-
+    setConnectionStatus('初始化成功，使用Cloudflare API');
+    
     // 初始加载数据
     fetchData();
 
-    // 设置实时订阅
-    let channel: any = null;
-    
-    try {
-      channel = supabase
-        .channel(`${tableName}_changes`)
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: tableName },
-          (payload) => {
-            console.log(`🔄 ${tableName} 实时更新:`, payload.eventType);
-            
-            switch (payload.eventType) {
-              case 'INSERT':
-                setData(prev => [payload.new as T, ...prev]);
-                break;
-              case 'UPDATE':
-                setData(prev => prev.map(item => 
-                  (item as any).id === payload.new.id ? payload.new as T : item
-                ));
-                break;
-              case 'DELETE':
-                setData(prev => prev.filter(item => (item as any).id !== payload.old.id));
-                break;
-            }
-          }
-        )
-        .subscribe((status) => {
-          console.log(`📡 ${tableName} 订阅状态:`, status);
-        });
-    } catch (error) {
-      console.error(`❌ ${tableName} 订阅失败:`, error);
-    }
+    // 模拟实时更新（每30秒轮询一次）
+    const interval = setInterval(() => {
+      fetchData();
+    }, 30000);
 
     return () => {
-      if (channel) {
-        supabase.removeChannel(channel);
-      }
+      clearInterval(interval);
     };
   }, [tableName, fetchData]);
 
@@ -141,7 +100,7 @@ export function useRealtimeData<T>({
 
 // 专用hooks
 export function useProducts(filters?: Record<string, any>) {
-  return useRealtimeData<Product>({ 
+  return useRealtimeData<any>({ 
     tableName: 'products', 
     filters,
     orderBy: { column: 'sort_order', ascending: true }
@@ -149,7 +108,7 @@ export function useProducts(filters?: Record<string, any>) {
 }
 
 export function useContactMessages(filters?: Record<string, any>) {
-  return useRealtimeData<ContactMessage>({ 
+  return useRealtimeData<any>({ 
     tableName: 'contact_messages', 
     filters,
     orderBy: { column: 'created_at', ascending: false }
@@ -157,7 +116,7 @@ export function useContactMessages(filters?: Record<string, any>) {
 }
 
 export function usePageContents(filters?: Record<string, any>) {
-  return useRealtimeData<PageContent>({ 
+  return useRealtimeData<any>({ 
     tableName: 'page_contents', 
     filters,
     orderBy: { column: 'page_key', ascending: true }

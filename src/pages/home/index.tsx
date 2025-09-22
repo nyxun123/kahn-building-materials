@@ -4,11 +4,23 @@ import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
-import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
-import type { Database } from '@/lib/database.types';
 
-type Product = Database['public']['Tables']['products']['Row'];
+interface Product {
+  id: number;
+  product_code: string;
+  name_zh: string;
+  name_en: string;
+  name_ru: string;
+  description_zh: string;
+  description_en: string;
+  description_ru: string;
+  image_url: string;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
 
 export default function HomePage() {
   const { t, i18n } = useTranslation(['common', 'home']);
@@ -22,30 +34,25 @@ export default function HomePage() {
       
       try {
         // 获取热门产品
-        const { data: productsData, error: productsError } = await supabase
-          .from('products')
-          .select('*')
-          .eq('is_active', true)
-          .order('sort_order', { ascending: true })
-          .limit(3);
-
-        if (productsError) throw productsError;
+        const productsResponse = await fetch('/api/products?limit=3');
+        if (!productsResponse.ok) {
+          throw new Error(`获取产品失败: ${productsResponse.status}`);
+        }
+        const productsData = await productsResponse.json();
 
         // 获取首页内容
-        const { data: contentData, error: contentError } = await supabase
-          .from('page_contents')
-          .select('*')
-          .eq('page_key', 'home')
-          .eq('is_active', true);
-
-        if (contentError) throw contentError;
+        const contentResponse = await fetch('/api/content/home');
+        if (!contentResponse.ok) {
+          throw new Error(`获取页面内容失败: ${contentResponse.status}`);
+        }
+        const contentData = await contentResponse.json();
 
         // 整理页面内容数据
         const contentMap: Record<string, string> = {};
-        contentData?.forEach(item => {
+        contentData?.forEach((item: any) => {
           const lang = i18n.language || 'zh';
-          const langKey = `content_${lang}` as keyof typeof item;
-          contentMap[item.section_key] = item[langKey] as string || item.content_zh || '';
+          const langKey = `content_${lang}`;
+          contentMap[item.section_key] = item[langKey] || item.content_zh || '';
         });
 
         setProducts(productsData || []);

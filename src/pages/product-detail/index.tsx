@@ -4,11 +4,36 @@ import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { ArrowLeft, CheckCircle, Package } from 'lucide-react';
 
-import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
-import type { Database } from '@/lib/database.types';
 
-type Product = Database['public']['Tables']['products']['Row'];
+interface Product {
+  id: number;
+  product_code: string;
+  name_zh: string;
+  name_en: string;
+  name_ru: string;
+  description_zh: string;
+  description_en: string;
+  description_ru: string;
+  features_zh: string[];
+  features_en: string[];
+  features_ru: string[];
+  specifications_zh: string;
+  specifications_en: string;
+  specifications_ru: string;
+  applications_zh: string;
+  applications_en: string;
+  applications_ru: string;
+  packaging_options_zh: string;
+  packaging_options_en: string;
+  packaging_options_ru: string;
+  price_range: string;
+  image_url: string;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
 
 export default function ProductDetailPage() {
   const { productCode } = useParams<{ productCode: string }>();
@@ -26,14 +51,17 @@ export default function ProductDetailPage() {
       setError(null);
       
       try {
-        const { data, error } = await supabase
-          .from('products')
-          .select('*')
-          .eq('product_code', productCode)
-          .eq('is_active', true)
-          .single();
-
-        if (error) throw error;
+        const response = await fetch(`/api/products/${productCode}`);
+        
+        if (!response.ok) {
+          if (response.status === 404) {
+            setError(t('products:product_not_found'));
+            return;
+          }
+          throw new Error(`获取产品详情失败: ${response.status}`);
+        }
+        
+        const data = await response.json();
         setProduct(data);
       } catch (err) {
         console.error('获取产品详情失败:', err);

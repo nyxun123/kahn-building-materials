@@ -1,348 +1,227 @@
-import { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { useTranslation } from 'react-i18next';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
-import { RiArrowLeftSLine } from 'react-icons/ri';
-import { productAPI } from '@/lib/api';
-import ImageUploader from '@/components/ImageUploader';
-import type { Database } from '@/lib/database.types';
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useForm } from "@refinedev/react-hook-form";
+import {
+  Card,
+  Grid,
+  Flex,
+  Button,
+  Title,
+  Text,
+} from "@tremor/react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import toast from "react-hot-toast";
+import { Save, ArrowLeft } from "lucide-react";
+import ImageUpload from "@/components/ImageUpload";
 
-type Product = Database['public']['Tables']['products']['Row'];
-type ProductInsert = Database['public']['Tables']['products']['Insert'];
+interface ProductFormValues {
+  product_code: string;
+  name_zh: string;
+  name_en: string;
+  name_ru?: string;
+  description_zh?: string;
+  description_en?: string;
+  description_ru?: string;
+  category?: string;
+  price?: number;
+  price_range?: string;
+  image_url?: string;
+  is_active?: boolean;
+  sort_order?: number;
+  features_zh?: string;
+  features_en?: string;
+  features_ru?: string;
+}
 
-const ProductEdit = () => {
-  const { t } = useTranslation('admin');
-  const { id } = useParams<{ id: string }>();
+const ProductEditor = () => {
+  const params = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const isNewProduct = id === 'new';
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const isCreate = !params.id || params.id === "new";
 
-  // 产品表单数据
-  const [productForm, setProductForm] = useState<ProductInsert>({
-    product_code: '',
-    name_zh: '',
-    name_en: '',
-    name_ru: '',
-    description_zh: '',
-    description_en: '',
-    description_ru: '',
-    specifications_zh: '',
-    specifications_en: '',
-    specifications_ru: '',
-    applications_zh: '',
-    applications_en: '',
-    applications_ru: '',
-    image_url: '',
-    features_zh: [],
-    features_en: [],
-    features_ru: [],
-    price_range: '',
-    packaging_options_zh: '',
-    packaging_options_en: '',
-    packaging_options_ru: '',
-    is_active: true,
-    sort_order: 999
+  const {
+    refineCore: { formLoading, onFinish, queryResult },
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+  } = useForm<ProductFormValues>({
+    refineCoreProps: {
+      resource: "products",
+      id: isCreate ? undefined : params.id,
+      action: isCreate ? "create" : "edit",
+      redirect: false,
+    },
+    defaultValues: {
+      is_active: true,
+      sort_order: 0,
+    },
   });
 
-  // 加载产品数据
   useEffect(() => {
-    if (!isNewProduct && id) {
-      loadProduct(parseInt(id));
-    }
-  }, [id, isNewProduct]);
-
-  const loadProduct = async (productId: number) => {
-    try {
-      setIsLoading(true);
-      const product = await productAPI.getProduct(productId);
-      setProductForm(product);
-    } catch (error) {
-      console.error('加载产品失败:', error);
-      toast.error('加载产品失败');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setProductForm((prev) => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target;
-    setProductForm((prev) => ({
-      ...prev,
-      [name]: checked
-    }));
-  };
-
-  const handleFeaturesChange = (e: React.ChangeEvent<HTMLTextAreaElement>, language: 'zh' | 'en' | 'ru') => {
-    const features = e.target.value
-      .split('\n')
-      .filter(line => line.trim() !== '')
-      .map(line => line.trim());
-
-    setProductForm((prev) => ({
-      ...prev,
-      [`features_${language}`]: features
-    }));
-  };
-
-  const handleImageUpload = (imageUrl: string) => {
-    setProductForm((prev) => ({
-      ...prev,
-      image_url: imageUrl
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      setIsSaving(true);
-      
-      // 验证必填字段
-      if (!productForm.product_code || !productForm.name_zh || !productForm.name_en || !productForm.name_ru) {
-        toast.error('请填写所有必填字段');
-        return;
+    const record = queryResult?.data?.data as any;
+    if (record) {
+      if (record.features_zh && typeof record.features_zh === "string") {
+        try {
+          const parsed = JSON.parse(record.features_zh);
+          setValue("features_zh", Array.isArray(parsed) ? parsed.join("\n") : record.features_zh);
+        } catch {
+          setValue("features_zh", record.features_zh);
+        }
       }
-
-      if (isNewProduct) {
-        await productAPI.createProduct(productForm);
-        toast.success('产品创建成功');
-      } else {
-        await productAPI.updateProduct(parseInt(id!), productForm);
-        toast.success('产品更新成功');
+      if (record.features_en && typeof record.features_en === "string") {
+        try {
+          const parsed = JSON.parse(record.features_en);
+          setValue("features_en", Array.isArray(parsed) ? parsed.join("\n") : record.features_en);
+        } catch {
+          setValue("features_en", record.features_en);
+        }
       }
-
-      navigate('/admin/products');
-    } catch (error) {
-      console.error('保存产品失败:', error);
-      toast.error('保存产品失败');
-    } finally {
-      setIsSaving(false);
+      if (record.features_ru && typeof record.features_ru === "string") {
+        try {
+          const parsed = JSON.parse(record.features_ru);
+          setValue("features_ru", Array.isArray(parsed) ? parsed.join("\n") : record.features_ru);
+        } catch {
+          setValue("features_ru", record.features_ru);
+        }
+      }
     }
-  };
+  }, [queryResult, setValue]);
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+  const onSubmit = handleSubmit(async (values) => {
+    const payload: any = {
+      ...values,
+      is_active: Boolean(values.is_active),
+      features_zh: values.features_zh
+        ? values.features_zh.split("\n").map((item) => item.trim()).filter(Boolean)
+        : [],
+      features_en: values.features_en
+        ? values.features_en.split("\n").map((item) => item.trim()).filter(Boolean)
+        : [],
+      features_ru: values.features_ru
+        ? values.features_ru.split("\n").map((item) => item.trim()).filter(Boolean)
+        : [],
+    };
+
+    try {
+      await onFinish(payload);
+      toast.success(isCreate ? "产品创建成功" : "产品更新成功");
+      navigate("/admin/products");
+    } catch (error) {
+      console.error("保存产品失败", error);
+      toast.error("保存失败，请检查必填项");
+    }
+  });
 
   return (
-    <>
-      <Helmet>
-        <title>{isNewProduct ? t('products.add_new') : t('products.edit')} | 杭州卡恩新型建材有限公司</title>
-      </Helmet>
-
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center mb-6">
-          <Link
-            to="/admin/products"
-            className="flex items-center text-primary hover:text-primary/80 mr-4"
-          >
-            <RiArrowLeftSLine className="w-5 h-5" />
-            {t('common.back')}
-          </Link>
-          <h1 className="text-2xl font-bold">{isNewProduct ? t('products.add_new') : t('products.edit')}</h1>
+    <Card className="space-y-6">
+      <Flex justifyContent="between" alignItems="center">
+        <div>
+          <Title className="text-xl font-semibold text-slate-900">
+            {isCreate ? "新增产品" : `编辑产品 #${params.id}`}
+          </Title>
+          <Text className="text-sm text-slate-500">
+            请完善产品的多语言信息，保持官网展示一致
+          </Text>
         </div>
+        <div className="flex items-center gap-2">
+          <Button variant="secondary" icon={ArrowLeft} onClick={() => navigate(-1)}>
+            返回
+          </Button>
+          <Button icon={Save} loading={formLoading} onClick={onSubmit}>
+            保存
+          </Button>
+        </div>
+      </Flex>
 
-        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* 左侧：基本信息 */}
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium mb-2">{t('products.product_code')} *</label>
-                <input
-                  type="text"
-                  name="product_code"
-                  value={productForm.product_code}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700"
-                />
-              </div>
+      <Grid numItemsSm={1} numItemsLg={2} className="gap-4">
+        <div>
+          <Text className="text-sm font-medium text-slate-600">产品编码</Text>
+          <Input required {...register("product_code", { required: true })} />
+        </div>
+        <div>
+          <Text className="text-sm font-medium text-slate-600">所属分类</Text>
+          <Input placeholder="例如：adhesive" {...register("category")} />
+        </div>
+        <div>
+          <Text className="text-sm font-medium text-slate-600">中文名称</Text>
+          <Input required {...register("name_zh", { required: true })} />
+        </div>
+        <div>
+          <Text className="text-sm font-medium text-slate-600">英文名称</Text>
+          <Input required {...register("name_en", { required: true })} />
+        </div>
+        <div>
+          <Text className="text-sm font-medium text-slate-600">俄文名称</Text>
+          <Input {...register("name_ru")} />
+        </div>
+        <div>
+          <Text className="text-sm font-medium text-slate-600">主图地址</Text>
+          <Input placeholder="https://" {...register("image_url")} />
+        </div>
+        <div>
+          <Text className="text-sm font-medium text-slate-600">价格区间</Text>
+          <Input placeholder="例如：￥100-￥150" {...register("price_range")} />
+        </div>
+        <div>
+          <Text className="text-sm font-medium text-slate-600">排序权重</Text>
+          <Input type="number" {...register("sort_order", { valueAsNumber: true })} />
+        </div>
+      </Grid>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">{t('products.name_zh')} *</label>
-                <input
-                  type="text"
-                  name="name_zh"
-                  value={productForm.name_zh}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700"
-                />
-              </div>
+      <Card className="bg-slate-50">
+        <Text className="text-sm font-medium text-slate-600">上传主图</Text>
+        <div className="mt-3">
+          <ImageUpload
+            value={watch("image_url") || ""}
+            onChange={(url) => setValue("image_url", url, { shouldDirty: true })}
+          />
+        </div>
+      </Card>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">{t('products.name_en')} *</label>
-                <input
-                  type="text"
-                  name="name_en"
-                  value={productForm.name_en}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700"
-                />
-              </div>
+      <Grid numItemsSm={1} numItemsLg={2} className="gap-4">
+        <div>
+          <Text className="text-sm font-medium text-slate-600">中文简介</Text>
+          <Textarea className="mt-1 min-h-[140px]" {...register("description_zh")} />
+        </div>
+        <div>
+          <Text className="text-sm font-medium text-slate-600">英文简介</Text>
+          <Textarea className="mt-1 min-h-[140px]" {...register("description_en")} />
+        </div>
+        <div>
+          <Text className="text-sm font-medium text-slate-600">俄文简介</Text>
+          <Textarea className="mt-1 min-h-[140px]" {...register("description_ru")} />
+        </div>
+        <div>
+          <Text className="text-sm font-medium text-slate-600">中文卖点（每行一条）</Text>
+          <Textarea className="mt-1 min-h-[140px]" {...register("features_zh")} />
+        </div>
+        <div>
+          <Text className="text-sm font-medium text-slate-600">英文卖点（每行一条）</Text>
+          <Textarea className="mt-1 min-h-[140px]" {...register("features_en")} />
+        </div>
+        <div>
+          <Text className="text-sm font-medium text-slate-600">俄文卖点（每行一条）</Text>
+          <Textarea className="mt-1 min-h-[140px]" {...register("features_ru")} />
+        </div>
+      </Grid>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">{t('products.name_ru')} *</label>
-                <input
-                  type="text"
-                  name="name_ru"
-                  value={productForm.name_ru}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">{t('products.image')}</label>
-                <ImageUploader
-                  onImageUpload={handleImageUpload}
-                  currentImage={productForm.image_url}
-                  folder="products"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">{t('products.price_range')}</label>
-                <input
-                  type="text"
-                  name="price_range"
-                  value={productForm.price_range}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">{t('products.sort_order')}</label>
-                <input
-                  type="number"
-                  name="sort_order"
-                  value={productForm.sort_order}
-                  onChange={handleInputChange}
-                  min="0"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700"
-                />
-              </div>
-
-              <div>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    name="is_active"
-                    checked={productForm.is_active}
-                    onChange={handleCheckboxChange}
-                    className="mr-2"
-                  />
-                  {t('products.active')}
-                </label>
-              </div>
-            </div>
-
-            {/* 右侧：详细描述 */}
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium mb-2">{t('products.description_zh')}</label>
-                <textarea
-                  name="description_zh"
-                  value={productForm.description_zh}
-                  onChange={handleInputChange}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">{t('products.description_en')}</label>
-                <textarea
-                  name="description_en"
-                  value={productForm.description_en}
-                  onChange={handleInputChange}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">{t('products.description_ru')}</label>
-                <textarea
-                  name="description_ru"
-                  value={productForm.description_ru}
-                  onChange={handleInputChange}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">{t('products.specifications_zh')}</label>
-                <textarea
-                  name="specifications_zh"
-                  value={productForm.specifications_zh}
-                  onChange={handleInputChange}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">{t('products.specifications_en')}</label>
-                <textarea
-                  name="specifications_en"
-                  value={productForm.specifications_en}
-                  onChange={handleInputChange}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">{t('products.specifications_ru')}</label>
-                <textarea
-                  name="specifications_ru"
-                  value={productForm.specifications_ru}
-                  onChange={handleInputChange}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700"
-                />
-              </div>
-            </div>
+      <Card className="bg-slate-50">
+        <Flex justifyContent="between" alignItems="center">
+          <div>
+            <Text className="font-medium text-slate-700">是否上架</Text>
+            <Text className="text-sm text-slate-500">关闭后产品将隐藏在官网列表</Text>
           </div>
-
-          <div className="flex justify-end space-x-4 mt-6">
-            <Link
-              to="/admin/products"
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700"
-            >
-              {t('common.cancel')}
-            </Link>
-            <button
-              type="submit"
-              disabled={isSaving}
-              className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 disabled:opacity-50"
-            >
-              {isSaving ? '保存中...' : (isNewProduct ? t('products.create') : t('products.update'))}
-            </button>
-          </div>
-        </form>
-      </div>
-    </>
+          <input
+            type="checkbox"
+            className="h-5 w-10 cursor-pointer rounded-full border border-slate-300"
+            checked={watch("is_active") ?? true}
+            onChange={(event) => setValue("is_active", event.target.checked)}
+          />
+        </Flex>
+      </Card>
+    </Card>
   );
 };
 
-export default ProductEdit;
+export default ProductEditor;

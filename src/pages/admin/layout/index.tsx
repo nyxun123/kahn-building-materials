@@ -6,9 +6,10 @@ import { BarChart3, Home, Inbox, LogOut, Menu, Package, Settings, X } from 'luci
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
+import { TempAuth } from '@/lib/temp-auth';
 
 type AdminUser = {
-  id: number;
+  id: string;
   name: string;
   email: string;
   role: string;
@@ -21,32 +22,44 @@ export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    // 检查是否已登录
-    const userJson = localStorage.getItem('admin_user');
-    
-    if (!userJson) {
-      // 未登录，重定向到登录页面
+    // 优先读取正式后台登录信息
+    const cloudAuthRaw = localStorage.getItem('admin-auth');
+    if (cloudAuthRaw) {
+      try {
+        const cloudAuth = JSON.parse(cloudAuthRaw);
+        const cloudUser = cloudAuth.user || {};
+        setUser({
+          id: cloudUser.id || 'admin-user',
+          name: cloudUser.name || cloudUser.email?.split('@')[0] || 'Admin',
+          email: cloudUser.email,
+          role: cloudUser.role || 'admin'
+        });
+        return;
+      } catch (error) {
+        console.error('解析 admin-auth 失败:', error);
+        localStorage.removeItem('admin-auth');
+      }
+    }
+
+    // 兼容临时认证模式
+    const tempUser = TempAuth.getCurrentUser();
+
+    if (!tempUser) {
       navigate('/admin/login');
       return;
     }
-    
-    try {
-      const userData = JSON.parse(userJson);
-      // 设置用户信息，使用Supabase用户数据结构
-      setUser({
-        id: userData.id,
-        name: userData.email?.split('@')[0] || 'Admin',
-        email: userData.email,
-        role: 'admin'
-      });
-    } catch (error) {
-      console.error('Invalid user data:', error);
-      handleLogout();
-    }
+
+    setUser({
+      id: tempUser.id,
+      name: tempUser.name || tempUser.email?.split('@')[0] || 'Admin',
+      email: tempUser.email,
+      role: tempUser.role || 'admin'
+    });
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('admin_user');
+    localStorage.removeItem('admin-auth');
+    TempAuth.logout();
     navigate('/admin/login');
   };
 

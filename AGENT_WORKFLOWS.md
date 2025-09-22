@@ -1,226 +1,198 @@
-# 🔄 Sub Agent协作流程与工作规范
+# Agents工作流程规范
 
-## 🎯 核心协作原则
+## 目标
+建立标准化的Agents工作流程，确保各团队高效协作，避免代码耦合问题。
 
-### 1. 🚀 效率优先原则
-- **并行执行**: 无依赖关系的任务必须并行处理
-- **工具优化**: 优先使用批量工具调用，减少等待时间
-- **状态同步**: 实时更新任务状态，避免重复工作
+## 核心工作流程
 
-### 2. 🎨 质量保障原则  
-- **代码审查**: 所有代码变更必须经过Code Review Agent审查
-- **测试覆盖**: 新功能必须包含完整的测试用例
-- **文档同步**: 重要变更必须同步更新相关文档
+### 1. 需求分析阶段
+- 产品经理定义功能需求
+- 架构师评估技术实现方案
+- 相关Agents团队参与技术评审
+- 确定接口契约和数据格式
 
-### 3. 🔐 安全防护原则
-- **权限最小化**: Agent只拥有必要的操作权限
-- **敏感信息保护**: 不在代码中硬编码敏感数据
-- **安全扫描**: Security Agent对所有代码进行安全检查
+### 2. 设计阶段
+- UI/UX团队创建设计稿
+- 前端团队评估实现复杂度
+- 后端团队设计API接口
+- 数据库团队设计数据模型
 
-## 📋 标准工作流程
+### 3. 开发阶段
+- 各团队并行开发
+- 遵循统一编码规范
+- 编写单元测试
+- 定期同步开发进度
 
-### 🎪 Phase 1: 需求分析阶段
-```mermaid
-sequenceDiagram
-    participant User as 用户
-    participant PL as Project Lead Agent
-    participant Teams as 各专业团队
+### 4. 测试阶段
+- 单元测试由各团队负责
+- 集成测试由QA团队负责
+- 性能测试由运维团队负责
+- 安全测试由安全团队负责
 
-    User->>PL: 提出需求
-    PL->>PL: 需求分析和场景识别
-    PL->>Teams: 需求澄清和确认
-    Teams->>PL: 技术可行性反馈
-    PL->>User: 需求确认和方案建议
+### 5. 部署阶段
+- 运维团队负责部署流程
+- 监控团队配置告警规则
+- 各团队验证功能正常
+- 回滚预案准备
+
+## 接口管理规范
+
+### API设计原则
+1. RESTful风格设计
+2. 统一错误码规范
+3. 版本化管理
+4. 文档化维护
+
+### 数据格式标准
+```json
+{
+  "code": 200,
+  "message": "success",
+  "data": {},
+  "meta": {
+    "timestamp": "2023-01-01T00:00:00Z",
+    "version": "1.0"
+  }
+}
 ```
 
-**Project Lead Agent职责:**
-1. 接收用户需求，识别项目场景类型
-2. 根据场景选择适用的规则文件
-3. 向用户确认理解的正确性
-4. 制定初步技术方案
-
-### 🏗️ Phase 2: 技术设计阶段
-```mermaid
-sequenceDiagram
-    participant PL as Project Lead Agent
-    participant FE as Frontend Lead
-    participant BE as Backend Lead  
-    participant DevOps as DevOps Lead
-    participant QA as QA Lead
-
-    PL->>FE: 前端架构设计任务
-    PL->>BE: 后端架构设计任务
-    PL->>DevOps: 部署方案设计任务
-    PL->>QA: 测试策略设计任务
-    
-    par 并行设计
-        FE->>FE: UI/UX设计 + 技术选型
-        BE->>BE: 数据库设计 + API设计
-        DevOps->>DevOps: CI/CD流程设计
-        QA->>QA: 测试用例设计
-    end
-    
-    FE->>PL: 前端方案
-    BE->>PL: 后端方案
-    DevOps->>PL: 部署方案
-    QA->>PL: 测试方案
-    
-    PL->>PL: 方案整合和优化
-    PL->>User: 完整技术方案确认
+### 错误处理规范
+```json
+{
+  "code": 400,
+  "message": "参数错误",
+  "error": {
+    "field": "email",
+    "reason": "邮箱格式不正确"
+  }
+}
 ```
 
-### 🛠️ Phase 3: 开发实施阶段
-```mermaid
-sequenceDiagram
-    participant PL as Project Lead
-    participant FE as Frontend Team
-    participant BE as Backend Team
-    participant DevOps as DevOps Team
+## 代码管理规范
 
-    PL->>BE: 优先部署后端服务
-    BE->>BE: 云函数开发和部署
-    BE->>BE: 数据库配置和数据模型
-    BE->>PL: 后端服务完成
+### 分支策略
+- main: 生产环境代码
+- develop: 开发环境代码
+- feature/模块名: 功能开发分支
+- hotfix/问题描述: 紧急修复分支
 
-    PL->>FE: 启动前端开发
-    PL->>DevOps: 准备部署环境
-    
-    par 并行开发
-        FE->>FE: 组件开发 + 页面实现
-        DevOps->>DevOps: CI/CD配置
-    end
-    
-    FE->>PL: 前端开发完成
-    DevOps->>PL: 部署环境就绪
+### 提交规范
+```
+feat(模块名): 功能描述
+fix(模块名): 修复描述
+docs: 文档更新
+refactor(模块名): 重构描述
+test: 测试相关
+chore: 构建相关
 ```
 
-### ✅ Phase 4: 测试验收阶段
-```mermaid
-sequenceDiagram
-    participant Dev as 开发团队
-    participant QA as QA Testing Agent
-    participant CR as Code Review Agent
-    participant Sec as Security Agent
-    participant PL as Project Lead
+### 代码审查要点
+1. 功能实现正确性
+2. 代码可读性和维护性
+3. 性能和安全性
+4. 测试覆盖率
+5. 文档完整性
 
-    Dev->>CR: 代码审查请求
-    CR->>CR: 代码质量检查
-    CR->>QA: 代码审查通过
-    
-    QA->>QA: 功能测试执行
-    QA->>Sec: 功能测试通过
-    
-    Sec->>Sec: 安全检查执行
-    Sec->>PL: 安全检查通过
-    
-    PL->>PL: 最终质量验收
-    PL->>User: 交付确认
-```
+## 部署流程规范
 
-## 🎭 Agent专业分工细则
+### 环境管理
+- 开发环境: dev.kn-wallpaperglue.com
+- 测试环境: test.kn-wallpaperglue.com
+- 预发布环境: staging.kn-wallpaperglue.com
+- 生产环境: kn-wallpaperglue.com
 
-### Frontend Team内部协作
-```mermaid
-graph TD
-    FL[Frontend Lead] --> |架构指导| UID[UI/UX Design]
-    FL --> |技术指导| MRA[Mobile Responsive]  
-    FL --> |集成指导| I18N[I18n Agent]
-    
-    UID --> |设计稿| MRA
-    UID --> |组件规范| I18N
-    MRA --> |适配方案| I18N
-```
+### 部署步骤
+1. 代码合并到目标分支
+2. 自动触发CI/CD流程
+3. 运行自动化测试
+4. 构建和打包
+5. 部署到目标环境
+6. 健康检查
+7. 通知相关人员
 
-**协作规范:**
-- Frontend Lead负责技术架构决策
-- UI/UX Design Agent先出设计稿
-- Mobile Responsive Agent基于设计稿进行适配
-- I18n Agent负责多语言实现
+### 回滚机制
+1. 监控系统检测异常
+2. 自动或手动触发回滚
+3. 恢复到上一稳定版本
+4. 通知相关人员
+5. 记录回滚原因
 
-### Backend Team内部协作
-```mermaid
-graph TD
-    BL[Backend Lead] --> |架构设计| DBA[Database Agent]
-    BL --> |API规范| API[API Integration]
-    DBA --> |数据模型| API
-    API --> |接口测试| BL
-```
+## 监控和告警
 
-**协作规范:**
-- Backend Lead制定整体架构
-- Database Agent优先设计数据模型
-- API Integration Agent基于数据模型开发接口
-- 所有后端变更需Backend Lead最终确认
+### 关键指标
+- 系统可用性
+- 响应时间
+- 错误率
+- 资源使用率
 
-## ⚙️ 工具使用分配
+### 告警级别
+- P0: 系统不可用，需立即处理
+- P1: 重要功能异常，需2小时内处理
+- P2: 次要功能异常，需24小时内处理
+- P3: 优化建议，可后续处理
 
-### CloudBase MCP工具分配表
-| Agent角色 | 主要工具 | 权限级别 |
-|----------|---------|---------|
-| Project Lead | 所有工具 | 完全权限 |
-| Backend Lead | 云函数、数据库工具 | 高权限 |
-| Database Agent | 数据库、数据模型工具 | 专业权限 |
-| Deployment Agent | 静态托管、域名工具 | 部署权限 |
-| Security Agent | 安全规则工具 | 只读权限 |
+### 监控工具
+- Cloudflare Analytics
+- 自定义监控API
+- 日志分析系统
+- 性能监控工具
 
-### 工具调用优先级
-1. **高优先级**: 云函数部署、数据库操作
-2. **中优先级**: 静态托管、域名配置
-3. **低优先级**: 查询类、监控类操作
+## 沟通协作机制
 
-## 🔔 异常处理机制
+### 日常沟通
+- 每日站会: 同步进度和问题
+- 技术分享: 每周技术交流
+- 问题讨论: 即时沟通工具
+- 文档更新: 实时同步
 
-### 常见问题解决流程
-```mermaid
-graph TD
-    A[Agent遇到问题] --> B{问题类型}
-    B -->|技术问题| C[向Team Lead求助]
-    B -->|工具问题| D[尝试替代方案]
-    B -->|需求不明确| E[向Project Lead澄清]
-    
-    C --> F[Team Lead提供技术指导]
-    D --> G[使用备用工具继续]
-    E --> H[Project Lead与用户确认]
-    
-    F --> I[问题解决继续任务]
-    G --> I
-    H --> I
-```
+### 会议安排
+- Sprint计划会: 每周一上午
+- Sprint评审会: 每周五下午
+- 回顾会: 每月最后一个周五
+- 架构评审会: 需要时召开
 
-### 升级机制
-1. **Level 1**: Agent内部解决
-2. **Level 2**: Team Lead介入
-3. **Level 3**: Project Lead协调
-4. **Level 4**: 向用户寻求帮助
+### 文档管理
+- 需求文档: Notion维护
+- 技术文档: 代码注释+README
+- 运维文档: Confluence维护
+- 用户手册: 在线文档系统
 
-## 📊 质量度量标准
+## 质量保障体系
 
-### 代码质量指标
-- **代码覆盖率**: >80%
-- **ESLint检查**: 0错误，0警告
-- **TypeScript检查**: 无类型错误
-- **性能评分**: Lighthouse >90分
+### 代码质量
+- 静态代码分析
+- 代码复杂度控制
+- 重复代码检测
+- 安全漏洞扫描
 
-### 协作效率指标
-- **任务完成率**: >95%
-- **平均响应时间**: <2分钟
-- **问题解决率**: >90%
-- **用户满意度**: >4.5/5星
+### 测试覆盖
+- 单元测试: >80%覆盖率
+- 集成测试: 核心流程100%覆盖
+- 性能测试: 关键接口压测
+- 安全测试: 定期安全扫描
 
-## 🎓 持续改进机制
+### 发布质量
+- 灰度发布机制
+- AB测试支持
+- 数据一致性检查
+- 用户反馈收集
 
-### 知识库建设
-1. **经验总结**: 每个项目结束后总结最佳实践
-2. **问题库**: 建立常见问题和解决方案库
-3. **模板库**: 沉淀可复用的代码模板和配置
-4. **培训材料**: 为新Agent提供培训文档
+## 持续改进机制
 
-### 流程优化
-1. **定期回顾**: 每周团队回顾会议
-2. **流程改进**: 基于反馈优化协作流程
-3. **工具升级**: 跟进新工具和技术趋势
-4. **规则更新**: 根据项目经验更新规则文档
+### 反馈收集
+- 用户反馈渠道
+- 系统监控数据
+- 团队内部建议
+- 竞品分析结果
 
----
+### 改进实施
+- 问题分类和优先级排序
+- 制定改进计划
+- 分配责任人和时间
+- 跟踪改进效果
 
-*本工作流程文档是活文档，将根据项目实践不断优化更新*
+### 知识沉淀
+- 技术难题解决方案
+- 最佳实践总结
+- 故障复盘报告
+- 经验分享文档

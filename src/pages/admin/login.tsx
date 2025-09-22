@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-hot-toast';
-import { supabase } from '@/lib/supabase';
 import { TempAuth } from '@/lib/temp-auth';
 
 const Login = () => {

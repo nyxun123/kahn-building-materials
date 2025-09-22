@@ -1,11 +1,3 @@
-import { supabase } from './supabase';
-import type { Database } from './database.types';
-
-// 类型定义
-type Product = Database['public']['Tables']['products']['Row'];
-type ContactMessage = Database['public']['Tables']['contact_messages']['Row'];
-type PageContent = Database['public']['Tables']['page_contents']['Row'];
-
 // API配置
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
@@ -13,77 +5,82 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 export const productAPI = {
   // 获取产品列表
   async getProducts(filters?: Record<string, any>) {
-    let query = supabase
-      .from('products')
-      .select('*')
-      .order('sort_order', { ascending: true })
-      .order('created_at', { ascending: false });
-
+    let url = '/api/admin/products';
+    
     if (filters) {
+      const params = new URLSearchParams();
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          query = query.eq(key, value);
+          params.append(key, value.toString());
         }
       });
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
     }
 
-    const { data, error } = await query;
-    if (error) throw error;
-    return data;
+    const response = await fetch(url);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+    }
+    return await response.json();
   },
 
   // 获取单个产品
   async getProduct(id: number) {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('id', id)
-      .single();
-    
-    if (error) throw error;
-    return data;
+    const response = await fetch(`/api/admin/products/${id}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+    }
+    return await response.json();
   },
 
   // 创建产品
-  async createProduct(product: Partial<Product>) {
-    const { data, error } = await supabase
-      .from('products')
-      .insert([{
-        ...product,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }])
-      .select()
-      .single();
+  async createProduct(product: any) {
+    const response = await fetch('/api/admin/products', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(product)
+    });
     
-    if (error) throw error;
-    return data;
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+    }
+    return await response.json();
   },
 
   // 更新产品
-  async updateProduct(id: number, updates: Partial<Product>) {
-    const { data, error } = await supabase
-      .from('products')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', id)
-      .select()
-      .single();
+  async updateProduct(id: number, updates: any) {
+    const response = await fetch(`/api/admin/products/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updates)
+    });
     
-    if (error) throw error;
-    return data;
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+    }
+    return await response.json();
   },
 
   // 删除产品
   async deleteProduct(id: number) {
-    const { error } = await supabase
-      .from('products')
-      .delete()
-      .eq('id', id);
+    const response = await fetch(`/api/admin/products/${id}`, {
+      method: 'DELETE'
+    });
     
-    if (error) throw error;
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+    }
     return true;
   },
 
@@ -102,92 +99,100 @@ export const productAPI = {
 // 联系消息API
 export const contactAPI = {
   async getMessages(filters?: Record<string, any>) {
-    let query = supabase
-      .from('contact_messages')
-      .select('*')
-      .order('created_at', { ascending: false });
-
+    let url = '/api/admin/contacts';
+    
     if (filters) {
+      const params = new URLSearchParams();
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          query = query.eq(key, value);
+          params.append(key, value.toString());
         }
       });
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
     }
 
-    const { data, error } = await query;
-    if (error) throw error;
-    return data;
+    const response = await fetch(url);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+    }
+    return await response.json();
   },
 
-  async createMessage(message: Partial<ContactMessage>) {
-    const { data, error } = await supabase
-      .from('contact_messages')
-      .insert([{
-        ...message,
-        status: 'new',
-        is_read: false,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }])
-      .select()
-      .single();
+  async createMessage(message: any) {
+    const response = await fetch('/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ data: message })
+    });
     
-    if (error) throw error;
-    return data;
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+    }
+    return await response.json();
   },
 
   async updateMessageStatus(id: number, status: string) {
-    const { data, error } = await supabase
-      .from('contact_messages')
-      .update({ 
-        status,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', id)
-      .select()
-      .single();
+    const response = await fetch(`/api/admin/contacts/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status })
+    });
     
-    if (error) throw error;
-    return data;
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+    }
+    return await response.json();
   }
 };
 
 // 页面内容API
 export const contentAPI = {
   async getContents(filters?: Record<string, any>) {
-    let query = supabase
-      .from('page_contents')
-      .select('*')
-      .order('page_key', { ascending: true })
-      .order('section_key', { ascending: true });
-
+    let url = '/api/admin/contents';
+    
     if (filters) {
+      const params = new URLSearchParams();
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          query = query.eq(key, value);
+          params.append(key, value.toString());
         }
       });
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
     }
 
-    const { data, error } = await query;
-    if (error) throw error;
-    return data;
+    const response = await fetch(url);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+    }
+    return await response.json();
   },
 
-  async updateContent(id: number, updates: Partial<PageContent>) {
-    const { data, error } = await supabase
-      .from('page_contents')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', id)
-      .select()
-      .single();
+  async updateContent(id: number, updates: any) {
+    const response = await fetch(`/api/admin/contents/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updates)
+    });
     
-    if (error) throw error;
-    return data;
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+    }
+    return await response.json();
   }
 };
 
@@ -252,13 +257,26 @@ export const handleApiError = (error: any) => {
   throw error;
 };
 
-// 实时订阅工具
+// 实时订阅工具（使用轮询替代）
 export const subscribeToChanges = (tableName: string, callback: (payload: any) => void) => {
-  return supabase
-    .channel(`${tableName}_changes`)
-    .on('postgres_changes', 
-      { event: '*', schema: 'public', table: tableName },
-      callback
-    )
-    .subscribe();
+  // 每30秒轮询一次数据更新
+  const interval = setInterval(async () => {
+    try {
+      const response = await fetch(`/api/admin/${tableName}`);
+      if (response.ok) {
+        const data = await response.json();
+        // 模拟Supabase的payload格式
+        callback({
+          eventType: 'REFRESH',
+          new: data,
+          old: null
+        });
+      }
+    } catch (error) {
+      console.error(`轮询${tableName}失败:`, error);
+    }
+  }, 30000);
+  
+  // 返回清理函数
+  return () => clearInterval(interval);
 };
