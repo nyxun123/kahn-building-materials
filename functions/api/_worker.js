@@ -2795,12 +2795,14 @@ async function handlePublicProducts(request, env) {
         SELECT id, product_code, name_zh, name_en, name_ru,
                description_zh, description_en, description_ru,
                image_url, gallery_images,
-               category, price_range, status, is_active,
+               category, price_range, is_active,
                sort_order, created_at, updated_at,
                features_zh, features_en, features_ru,
-               specifications_zh, specifications_en, specifications_ru
+               specifications_zh, specifications_en, specifications_ru,
+               applications_zh, applications_en, applications_ru,
+               packaging_options_zh, packaging_options_en, packaging_options_ru
         FROM products
-        WHERE is_active = 1 AND status = 'published'
+        WHERE is_active = 1
         ORDER BY sort_order ASC, created_at DESC
       `).all();
 
@@ -3624,12 +3626,14 @@ async function handleGetSingleProductByCode(request, env, productCode) {
         SELECT id, product_code, name_zh, name_en, name_ru,
                description_zh, description_en, description_ru,
                image_url, gallery_images,
-               category, price_range, status, is_active,
+               category, price_range, is_active,
                sort_order, created_at, updated_at,
                features_zh, features_en, features_ru,
-               specifications_zh, specifications_en, specifications_ru
+               specifications_zh, specifications_en, specifications_ru,
+               applications_zh, applications_en, applications_ru,
+               packaging_options_zh, packaging_options_en, packaging_options_ru
         FROM products
-        WHERE product_code = ? AND is_active = 1 AND status = 'published'
+        WHERE product_code = ? AND is_active = 1
       `).bind(productCode).first();
 
       if (!product) {

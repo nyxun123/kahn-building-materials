@@ -1012,6 +1012,7 @@ async function handleGetProducts(request, env) {
     const page = Math.max(1, parseInt(url.searchParams.get('page') || '1'));
     const limit = Math.min(50, Math.max(1, parseInt(url.searchParams.get('limit') || '20')));
     const offset = (page - 1) * limit;
+    const searchTerm = url.searchParams.get('q')?.trim();
     
     // 快速数据库检查
     if (!env.DB) {
@@ -1020,20 +1021,35 @@ async function handleGetProducts(request, env) {
 
     try {
       // 使用单一查询同时获取数据和计数，优化性能
-      const [productsResult, countResult] = await Promise.all([
-        env.DB.prepare(`
+      let whereClause = '';
+      let listBindings = [];
+      let countBindings = [];
+
+      if (searchTerm) {
+        const likeValue = `%${searchTerm}%`;
+        whereClause = `WHERE product_code LIKE ? OR name_zh LIKE ? OR name_en LIKE ? OR name_ru LIKE ?`;
+        listBindings = [likeValue, likeValue, likeValue, likeValue, limit, offset];
+        countBindings = [likeValue, likeValue, likeValue, likeValue];
+      } else {
+        listBindings = [limit, offset];
+      }
+
+      const productsPromise = env.DB.prepare(`
           SELECT id, product_code, name_zh, name_en, name_ru,
-                 description_zh, description_en, description_ru,
-                 price, price_range, image_url, category, 
-                 is_active, sort_order, created_at, updated_at,
-                 features_zh, features_en, features_ru
+                 price_range, image_url, category,
+                 is_active, sort_order, created_at, updated_at
           FROM products 
+          ${whereClause}
           ORDER BY sort_order ASC, created_at DESC 
           LIMIT ? OFFSET ?
-        `).bind(limit, offset).all(),
-        
-        env.DB.prepare(`SELECT COUNT(*) as total FROM products`).first()
-      ]);
+        `).bind(...listBindings).all();
+
+      const countStatement = env.DB.prepare(`SELECT COUNT(*) as total FROM products ${whereClause}`);
+      const countPromise = countBindings.length
+        ? countStatement.bind(...countBindings).first()
+        : countStatement.first();
+
+      const [productsResult, countResult] = await Promise.all([productsPromise, countPromise]);
       
       const elapsedTime = performance.now() - startTime;
       
@@ -1083,6 +1099,609 @@ async function handleGetProducts(request, env) {
     });
     
     return createErrorResponse(500, '获取数据失败');
+  }
+}
+
+async function ensureCompanyTables(env) {
+  if (!env.DB) return;
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS company_info (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      section_type TEXT NOT NULL,
+      title_zh TEXT,
+      title_en TEXT,
+      title_ru TEXT,
+      content_zh TEXT,
+      content_en TEXT,
+      content_ru TEXT,
+      image_url TEXT,
+      sort_order INTEGER DEFAULT 0,
+      is_active BOOLEAN DEFAULT 1,
+      language TEXT DEFAULT 'zh',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `).run();
+
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS company_content (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      content_type TEXT NOT NULL,
+      title_zh TEXT,
+      title_en TEXT,
+      title_ru TEXT,
+      content_zh TEXT,
+      content_en TEXT,
+      content_ru TEXT,
+      image_url TEXT,
+      gallery_images TEXT,
+      sort_order INTEGER DEFAULT 0,
+      is_active BOOLEAN DEFAULT 1,
+      language TEXT DEFAULT 'zh',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `).run();
+}
+
+async function handleAdminCompanyInfo(request, env) {
+  try {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader) {
+      return createAuthError();
+    }
+
+    if (!env.DB) {
+      return createErrorResponse(500, 'D1数据库未配置');
+    }
+
+    await ensureCompanyTables(env);
+
+    const url = new URL(request.url);
+    const page = Math.max(1, parseInt(url.searchParams.get('page') || '1'));
+    const limit = Math.min(100, Math.max(1, parseInt(url.searchParams.get('limit') || '20')));
+    const offset = (page - 1) * limit;
+    const sectionType = url.searchParams.get('section_type')?.trim();
+    const search = url.searchParams.get('q')?.trim();
+
+    const conditions = [];
+    const conditionParams = [];
+
+    if (sectionType) {
+      conditions.push('section_type = ?');
+      conditionParams.push(sectionType);
+    }
+
+    if (search) {
+      const likeValue = `%${search}%`;
+      conditions.push(`(
+        title_zh LIKE ? OR title_en LIKE ? OR title_ru LIKE ? OR
+        content_zh LIKE ? OR content_en LIKE ? OR content_ru LIKE ?
+      )`);
+      conditionParams.push(likeValue, likeValue, likeValue, likeValue, likeValue, likeValue);
+    }
+
+    const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    const listParams = [...conditionParams, limit, offset];
+    const listPromise = env.DB.prepare(`
+      SELECT id, section_type, title_zh, title_en, title_ru, content_zh, content_en, content_ru,
+             image_url, language, sort_order, is_active, created_at, updated_at
+      FROM company_info
+      ${whereClause}
+      ORDER BY sort_order ASC, updated_at DESC
+      LIMIT ? OFFSET ?
+    `).bind(...listParams).all();
+
+    const countStatement = env.DB.prepare(`SELECT COUNT(*) as total FROM company_info ${whereClause}`);
+    const countPromise = conditionParams.length
+      ? countStatement.bind(...conditionParams).first()
+      : countStatement.first();
+
+    let [listResult, countResult] = await Promise.all([listPromise, countPromise]);
+
+    if ((countResult?.total || 0) === 0) {
+      await env.DB.prepare(`
+        INSERT INTO company_info (section_type, title_zh, content_zh, is_active)
+        VALUES ('basic', '公司简介', '请完善公司信息', 1)
+      `).run();
+      const refreshedListParams = [...conditionParams, limit, offset];
+      const refreshedListPromise = env.DB.prepare(`
+        SELECT id, section_type, title_zh, title_en, title_ru, content_zh, content_en, content_ru,
+               image_url, language, sort_order, is_active, created_at, updated_at
+        FROM company_info
+        ${whereClause}
+        ORDER BY sort_order ASC, updated_at DESC
+        LIMIT ? OFFSET ?
+      `).bind(...refreshedListParams).all();
+      const refreshedCountPromise = conditionParams.length
+        ? countStatement.bind(...conditionParams).first()
+        : countStatement.first();
+      [listResult, countResult] = await Promise.all([refreshedListPromise, refreshedCountPromise]);
+    }
+
+    return new Response(JSON.stringify({
+      data: listResult.results || [],
+      pagination: {
+        page,
+        limit,
+        total: countResult?.total || 0,
+        totalPages: Math.ceil((countResult?.total || 0) / limit)
+      }
+    }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+  } catch (error) {
+    console.error('获取公司信息失败:', error);
+    return createErrorResponse(500, '获取公司信息失败');
+  }
+}
+
+async function handleCreateCompanyInfo(request, env) {
+  try {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader) {
+      return createAuthError();
+    }
+
+    if (!env.DB) {
+      return createErrorResponse(500, 'D1数据库未配置');
+    }
+
+    await ensureCompanyTables(env);
+
+    const body = await request.json();
+    if (!body?.section_type) {
+      return createErrorResponse(400, 'section_type 为必填字段');
+    }
+
+    const payload = {
+      section_type: String(body.section_type).trim(),
+      title_zh: body.title_zh?.trim() || '',
+      title_en: body.title_en?.trim() || '',
+      title_ru: body.title_ru?.trim() || '',
+      content_zh: body.content_zh?.trim() || '',
+      content_en: body.content_en?.trim() || '',
+      content_ru: body.content_ru?.trim() || '',
+      image_url: body.image_url?.trim() || '',
+      language: body.language?.trim() || 'zh',
+      sort_order: Number.isFinite(body.sort_order) ? Number(body.sort_order) : 0,
+      is_active: body.is_active ? 1 : 0,
+    };
+
+    const result = await env.DB.prepare(`
+      INSERT INTO company_info (
+        section_type, title_zh, title_en, title_ru,
+        content_zh, content_en, content_ru,
+        image_url, sort_order, is_active, language
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      payload.section_type,
+      payload.title_zh,
+      payload.title_en,
+      payload.title_ru,
+      payload.content_zh,
+      payload.content_en,
+      payload.content_ru,
+      payload.image_url,
+      payload.sort_order,
+      payload.is_active,
+      payload.language
+    ).run();
+
+    const newId = result?.meta?.last_row_id;
+    const newRecord = newId
+      ? await env.DB.prepare('SELECT * FROM company_info WHERE id = ?').bind(newId).first()
+      : null;
+
+    return new Response(JSON.stringify({
+      data: newRecord,
+      message: '公司信息创建成功'
+    }), {
+      status: 201,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+  } catch (error) {
+    console.error('创建公司信息失败:', error);
+    return createErrorResponse(500, '创建公司信息失败');
+  }
+}
+
+async function handleUpdateCompanyInfo(request, env) {
+  try {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader) {
+      return createAuthError();
+    }
+
+    if (!env.DB) {
+      return createErrorResponse(500, 'D1数据库未配置');
+    }
+
+    await ensureCompanyTables(env);
+
+    const url = new URL(request.url);
+    const idPart = url.pathname.split('/').pop();
+    if (!idPart || Number.isNaN(Number(idPart))) {
+      return createErrorResponse(400, '无效的公司信息ID');
+    }
+    const recordId = Number(idPart);
+
+    const body = await request.json();
+    const allowedFields = [
+      'section_type',
+      'title_zh',
+      'title_en',
+      'title_ru',
+      'content_zh',
+      'content_en',
+      'content_ru',
+      'image_url',
+      'language',
+      'sort_order',
+      'is_active'
+    ];
+
+    const updateClauses = [];
+    const bindValues = [];
+
+    allowedFields.forEach((field) => {
+      if (Object.prototype.hasOwnProperty.call(body, field)) {
+        updateClauses.push(`${field} = ?`);
+        if (field === 'is_active') {
+          bindValues.push(body[field] ? 1 : 0);
+        } else if (field === 'sort_order') {
+          bindValues.push(Number.isFinite(body[field]) ? Number(body[field]) : 0);
+        } else {
+          bindValues.push(body[field]);
+        }
+      }
+    });
+
+    if (updateClauses.length === 0) {
+      return createErrorResponse(400, '没有需要更新的字段');
+    }
+
+    updateClauses.push('updated_at = CURRENT_TIMESTAMP');
+    bindValues.push(recordId);
+
+    await env.DB.prepare(`
+      UPDATE company_info
+      SET ${updateClauses.join(', ')}
+      WHERE id = ?
+    `).bind(...bindValues).run();
+
+    const updated = await env.DB.prepare('SELECT * FROM company_info WHERE id = ?').bind(recordId).first();
+
+    return new Response(JSON.stringify({
+      data: updated,
+      message: '公司信息更新成功'
+    }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+  } catch (error) {
+    console.error('更新公司信息失败:', error);
+    return createErrorResponse(500, '更新公司信息失败');
+  }
+}
+
+async function handleDeleteCompanyInfo(request, env) {
+  try {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader) {
+      return createAuthError();
+    }
+
+    if (!env.DB) {
+      return createErrorResponse(500, 'D1数据库未配置');
+    }
+
+    await ensureCompanyTables(env);
+
+    const url = new URL(request.url);
+    const idPart = url.pathname.split('/').pop();
+    if (!idPart || Number.isNaN(Number(idPart))) {
+      return createErrorResponse(400, '无效的公司信息ID');
+    }
+    const recordId = Number(idPart);
+
+    await env.DB.prepare('DELETE FROM company_info WHERE id = ?').bind(recordId).run();
+
+    return new Response(JSON.stringify({
+      data: { id: recordId },
+      message: '公司信息删除成功'
+    }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+  } catch (error) {
+    console.error('删除公司信息失败:', error);
+    return createErrorResponse(500, '删除公司信息失败');
+  }
+}
+
+async function handleAdminCompanyContent(request, env) {
+  try {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader) {
+      return createAuthError();
+    }
+
+    if (!env.DB) {
+      return createErrorResponse(500, 'D1数据库未配置');
+    }
+
+    await ensureCompanyTables(env);
+
+    const url = new URL(request.url);
+    const page = Math.max(1, parseInt(url.searchParams.get('page') || '1'));
+    const limit = Math.min(100, Math.max(1, parseInt(url.searchParams.get('limit') || '20')));
+    const offset = (page - 1) * limit;
+    const contentType = url.searchParams.get('content_type')?.trim();
+    const search = url.searchParams.get('q')?.trim();
+
+    const conditions = [];
+    const params = [];
+
+    if (contentType) {
+      conditions.push('content_type = ?');
+      params.push(contentType);
+    }
+
+    if (search) {
+      const likeValue = `%${search}%`;
+      conditions.push(`(
+        title_zh LIKE ? OR title_en LIKE ? OR title_ru LIKE ? OR
+        content_zh LIKE ? OR content_en LIKE ? OR content_ru LIKE ?
+      )`);
+      params.push(likeValue, likeValue, likeValue, likeValue, likeValue, likeValue);
+    }
+
+    const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+    const listParams = [...params, limit, offset];
+
+    const listPromise = env.DB.prepare(`
+      SELECT id, content_type, title_zh, title_en, title_ru, content_zh, content_en, content_ru,
+             image_url, gallery_images, language, sort_order, is_active, created_at, updated_at
+      FROM company_content
+      ${whereClause}
+      ORDER BY sort_order ASC, updated_at DESC
+      LIMIT ? OFFSET ?
+    `).bind(...listParams).all();
+
+    const countStmt = env.DB.prepare(`SELECT COUNT(*) as total FROM company_content ${whereClause}`);
+    const countPromise = params.length ? countStmt.bind(...params).first() : countStmt.first();
+
+    const [listResult, countResult] = await Promise.all([listPromise, countPromise]);
+
+    return new Response(JSON.stringify({
+      data: listResult.results || [],
+      pagination: {
+        page,
+        limit,
+        total: countResult?.total || 0,
+        totalPages: Math.ceil((countResult?.total || 0) / limit)
+      }
+    }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+  } catch (error) {
+    console.error('获取公司内容失败:', error);
+    return createErrorResponse(500, '获取公司内容失败');
+  }
+}
+
+async function handleCreateCompanyContent(request, env) {
+  try {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader) {
+      return createAuthError();
+    }
+
+    if (!env.DB) {
+      return createErrorResponse(500, 'D1数据库未配置');
+    }
+
+    const body = await request.json();
+    if (!body?.content_type) {
+      return createErrorResponse(400, 'content_type 为必填字段');
+    }
+
+    const payload = {
+      content_type: String(body.content_type).trim(),
+      title_zh: body.title_zh?.trim() || '',
+      title_en: body.title_en?.trim() || '',
+      title_ru: body.title_ru?.trim() || '',
+      content_zh: body.content_zh?.trim() || '',
+      content_en: body.content_en?.trim() || '',
+      content_ru: body.content_ru?.trim() || '',
+      image_url: body.image_url?.trim() || '',
+      gallery_images: Array.isArray(body.gallery_images)
+        ? JSON.stringify(body.gallery_images)
+        : body.gallery_images?.trim() || '[]',
+      language: body.language?.trim() || 'zh',
+      sort_order: Number.isFinite(body.sort_order) ? Number(body.sort_order) : 0,
+      is_active: body.is_active ? 1 : 0,
+    };
+
+    const result = await env.DB.prepare(`
+      INSERT INTO company_content (
+        content_type, title_zh, title_en, title_ru,
+        content_zh, content_en, content_ru,
+        image_url, gallery_images, sort_order, is_active, language
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      payload.content_type,
+      payload.title_zh,
+      payload.title_en,
+      payload.title_ru,
+      payload.content_zh,
+      payload.content_en,
+      payload.content_ru,
+      payload.image_url,
+      payload.gallery_images,
+      payload.sort_order,
+      payload.is_active,
+      payload.language
+    ).run();
+
+    const newId = result?.meta?.last_row_id;
+    const newRecord = newId
+      ? await env.DB.prepare('SELECT * FROM company_content WHERE id = ?').bind(newId).first()
+      : null;
+
+    return new Response(JSON.stringify({
+      data: newRecord,
+      message: '公司内容创建成功'
+    }), {
+      status: 201,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+  } catch (error) {
+    console.error('创建公司内容失败:', error);
+    return createErrorResponse(500, '创建公司内容失败');
+  }
+}
+
+async function handleUpdateCompanyContent(request, env) {
+  try {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader) {
+      return createAuthError();
+    }
+
+    if (!env.DB) {
+      return createErrorResponse(500, 'D1数据库未配置');
+    }
+
+    const url = new URL(request.url);
+    const idPart = url.pathname.split('/').pop();
+    if (!idPart || Number.isNaN(Number(idPart))) {
+      return createErrorResponse(400, '无效的公司内容ID');
+    }
+    const recordId = Number(idPart);
+
+    const body = await request.json();
+    const allowedFields = [
+      'content_type',
+      'title_zh',
+      'title_en',
+      'title_ru',
+      'content_zh',
+      'content_en',
+      'content_ru',
+      'image_url',
+      'gallery_images',
+      'language',
+      'sort_order',
+      'is_active'
+    ];
+
+    const updateClauses = [];
+    const bindValues = [];
+
+    allowedFields.forEach((field) => {
+      if (Object.prototype.hasOwnProperty.call(body, field)) {
+        updateClauses.push(`${field} = ?`);
+        if (field === 'is_active') {
+          bindValues.push(body[field] ? 1 : 0);
+        } else if (field === 'sort_order') {
+          bindValues.push(Number.isFinite(body[field]) ? Number(body[field]) : 0);
+        } else if (field === 'gallery_images') {
+          bindValues.push(
+            Array.isArray(body[field]) ? JSON.stringify(body[field]) : (body[field]?.trim() || '[]')
+          );
+        } else {
+          bindValues.push(body[field]);
+        }
+      }
+    });
+
+    if (updateClauses.length === 0) {
+      return createErrorResponse(400, '没有需要更新的字段');
+    }
+
+    updateClauses.push('updated_at = CURRENT_TIMESTAMP');
+    bindValues.push(recordId);
+
+    await env.DB.prepare(`
+      UPDATE company_content
+      SET ${updateClauses.join(', ')}
+      WHERE id = ?
+    `).bind(...bindValues).run();
+
+    const updated = await env.DB.prepare('SELECT * FROM company_content WHERE id = ?').bind(recordId).first();
+
+    return new Response(JSON.stringify({
+      data: updated,
+      message: '公司内容更新成功'
+    }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+  } catch (error) {
+    console.error('更新公司内容失败:', error);
+    return createErrorResponse(500, '更新公司内容失败');
+  }
+}
+
+async function handleDeleteCompanyContent(request, env) {
+  try {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader) {
+      return createAuthError();
+    }
+
+    if (!env.DB) {
+      return createErrorResponse(500, 'D1数据库未配置');
+    }
+
+    const url = new URL(request.url);
+    const idPart = url.pathname.split('/').pop();
+    if (!idPart || Number.isNaN(Number(idPart))) {
+      return createErrorResponse(400, '无效的公司内容ID');
+    }
+    const recordId = Number(idPart);
+
+    await env.DB.prepare('DELETE FROM company_content WHERE id = ?').bind(recordId).run();
+
+    return new Response(JSON.stringify({
+      data: { id: recordId },
+      message: '公司内容删除成功'
+    }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+  } catch (error) {
+    console.error('删除公司内容失败:', error);
+    return createErrorResponse(500, '删除公司内容失败');
   }
 }
 
@@ -2176,12 +2795,14 @@ async function handlePublicProducts(request, env) {
         SELECT id, product_code, name_zh, name_en, name_ru,
                description_zh, description_en, description_ru,
                image_url, gallery_images,
-               category, price_range, status, is_active,
+               category, price_range, is_active,
                sort_order, created_at, updated_at,
                features_zh, features_en, features_ru,
-               specifications_zh, specifications_en, specifications_ru
+               specifications_zh, specifications_en, specifications_ru,
+               applications_zh, applications_en, applications_ru,
+               packaging_options_zh, packaging_options_en, packaging_options_ru
         FROM products
-        WHERE is_active = 1 AND status = 'published'
+        WHERE is_active = 1
         ORDER BY sort_order ASC, created_at DESC
       `).all();
 
@@ -3005,12 +3626,14 @@ async function handleGetSingleProductByCode(request, env, productCode) {
         SELECT id, product_code, name_zh, name_en, name_ru,
                description_zh, description_en, description_ru,
                image_url, gallery_images,
-               category, price_range, status, is_active,
+               category, price_range, is_active,
                sort_order, created_at, updated_at,
                features_zh, features_en, features_ru,
-               specifications_zh, specifications_en, specifications_ru
+               specifications_zh, specifications_en, specifications_ru,
+               applications_zh, applications_en, applications_ru,
+               packaging_options_zh, packaging_options_en, packaging_options_ru
         FROM products
-        WHERE product_code = ? AND is_active = 1 AND status = 'published'
+        WHERE product_code = ? AND is_active = 1
       `).bind(productCode).first();
 
       if (!product) {
