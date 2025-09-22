@@ -1786,9 +1786,9 @@ async function handleCreateProduct(request, env) {
       is_active, sort_order
     });
 
-    // 快速验证必填字段
-    if (!product_code?.trim() || !name_zh?.trim() || !name_en?.trim()) {
-      return createErrorResponse(400, '请填写产品代码、中英文名称');
+    // 基础验证 - 只要求产品代码和中文名称
+    if (!product_code?.trim() || !name_zh?.trim()) {
+      return createErrorResponse(400, '请填写产品代码和中文名称');
     }
 
     // 如果没有提供 category，使用默认值
@@ -1827,8 +1827,8 @@ async function handleCreateProduct(request, env) {
       const productData = {
         product_code: product_code.trim(),
         name_zh: name_zh.trim(),
-        name_en: name_en.trim(),
-        name_ru: name_ru?.trim() || '',
+        name_en: name_en?.trim() || name_zh.trim(), // 如果没有英文名称，使用中文名称
+        name_ru: name_ru?.trim() || name_zh.trim(),  // 如果没有俄文名称，使用中文名称
         description_zh: description_zh?.trim() || '',
         description_en: description_en?.trim() || '',
         description_ru: description_ru?.trim() || '',

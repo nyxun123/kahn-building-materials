@@ -109,7 +109,9 @@ const ProductEditor = () => {
       navigate("/admin/products");
     } catch (error) {
       console.error("保存产品失败", error);
-      toast.error("保存失败，请检查必填项");
+      // 显示具体的错误信息
+      const errorMessage = error?.message || error?.response?.data?.message || "保存失败，请重试";
+      toast.error(errorMessage);
     }
   });
 
@@ -137,7 +139,7 @@ const ProductEditor = () => {
       <Grid numItemsSm={1} numItemsLg={2} className="gap-4">
         <div>
           <Text className="text-sm font-medium text-slate-600">产品编码</Text>
-          <Input required {...register("product_code", { required: true })} />
+          <Input {...register("product_code")} />
         </div>
         <div>
           <Text className="text-sm font-medium text-slate-600">所属分类</Text>
@@ -145,11 +147,11 @@ const ProductEditor = () => {
         </div>
         <div>
           <Text className="text-sm font-medium text-slate-600">中文名称</Text>
-          <Input required {...register("name_zh", { required: true })} />
+          <Input {...register("name_zh")} />
         </div>
         <div>
           <Text className="text-sm font-medium text-slate-600">英文名称</Text>
-          <Input required {...register("name_en", { required: true })} />
+          <Input {...register("name_en")} />
         </div>
         <div>
           <Text className="text-sm font-medium text-slate-600">俄文名称</Text>

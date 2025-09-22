@@ -116,9 +116,9 @@ const ProductForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // 验证必填字段
-    if (!formData.product_code || !formData.name_zh || !formData.name_en || !formData.category) {
-      toast.error('请填写所有必填字段');
+    // 基础验证 - 只要求产品代码和中文名称
+    if (!formData.product_code || !formData.name_zh) {
+      toast.error('请至少填写产品代码和中文名称');
       return;
     }
 
