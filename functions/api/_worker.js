@@ -701,7 +701,7 @@ async function handleImageUpload(request, env) {
           throw new Error('R2上传失败，未返回结果');
         }
         
-        const imageUrl = `https://pub-b9f0c2c358074609bf8701513c879957.r2.dev/${safeFileName}`;
+        const imageUrl = `https://pub-${env.CLOUDFLARE_ACCOUNT_ID || 'b9f0c2c358074609bf8701513c879957'}.r2.dev/${safeFileName}`;
         const elapsedTime = performance.now() - startTime;
         
         console.log('✅ R2上传成功:', { url: imageUrl, time: `${elapsedTime.toFixed(2)}ms` });
