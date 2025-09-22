@@ -92,6 +92,8 @@ const ProductEditor = () => {
     const payload: any = {
       ...values,
       is_active: Boolean(values.is_active),
+      // 自动清空base64数据
+      image_url: values.image_url?.startsWith('data:image/') ? '' : values.image_url,
       features_zh: values.features_zh
         ? values.features_zh.split("\n").map((item) => item.trim()).filter(Boolean)
         : [],

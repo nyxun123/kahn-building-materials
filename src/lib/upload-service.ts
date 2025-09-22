@@ -33,18 +33,11 @@ class UploadService {
       allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
     } = options;
 
-    try {
-      // 验证文件
-      this.validateFile(file, maxSize, allowedTypes);
+    // 验证文件
+    this.validateFile(file, maxSize, allowedTypes);
 
-      // 尝试上传到Cloudflare Worker
-      return await this.uploadToCloudflare(file, folder);
-    } catch (error) {
-      console.error('上传失败:', error);
-
-      // 回退到base64存储
-      return await this.uploadToBase64(file, folder);
-    }
+    // 直接上传到Cloudflare Worker，不使用base64回退
+    return await this.uploadToCloudflare(file, folder);
   }
 
   private validateFile(file: File, maxSize: number, allowedTypes: string[]) {
@@ -75,8 +68,8 @@ class UploadService {
         uploadMethod: 'cloudflare'
       };
     } catch (error) {
-      console.error('Cloudflare上传失败，使用base64回退:', error);
-      return await this.uploadToBase64(file, folder);
+      console.error('Cloudflare上传失败:', error);
+      throw new Error(`图片上传失败: ${error.message || '未知错误'}`);
     }
   }
 

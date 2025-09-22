@@ -29,8 +29,29 @@ export class CloudflareWorkerUpload {
       formData.append('file', file);
       formData.append('folder', folder);
 
+      // 获取认证token
+      const getAuthToken = () => {
+        try {
+          const adminAuth = localStorage.getItem("admin-auth");
+          if (adminAuth) {
+            const parsed = JSON.parse(adminAuth);
+            return parsed?.token || 'admin-session';
+          }
+          const tempAuth = localStorage.getItem("temp-admin-auth");
+          if (tempAuth) {
+            return 'temp-admin';
+          }
+        } catch (error) {
+          console.warn("读取认证信息失败", error);
+        }
+        return 'admin-token'; // 默认token
+      };
+
       const response = await fetch(getApiUrl(API_CONFIG.PATHS.UPLOAD_IMAGE), {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${getAuthToken()}`
+        },
         body: formData,
       });
 
@@ -47,9 +68,12 @@ export class CloudflareWorkerUpload {
       };
     } catch (error) {
       console.error('Worker上传失败:', error);
-
-      // 回退到base64存储
-      return await this.uploadToBase64(file, folder);
+      
+      return {
+        success: false,
+        error: `图片上传失败: ${error.message || '未知错误'}`,
+        method: 'cloudflare'
+      };
     }
   }
 

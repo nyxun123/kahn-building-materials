@@ -127,6 +127,8 @@ const ProductForm = () => {
       
       const productData = {
         ...formData,
+        // 自动清空base64数据
+        image_url: formData.image_url?.startsWith('data:image/') ? '' : formData.image_url,
         // 确保特性是JSON数组格式
         features_zh: formData.features_zh || '[]',
         features_en: formData.features_en || '[]',
