@@ -8,11 +8,11 @@
 - **响应式设计**: 适配桌面端和移动端
 - **管理后台**: 产品管理、消息管理、内容管理
 - **现代化技术栈**: React 18 + TypeScript + Vite + Tailwind CSS
-- **数据库集成**: Supabase 后端服务
+- **数据库集成**: Cloudflare D1 后端服务
 - **表单验证**: React Hook Form + Zod
 - **UI 组件**: Radix UI + Shadcn/ui
 
-## 📦 技术栈
+## 🛠️ 技术栈
 
 - **前端框架**: React 18 + TypeScript
 - **构建工具**: Vite
@@ -22,15 +22,15 @@
 - **状态管理**: React Hooks
 - **表单处理**: React Hook Form + Zod
 - **国际化**: React i18next
-- **后端服务**: Supabase
+- **后端服务**: Cloudflare D1
 - **部署平台**: Cloudflare Pages
 
-## 🛠️ 开发环境设置
-
-### 前置要求
+## 📦 环境要求
 
 - Node.js 18+
-- pnpm (推荐) 或 npm
+- pnpm
+
+## 🚀 开发环境设置
 
 ### 安装依赖
 
@@ -65,6 +65,7 @@ pnpm dev
 
 - `pnpm dev` - 启动开发服务器
 - `pnpm build` - 构建生产版本
+- `pnpm build:prod` - 构建生产版本（生产环境配置）
 - `pnpm build:cloudflare` - 为 Cloudflare Pages 构建
 - `pnpm test:cloudflare` - 测试 Cloudflare Pages 构建
 - `pnpm preview` - 预览生产构建
@@ -87,42 +88,6 @@ pnpm dev
 5. 设置环境变量
 6. 部署项目
 
-#### 测试构建
-
-在部署前，可以本地测试构建：
-
-```bash
-pnpm run test:cloudflare
-```
-
-## 📁 项目结构
-
-```
-src/
-├── components/          # 可复用组件
-│   ├── ui/             # UI 基础组件
-│   ├── layout.tsx      # 布局组件
-│   ├── navbar.tsx      # 导航栏
-│   └── footer.tsx      # 页脚
-├── pages/              # 页面组件
-│   ├── home/           # 首页
-│   ├── products/       # 产品页面
-│   ├── about/          # 关于我们
-│   ├── contact/        # 联系我们
-│   ├── oem/            # OEM 服务
-│   └── admin/          # 管理后台
-├── lib/                # 工具库
-│   ├── supabase.ts     # Supabase 客户端
-│   ├── i18n.ts         # 国际化配置
-│   ├── router.tsx      # 路由配置
-│   └── utils.ts        # 工具函数
-├── locales/            # 多语言文件
-│   ├── zh/             # 中文
-│   ├── en/             # 英文
-│   └── ru/             # 俄语
-└── hooks/              # 自定义 Hooks
-```
-
 ## 🌐 多语言支持
 
 项目支持三种语言：
@@ -143,6 +108,14 @@ src/
 
 访问路径: `/admin/login`
 
+## 🏢 业务信息
+
+- 公司: 杭州卡恩新型建材有限公司
+- 邮箱: info@karn-materials.com
+- 电话: +86 571-88888888
+- 地址: 浙江省杭州市余杭区东湖街道星桥路18号星尚国际广场
+- 产品: 羧甲基淀粉（CMS）产品，主要用于墙纸胶粉、银粉纸涂布、建材添加等行业
+
 ## 🤝 贡献
 
 1. Fork 项目
@@ -154,10 +127,3 @@ src/
 ## 📄 许可证
 
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
-
-## 📞 联系我们
-
-- 公司: 杭州卡恩新型建材有限公司
-- 邮箱: info@karn-materials.com
-- 电话: +86 571-88888888
-- 地址: 浙江省杭州市余杭区东湖街道星桥路18号星尚国际广场

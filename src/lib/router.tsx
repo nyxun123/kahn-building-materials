@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { Layout } from '@/components/layout';
+import LanguageDetection from '@/components/LanguageDetection';
 
 // 延迟加载组件
 const HomePage = lazy(() => import('@/pages/home'));
@@ -228,7 +229,7 @@ export const router = createBrowserRouter([
   // 重定向路由
   {
     path: '/',
-    element: <Navigate to="/zh" replace />,
+    element: <LanguageDetection />,
   },
   {
     path: '/products',

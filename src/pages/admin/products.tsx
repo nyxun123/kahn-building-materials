@@ -14,9 +14,10 @@ import {
   Flex,
   Text,
 } from "@tremor/react";
-import { useTable, useDelete } from "@refinedev/core";
+import { useTable } from "@refinedev/core";
 import { Trash2, PencilLine, Plus, RefreshCcw } from "lucide-react";
 import toast from "react-hot-toast";
+import { d1Api } from "@/lib/d1-api";
 
 const Products = () => {
   const [search, setSearch] = useState("");
@@ -50,7 +51,7 @@ const Products = () => {
     },
   });
 
-  const { mutate: deleteProduct, isLoading: deleting } = useDelete();
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const isLoading = tableQueryResult?.isLoading ?? false;
   const refetch = tableQueryResult?.refetch;
@@ -126,20 +127,24 @@ const Products = () => {
                       color="rose"
                       icon={Trash2}
                       size="xs"
-                      loading={deleting}
-                      onClick={() =>
-                        deleteProduct(
-                          {
-                            resource: "products",
-                            id: product.id,
-                            mutationMode: "undoable",
-                          },
-                          {
-                            onSuccess: () => toast.success("产品已删除"),
-                            onError: () => toast.error("删除失败，请重试"),
-                          },
-                        )
-                      }
+                      loading={deletingId === product.id}
+                      onClick={async () => {
+                        try {
+                          setDeletingId(product.id);
+                          const result = await d1Api.deleteProduct(product.id);
+                          if (result.error) {
+                            throw new Error(result.error.message);
+                          }
+                          toast.success("产品已删除");
+                          await refetch?.();
+                        } catch (error) {
+                          console.error("删除产品失败:", error);
+                          const message = error instanceof Error ? error.message : "删除失败，请重试";
+                          toast.error(message || "删除失败，请重试");
+                        } finally {
+                          setDeletingId(null);
+                        }
+                      }}
                     >
                       删除
                     </Button>

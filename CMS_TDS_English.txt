@@ -1,0 +1,60 @@
+Hangzhou Kahn New Building Materials Co., Ltd.
+Technical Data Sheet (TDS) for Carboxymethyl Starch (CMS)
+
+Product Name: Carboxymethyl Starch (CMS)
+Product Models: 8840 / K6 / 999
+
+--------------------------------------------
+
+1. Product Description
+Carboxymethyl Starch (CMS) is an anionic starch ether produced by chemical modification of natural starch as raw material. This product has excellent water solubility, thickening property, stability and film-forming ability. It is widely used in various industrial applications such as textile printing and dyeing, water-based coatings, wallpaper adhesive, water-absorbing gel, and dispersing and suspending agents.
+
+2. Technical Specifications
+
+┌───────────────┬──────────────┬──────────────┬──────────────┐
+│    Items     │     8840      │      K6       │      999      │
+├───────────────┼──────────────┼──────────────┼──────────────┤
+│ Viscometer   │    NDJ-8     │    NDJ-8     │    NDJ-8     │
+│ Test Condition│ 5% Solution  │ 5% Solution  │ 5% Solution  │
+│ Spindle      │ No.4 Spindle │ No.4 Spindle │ No.4 Spindle │
+│ Speed        │ 12 rpm       │ 12 rpm       │ 12 rpm       │
+│ Viscosity(cP)│ 25000±10%    │ 50000±10%    │ 65000±10%    │
+│ pH Value     │ 9-11         │ 9-11         │ 9-11         │
+│ Appearance   │ Flake        │ Flake        │ Flake        │
+│ Degree of   │ 0.3          │ 0.4          │ 0.4          │
+│ Substitution │              │              │              │
+└───────────────┴──────────────┴──────────────┴──────────────┘
+
+3. Product Characteristics
+1. Excellent water solubility, dissolves rapidly in cold water
+2. Stable viscosity with good thickening effect
+3. Good chemical stability, acid and alkali resistant
+4. Compatible with various chemical additives
+5. Environmentally friendly and non-toxic, biodegradable
+
+4. Application Fields
+1. Textile Printing and Dyeing: Used as printing paste and sizing agent
+2. Water-based Coatings: Used as thickener and stabilizer
+3. Wallpaper Adhesive: Provides good adhesion and application performance
+4. Water-absorbing Gel: Used in hygiene products and agricultural water retention agents
+5. Dispersing and Suspending Agents: Used in pesticide and ceramic industries for dispersion stabilization
+
+5. Usage Instructions
+1. Direct Addition: Slowly add the product to stirring water to avoid lumping
+2. Pre-mixing: Mix evenly with a small amount of salt first, then add to water and stir to dissolve
+3. Recommended Dosage: Determined according to specific applications and required viscosity, generally 0.1-2.0%
+
+6. Packaging and Storage
+1. Packaging: 25kg/bag, lined with plastic bag and covered with woven bag
+2. Storage Conditions: Dry and ventilated place, avoid direct sunlight
+3. Shelf Life: 24 months at room temperature
+
+7. Safety Information
+1. This product is non-toxic and harmless, but avoid inhaling large amounts of dust
+2. If contact with skin or eyes, rinse with water
+3. Transport according to general chemical transportation regulations
+
+Hangzhou Kahn New Building Materials Co., Ltd.
+Address: No.xxx, xxx Road, xxx District, Hangzhou City
+Tel: 0571-xxxxxxx
+Website: www.xxxxxx.com
