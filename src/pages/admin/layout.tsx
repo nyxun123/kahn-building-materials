@@ -17,6 +17,9 @@ import {
   Building2,
   LogOut,
   Globe,
+  Search,
+  TrendingUp,
+  MapPin,
 } from "lucide-react";
 import { AdminProvider } from "./refine/admin-provider";
 
@@ -50,6 +53,24 @@ const NAV_ITEMS = [
     description: "企业介绍与资质资料",
     path: "/admin/company-info",
     icon: Building2,
+  },
+  {
+    label: "SEO优化",
+    description: "搜索引擎优化与地理位置",
+    path: "/admin/seo",
+    icon: Search,
+  },
+  {
+    label: "网站分析",
+    description: "流量统计与用户行为",
+    path: "/admin/analytics",
+    icon: TrendingUp,
+  },
+  {
+    label: "网站地图",
+    description: "多语言URL与索引管理",
+    path: "/admin/sitemap",
+    icon: MapPin,
   },
 ];
 

@@ -6,6 +6,7 @@ import { Toaster } from 'react-hot-toast';
 
 import { router } from './lib/router';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { ServiceWorkerProvider } from './components/ServiceWorkerProvider';
 import './lib/i18n';
 
 function App() {
@@ -18,14 +19,16 @@ function App() {
   }, []);
 
   return (
-    <ErrorBoundary>
-      <HelmetProvider>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Toaster position="top-center" />
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </HelmetProvider>
-    </ErrorBoundary>
+    <ServiceWorkerProvider>
+      <ErrorBoundary>
+        <HelmetProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Toaster position="top-center" />
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </HelmetProvider>
+      </ErrorBoundary>
+    </ServiceWorkerProvider>
   );
 }
 

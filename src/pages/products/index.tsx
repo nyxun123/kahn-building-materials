@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { ArrowRight } from 'lucide-react';
-import { getApiUrl, API_CONFIG } from '@/lib/config';
+import { optimizedFetch } from '@/lib/api-cache';
+import { useDebounce, useLocalStorage } from '@/lib/performance-utils';
+import { LazyImage } from '@/components/LazyImage';
 
 // 使用D1 API
 interface Product {
@@ -22,55 +24,109 @@ interface Product {
   updated_at: string;
 }
 
-export default function ProductsPage() {
+const ProductsPage = memo(function ProductsPage() {
   const { t, i18n } = useTranslation(['common', 'products']);
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  // 使用防抖优化搜索
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  
+  // 优化的获取产品名称函数
+  const getProductName = useCallback((product: Product) => {
+    const currentLang = i18n.language || 'zh';
+    const nameKey = `name_${currentLang}` as keyof typeof product;
+    return product[nameKey] as string || product.name_zh;
+  }, [i18n.language]);
+  
+  // 优化的获取产品描述函数
+  const getProductDescription = useCallback((product: Product) => {
+    const currentLang = i18n.language || 'zh';
+    const descKey = `description_${currentLang}` as keyof typeof product;
+    return product[descKey] as string || product.description_zh;
+  }, [i18n.language]);
+  
+  // 缓存过滤结果
+  const filteredProducts = useMemo(() => {
+    if (!debouncedSearchTerm) return products;
+    return products.filter(product => {
+      const name = getProductName(product);
+      const description = getProductDescription(product);
+      const searchLower = debouncedSearchTerm.toLowerCase();
+      return name.toLowerCase().includes(searchLower) || 
+             description.toLowerCase().includes(searchLower);
+    });
+  }, [products, debouncedSearchTerm, getProductName, getProductDescription]);
+  
+  // 缓存产品数据到localStorage
+  const [cachedProducts, setCachedProducts] = useLocalStorage<Product[]>('products-cache', []);
 
   useEffect(() => {
     async function fetchProducts() {
       setIsLoading(true);
       
       try {
-        // 使用公开产品API
-        const response = await fetch(getApiUrl(API_CONFIG.PATHS.PRODUCTS));
-        
-        if (!response.ok) {
-          throw new Error('获取产品失败');
+        // 优先使用缓存
+        if (cachedProducts.length > 0) {
+          setProducts(cachedProducts);
+          setIsLoading(false);
         }
         
-        const result = await response.json();
+        // 使用优化的fetch
+        const result = await optimizedFetch('/api/products', {}, { ttl: 5 * 60 * 1000 });
         
         if (result.success) {
           setProducts(result.data);
+          setCachedProducts(result.data);
         } else {
           console.error('获取产品失败:', result.message);
-          setProducts([]);
+          if (cachedProducts.length === 0) {
+            setProducts([]);
+          }
         }
       } catch (error) {
         console.error('获取产品失败:', error);
-        setProducts([]);
+        if (cachedProducts.length === 0) {
+          setProducts([]);
+        }
       } finally {
         setIsLoading(false);
       }
     }
 
     fetchProducts();
-  }, []);
+  }, [cachedProducts, setCachedProducts]);
 
-  // 根据当前语言获取产品名称
-  const getProductName = (product: Product) => {
-    const lang = i18n.language || 'zh';
-    const nameKey = `name_${lang}` as keyof typeof product;
-    return product[nameKey] as string || product.name_zh;
-  };
-
-  // 根据当前语言获取产品描述
-  const getProductDescription = (product: Product) => {
-    const lang = i18n.language || 'zh';
-    const descKey = `description_${lang}` as keyof typeof product;
-    return product[descKey] as string || product.description_zh || '';
-  };
+  // 优化的产品卡片组件
+  const ProductCard = memo(({ product }: { product: Product }) => (
+    <div className="group relative overflow-hidden rounded-lg border bg-background p-6 shadow-sm transition-all hover:shadow-md">
+      {product.image_url ? (
+        <div className="aspect-square mb-5 overflow-hidden rounded-md bg-muted">
+          <LazyImage
+            src={product.image_url}
+            alt={getProductName(product)}
+            className="h-full w-full object-cover object-center transition-all group-hover:scale-105"
+          />
+        </div>
+      ) : (
+        <div className="aspect-square mb-5 overflow-hidden rounded-md bg-muted flex items-center justify-center text-muted-foreground">
+          暂无图片
+        </div>
+      )}
+      <h3 className="text-lg font-semibold">{getProductName(product)}</h3>
+      <p className="mt-2 line-clamp-3 text-muted-foreground">
+        {getProductDescription(product)}
+      </p>
+      <Link 
+        to={`/products/${product.product_code}`}
+        className="mt-4 inline-flex items-center text-sm font-medium text-primary hover:underline"
+      >
+        {t('cta.learn_more')}
+        <ArrowRight className="ml-1 h-4 w-4" />
+      </Link>
+    </div>
+  ));
 
   return (
     <>
@@ -91,6 +147,21 @@ export default function ProductsPage() {
         </div>
       </section>
 
+      {/* 搜索区 */}
+      <section className="py-8 bg-background border-b">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-md mx-auto">
+            <input
+              type="text"
+              placeholder={t('products:search_placeholder')}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
+      </section>
+
       {/* 产品列表区 */}
       <section className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -98,39 +169,16 @@ export default function ProductsPage() {
             <div className="flex justify-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
             </div>
-          ) : products.length === 0 ? (
+          ) : filteredProducts.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-muted-foreground">{t('products:no_products')}</p>
+              <p className="text-muted-foreground">
+                {searchTerm ? t('products:no_search_results') : t('products:no_products')}
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {products.map((product) => (
-                <div key={product.id} className="group relative overflow-hidden rounded-lg border bg-background p-6 shadow-sm transition-all hover:shadow-md">
-                  {product.image_url ? (
-                    <div className="aspect-square mb-5 overflow-hidden rounded-md bg-muted">
-                      <img
-                        src={product.image_url.startsWith('http') ? product.image_url : product.image_url}
-                        alt={getProductName(product)}
-                        className="h-full w-full object-cover object-center transition-all group-hover:scale-105"
-                      />
-                    </div>
-                  ) : (
-                    <div className="aspect-square mb-5 overflow-hidden rounded-md bg-muted flex items-center justify-center text-muted-foreground">
-                      暂无图片
-                    </div>
-                  )}
-                  <h3 className="text-lg font-semibold">{getProductName(product)}</h3>
-                  <p className="mt-2 line-clamp-3 text-muted-foreground">
-                    {getProductDescription(product)}
-                  </p>
-                  <Link 
-                    to={`/products/${product.product_code}`}
-                    className="mt-4 inline-flex items-center text-sm font-medium text-primary hover:underline"
-                  >
-                    {t('cta.learn_more')}
-                    <ArrowRight className="ml-1 h-4 w-4" />
-                  </Link>
-                </div>
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           )}
@@ -157,4 +205,6 @@ export default function ProductsPage() {
       </section>
     </>
   );
-}
+});
+
+export default ProductsPage;

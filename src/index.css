@@ -1,3 +1,6 @@
+/* 页头页尾增强样式 */
+@import './styles/header-footer-enhancements.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -1,112 +1,125 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { Mail, MapPin, Phone, Globe, Clock, Building2 } from 'lucide-react';
+import { Mail, MapPin, Phone, Clock, Award, Shield, CheckCircle } from 'lucide-react';
 
 export function Footer() {
   const { t } = useTranslation();
   const { lang = 'zh' } = useParams<{ lang: string }>();
 
-  const quickLinks = [
-    { name: t('nav.home'), href: `/${lang}` },
-    { name: t('nav.products'), href: `/${lang}/products` },
-    { name: t('nav.oem'), href: `/${lang}/oem` },
-    { name: t('nav.about'), href: `/${lang}/about` },
-    { name: t('nav.contact'), href: `/${lang}/contact` },
-  ];
-
-  const certifications = [
-    { name: 'ISO 9001', year: '2023' },
-    { name: '环保认证', year: '2024' },
-    { name: '质量认证', year: '2023' },
-  ];
-
   return (
-    <footer className="bg-background border-t border-border">
-      {/* 主要内容区 */}
-      <div className="bg-muted/20 py-12">
+    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+      <div className="py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            
             {/* 公司信息 */}
-            <div className="lg:col-span-2">
-              <div className="flex items-center">
-                <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-green-400 bg-clip-text text-transparent dark:from-green-400 dark:to-green-300">
-                  KARN
-                </span>
-              </div>
-              <p className="mt-4 text-sm text-muted-foreground max-w-md">
-                {t('footer.company')} - {t('title')}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                杭州卡恩新型建材有限公司
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 leading-relaxed">
+                专业从事新型建材的研发、生产和销售，为客户提供高品质的建筑材料解决方案。
               </p>
-              <div className="mt-6 flex flex-wrap gap-4">
-                <div className="flex items-center">
-                  <Phone className="h-5 w-5 text-primary mr-2" />
-                  <span className="text-sm">{t('footer.contact.phone_value')}</span>
-                </div>
-                <div className="flex items-center">
-                  <Mail className="h-5 w-5 text-primary mr-2" />
-                  <span className="text-sm">{t('footer.contact.email_value')}</span>
-                </div>
+              <div className="flex items-center">
+                <Award className="h-4 w-4 text-green-600 mr-2" />
+                <span className="text-sm text-gray-600 dark:text-gray-400">ISO 9001 质量认证</span>
+              </div>
+            </div>
+
+            {/* 联系方式 */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                联系我们
+              </h3>
+              <div className="space-y-2">
                 <div className="flex items-start">
-                  <MapPin className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                  <span className="text-sm">{t('footer.contact.address_value')}</span>
+                  <MapPin className="h-4 w-4 text-green-600 mr-2 mt-0.5" />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    浙江省杭州市余杭区
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  <Phone className="h-4 w-4 text-green-600 mr-2" />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    +86 571-8888-8888
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  <Mail className="h-4 w-4 text-green-600 mr-2" />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    info@karn-materials.com
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  <Clock className="h-4 w-4 text-green-600 mr-2" />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    周一至周五 8:00-18:00
+                  </span>
                 </div>
               </div>
             </div>
-            
-            {/* 快捷链接 */}
+
+            {/* 快捷导航 */}
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground mb-4">
-                {t('footer.links.title')}
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                快捷导航
               </h3>
-              <ul className="space-y-3">
-                {quickLinks.map((link) => (
-                  <li key={link.name}>
-                    <Link 
-                      to={link.href} 
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors hover:underline"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              <div className="space-y-2">
+                <Link to={`/${lang}/`} className="block text-sm text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                  首页
+                </Link>
+                <Link to={`/${lang}/products`} className="block text-sm text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                  产品中心
+                </Link>
+                <Link to={`/${lang}/about`} className="block text-sm text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                  关于我们
+                </Link>
+                <Link to={`/${lang}/contact`} className="block text-sm text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                  联系我们
+                </Link>
+              </div>
             </div>
-            
-            {/* 认证信息 */}
+
+            {/* 质量保证 */}
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground mb-4">
-                质量认证
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                质量保证
               </h3>
-              <div className="space-y-3">
-                {certifications.map((cert, index) => (
-                  <div key={index} className="flex items-center">
-                    <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                    <div>
-                      <p className="text-sm text-foreground">{cert.name}</p>
-                      <p className="text-xs text-muted-foreground">{cert.year}</p>
-                    </div>
-                  </div>
-                ))}
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <Shield className="h-4 w-4 text-green-600 mr-2" />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">质量体系认证</span>
+                </div>
+                <div className="flex items-center">
+                  <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">环保标准认证</span>
+                </div>
+                <div className="flex items-center">
+                  <Award className="h-4 w-4 text-green-600 mr-2" />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">行业资质认证</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
       
-      {/* 底部版权信息 */}
-      <div className="py-6">
+      {/* 版权信息 */}
+      <div className="border-t border-gray-200 dark:border-gray-800 py-4">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-xs text-muted-foreground mb-4 md:mb-0">
-              {t('footer.rights')}
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              © 2024 杭州卡恩新型建材有限公司. 保留所有权利.
             </p>
-            <div className="flex items-center text-xs text-muted-foreground">
-              <Globe className="h-4 w-4 mr-1" />
-              <span>支持多语言 | </span>
-              <Clock className="h-4 w-4 mx-1" />
-              <span>全天候服务 | </span>
-              <Building2 className="h-4 w-4 mx-1" />
-              <span>专业制造</span>
+            <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400 mt-2 md:mt-0">
+              <a href="#" className="hover:text-green-600 transition-colors">
+                隐私政策
+              </a>
+              <a href="#" className="hover:text-green-600 transition-colors">
+                使用条款
+              </a>
             </div>
           </div>
         </div>

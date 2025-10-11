@@ -11,7 +11,7 @@ database_id = "1017f91b-e6f1-42d9-b9c3-5f32904be73a"
 # R2 存储桶配置 - 图片上传
 [[r2_buckets]]
 binding = "IMAGE_BUCKET"
-bucket_name = "kahn-materials-images"
+bucket_name = "kaen"
 
 [env.production]
 # D1 数据库配置 - 生产环境
@@ -23,7 +23,7 @@ database_id = "1017f91b-e6f1-42d9-b9c3-5f32904be73a"
 # R2 存储桶配置 - 生产环境
 [[env.production.r2_buckets]]
 binding = "IMAGE_BUCKET"
-bucket_name = "kahn-materials-images"
+bucket_name = "kaen"
 
 [env.production.vars]
 ENVIRONMENT = "production"

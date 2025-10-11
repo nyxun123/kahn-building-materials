@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片上传测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .result {
+            background: #f5f5f5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+            word-break: break-all;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        img {
+            max-width: 300px;
+            max-height: 200px;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>图片上传测试</h1>
+    
+    <div class="test-section">
+        <h2>1. 测试图片上传API</h2>
+        <input type="file" id="imageInput" accept="image/*">
+        <button onclick="testImageUpload()" id="uploadBtn">上传图片</button>
+        <div id="uploadResult" class="result"></div>
+        <div id="imagePreview"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. 测试产品创建（包含图片）</h2>
+        <button onclick="testProductCreation()" id="createBtn">创建测试产品</button>
+        <div id="createResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. 测试完整的产品编辑流程</h2>
+        <p>请按以下步骤测试编辑功能：</p>
+        <ol>
+            <li>上传一张图片</li>
+            <li>创建一个包含完整信息的产品</li>
+            <li>点击下面的“模拟编辑”按钮来检查数据是否正确加载</li>
+        </ol>
+        <input type="number" id="editProductId" placeholder="要编辑的产品ID">
+        <button onclick="testProductEdit()" id="editBtn">模拟产品编辑流程</button>
+        <div id="editResult" class="result"></div>
+        <div id="editDataComparison"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8788/api';
+        let lastUploadedImageUrl = '';
+
+        async function testImageUpload() {
+            const fileInput = document.getElementById('imageInput');
+            const file = fileInput.files[0];
+            const resultDiv = document.getElementById('uploadResult');
+            const previewDiv = document.getElementById('imagePreview');
+            const uploadBtn = document.getElementById('uploadBtn');
+
+            if (!file) {
+                resultDiv.innerHTML = '<span style="color: red;">请选择图片文件</span>';
+                return;
+            }
+
+            try {
+                uploadBtn.disabled = true;
+                resultDiv.innerHTML = '正在上传...';
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                console.log('上传文件信息:', {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                });
+
+                const response = await fetch(`${API_BASE}/upload-image`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                console.log('上传响应:', result);
+
+                if (response.ok && result.code === 200) {
+                    // 使用original字段作为图片URL
+                    lastUploadedImageUrl = result.data.original || result.data.url;
+                    resultDiv.innerHTML = `<div class="success">
+                        <strong>上传成功！</strong><br>
+                        URL: ${lastUploadedImageUrl}<br>
+                        文件名: ${result.data.fileName}<br>
+                        类型: ${result.data.fileType}<br>
+                        上传方式: ${result.data.uploadMethod}
+                    </div>`;
+
+                    // 显示图片预览
+                    previewDiv.innerHTML = `<img src="${lastUploadedImageUrl}" alt="上传的图片">`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">
+                        <strong>上传失败：</strong>${result.message || '未知错误'}
+                    </div>`;
+                    previewDiv.innerHTML = '';
+                }
+            } catch (error) {
+                console.error('上传错误:', error);
+                resultDiv.innerHTML = `<div class="error">
+                    <strong>上传失败：</strong>${error.message}
+                </div>`;
+                previewDiv.innerHTML = '';
+            } finally {
+                uploadBtn.disabled = false;
+            }
+        }
+
+        async function testProductCreation() {
+            const resultDiv = document.getElementById('createResult');
+            const createBtn = document.getElementById('createBtn');
+
+            if (!lastUploadedImageUrl) {
+                resultDiv.innerHTML = '<span style="color: red;">请先上传图片</span>';
+                return;
+            }
+
+            try {
+                createBtn.disabled = true;
+                resultDiv.innerHTML = '正在创建产品...';
+
+                const productData = {
+                    product_code: 'TEST-' + Date.now(),
+                    name_zh: '测试产品-图片持久化验证',
+                    name_en: 'Test Product - Image Persistence',
+                    description_zh: '这是一个用于测试图片持久化功能的产品',
+                    category: 'adhesive',
+                    price: 25.00,
+                    image_url: lastUploadedImageUrl,
+                    is_active: true
+                };
+
+                console.log('创建产品数据:', productData);
+
+                const response = await fetch(`${API_BASE}/admin/products`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer test-token'
+                    },
+                    body: JSON.stringify(productData)
+                });
+
+                const result = await response.json();
+                console.log('创建产品响应:', result);
+
+                if (response.ok && result.data) {
+                    resultDiv.innerHTML = `<div class="success">
+                        <strong>产品创建成功！</strong><br>
+                        产品ID: ${result.data.id}<br>
+                        产品代码: ${result.data.product_code}<br>
+                        图片URL: ${result.data.image_url}
+                    </div>`;
+                    
+                    // 自动设置产品ID用于下一步测试
+                    document.getElementById('productId').value = result.data.id;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">
+                        <strong>创建失败：</strong>${result.error?.message || result.message || '未知错误'}
+                    </div>`;
+                }
+            } catch (error) {
+                console.error('创建产品错误:', error);
+                resultDiv.innerHTML = `<div class="error">
+                    <strong>创建失败：</strong>${error.message}
+                </div>`;
+            } finally {
+                createBtn.disabled = false;
+            }
+        }
+
+        async function testProductEdit() {
+            const productId = document.getElementById('editProductId').value;
+            const resultDiv = document.getElementById('editResult');
+            const comparisonDiv = document.getElementById('editDataComparison');
+            const editBtn = document.getElementById('editBtn');
+
+            if (!productId) {
+                resultDiv.innerHTML = '<span style="color: red;">请输入产品ID</span>';
+                return;
+            }
+
+            try {
+                editBtn.disabled = true;
+                resultDiv.innerHTML = '正在测试编辑流程...';
+                comparisonDiv.innerHTML = '';
+
+                // 1. 获取产品数据（模拟编辑页面加载）
+                console.log('🔄 步骤1: 获取产品数据（模拟编辑页面加载）');
+                const response = await fetch(`${API_BASE}/admin/products/${productId}`, {
+                    headers: {
+                        'Authorization': 'Bearer test-token'
+                    }
+                });
+
+                const result = await response.json();
+                console.log('📤 API响应:', result);
+
+                if (response.ok && result.data && result.data.length > 0) {
+                    const product = result.data[0];
+                    
+                    // 2. 模拟前端ProductForm组件的数据映射
+                    console.log('🗺️ 步骤2: 模拟前端数据映射');
+                    const formData = {
+                        product_code: product.product_code || '',
+                        name_zh: product.name_zh || '',
+                        name_en: product.name_en || '',
+                        name_ru: product.name_ru || '',
+                        description_zh: product.description_zh || '',
+                        description_en: product.description_en || '',
+                        description_ru: product.description_ru || '',
+                        specifications_zh: product.specifications_zh || '',
+                        specifications_en: product.specifications_en || '',
+                        specifications_ru: product.specifications_ru || '',
+                        applications_zh: product.applications_zh || '',
+                        applications_en: product.applications_en || '',
+                        applications_ru: product.applications_ru || '',
+                        category: product.category || 'adhesive',
+                        price: product.price || 0,
+                        price_range: product.price_range || '',
+                        features_zh: product.features_zh || '',
+                        features_en: product.features_en || '',
+                        features_ru: product.features_ru || '',
+                        image_url: product.image_url || '',
+                        gallery_images: product.gallery_images || '',
+                        packaging_options_zh: product.packaging_options_zh || '',
+                        packaging_options_en: product.packaging_options_en || '',
+                        packaging_options_ru: product.packaging_options_ru || '',
+                        tags: product.tags || '',
+                        is_active: product.is_active,
+                        is_featured: product.is_featured || false,
+                        sort_order: product.sort_order || 0,
+                        stock_quantity: product.stock_quantity || 0,
+                        min_order_quantity: product.min_order_quantity || 1,
+                        meta_title_zh: product.meta_title_zh || '',
+                        meta_title_en: product.meta_title_en || '',
+                        meta_title_ru: product.meta_title_ru || '',
+                        meta_description_zh: product.meta_description_zh || '',
+                        meta_description_en: product.meta_description_en || '',
+                        meta_description_ru: product.meta_description_ru || '',
+                    };
+                    
+                    console.log('📝 映射后的表单数据:', formData);
+
+                    // 3. 检查关键字段的存在性
+                    const criticalFields = [
+                        { key: 'product_code', label: '产品代码' },
+                        { key: 'name_zh', label: '中文名称' },
+                        { key: 'name_en', label: '英文名称' },
+                        { key: 'description_zh', label: '中文描述' },
+                        { key: 'price', label: '价格' },
+                        { key: 'image_url', label: '图片URL' },
+                        { key: 'category', label: '分类' }
+                    ];
+
+                    let allFieldsPresent = true;
+                    let fieldStatus = [];
+
+                    for (const { key, label } of criticalFields) {
+                        const value = formData[key];
+                        const isPresent = value !== null && value !== undefined && value !== '';
+                        
+                        if (!isPresent && key !== 'description_zh') { // 描述字段可以为空
+                            allFieldsPresent = false;
+                        }
+                        
+                        fieldStatus.push({
+                            label,
+                            value: value,
+                            status: isPresent ? '✅ 存在' : '❌ 缺失'
+                        });
+                    }
+
+                    // 4. 显示结果
+                    if (allFieldsPresent) {
+                        resultDiv.innerHTML = `<div class="success">
+                            <strong>✅ 编辑流程测试成功！</strong><br>
+                            产品ID: ${productId}<br>
+                            所有关键字段都正确加载并映射到表单中
+                        </div>`;
+                    } else {
+                        resultDiv.innerHTML = `<div class="error">
+                            <strong>❌ 发现数据丢失问题！</strong><br>
+                            产品ID: ${productId}<br>
+                            某些关键字段未能正确加载
+                        </div>`;
+                    }
+
+                    // 5. 显示详细对比
+                    let comparisonHtml = '<h3>字段加载状态详情：</h3><table style="width:100%; border-collapse: collapse; margin-top: 10px;">';
+                    comparisonHtml += '<tr style="background: #f5f5f5;"><th style="border: 1px solid #ddd; padding: 8px;">字段</th><th style="border: 1px solid #ddd; padding: 8px;">状态</th><th style="border: 1px solid #ddd; padding: 8px;">值</th></tr>';
+                    
+                    fieldStatus.forEach(field => {
+                        const displayValue = typeof field.value === 'string' && field.value.length > 50 
+                            ? field.value.substring(0, 50) + '...' 
+                            : String(field.value);
+                        
+                        comparisonHtml += `<tr>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${field.label}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${field.status}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; word-break: break-all;">${displayValue}</td>
+                        </tr>`;
+                    });
+                    
+                    comparisonHtml += '</table>';
+                    
+                    if (!allFieldsPresent) {
+                        comparisonHtml += '<div style="margin-top: 15px; padding: 10px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px;">';
+                        comparisonHtml += '<strong>⚠️ 问题诊断：</strong><br>';
+                        comparisonHtml += '如果您在编辑页面看到空的表单字段，可能的原因包括：<br>';
+                        comparisonHtml += '1. 浏览器缓存问题 - 请清除浏览器缓存<br>';
+                        comparisonHtml += '2. JavaScript错误 - 请检查浏览器控制台<br>';
+                        comparisonHtml += '3. 网络连接问题 - 请检查网络稳定性<br>';
+                        comparisonHtml += '4. 认证状态过期 - 请重新登录管理后台';
+                        comparisonHtml += '</div>';
+                    } else {
+                        comparisonHtml += '<div style="margin-top: 15px; padding: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px;">';
+                        comparisonHtml += '<strong>✅ 测试结果：</strong>编辑功能正常，所有数据都能正确加载和显示。';
+                        comparisonHtml += '</div>';
+                    }
+                    
+                    comparisonDiv.innerHTML = comparisonHtml;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">
+                        <strong>获取失败：</strong>${result.error?.message || result.message || '产品不存在'}
+                    </div>`;
+                    comparisonDiv.innerHTML = '';
+                }
+            } catch (error) {
+                console.error('编辑流程测试错误:', error);
+                resultDiv.innerHTML = `<div class="error">
+                    <strong>测试失败：</strong>${error.message}
+                </div>`;
+                comparisonDiv.innerHTML = '';
+            } finally {
+                editBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

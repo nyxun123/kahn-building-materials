@@ -128,9 +128,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       return value;
     }
     
-    // If it's a relative path, convert to full URL
+    // If it's a relative path (legacy images), try to construct a valid URL
     if (value.startsWith('/')) {
-      return window.location.origin + value;
+      // 这里可以尝试使用静态资源路径，但通常不可用
+      // 可以考虑显示一个占位图像或者提示用户重新上传
+      console.warn('检测到旧的相对路径图片:', value);
+      return window.location.origin + value; // 尝试构造完整URL
     }
     
     // Return original URL

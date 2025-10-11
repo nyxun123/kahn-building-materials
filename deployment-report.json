@@ -1,0 +1,24 @@
+{
+  "timestamp": "2025-10-11T06:25:31.482Z",
+  "version": "2.0.0-cloudflare-fix",
+  "changes": [
+    "修复 API 端点 /api/admin/products/[id] 的数据格式返回问题",
+    "增强前端数据提供者的错误处理和重试机制",
+    "优化产品编辑组件针对 Cloudflare 环境的数据回显逻辑",
+    "添加详细的调试日志和错误提示",
+    "禁用缓存确保获取最新数据",
+    "增强数据类型转换和验证机制"
+  ],
+  "fixes": [
+    "产品编辑页面数据丢失问题",
+    "Cloudflare D1 数据库数据序列化问题",
+    "生产环境网络延迟导致的数据加载问题",
+    "React 表单在异步环境下的数据回显问题"
+  ],
+  "deployment": {
+    "platform": "Cloudflare Pages",
+    "project": "kahn-building-materials",
+    "url": "https://kn-wallpaperglue.com",
+    "admin_url": "https://kn-wallpaperglue.com/admin"
+  }
+}

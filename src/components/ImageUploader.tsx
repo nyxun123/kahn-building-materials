@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { RiUploadCloudLine, RiCloseLine, RiImageLine } from 'react-icons/ri';
+import { uploadService } from '@/lib/upload-service';
 
 interface ImageUploaderProps {
   onImageUpload: (url: string) => void;
@@ -48,52 +49,20 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       };
       reader.readAsDataURL(file);
 
-      // 直接使用FormData上传
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('folder', folder);
-
-      // 获取认证token
-      const getAuthToken = () => {
-        try {
-          const adminAuth = localStorage.getItem("admin-auth");
-          if (adminAuth) {
-            const parsed = JSON.parse(adminAuth);
-            return parsed?.token || 'admin-session';
-          }
-          const tempAuth = localStorage.getItem("temp-admin-auth");
-          if (tempAuth) {
-            return 'temp-admin';
-          }
-        } catch (error) {
-          console.warn("读取认证信息失败", error);
-        }
-        return 'admin-token'; // 默认token
-      };
-
-      const response = await fetch('/api/upload-image', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${getAuthToken()}`
-        },
-        body: formData
+      // 使用统一的上传服务
+      const result = await uploadService.uploadWithRetry(file, {
+        folder,
+        maxSize,
+        allowedTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
       });
-
-      if (!response.ok) {
-        throw new Error('上传失败');
-      }
-
-      const result = await response.json();
       
-      if (result.code === 200) {
-        onImageUpload(result.data.medium);
-        toast.success('图片上传成功');
-      } else {
-        throw new Error(result.message);
-      }
+      console.log('✅ 上传成功:', result);
+      onImageUpload(result.url);
+      toast.success('图片上传成功');
+      
     } catch (error) {
-      console.error('图片上传失败:', error);
-      toast.error('图片上传失败');
+      console.error('❌ 图片上传失败:', error);
+      toast.error(error instanceof Error ? error.message : '图片上传失败');
     } finally {
       setUploading(false);
     }

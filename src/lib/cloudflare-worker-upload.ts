@@ -25,6 +25,13 @@ export class CloudflareWorkerUpload {
 
   async uploadToWorker(file: File, folder: string): Promise<WorkerUploadResponse> {
     try {
+      console.log('🚀 开始上传图片到Cloudflare:', {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type,
+        folder: folder
+      });
+      
       const formData = new FormData();
       formData.append('file', file);
       formData.append('folder', folder);
@@ -55,11 +62,20 @@ export class CloudflareWorkerUpload {
         body: formData,
       });
 
+      console.log('📝 上传响应状态:', response.status, response.statusText);
+      
       if (!response.ok) {
-        throw new Error(`Worker上传失败: ${response.statusText}`);
+        const errorText = await response.text();
+        console.error('❌ 上传失败:', errorText);
+        throw new Error(`上传失败 (${response.status}): ${errorText || response.statusText}`);
       }
 
       const data = await response.json();
+      console.log('✅ 上传响应数据:', data);
+      
+      if (data.code !== 200) {
+        throw new Error(data.message || '上传失败');
+      }
 
       return {
         success: true,
@@ -67,7 +83,7 @@ export class CloudflareWorkerUpload {
         method: data.data?.uploadMethod || 'cloudflare'
       };
     } catch (error) {
-      console.error('Worker上传失败:', error);
+      console.error('❌ Worker上传失败:', error);
       
       return {
         success: false,

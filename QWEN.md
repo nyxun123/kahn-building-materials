@@ -1,108 +1,101 @@
-# QWEN.md - 杭州卡恩新型建材有限公司官网项目
+# 杭州卡恩新型建材有限公司官网项目指南
 
 ## 📋 项目概述
 
-这是一个为**杭州卡恩新型建材有限公司**开发的现代化企业官网，使用 React + TypeScript + Vite 构建，支持多语言（中文、英文、俄语）和管理后台。
+这是一个基于 React + TypeScript + Vite 构建的现代化企业官网，支持多语言（中文、英文、俄语）和管理后台。该项目主要用于展示杭州卡恩新型建材有限公司的产品信息，特别是羧甲基淀粉（CMS）产品，该产品主要用于墙纸胶粉、银粉纸涂布、建材添加等行业。
 
-## 🏗️ 项目结构
-
-```
-src/
-├── components/          # 可复用组件
-│   ├── ui/             # UI 基础组件
-│   ├── layout.tsx      # 布局组件
-│   ├── navbar.tsx      # 导航栏
-│   └── footer.tsx      # 页脚
-├── pages/              # 页面组件
-│   ├── home/           # 首页
-│   ├── products/       # 产品页面
-│   ├── about/          # 关于我们
-│   ├── contact/        # 联系我们
-│   ├── oem/            # OEM 服务
-│   └── admin/          # 管理后台
-├── lib/                # 工具库
-│   ├── supabase.ts     # Supabase 客户端（已迁移至D1）
-│   ├── i18n.ts         # 国际化配置
-│   ├── router.tsx      # 路由配置
-│   └── utils.ts        # 工具函数
-├── locales/            # 多语言文件
-│   ├── zh/             # 中文
-│   ├── en/             # 英文
-│   └── ru/             # 俄语
-└── hooks/              # 自定义 Hooks
-
-functions/              # Cloudflare Workers API
-├── api/
-│   └── _worker.js      # API 路由和数据库操作
-
-public/                 # 静态资源
-├── images/             # 图片资源
-├── _headers            # HTTP 响应头配置
-├── _redirects          # 重定向配置
-└── _worker.js          # 静态资源服务 Worker
-```
-
-## 🚀 技术栈
-
-### 前端技术
+### 核心技术栈
 - **前端框架**: React 18 + TypeScript
 - **构建工具**: Vite
 - **样式框架**: Tailwind CSS
 - **UI 组件**: Radix UI + Shadcn/ui
 - **路由**: React Router DOM
-- **状态管理**: React Hooks
-- **表单处理**: React Hook Form + Zod
 - **国际化**: React i18next
-- **动画库**: Framer Motion
-- **图标库**: Lucide React + React Icons
-
-### 后端技术
-- **数据库**: Cloudflare D1 (SQLite)
-- **存储**: Cloudflare R2 (对象存储)
+- **后端服务**: Supabase (数据库和认证)
 - **部署平台**: Cloudflare Pages
-- **API**: Cloudflare Workers
 
-### 数据库架构
-- **products** - 产品信息表 (产品代码、多语言名称描述、规格、应用、包装选项等)
-- **contacts** - 联系表单消息表 (用户提交的联系信息)
-- **page_contents** - 页面内容表 (首页、产品页、关于我们等页面的多语言内容)
-- **company_info** - 公司信息表 (公司简介、联系方式等多语言内容)
-- **company_content** - 公司内容表 (公司详细介绍内容)
-- **admins** - 管理员表 (后台登录认证)
+### 功能特性
+- **多语言支持**: 支持中文、英文、俄语三种语言
+- **响应式设计**: 适配桌面端和移动端
+- **管理后台**: 产品管理、消息管理、内容管理
+- **表单验证**: React Hook Form + Zod
+- **现代化UI组件**: 使用 Radix UI 和 Shadcn/ui 构建
 
-## 📦 依赖说明
+## 🔧 项目结构
 
-### 核心依赖
-- `react`, `react-dom` - React 框架核心
-- `@radix-ui/react-*` - Radix UI 组件库
-- `@hookform/resolvers` - 表单验证
-- `i18next`, `react-i18next` - 国际化支持
-- `react-router-dom` - 路由管理
-- `tailwindcss` - 样式框架
-- `zod` - 数据验证
+```
+/ (项目根目录)
+├── src/                    # 源代码目录
+│   ├── components/         # React 组件
+│   ├── pages/              # 页面组件
+│   ├── hooks/              # 自定义 hooks
+│   ├── lib/                # 工具函数库
+│   ├── locales/            # 国际化语言文件
+│   ├── services/           # API 服务
+│   ├── types/              # TypeScript 类型定义
+│   ├── utils/              # 通用工具函数
+│   ├── styles/             # 样式文件
+│   ├── assets/             # 静态资源
+│   ├── constants/          # 常量定义
+│   └── App.tsx             # 主应用组件
+├── functions/              # Cloudflare Workers 函数
+├── public/                 # 静态资源目录
+├── .env                    # 环境变量配置
+├── .env.example            # 环境变量示例
+├── .gitignore              # Git 忽略配置
+├── package.json            # 项目依赖和脚本
+├── tsconfig.json           # TypeScript 配置
+├── vite.config.ts          # Vite 构建配置
+├── tailwind.config.js      # Tailwind CSS 配置
+├── postcss.config.js       # PostCSS 配置
+└── README.md               # 项目说明文档
+```
 
-### UI 与组件库
-- `@tremor/react` - 数据可视化组件
-- `recharts` - 图表库
-- `framer-motion` - 动画库
-- `lucide-react` - 图标库
-- `react-icons` - 图标库
+## 🛠️ 开发环境设置
 
-### 开发工具
-- `@types/*` - TypeScript 类型定义
-- `vite` - 构建工具
-- `typescript` - 类型系统
-- `eslint` - 代码检查
+### 环境要求
+- Node.js 18+
+- pnpm
 
-## 🔧 开发命令
+### 安装和运行
 
-- `pnpm dev` - 启动开发服务器 (访问 http://localhost:5173)
+1. **安装依赖**:
+```bash
+pnpm install
+```
+
+2. **环境变量配置**:
+复制 `.env.example` 为 `.env` 并填入相应的值：
+```bash
+cp .env.example .env
+```
+
+需要配置的环境变量：
+```env
+VITE_SUPABASE_URL=你的Supabase项目URL
+VITE_SUPABASE_ANON_KEY=你的Supabase匿名密钥
+VITE_API_BASE_URL=API基础URL
+```
+
+3. **启动开发服务器**:
+```bash
+pnpm dev
+```
+
+访问 [http://localhost:5173](http://localhost:5173) 查看网站。
+
+## 📝 可用脚本
+
+- `pnpm dev` - 启动开发服务器
 - `pnpm build` - 构建生产版本
 - `pnpm build:prod` - 构建生产版本（生产环境配置）
 - `pnpm build:cloudflare` - 为 Cloudflare Pages 构建
 - `pnpm test:cloudflare` - 测试 Cloudflare Pages 构建
 - `pnpm preview` - 预览生产构建
 - `pnpm lint` - 运行 ESLint 检查
+- `pnpm test` - 运行 Vitest 测试
+- `pnpm test:ui` - 运行 Vitest UI 测试
+- `pnpm test:run` - 运行 Vitest 测试（非监听模式）
 
 ## 🌐 多语言支持
 
@@ -113,23 +106,69 @@ public/                 # 静态资源
 
 语言文件位于 `src/locales/` 目录下，使用 React i18next 进行国际化处理。
 
-## 🔑 环境变量
+## 🔐 管理后台
 
-项目使用 Cloudflare D1 作为后端服务，需要配置以下环境变量：
+管理后台功能包括：
+- **产品管理**: 添加、编辑、删除产品信息
+- **消息管理**: 查看和管理用户留言
+- **内容管理**: 编辑页面内容
 
-```env
-VITE_SUPABASE_URL=你的Supabase项目URL (已迁移至D1)
-VITE_SUPABASE_ANON_KEY=你的Supabase匿名密钥 (已迁移至D1)
-```
+访问路径: `/admin/login`
 
-## 🚀 部署
+管理后台使用 Refine 框架构建，集成了 Supabase 作为数据源。
 
-项目已优化支持 Cloudflare Pages 部署：
-- 构建命令: `pnpm run build`
-- 输出目录: `dist`
-- 环境: Cloudflare Workers + D1 + R2
+## 🚀 构建和部署
 
-## 🏢 业务信息
+### Cloudflare Pages 部署
+
+本项目已优化支持 Cloudflare Pages 部署。
+
+快速部署步骤：
+1. 推送代码到 GitHub 仓库
+2. 在 Cloudflare Dashboard 中创建 Pages 项目
+3. 连接 GitHub 仓库
+4. 配置构建设置：
+   - 构建命令: `pnpm run build:cloudflare`
+   - 输出目录: `dist`
+5. 设置环境变量
+6. 部署项目
+
+## 💾 数据库集成
+
+项目使用 Supabase 作为后端服务，提供数据库和认证功能：
+- 数据库: PostgreSQL
+- 认证: Supabase Auth
+- 存储: Supabase Storage
+
+## 🧪 测试
+
+项目使用 Vitest 作为测试框架，包含：
+- 单元测试
+- 组件测试
+- 集成测试
+
+测试文件通常位于 `tests/` 目录或与源代码并列。
+
+## 📦 依赖说明
+
+主要依赖包括：
+- **React 18**: 前端框架
+- **TypeScript**: 类型检查
+- **Tailwind CSS**: CSS 框架
+- **React Router DOM**: 路由控制
+- **React Hook Form**: 表单处理
+- **Zod**: 表单验证
+- **React i18next**: 国际化
+- **Refine**: 企业级应用框架
+- **Supabase**: 后端服务
+- **Radix UI**: 无障碍 UI 组件
+- **Shadcn/ui**: UI 组件库
+
+## 🎨 UI 组件
+
+项目使用 Radix UI 和 Shadcn/ui 作为 UI 组件库，通过 `@/components/ui` 和 `@/hooks` 别名访问。
+
+## 🌍 业务信息
 
 - 公司: 杭州卡恩新型建材有限公司
 - 邮箱: info@karn-materials.com
@@ -137,63 +176,23 @@ VITE_SUPABASE_ANON_KEY=你的Supabase匿名密钥 (已迁移至D1)
 - 地址: 浙江省杭州市余杭区东湖街道星桥路18号星尚国际广场
 - 产品: 羧甲基淀粉（CMS）产品，主要用于墙纸胶粉、银粉纸涂布、建材添加等行业
 
-## 🛠️ API 功能
+## 🤝 贡献指南
 
-### 公共 API
-- 产品列表查询: `GET /api/products`
-- 产品详情查询: `GET /api/products/{productCode}`
-- 联系表单提交: `POST /api/contact`
-- 页面内容查询: `GET /api/content/{pageType}`
-- 公司信息查询: `GET /api/company/info/{sectionType}`
-- 公司内容查询: `GET /api/company/content/{contentType}`
+1. Fork 项目
+2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 打开 Pull Request
 
-### 管理员 API
-- 管理员登录: `POST /api/admin/login`
-- 产品管理: `GET/POST/PUT/DELETE /api/admin/products`
-- 联系消息管理: `GET/PUT/DELETE /api/admin/contacts`
-- 页面内容管理: `GET/POST/PUT/DELETE /api/admin/content/{pageType}`
-- 公司信息管理: `GET/POST/PUT/DELETE /api/admin/company/info`
-- 公司内容管理: `GET/POST/PUT/DELETE /api/admin/company/content`
-- 仪表板统计: `GET /api/admin/dashboard/stats`
-- 仪表板活动: `GET /api/admin/dashboard/activities`
-- 系统健康: `GET /api/admin/dashboard/health`
-- 图片上传: `POST /api/upload-image`
+## 📄 许可证
 
-### 认证机制
-- 管理员接口使用简单的密码认证
-- 请求头携带 Authorization 信息进行认证
+本项目采用 MIT 许可证。
 
-## 📄 特殊配置
+## ⚙️ 额外工具脚本
 
-- 项目已从 Supabase 迁移到 Cloudflare D1 数据库
-- 集成了 Cloudflare R2 用于图片和文件存储
-- 支持管理后台功能（产品管理、消息管理、内容管理）
-- 包含产品技术参数文件（CMS_TDS_Chinese.pdf, CMS_TDS_English.pdf 等）
-- 集成了 Google reCAPTCHA 验证
-- 包含自动化域名配置脚本
-
-## 🎯 项目目标
-
-1. **展示产品力**: 展示羧甲基淀粉（CMS）产品力与应用方案
-2. **传达特点**: 传达冷水速溶、高粘度、环保、安全的产品特点
-3. **客户便利**: 方便客户快速了解参数、下载资料、提交询价或 OEM 定制需求
-4. **国际化**: 支持中、英、俄三种语言，面向国际市场
-5. **现代化管理**: 通过后台管理系统，实现内容、产品和用户消息的便捷管理
-
-## 📝 管理后台功能
-
-管理后台位于 `/admin` 路径，提供以下功能：
-- 仪表板统计和活动监控
-- 产品分类管理 (增删改查)
-- 联系消息管理 (查看、标记已读、删除)
-- 页面内容管理 (首页、产品页、关于我们等页面内容)
-- 公司信息管理 (公司简介、联系方式等)
-- 图片上传管理 (支持多语言、多格式图片上传)
-
-## 🌐 部署架构
-
-- **前端**: React + Vite 构建的单页应用（SPA）
-- **后端**: Cloudflare Workers + Cloudflare D1 (SQLite) + Cloudflare R2 (存储)
-- **部署**: Cloudflare Pages 静态托管 + Workers 边缘计算
-- **CDN**: Cloudflare 全球 CDN 网络
-- **安全**: 所有 API 请求通过 Workers 处理，支持 CORS 配置
+项目包含许多自动化工具脚本，用于域名验证、API设置、DNS配置等：
+- `domain:verify` - 域名验证
+- `domain:check` - 快速部署检查  
+- `domain:monitor` - 实时域名监控
+- `agent:d1:create-admin` - 创建D1数据库管理员
+- 以及其他多个自动化脚本

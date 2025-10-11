@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'react-hot-toast';
-import { TempAuth } from '@/lib/temp-auth';
 
 const Login = () => {
   const { t } = useTranslation('admin');
@@ -52,7 +51,7 @@ const Login = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error?.message || '登录请求失败');
+        throw new Error(errorData.message || '登录请求失败');
       }
 
       const result = await response.json();
@@ -62,7 +61,8 @@ const Login = () => {
         localStorage.setItem('admin-auth', JSON.stringify({
           user: result.user,
           token: `admin-${Date.now()}`,
-          loginTime: new Date().toISOString()
+          loginTime: new Date().toISOString(),
+          authType: result.authType
         }));
         
         toast.success('登录成功！');
@@ -72,19 +72,7 @@ const Login = () => {
       }
     } catch (error: any) {
       console.error('Login error:', error);
-      
-      // 降级到本地临时认证
-      try {
-        const tempResult = await TempAuth.login(email, password);
-        if (tempResult.success) {
-          toast.success('登录成功！（离线模式）');
-          navigate('/admin/dashboard');
-        } else {
-          throw new Error(tempResult.error || '登录失败');
-        }
-      } catch (fallbackError: any) {
-        toast.error('登录失败，请检查用户名和密码');
-      }
+      toast.error(error.message || '登录失败，请检查用户名和密码');
     } finally {
       setIsLoading(false);
     }
@@ -105,9 +93,9 @@ const Login = () => {
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
               请输入您的管理员账号和密码
             </p>
-            <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300 rounded-md">
+            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-md">
               <p className="text-sm">
-                请输入您的管理员账号和密码
+                使用您的管理员账号登录系统
               </p>
             </div>
           </div>

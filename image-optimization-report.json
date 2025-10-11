@@ -1,0 +1,10 @@
+{
+  "timestamp": "2025-10-11T06:45:51.999Z",
+  "totalImages": 50,
+  "largeImages": 5,
+  "totalSizeMB": "10.42",
+  "optimizationRecommendations": {
+    "webpConversion": 5,
+    "potentialSavingsMB": "1.39"
+  }
+}

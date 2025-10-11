@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片上传测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+        .upload-area:hover {
+            border-color: #007bff;
+            background-color: #f8f9fa;
+        }
+        .result {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .preview {
+            max-width: 100%;
+            max-height: 300px;
+            margin: 10px 0;
+        }
+        .loading {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>图片上传测试</h1>
+    <p>测试新的图片上传API是否正常工作</p>
+    
+    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+        <p>点击此处选择图片文件</p>
+        <p style="font-size: 14px; color: #666;">支持 JPEG, PNG, WebP, GIF 格式，最大 5MB</p>
+    </div>
+    
+    <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="uploadImage(this.files[0])">
+    
+    <div id="result"></div>
+
+    <script>
+        async function uploadImage(file) {
+            const resultDiv = document.getElementById('result');
+            
+            if (!file) {
+                showResult('请选择一个文件', 'error');
+                return;
+            }
+            
+            // 显示上传中状态
+            showResult('正在上传图片...', 'loading');
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('folder', 'test');
+                
+                console.log('开始上传文件:', {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                });
+                
+                const response = await fetch('/api/upload-image', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                console.log('上传响应:', data);
+                
+                if (data.code === 200) {
+                    showResult(`
+                        <strong>上传成功！</strong><br>
+                        文件名: ${data.data.fileName}<br>
+                        大小: ${(data.data.fileSize / 1024).toFixed(2)} KB<br>
+                        类型: ${data.data.fileType}<br>
+                        上传方式: ${data.data.uploadMethod}<br>
+                        用时: ${data.data.uploadTime?.toFixed(2)} ms<br>
+                        <img src="${data.data.original}" alt="上传的图片" class="preview">
+                    `, 'success');
+                } else {
+                    showResult(`上传失败: ${data.message}`, 'error');
+                }
+                
+            } catch (error) {
+                console.error('上传出错:', error);
+                showResult(`上传出错: ${error.message}`, 'error');
+            }
+        }
+        
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<div class="result ${type}">${message}</div>`;
+        }
+        
+        // 拖拽上传支持
+        const uploadArea = document.querySelector('.upload-area');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#007bff';
+            uploadArea.style.backgroundColor = '#f8f9fa';
+        });
+        
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#ccc';
+            uploadArea.style.backgroundColor = '';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#ccc';
+            uploadArea.style.backgroundColor = '';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                uploadImage(files[0]);
+            }
+        });
+    </script>
+</body>
+</html>

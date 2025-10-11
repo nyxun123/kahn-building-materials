@@ -140,7 +140,7 @@ export default function ProductDetailPage() {
           <div className="bg-muted rounded-lg overflow-hidden">
             {product.image_url ? (
               <img 
-                src={product.image_url.startsWith('http') ? product.image_url : product.image_url} 
+                src={product.image_url} 
                 alt={getLocalizedContent('name')} 
                 className="w-full h-full object-contain"
               />
