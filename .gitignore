@@ -56,3 +56,5 @@ tmp/
 *.key
 *.crt
 *.cert
+.env
+.env.*
