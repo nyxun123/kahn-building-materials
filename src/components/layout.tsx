@@ -19,7 +19,7 @@ export function Layout() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="flex-1 pt-20"> {/* pt-20 给新的导航栏留出更多空间 */}
+      <main className="flex-1 pt-24">
         <Outlet />
       </main>
       <Footer />

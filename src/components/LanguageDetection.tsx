@@ -17,8 +17,8 @@ const LanguageDetection = () => {
       return;
     }
     
-    // 如果 URL 中没有语言代码，直接重定向到中文首页
-    navigate('/zh', { replace: true });
+    // 如果 URL 中没有语言代码，直接重定向到英文首页
+    navigate('/en', { replace: true });
   }, [navigate, location]);
 
   return null; // 不渲染任何内容，只是执行重定向逻辑

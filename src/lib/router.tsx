@@ -260,26 +260,26 @@ export const router = createBrowserRouter([
   },
   {
     path: '/products',
-    element: <Navigate to="/zh/products" replace />,
+    element: <Navigate to="/en/products" replace />,
   },
   {
     path: '/products/:productCode',
-    element: <Navigate to="/zh/products/:productCode" replace />,
+    element: <Navigate to="/en/products/:productCode" replace />,
   },
   {
     path: '/oem',
-    element: <Navigate to="/zh/oem" replace />,
+    element: <Navigate to="/en/oem" replace />,
   },
   {
     path: '/about',
-    element: <Navigate to="/zh/about" replace />,
+    element: <Navigate to="/en/about" replace />,
   },
   {
     path: '/contact',
-    element: <Navigate to="/zh/contact" replace />,
+    element: <Navigate to="/en/contact" replace />,
   },
   {
     path: '*',
-    element: <Navigate to="/zh" replace />,
+    element: <Navigate to="/en" replace />,
   },
 ]);

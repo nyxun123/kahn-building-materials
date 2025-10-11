@@ -43,64 +43,87 @@ export function Navbar() {
   }, []);
 
   return (
-    <header className={cn(
-      "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-      isScrolled
-        ? "bg-green-700 shadow-lg"
-        : "bg-green-700"
-    )}>
-      {/* 主导航栏 - 符合设计图片的深绿色背景 */}
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-4" aria-label={t('nav.main_navigation')}>
-        <div className="flex items-center justify-between">
-          {/* 品牌标识 */}
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white w-full">
+      {/* 顶部信息条 - 深绿色工业风格 */}
+      <div className="bg-[#064E3B] text-white py-2 px-4">
+        <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center text-sm">
+          <div className="flex items-center mb-2 sm:mb-0">
+            <span className="mr-4">杭州卡恩新型建材有限公司</span>
+            <div className="flex items-center mr-4">
+              <Phone className="h-4 w-4 mr-1" />
+              <span>+86 571-88888888</span>
+            </div>
+            <div className="hidden sm:flex items-center mr-4">
+              <Mail className="h-4 w-4 mr-1" />
+              <span>info@karn-materials.com</span>
+            </div>
+          </div>
           <div className="flex items-center">
-            <Link to="/" className="flex items-center">
-              <div className="text-white font-bold text-xl">
+            <MapPin className="h-4 w-4 mr-1" />
+            <span>浙江省杭州市余杭区东湖街道星桥路18号星尚国际广场</span>
+          </div>
+        </div>
+      </div>
+      
+      {/* 主导航栏 - 白色工业风格，始终保持在顶部 */}
+      <nav className={cn(
+        "bg-white container mx-auto px-4 sm:px-6 lg:px-8 py-4 border-b border-gray-100 transition-all duration-300",
+        isScrolled ? "shadow-md" : ""
+      )} aria-label={t('nav.main_navigation')}>
+        <div className="flex items-center justify-between">
+          {/* 品牌标识 - 工业级专业感 */}
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center group">
+              <div className="text-[#047857] font-bold text-xl group-hover:text-[#064E3B] transition-colors">
                 KARN
               </div>
               <div className="ml-3 hidden sm:block">
-                <div className="text-white text-sm">杭州卡恩新型建材有限公司</div>
+                <div className="text-gray-700 text-sm font-medium group-hover:text-[#047857] transition-colors">
+                  杭州卡恩新型建材有限公司
+                </div>
               </div>
             </Link>
           </div>
 
-          {/* 桌面端导航菜单 */}
-          <div className="hidden lg:flex items-center space-x-8">
+          {/* 桌面端导航菜单 - 统一绿色色调 */}
+          <div className="hidden lg:flex items-center space-x-10">
             <Link
               to={`/${lang}`}
-              className="text-white hover:text-green-200 transition-colors duration-200 font-medium"
+              className="text-gray-700 hover:text-[#047857] transition-colors duration-200 font-medium relative pb-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#047857] after:transition-all after:duration-300 hover:after:w-full"
             >
               首页
             </Link>
             <Link
               to={`/${lang}/products`}
-              className="text-white hover:text-green-200 transition-colors duration-200 font-medium"
+              className="text-gray-700 hover:text-[#047857] transition-colors duration-200 font-medium relative pb-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#047857] after:transition-all after:duration-300 hover:after:w-full"
             >
               产品中心
             </Link>
             <Link
               to={`/${lang}/about`}
-              className="text-white hover:text-green-200 transition-colors duration-200 font-medium"
+              className="text-gray-700 hover:text-[#047857] transition-colors duration-200 font-medium relative pb-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#047857] after:transition-all after:duration-300 hover:after:w-full"
             >
               关于我们
             </Link>
             <Link
               to={`/${lang}/contact`}
-              className="text-white hover:text-green-200 transition-colors duration-200 font-medium"
+              className="text-gray-700 hover:text-[#047857] transition-colors duration-200 font-medium relative pb-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#047857] after:transition-all after:duration-300 hover:after:w-full"
             >
               联系我们
             </Link>
           </div>
 
-          {/* 右侧联系信息 */}
-          <div className="hidden lg:flex items-center space-x-6 text-white">
-            <div className="flex items-center">
-              <Phone className="h-4 w-4 mr-2" />
-              <span className="font-medium">+86 571-8888-8888</span>
-            </div>
-
-            <div className="flex items-center space-x-2">
+          {/* 右侧导航元素 - 工业风格按钮 */}
+          <div className="hidden lg:flex items-center space-x-6">
+            <Link to={`/${lang}/contact`}>
+              <Button className="bg-[#047857] hover:bg-[#064E3B] text-white px-6 py-2 text-sm rounded-sm transition-colors duration-200">
+                <Phone className="h-4 w-4 mr-2" />
+                立即咨询
+              </Button>
+            </Link>
+            <div className="flex items-center space-x-3">
               <LanguageSwitcher />
+              <ThemeToggle />
             </div>
           </div>
 
@@ -112,7 +135,7 @@ export function Navbar() {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-expanded={isMenuOpen}
               aria-label={t('nav.toggle_menu')}
-              className="text-white hover:bg-green-600"
+              className="text-gray-700 hover:bg-gray-100 hover:text-[#047857]"
             >
               {isMenuOpen ? (
                 <X className="h-6 w-6" aria-hidden="true" />
@@ -124,51 +147,56 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* 移动端菜单 - 简化版 */}
+      {/* 移动端菜单 - 工业风格 */}
       <div className={cn(
-        'lg:hidden transition-all duration-300 ease-out',
+        'lg:hidden transition-all duration-300 ease-out bg-white border-b border-gray-100',
         isMenuOpen
           ? 'max-h-screen opacity-100'
           : 'max-h-0 opacity-0 overflow-hidden'
       )}>
-        <div className="bg-green-600">
-          <div className="px-4 py-4 space-y-3">
-            <Link
-              to={`/${lang}`}
-              className="block text-white hover:text-green-200 py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              首页
+        <div className="px-4 py-6 space-y-6">
+          <div className="flex flex-col space-y-6">
+            <Link to={`/${lang}/contact`}>
+              <Button className="w-full bg-[#047857] hover:bg-[#064E3B] text-white px-6 py-3 rounded-sm transition-colors">
+                <Phone className="h-4 w-4 mr-2" />
+                立即咨询
+              </Button>
             </Link>
-            <Link
-              to={`/${lang}/products`}
-              className="block text-white hover:text-green-200 py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              产品中心
-            </Link>
-            <Link
-              to={`/${lang}/about`}
-              className="block text-white hover:text-green-200 py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              关于我们
-            </Link>
-            <Link
-              to={`/${lang}/contact`}
-              className="block text-white hover:text-green-200 py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              联系我们
-            </Link>
-
-            <div className="flex items-center text-white pt-4 border-t border-green-500">
-              <Phone className="h-4 w-4 mr-2" />
-              <span>+86 571-8888-8888</span>
+          
+            <div className="space-y-4">
+              <Link
+                to={`/${lang}`}
+                className="block text-gray-700 hover:text-[#047857] py-3 font-medium border-b border-gray-100 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                首页
+              </Link>
+              <Link
+                to={`/${lang}/products`}
+                className="block text-gray-700 hover:text-[#047857] py-3 font-medium border-b border-gray-100 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                产品中心
+              </Link>
+              <Link
+                to={`/${lang}/about`}
+                className="block text-gray-700 hover:text-[#047857] py-3 font-medium border-b border-gray-100 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                关于我们
+              </Link>
+              <Link
+                to={`/${lang}/contact`}
+                className="block text-gray-700 hover:text-[#047857] py-3 font-medium border-b border-gray-100 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                联系我们
+              </Link>
             </div>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 pt-4 border-t border-gray-200">
               <LanguageSwitcher />
+              <ThemeToggle />
             </div>
           </div>
         </div>
