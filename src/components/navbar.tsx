@@ -13,7 +13,7 @@ interface NavbarProps {
 }
 
 export function Navbar({ forceUpdate }: NavbarProps = {}) {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation("common");
   const location = useLocation();
   const { lang = 'en' } = useParams<{ lang: string }>();
   const [isMenuOpen, setIsMenuOpen] = useState(false);

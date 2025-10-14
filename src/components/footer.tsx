@@ -9,7 +9,7 @@ interface FooterProps {
 }
 
 export function Footer({ forceUpdate }: FooterProps = {}) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("common");
   const { lang = 'en' } = useParams<{ lang: string }>();
 
   return (
