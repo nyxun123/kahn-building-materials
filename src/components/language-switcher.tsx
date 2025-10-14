@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,9 +21,13 @@ export function LanguageSwitcher() {
   const { i18n, t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  const currentLang = i18n.language || 'zh';
+  const { lang: urlLang } = useParams<{ lang: string }>();
+  
+  // 使用URL参数中的语言，如果没有则使用i18n当前语言
+  const currentLang = urlLang || i18n.language || 'en';
 
   const handleLanguageChange = (langCode: string) => {
+    // 更新i18n语言
     i18n.changeLanguage(langCode);
     localStorage.setItem('userLanguage', langCode);
     
@@ -41,7 +45,7 @@ export function LanguageSwitcher() {
     }
     
     // 构建新路径
-    const newPath = currentPathParts.join('/');
+    const newPath = currentPathParts.join('/') || '/';
     navigate(newPath);
   };
 

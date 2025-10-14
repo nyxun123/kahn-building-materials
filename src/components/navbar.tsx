@@ -8,13 +8,24 @@ import { LanguageSwitcher } from './language-switcher';
 import { ThemeToggle } from './theme-toggle';
 import { Button } from './ui/button';
 
-export function Navbar() {
-  const { t } = useTranslation();
+interface NavbarProps {
+  forceUpdate?: number;
+}
+
+export function Navbar({ forceUpdate }: NavbarProps = {}) {
+  const { t, i18n } = useTranslation();
   const location = useLocation();
-  const { lang = 'zh' } = useParams<{ lang: string }>();
+  const { lang = 'en' } = useParams<{ lang: string }>();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showDropdown, setShowDropdown] = useState<string | null>(null);
+
+  // 确保i18n语言与URL参数同步
+  useEffect(() => {
+    if (lang && ['zh', 'en', 'ru'].includes(lang) && i18n.language !== lang) {
+      i18n.changeLanguage(lang);
+    }
+  }, [lang, i18n]);
 
   const navigation = [
     { name: t('nav.home'), href: `/${lang}` },
@@ -23,9 +34,9 @@ export function Navbar() {
       href: `/${lang}/products`,
       hasDropdown: true,
       children: [
-        { name: '墙纸胶粉', href: `/${lang}/products/wallpaper-glue` },
-        { name: '植物淀粉', href: `/${lang}/products/plant-starch` },
-        { name: 'OEM定制', href: `/${lang}/oem` }
+        { name: t('nav.wallpaper_glue'), href: `/${lang}/products/wallpaper-glue` },
+        { name: t('nav.plant_starch'), href: `/${lang}/products/plant-starch` },
+        { name: t('nav.oem_custom'), href: `/${lang}/oem` }
       ]
     },
     { name: t('nav.oem'), href: `/${lang}/oem` },
@@ -48,19 +59,19 @@ export function Navbar() {
       <div className="bg-[#064E3B] text-white py-2 px-4">
         <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center text-sm">
           <div className="flex items-center mb-2 sm:mb-0">
-            <span className="mr-4">杭州卡恩新型建材有限公司</span>
+            <span className="mr-4">{t('header.company_name')}</span>
             <div className="flex items-center mr-4">
               <Phone className="h-4 w-4 mr-1" />
-              <span>+86 571-88888888</span>
+              <span>{t('header.phone')}</span>
             </div>
             <div className="hidden sm:flex items-center mr-4">
               <Mail className="h-4 w-4 mr-1" />
-              <span>info@karn-materials.com</span>
+              <span>{t('header.email')}</span>
             </div>
           </div>
           <div className="flex items-center">
             <MapPin className="h-4 w-4 mr-1" />
-            <span>浙江省杭州市余杭区东湖街道星桥路18号星尚国际广场</span>
+            <span>{t('header.address')}</span>
           </div>
         </div>
       </div>
@@ -73,13 +84,13 @@ export function Navbar() {
         <div className="flex items-center justify-between">
           {/* 品牌标识 - 工业级专业感 */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center group">
+            <Link to={`/${lang}`} className="flex items-center group">
               <div className="text-[#047857] font-bold text-xl group-hover:text-[#064E3B] transition-colors">
                 KARN
               </div>
               <div className="ml-3 hidden sm:block">
                 <div className="text-gray-700 text-sm font-medium group-hover:text-[#047857] transition-colors">
-                  杭州卡恩新型建材有限公司
+                  {t('header.brand_name')}
                 </div>
               </div>
             </Link>
@@ -91,25 +102,25 @@ export function Navbar() {
               to={`/${lang}`}
               className="text-gray-700 hover:text-[#047857] transition-colors duration-200 font-medium relative pb-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#047857] after:transition-all after:duration-300 hover:after:w-full"
             >
-              首页
+              {t('nav.home')}
             </Link>
             <Link
               to={`/${lang}/products`}
               className="text-gray-700 hover:text-[#047857] transition-colors duration-200 font-medium relative pb-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#047857] after:transition-all after:duration-300 hover:after:w-full"
             >
-              产品中心
+              {t('nav.products')}
             </Link>
             <Link
               to={`/${lang}/about`}
               className="text-gray-700 hover:text-[#047857] transition-colors duration-200 font-medium relative pb-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#047857] after:transition-all after:duration-300 hover:after:w-full"
             >
-              关于我们
+              {t('nav.about')}
             </Link>
             <Link
               to={`/${lang}/contact`}
               className="text-gray-700 hover:text-[#047857] transition-colors duration-200 font-medium relative pb-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#047857] after:transition-all after:duration-300 hover:after:w-full"
             >
-              联系我们
+              {t('nav.contact')}
             </Link>
           </div>
 
@@ -118,7 +129,7 @@ export function Navbar() {
             <Link to={`/${lang}/contact`}>
               <Button className="bg-[#047857] hover:bg-[#064E3B] text-white px-6 py-2 text-sm rounded-sm transition-colors duration-200">
                 <Phone className="h-4 w-4 mr-2" />
-                立即咨询
+                {t('header.consult_now')}
               </Button>
             </Link>
             <div className="flex items-center space-x-3">
@@ -159,38 +170,38 @@ export function Navbar() {
             <Link to={`/${lang}/contact`}>
               <Button className="w-full bg-[#047857] hover:bg-[#064E3B] text-white px-6 py-3 rounded-sm transition-colors">
                 <Phone className="h-4 w-4 mr-2" />
-                立即咨询
+                {t('header.consult_now')}
               </Button>
             </Link>
-          
+
             <div className="space-y-4">
               <Link
                 to={`/${lang}`}
                 className="block text-gray-700 hover:text-[#047857] py-3 font-medium border-b border-gray-100 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                首页
+                {t('nav.home')}
               </Link>
               <Link
                 to={`/${lang}/products`}
                 className="block text-gray-700 hover:text-[#047857] py-3 font-medium border-b border-gray-100 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                产品中心
+                {t('nav.products')}
               </Link>
               <Link
                 to={`/${lang}/about`}
                 className="block text-gray-700 hover:text-[#047857] py-3 font-medium border-b border-gray-100 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                关于我们
+                {t('nav.about')}
               </Link>
               <Link
                 to={`/${lang}/contact`}
                 className="block text-gray-700 hover:text-[#047857] py-3 font-medium border-b border-gray-100 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                联系我们
+                {t('nav.contact')}
               </Link>
             </div>
 
