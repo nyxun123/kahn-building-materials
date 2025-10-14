@@ -7,7 +7,10 @@
     "about": "About Us",
     "contact": "Contact",
     "main_navigation": "Main Navigation",
-    "toggle_menu": "Toggle Menu"
+    "toggle_menu": "Toggle Menu",
+    "wallpaper_glue": "Wallpaper Glue",
+    "plant_starch": "Plant Starch",
+    "oem_custom": "OEM Customization"
   },
   "language": {
     "zh": "中文",
@@ -19,23 +22,43 @@
     "dark": "Dark Mode",
     "system": "System Mode"
   },
+  "header": {
+    "company_name": "Hangzhou Karn New Building Materials Co., Ltd.",
+    "phone": "+86 571-88888888",
+    "email": "info@karn-materials.com",
+    "address": "No. 18, Xingqiao Road, Donghu Street, Yuhang District, Hangzhou, China",
+    "brand_name": "Hangzhou Karn New Building Materials Co., Ltd.",
+    "consult_now": "Contact Now"
+  },
   "footer": {
-    "company": "Hangzhou Karn New Building Materials Co., Ltd.",
-    "rights": "© 2025 Hangzhou Karn New Building Materials Co., Ltd. All rights reserved.",
-    "links": {
-      "title": "Quick Links",
+    "company_brief": "Hangzhou Karn New Building Materials Co., Ltd. specializes in the research, development, production, and sales of new building materials, providing customers with high-quality building material solutions.",
+    "iso_certified": "ISO 9001 Quality Certified",
+    "sections": {
+      "about": "Company Profile",
+      "contact": "Contact Us",
+      "quick_links": "Quick Links",
+      "quality": "Quality Assurance"
+    },
+    "quick_links": {
+      "home": "Home",
       "products": "Products",
       "about": "About Us",
       "contact": "Contact Us"
     },
-    "contact": {
-      "title": "Contact Info",
-      "address": "Address",
-      "phone": "Phone",
-      "email": "Email",
-      "address_value": "No. 18, Xingqiao Road, Donghu Street, Yuhang District, Hangzhou, Zhejiang Province, China",
-      "phone_value": "+86 571-88888888",
-      "email_value": "info@karn-materials.com"
+    "contact_info": {
+      "address": "Starlight Building A, 15 Starlight Street,<br />Donghu Street, Yuhang District,<br />Hangzhou, Zhejiang, China",
+      "phone": "+86 571-8888-8888",
+      "email": "info@karn-materials.com"
+    },
+    "quality_features": {
+      "quality_system": "Quality System Certification",
+      "environmental": "Environmental Standard Certification",
+      "industry_certification": "Industry Qualification Certification"
+    },
+    "copyright": "© 2024 Hangzhou Karn New Building Materials Co., Ltd. All rights reserved.",
+    "bottom_links": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
     }
   },
   "cta": {

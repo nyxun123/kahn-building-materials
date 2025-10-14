@@ -1,32 +1,82 @@
 {
-  "meta_description": "Hangzhou Karn New Building Materials Co., Ltd. is a professional manufacturer of wallpaper adhesive powder, offering high-quality products and OEM services.",
+  "meta_description": "Hangzhou Karn New Building Materials Co., Ltd. - Professional wallpaper adhesive manufacturer providing high-quality wallpaper adhesive products, OEM services, and semi-finished small packaging solutions.",
   "hero": {
-    "title": "Professional Wallpaper Adhesive Manufacturer",
-    "subtitle": "Providing high-quality, eco-friendly, and easy-to-use wallpaper adhesive products with customized OEM manufacturing services for global clients"
+    "badge": "KARN Professional Manufacturing",
+    "title": "Professional New Building Materials Supplier",
+    "subtitle": "Hangzhou Karn New Building Materials Co., Ltd. specializes in the R&D and production of high-quality wallpaper adhesive powders",
+    "subtitle_highlight": "Industrial-Grade Solutions",
+    "company_alt": "Hangzhou Karn New Building Materials Co., Ltd."
   },
   "products": {
+    "series": "Product Series",
     "title": "Our Products",
-    "subtitle": "Discover our premium wallpaper adhesive powder series, providing perfect solutions for your decoration needs",
+    "subtitle": "Discover our high-quality wallpaper adhesive product series",
+    "no_image": "No Image Available",
     "view_all": "View All Products"
   },
+  "video": {
+    "badge": "Product Demonstration",
+    "title": "Product Demo Video",
+    "subtitle": "Learn about our product features and usage methods through video",
+    "features": {
+      "mixing": {
+        "title": "Simple Mixing Steps",
+        "description": "Watch how our products mix easily and efficiently with clean water"
+      },
+      "application": {
+        "title": "Professional Application Techniques",
+        "description": "Learn how to properly apply our products for optimal results"
+      }
+    },
+    "explore_products": "Explore All Products"
+  },
   "why_us": {
+    "badge": "Company Advantages",
     "title": "Why Choose Us",
-    "subtitle": "We are committed to providing the highest quality wallpaper adhesive products and exceptional customer service",
+    "subtitle": "20 years of professional experience providing high-quality wall treatment products to global clients",
     "quality": {
-      "title": "Product Quality",
-      "description": "Our products are made from premium raw materials and undergo rigorous quality testing to ensure each batch meets international standards"
+      "title": "Quality Assurance",
+      "description": "Strict implementation of ISO9001 quality management system to ensure stable and reliable product quality"
     },
     "experience": {
-      "title": "Industry Experience",
-      "description": "With over 15 years of experience in wallpaper adhesive production, we deeply understand market needs and continuously innovate our products"
+      "title": "Professional Experience",
+      "description": "20 years of industry experience, deep understanding of customer needs, providing professional solutions"
     },
     "service": {
-      "title": "Customer Service",
-      "description": "We provide comprehensive customer support, including product consultation, technical guidance, and after-sales service to ensure customer satisfaction"
+      "title": "Quality Service",
+      "description": "Professional pre-sales and after-sales service team providing comprehensive customer support"
     }
   },
+  "oem": {
+    "badge": "Custom Services",
+    "title": "OEM Custom Manufacturing Services",
+    "description": "Karn has over 23 years of wallpaper adhesive production experience, providing professional OEM/ODM services to global clients. We can customize product formulations, packaging, and branding according to your requirements.",
+    "image_alt": "OEM Custom Services",
+    "features": {
+      "brand": "Brand Customization: Production according to your brand requirements",
+      "packaging": "Packaging Customization: Various packaging options from small to large packages",
+      "formula": "Formula Customization: Adjust product performance according to market demands",
+      "export": "Exported to 45 countries and regions"
+    },
+    "learn_more": "Learn More About OEM Services"
+  },
+  "semi": {
+    "badge": "Convenient Solutions",
+    "title": "Semi-Finished Wallpaper Adhesive Small Packaging",
+    "description": "We provide 200g to 500g aluminum foil bag small packaging of semi-finished wallpaper adhesive, suitable for small-area renovation needs and retail markets. These products are easy to store and transport, requiring only water addition before use.",
+    "image_alt": "Semi-finished Small Packaging Wallpaper Adhesive",
+    "features": {
+      "specs": "Complete Specifications: 200g, 300g, 400g, 500g available",
+      "packaging": "Aluminum Foil Bag Packaging: Good moisture resistance",
+      "market": "Suitable for home decoration markets and building materials retail",
+      "custom_brand": "Brand Customization: Custom packaging and labels available"
+    },
+    "view_products": "View Small Packaging Products"
+  },
   "cta": {
-    "title": "Start Collaboration",
-    "description": "Whether you're looking for wholesale purchasing or OEM custom production, we can provide the best solution for you. Contact us to start your customization journey."
+    "title": "Contact Us for Professional Solutions",
+    "description": "Contact our professional team now to get high-quality wallpaper adhesive products and custom services tailored to your needs",
+    "image_alt": "Industrial Robotics Automation Factory",
+    "browse_products": "Browse Products"
   }
 }

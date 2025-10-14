@@ -30,17 +30,24 @@ i18n
     },
   });
 
-// 针对主域名强制英文，避免浏览器语言导致显示中文
-if (typeof window !== 'undefined') {
-  const host = window.location.hostname.toLowerCase();
-  const EN_HOSTS = ['kn-wallpaperglue.com', 'www.kn-wallpaperglue.com'];
-  if (EN_HOSTS.includes(host)) {
-    const current = i18n.language;
-    if (current !== 'en') {
-      i18n.changeLanguage('en');
-      try { localStorage.setItem('userLanguage', 'en'); } catch {}
+// 导出一个函数来强制设置主域名语言
+export const enforceMainDomainLanguage = () => {
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname.toLowerCase();
+    const EN_HOSTS = ['kn-wallpaperglue.com', 'www.kn-wallpaperglue.com'];
+    if (EN_HOSTS.includes(host)) {
+      const current = i18n.language;
+      if (current !== 'en') {
+        i18n.changeLanguage('en');
+        try { localStorage.setItem('userLanguage', 'en'); } catch {}
+      }
+      return true;
     }
   }
-}
+  return false;
+};
+
+// 初始化时执行一次
+enforceMainDomainLanguage();
 
 export default i18n;

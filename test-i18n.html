@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>i18n Test</title>
+</head>
+<body>
+    <h1>Language Test</h1>
+    <script>
+        // 检查 localStorage
+        console.log('localStorage.userLanguage:', localStorage.getItem('userLanguage'));
+        console.log('URL path:', window.location.pathname);
+        console.log('Expected language from URL:', window.location.pathname.split('/')[1]);
+    </script>
+</body>
+</html>

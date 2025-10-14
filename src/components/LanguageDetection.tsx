@@ -17,6 +17,13 @@ const LanguageDetection = () => {
     const host = window.location.hostname.toLowerCase();
     const EN_HOSTS = ['kn-wallpaperglue.com', 'www.kn-wallpaperglue.com'];
     if (EN_HOSTS.includes(host)) {
+      // 确保i18n也设置为英文
+      if (i18n.language !== 'en') {
+        i18n.changeLanguage('en');
+        try { localStorage.setItem('userLanguage', 'en'); } catch {}
+      }
+      
+      // 如果URL中没有语言前缀，添加/en/
       if (!supportedLanguages.includes(firstPart)) {
         navigate(`/en${location.pathname}`, { replace: true });
       }
@@ -24,7 +31,11 @@ const LanguageDetection = () => {
     }
     
     if (supportedLanguages.includes(firstPart)) {
-      // 如果 URL 中已有语言代码，不进行任何操作
+      // 如果 URL 中已有语言代码，确保i18n同步
+      if (i18n.language !== firstPart) {
+        i18n.changeLanguage(firstPart);
+        try { localStorage.setItem('userLanguage', firstPart); } catch {}
+      }
       return;
     }
     

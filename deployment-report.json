@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-10-11T06:25:31.482Z",
+  "timestamp": "2025-10-11T09:29:28.437Z",
   "version": "2.0.0-cloudflare-fix",
   "changes": [
     "修复 API 端点 /api/admin/products/[id] 的数据格式返回问题",
