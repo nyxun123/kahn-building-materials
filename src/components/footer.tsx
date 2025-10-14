@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { Mail, MapPin, Phone, Clock, Award, Shield, CheckCircle, ChevronRight } from 'lucide-react';
 
@@ -8,61 +9,63 @@ interface FooterProps {
 }
 
 export function Footer({ forceUpdate }: FooterProps = {}) {
+  const { t } = useTranslation("common");
   const { lang = 'en' } = useParams<{ lang: string }>();
 
   return (
-    <footer className="bg-white text-gray-800 border-t border-gray-200">
+    <footer key={`footer-${lang}-${forceUpdate}`} className="bg-white text-gray-800 border-t border-gray-200">
       <div className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
 
-            {/* Company Profile */}
+            {/* 公司简介 - 白色背景风格 */}
             <div>
               <h3 className="text-lg font-bold mb-5 text-[#064E3B] uppercase tracking-wider">
-                Company Profile
+                {t('footer.sections.about')}
               </h3>
               <p className="text-sm text-gray-600 mb-6 leading-relaxed">
-                Hangzhou Karn New Building Materials Co., Ltd. specializes in the research, development, production, and sales of new building materials, providing customers with high-quality building material solutions.
+                {t('footer.company_brief')}
               </p>
               <div className="flex items-center text-[#047857]">
                 <Award className="h-4 w-4 mr-2" />
-                <span className="text-xs">ISO 9001 Quality Certified</span>
+                <span className="text-xs">{t('footer.iso_certified')}</span>
               </div>
             </div>
 
-            {/* Contact Us */}
+            {/* 联系方式 - 白色背景风格 */}
             <div>
               <h3 className="text-lg font-bold mb-5 text-[#064E3B] uppercase tracking-wider">
-                Contact Us
+                {t('footer.sections.contact')}
               </h3>
               <div className="space-y-4">
                 <div className="flex items-start">
                   <div className="w-8 h-8 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0 mt-0.5">
                     <MapPin className="h-4 w-4 text-white" />
                   </div>
-                  <span className="text-sm text-gray-600 ml-3">
-                    Starlight Building A, 15 Starlight Street,<br />Donghu Street, Yuhang District,<br />Hangzhou, Zhejiang, China
-                  </span>
+                  <span
+                    className="text-sm text-gray-600 ml-3"
+                    dangerouslySetInnerHTML={{ __html: t('footer.contact_info.address') }}
+                  />
                 </div>
                 <div className="flex items-center">
                   <div className="w-8 h-8 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0">
                     <Phone className="h-4 w-4 text-white" />
                   </div>
-                  <span className="text-sm text-gray-600 ml-3">+86 571-8888-8888</span>
+                  <span className="text-sm text-gray-600 ml-3">{t('footer.contact_info.phone')}</span>
                 </div>
                 <div className="flex items-center">
                   <div className="w-8 h-8 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0">
                     <Mail className="h-4 w-4 text-white" />
                   </div>
-                  <span className="text-sm text-gray-600 ml-3">info@karn-materials.com</span>
+                  <span className="text-sm text-gray-600 ml-3">{t('footer.contact_info.email')}</span>
                 </div>
               </div>
             </div>
 
-            {/* Quick Links */}
+            {/* 快捷导航 - 白色背景风格 */}
             <div>
               <h3 className="text-lg font-bold mb-5 text-[#064E3B] uppercase tracking-wider">
-                Quick Links
+                {t('footer.sections.quick_links')}
               </h3>
               <div className="space-y-3">
                 <Link
@@ -70,55 +73,55 @@ export function Footer({ forceUpdate }: FooterProps = {}) {
                   className="flex items-center text-sm text-gray-600 hover:text-[#047857] transition-colors duration-200 py-1.5 group"
                 >
                   <ChevronRight className="h-4 w-4 mr-2 text-[#047857] group-hover:translate-x-1 transition-transform" />
-                  Home
+                  {t('footer.quick_links.home')}
                 </Link>
                 <Link
                   to={`/${lang}/products`}
                   className="flex items-center text-sm text-gray-600 hover:text-[#047857] transition-colors duration-200 py-1.5 group"
                 >
                   <ChevronRight className="h-4 w-4 mr-2 text-[#047857] group-hover:translate-x-1 transition-transform" />
-                  Products
+                  {t('footer.quick_links.products')}
                 </Link>
                 <Link
                   to={`/${lang}/about`}
                   className="flex items-center text-sm text-gray-600 hover:text-[#047857] transition-colors duration-200 py-1.5 group"
                 >
                   <ChevronRight className="h-4 w-4 mr-2 text-[#047857] group-hover:translate-x-1 transition-transform" />
-                  About Us
+                  {t('footer.quick_links.about')}
                 </Link>
                 <Link
                   to={`/${lang}/contact`}
                   className="flex items-center text-sm text-gray-600 hover:text-[#047857] transition-colors duration-200 py-1.5 group"
                 >
                   <ChevronRight className="h-4 w-4 mr-2 text-[#047857] group-hover:translate-x-1 transition-transform" />
-                  Contact Us
+                  {t('footer.quick_links.contact')}
                 </Link>
               </div>
             </div>
 
-            {/* Quality Assurance */}
+            {/* 质量保证 - 白色背景风格 */}
             <div>
               <h3 className="text-lg font-bold mb-5 text-[#064E3B] uppercase tracking-wider">
-                Quality Assurance
+                {t('footer.sections.quality')}
               </h3>
               <div className="space-y-4">
                 <div className="flex items-center">
                   <div className="w-8 h-8 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0">
                     <Shield className="h-4 w-4 text-white" />
                   </div>
-                  <span className="text-sm text-gray-600 ml-3">ISO 9001:2015 Quality System</span>
+                  <span className="text-sm text-gray-600 ml-3">{t('footer.quality_features.quality_system')}</span>
                 </div>
                 <div className="flex items-center">
                   <div className="w-8 h-8 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0">
                     <CheckCircle className="h-4 w-4 text-white" />
                   </div>
-                  <span className="text-sm text-gray-600 ml-3">Eco-friendly Materials</span>
+                  <span className="text-sm text-gray-600 ml-3">{t('footer.quality_features.environmental')}</span>
                 </div>
                 <div className="flex items-center">
                   <div className="w-8 h-8 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0">
                     <Award className="h-4 w-4 text-white" />
                   </div>
-                  <span className="text-sm text-gray-600 ml-3">Industry Certification</span>
+                  <span className="text-sm text-gray-600 ml-3">{t('footer.quality_features.industry_certification')}</span>
                 </div>
               </div>
             </div>
@@ -126,19 +129,19 @@ export function Footer({ forceUpdate }: FooterProps = {}) {
         </div>
       </div>
 
-      {/* Copyright */}
+      {/* 版权信息 - 白色背景风格 */}
       <div className="border-t border-gray-200 bg-gray-50 py-6">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-gray-600">
-              © 2024 Hangzhou Karn New Building Materials Co., Ltd. All Rights Reserved.
+              {t('footer.copyright')}
             </p>
             <div className="flex items-center space-x-6 text-sm text-gray-600 mt-3 md:mt-0">
               <a href="#" className="hover:text-[#047857] transition-colors duration-200">
-                Privacy Policy
+                {t('footer.bottom_links.privacy')}
               </a>
               <a href="#" className="hover:text-[#047857] transition-colors duration-200">
-                Terms of Service
+                {t('footer.bottom_links.terms')}
               </a>
             </div>
           </div>
