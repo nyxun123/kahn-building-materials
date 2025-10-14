@@ -18,7 +18,7 @@ export const HeroSection = memo(function HeroSection({ pageContent, lang }: Hero
       <div className="absolute inset-0 z-0">
         <LazyImage 
           src="/images/modern_powder_production_line_factory.jpg" 
-          alt="杭州卡恩新型建材有限公司" 
+          alt={t('home:hero.company_alt')}
           className="w-full h-full object-cover"
           loading="eager"
         />
@@ -43,13 +43,13 @@ export const HeroSection = memo(function HeroSection({ pageContent, lang }: Hero
             {/* 工业风格小标题 */}
             <div className="inline-flex items-center space-x-2 bg-[#064E3B] px-4 py-1.5 rounded-sm">
               <div className="w-2 h-2 bg-[#10B981] rotate-45"></div>
-              <span className="text-white text-sm font-medium tracking-wider uppercase">KARN 专业制造</span>
+              <span className="text-white text-sm font-medium tracking-wider uppercase">{t('home:hero.badge')}</span>
             </div>
 
             {/* 大标题 - 使用更大更精细的字体 */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight">
               <span className="block">{pageContent.hero_title || t('home:hero.title')}</span>
-              <span className="block mt-2 text-[#10B981]">工业级解决方案</span>
+              <span className="block mt-2 text-[#10B981]">{t('home:hero.subtitle_highlight')}</span>
             </h1>
 
             {/* 副标题 - 清晰简洁 */}

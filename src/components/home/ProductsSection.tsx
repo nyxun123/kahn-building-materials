@@ -37,9 +37,9 @@ export const ProductsSection = memo(function ProductsSection({
 
   // 根据当前语言获取产品名称
   const getProductName = (product: Product) => {
-    const currentLang = i18n.language || 'zh';
+    const currentLang = i18n.language || 'en';
     const nameKey = `name_${currentLang}` as keyof typeof product;
-    return product[nameKey] as string || product.name_zh;
+    return (product[nameKey] as string) || product.name_en || product.name_zh;
   };
 
   return (
@@ -49,7 +49,7 @@ export const ProductsSection = memo(function ProductsSection({
         <div className="mb-16">
           <div className="flex items-center space-x-2 mb-3">
             <div className="w-8 h-1 bg-[#047857]"></div>
-            <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">产品系列</span>
+            <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">{t('home:products.series')}</span>
           </div>
           
           <h2 className="industrial-title text-3xl md:text-4xl font-bold text-[#064E3B] mb-6">
@@ -80,15 +80,15 @@ export const ProductsSection = memo(function ProductsSection({
                   </div>
                 ) : (
                   <div className="aspect-[4/3] mb-5 overflow-hidden rounded-sm bg-gray-100 flex items-center justify-center text-gray-400">
-                    暂无图片
+                    {t('home:products.no_image')}
                   </div>
                 )}
                 <h3 className="text-lg font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors">{getProductName(product)}</h3>
                 <p className="mt-3 line-clamp-3 text-black">
                   {(() => {
-                    const currentLang = i18n.language || 'zh';
+                    const currentLang = i18n.language || 'en';
                     const descKey = `description_${currentLang}` as keyof typeof product;
-                    return (product[descKey] as string) || product.description_zh || '';
+                    return (product[descKey] as string) || product.description_en || product.description_zh || '';
                   })()}
                 </p>
                 <Link 

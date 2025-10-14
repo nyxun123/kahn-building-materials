@@ -25,7 +25,7 @@ interface Product {
 }
 
 const ProductsPage = memo(function ProductsPage() {
-  const { t, i18n } = useTranslation(['common', 'products']);
+  const { t, i18n } = useTranslation(['common', 'products', 'home']);
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -111,7 +111,7 @@ const ProductsPage = memo(function ProductsPage() {
         </div>
       ) : (
         <div className="aspect-square mb-5 overflow-hidden rounded-md bg-muted flex items-center justify-center text-muted-foreground">
-          暂无图片
+          {t('home:products.no_image')}
         </div>
       )}
       <h3 className="text-lg font-semibold">{getProductName(product)}</h3>

@@ -12,6 +12,16 @@ const LanguageDetection = () => {
     const firstPart = pathParts[0];
     
     const supportedLanguages = ['zh', 'en', 'ru'];
+
+    // 如果主域名，强制跳转英文
+    const host = window.location.hostname.toLowerCase();
+    const EN_HOSTS = ['kn-wallpaperglue.com', 'www.kn-wallpaperglue.com'];
+    if (EN_HOSTS.includes(host)) {
+      if (!supportedLanguages.includes(firstPart)) {
+        navigate(`/en${location.pathname}`, { replace: true });
+      }
+      return;
+    }
     
     if (supportedLanguages.includes(firstPart)) {
       // 如果 URL 中已有语言代码，不进行任何操作

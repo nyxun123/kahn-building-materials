@@ -78,22 +78,24 @@ export default function ProductDetailPage() {
   const getLocalizedContent = <K extends keyof Product>(fieldPrefix: string): string => {
     if (!product) return '';
     
-    const lang = i18n.language || 'zh';
+    const lang = i18n.language || 'en';
     const fieldKey = `${fieldPrefix}_${lang}` as K;
-    const fallbackKey = `${fieldPrefix}_zh` as K;
+    const fallbackKeyEn = `${fieldPrefix}_en` as K;
+    const fallbackKeyZh = `${fieldPrefix}_zh` as K;
     
-    return (product[fieldKey] as string) || (product[fallbackKey] as string) || '';
+    return (product[fieldKey] as string) || (product[fallbackKeyEn] as string) || (product[fallbackKeyZh] as string) || '';
   };
 
   // 获取本地化的特点列表
   const getLocalizedFeatures = (): string[] => {
     if (!product) return [];
     
-    const lang = i18n.language || 'zh';
+    const lang = i18n.language || 'en';
     const featureKey = `features_${lang}` as keyof typeof product;
-    const fallbackKey = 'features_zh' as keyof typeof product;
+    const fallbackKeyEn = 'features_en' as keyof typeof product;
+    const fallbackKeyZh = 'features_zh' as keyof typeof product;
     
-    return (product[featureKey] as string[]) || (product[fallbackKey] as string[]) || [];
+    return (product[featureKey] as string[]) || (product[fallbackKeyEn] as string[]) || (product[fallbackKeyZh] as string[]) || [];
   };
 
   if (isLoading) {
@@ -146,7 +148,7 @@ export default function ProductDetailPage() {
               />
             ) : (
               <div className="w-full h-full min-h-[300px] flex items-center justify-center text-muted-foreground">
-                暂无图片
+                {t('home:products.no_image')}
               </div>
             )}
           </div>

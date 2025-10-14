@@ -110,19 +110,19 @@ export default function HomePage() {
             // 整理页面内容数据
             const contentMap: Record<string, string> = {}
             contentData?.forEach((item: any) => {
-              const lang = i18n.language || 'zh';
+              const lang = i18n.language || 'en';
               const langKey = `content_${lang}`;
-              contentMap[item.section_key] = item[langKey] || item.content_zh || '';
+              contentMap[item.section_key] = item[langKey] || item.content_en || item.content_zh || '';
             });
             setPageContent(contentMap);
           }
         } catch (contentError) {
           console.log('页面内容API不可用，使用默认内容');
           setPageContent({
-            hero_title: '专业的新型建材供应商',
-            hero_subtitle: '杭州卡恩新型建材有限公司专注于高品质墙纸胶粉的研发与生产',
-            products_title: '我们的产品',
-            products_subtitle: '发现我们的高品质墙纸胶产品系列'
+            hero_title: t('home:hero.title'),
+            hero_subtitle: t('home:hero.subtitle'),
+            products_title: t('home:products.title'),
+            products_subtitle: t('home:products.subtitle')
           });
         }
         
@@ -150,8 +150,8 @@ export default function HomePage() {
         ];
         setProducts(mockProducts);
         setPageContent({
-          hero_title: '专业的新型建材供应商',
-          hero_subtitle: '杭州卡恩新型建材有限公司专注于高品质墙纸胶粉的研发与生产'
+          hero_title: t('home:hero.title'),
+          hero_subtitle: t('home:hero.subtitle')
         });
       } finally {
         setIsLoading(false);
@@ -163,9 +163,9 @@ export default function HomePage() {
 
   // 根据当前语言获取产品名称
   const getProductName = (product: Product) => {
-    const lang = i18n.language || 'zh';
+    const lang = i18n.language || 'en';
     const nameKey = `name_${lang}` as keyof typeof product;
-    return product[nameKey] as string || product.name_zh;
+    return (product[nameKey] as string) || product.name_en || product.name_zh;
   };
 
   // 英雄区背景图片URL
@@ -184,7 +184,7 @@ export default function HomePage() {
         <div className="absolute inset-0 z-0">
           <img 
             src="/images/modern_powder_production_line_factory.jpg" 
-            alt="杭州卡恩新型建材有限公司" 
+            alt={t('home:hero.company_alt')} 
             className="w-full h-full object-cover"
           />
         </div>
@@ -208,13 +208,13 @@ export default function HomePage() {
               {/* 工业风格小标题 */}
               <div className="inline-flex items-center space-x-2 bg-[#064E3B] px-4 py-1.5 rounded-sm">
                 <div className="w-2 h-2 bg-[#10B981] rotate-45"></div>
-                <span className="text-white text-sm font-medium tracking-wider uppercase">KARN 专业制造</span>
+                <span className="text-white text-sm font-medium tracking-wider uppercase">{t('home:hero.badge')}</span>
               </div>
 
               {/* 大标题 - 使用更大更精细的字体 */}
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight">
                 <span className="block">{pageContent.hero_title || t('home:hero.title')}</span>
-                <span className="block mt-2 text-[#10B981]">工业级解决方案</span>
+                <span className="block mt-2 text-[#10B981]">{t('home:hero.subtitle_highlight')}</span>
               </h1>
 
               {/* 副标题 - 清晰简洁 */}
@@ -250,13 +250,13 @@ export default function HomePage() {
           <div className="mb-16">
             <div className="flex items-center space-x-2 mb-3">
               <div className="w-8 h-1 bg-[#047857]"></div>
-              <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">产品系列</span>
+              <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">{t('home:products.series')}</span>
             </div>
-            
+
             <h2 className="industrial-title text-3xl md:text-4xl font-bold text-[#064E3B] mb-6">
               {pageContent.products_title || t('home:products.title')}
             </h2>
-            
+
             <p className="text-gray-600 max-w-2xl leading-relaxed text-lg">
               {pageContent.products_subtitle || t('home:products.subtitle')}
             </p>
@@ -281,15 +281,15 @@ export default function HomePage() {
                     </div>
                   ) : (
                     <div className="aspect-[4/3] mb-5 overflow-hidden rounded-sm bg-gray-100 flex items-center justify-center text-gray-400">
-                      暂无图片
+                      {t('home:products.no_image')}
                     </div>
                   )}
                   <h3 className="text-lg font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors">{getProductName(product)}</h3>
                   <p className="mt-3 line-clamp-3 text-gray-600">
                     {(() => {
-                      const lang = i18n.language || 'zh';
+                      const lang = i18n.language || 'en';
                       const descKey = `description_${lang}` as keyof typeof product;
-                      return (product[descKey] as string) || product.description_zh || '';
+                      return (product[descKey] as string) || product.description_en || product.description_zh || '';
                     })()}
                   </p>
                   <Link 
@@ -331,7 +331,7 @@ export default function HomePage() {
                   <iframe 
                     className="w-full h-full"
                     src={pageContent.video_url || 'https://www.youtube.com/embed/dQw4w9WgXcQ'}
-                    title="产品演示视频"
+                    title={t('home:video.title')}
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
@@ -347,7 +347,7 @@ export default function HomePage() {
             <div className="md:w-1/2">
               <div className="flex items-center space-x-2 mb-3">
                 <div className="w-8 h-1 bg-[#047857]"></div>
-                <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">产品演示</span>
+                <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">{t('home:video.badge')}</span>
               </div>
               
               <h2 className="industrial-title text-3xl md:text-4xl font-bold text-[#064E3B] mb-6">
@@ -365,8 +365,8 @@ export default function HomePage() {
                     <CheckCircle2 className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-[#064E3B]">简单混合步骤</h4>
-                    <p className="text-gray-600">观看我们的产品如何简单高效地与清水混合</p>
+                    <h4 className="font-bold text-[#064E3B]">{t('home:video.features.mixing.title')}</h4>
+                    <p className="text-gray-600">{t('home:video.features.mixing.description')}</p>
                   </div>
                 </div>
                 
@@ -375,15 +375,15 @@ export default function HomePage() {
                     <CheckCircle2 className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-[#064E3B]">专业施工技巧</h4>
-                    <p className="text-gray-600">学习如何正确应用我们的产品以获得最佳结果</p>
+                    <h4 className="font-bold text-[#064E3B]">{t('home:video.features.application.title')}</h4>
+                    <p className="text-gray-600">{t('home:video.features.application.description')}</p>
                   </div>
                 </div>
               </div>
               
               <Button asChild className="bg-[#047857] hover:bg-[#064E3B] text-white rounded-sm px-8 py-6 text-lg transition-colors">
                 <Link to={`/${i18n.language}/products`}>
-                  探索全部产品
+                  {t('home:video.explore_products')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
@@ -399,7 +399,7 @@ export default function HomePage() {
           <div className="text-center mb-20">
             <div className="inline-flex items-center space-x-2 mb-3">
               <div className="w-3 h-3 bg-[#047857] rotate-45"></div>
-              <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">企业优势</span>
+              <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">{t('home:why_us.badge')}</span>
               <div className="w-3 h-3 bg-[#047857] rotate-45"></div>
             </div>
             
@@ -480,15 +480,15 @@ export default function HomePage() {
               {/* 工业风格标题区 */}
               <div className="flex items-center space-x-2 mb-3">
                 <div className="w-8 h-1 bg-[#047857]"></div>
-                <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">定制服务</span>
+                <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">{t('home:oem.badge')}</span>
               </div>
               
               <h2 className="industrial-title text-3xl md:text-4xl font-bold text-[#064E3B] mb-6">
-                OEM代工定制服务
+                {t('home:oem.title')}
               </h2>
               
               <p className="text-gray-600 leading-relaxed text-lg mb-8">
-                卡恩拥有超过23年的墙纸胶生产经验，为全球客户提供专业的OEM/ODM代工服务。我们可以根据您的要求定制产品配方、包装和品牌。
+                {t('home:oem.description')}
               </p>
               
               {/* 工业风格特点列表 */}
@@ -497,31 +497,31 @@ export default function HomePage() {
                   <div className="w-6 h-6 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0 mt-0.5">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  <span className="ml-3 text-gray-700">品牌定制：按照您的品牌要求生产</span>
+                  <span className="ml-3 text-gray-700">{t('home:oem.features.brand')}</span>
                 </li>
                 <li className="flex items-start">
                   <div className="w-6 h-6 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0 mt-0.5">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  <span className="ml-3 text-gray-700">包装定制：提供多种包装选择，从小包装到大包装</span>
+                  <span className="ml-3 text-gray-700">{t('home:oem.features.packaging')}</span>
                 </li>
                 <li className="flex items-start">
                   <div className="w-6 h-6 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0 mt-0.5">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  <span className="ml-3 text-gray-700">配方定制：根据市场需求调整产品性能</span>
+                  <span className="ml-3 text-gray-700">{t('home:oem.features.formula')}</span>
                 </li>
                 <li className="flex items-start">
                   <div className="w-6 h-6 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0 mt-0.5">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  <span className="ml-3 text-gray-700">已出口到45个国家和地区</span>
+                  <span className="ml-3 text-gray-700">{t('home:oem.features.export')}</span>
                 </li>
               </ul>
               
               <Button asChild className="bg-[#047857] hover:bg-[#064E3B] text-white rounded-sm px-8 py-6 text-lg transition-colors">
                 <Link to={`/${i18n.language}/oem`}>
-                  了解更多OEM服务
+                  {t('home:oem.learn_more')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
@@ -538,7 +538,7 @@ export default function HomePage() {
                 <div className="rounded-sm overflow-hidden shadow-xl relative">
                   <img 
                     src="/images/oem_manufacturing_custom_packaging_uv_stickers.jpg" 
-                    alt="OEM定制服务" 
+                    alt={t('home:oem.image_alt')} 
                     className="w-full h-auto object-cover rounded-sm"
                   />
                   
@@ -547,7 +547,7 @@ export default function HomePage() {
                   
                   {/* 工业风格标记 */}
                   <div className="absolute top-4 right-4 bg-[#047857] text-white px-4 py-1.5 text-sm font-medium tracking-wider">
-                    OEM服务
+                    {t('home:oem.badge')}
                   </div>
                 </div>
                 
@@ -574,7 +574,7 @@ export default function HomePage() {
                 <div className="rounded-sm overflow-hidden shadow-xl relative">
                   <img 
                     src="/images/silver_aluminum_foil_small_packaging_pouches.jpg" 
-                    alt="半成品小包装墙纸胶" 
+                    alt={t('home:semi.image_alt')} 
                     className="w-full h-auto object-cover rounded-sm"
                   />
                   
@@ -583,7 +583,7 @@ export default function HomePage() {
                   
                   {/* 工业风格标记 */}
                   <div className="absolute top-4 left-4 bg-[#047857] text-white px-4 py-1.5 text-sm font-medium tracking-wider">
-                    小包装产品
+                    {t('home:semi.badge')}
                   </div>
                 </div>
                 
@@ -596,15 +596,15 @@ export default function HomePage() {
               {/* 工业风格标题区 */}
               <div className="flex items-center space-x-2 mb-3">
                 <div className="w-8 h-1 bg-[#047857]"></div>
-                <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">便捷解决方案</span>
+                <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">{t('home:semi.badge')}</span>
               </div>
               
               <h2 className="industrial-title text-3xl md:text-4xl font-bold text-[#064E3B] mb-6">
-                半成品墙纸胶小包装
+                {t('home:semi.title')}
               </h2>
               
               <p className="text-gray-600 leading-relaxed text-lg mb-8">
-                我们提供200g刻500g铝膜袋小包装的半成品墙纸胶，适合小面积装修需求和零售市场。这些产品便于存储和运输，使用时只需加水即可。
+                {t('home:semi.description')}
               </p>
               
               {/* 工业风格特点列表 */}
@@ -613,31 +613,31 @@ export default function HomePage() {
                   <div className="w-6 h-6 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0 mt-0.5">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  <span className="ml-3 text-gray-700">规格齐全：200g、300g、400g、500g可选</span>
+                  <span className="ml-3 text-gray-700">{t('home:semi.features.specs')}</span>
                 </li>
                 <li className="flex items-start">
                   <div className="w-6 h-6 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0 mt-0.5">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  <span className="ml-3 text-gray-700">铝膜袋包装：防潮、防潮性好</span>
+                  <span className="ml-3 text-gray-700">{t('home:semi.features.packaging')}</span>
                 </li>
                 <li className="flex items-start">
                   <div className="w-6 h-6 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0 mt-0.5">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  <span className="ml-3 text-gray-700">适合家装市场和建材商场零售</span>
+                  <span className="ml-3 text-gray-700">{t('home:semi.features.market')}</span>
                 </li>
                 <li className="flex items-start">
                   <div className="w-6 h-6 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0 mt-0.5">
                     <CheckCircle2 className="h-4 w-4 text-white" />
                   </div>
-                  <span className="ml-3 text-gray-700">品牌定制：可按要求定制包装和标签</span>
+                  <span className="ml-3 text-gray-700">{t('home:semi.features.custom_brand')}</span>
                 </li>
               </ul>
               
               <Button asChild className="bg-[#047857] hover:bg-[#064E3B] text-white rounded-sm px-8 py-6 text-lg transition-colors">
                 <Link to={`/${i18n.language}/products/KARN-SEMI`}>
-                  查看小包装产品
+                  {t('home:semi.view_products')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
@@ -652,7 +652,7 @@ export default function HomePage() {
         <div className="absolute inset-0 z-0">
           <img 
             src="/images/modern_industrial_robotics_factory_china.jpg" 
-            alt="工业机器人自动化工厂" 
+            alt={t('home:cta.image_alt')} 
             className="w-full h-full object-cover"
           />
         </div>
@@ -691,7 +691,7 @@ export default function HomePage() {
               
               <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-10 py-7 text-lg rounded-sm">
                 <Link to={`/${i18n.language}/products`}>
-                  浏览产品
+                  {t('home:cta.browse_products')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>

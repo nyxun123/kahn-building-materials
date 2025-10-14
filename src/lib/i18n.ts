@@ -21,12 +21,26 @@ i18n
       escapeValue: false, // React已经安全处理了字符串
     },
     detection: {
-      order: ['path', 'querystring', 'navigator', 'localStorage'],
+      // 优先使用 URL 路径和查询参数，其次本地存储，最后才看浏览器语言
+      order: ['path', 'querystring', 'localStorage', 'navigator'],
       lookupFromPathIndex: 0,
       lookupQuerystring: 'lang',
       lookupLocalStorage: 'userLanguage',
       caches: [],
     },
   });
+
+// 针对主域名强制英文，避免浏览器语言导致显示中文
+if (typeof window !== 'undefined') {
+  const host = window.location.hostname.toLowerCase();
+  const EN_HOSTS = ['kn-wallpaperglue.com', 'www.kn-wallpaperglue.com'];
+  if (EN_HOSTS.includes(host)) {
+    const current = i18n.language;
+    if (current !== 'en') {
+      i18n.changeLanguage('en');
+      try { localStorage.setItem('userLanguage', 'en'); } catch {}
+    }
+  }
+}
 
 export default i18n;
