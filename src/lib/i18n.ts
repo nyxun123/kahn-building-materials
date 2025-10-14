@@ -21,11 +21,11 @@ i18n
       escapeValue: false, // React已经安全处理了字符串
     },
     detection: {
-      order: ['path', 'querystring', 'localStorage', 'navigator'],
+      order: ['path', 'querystring', 'navigator', 'localStorage'],
       lookupFromPathIndex: 0,
       lookupQuerystring: 'lang',
       lookupLocalStorage: 'userLanguage',
-      caches: ['localStorage'],
+      caches: [],
     },
   });
 

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Navbar } from './navbar';
@@ -7,22 +7,29 @@ import { Footer } from './footer';
 export function Layout() {
   const { lang } = useParams<{ lang: string }>();
   const { i18n } = useTranslation();
-  
+  const [forceUpdate, setForceUpdate] = useState(0);
+
   // 当URL中的语言参数变化时切换语言
   useEffect(() => {
-    if (lang && ['zh', 'en', 'ru'].includes(lang)) {
-      i18n.changeLanguage(lang);
-      localStorage.setItem('userLanguage', lang);
+    const targetLang = lang || 'en';
+    if (['zh', 'en', 'ru'].includes(targetLang)) {
+      // 强制切换语言，不管 localStorage 中是什么
+      if (i18n.language !== targetLang) {
+        i18n.changeLanguage(targetLang);
+        localStorage.setItem('userLanguage', targetLang);
+        // 强制重新渲染所有组件
+        setForceUpdate(prev => prev + 1);
+      }
     }
   }, [lang, i18n]);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
+    <div key={forceUpdate} className="flex flex-col min-h-screen">
+      <Navbar forceUpdate={forceUpdate} />
       <main className="flex-1 pt-24">
         <Outlet />
       </main>
-      <Footer />
+      <Footer forceUpdate={forceUpdate} />
     </div>
   );
 }
