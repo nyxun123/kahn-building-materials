@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
+import ImageUpload from '@/components/ImageUpload';
 
 interface OEMService {
   id: number;
@@ -30,82 +32,6 @@ interface OEMVersion {
   action: 'created' | 'updated' | 'published';
 }
 
-// 模拟数据
-const mockOEMServices: OEMService[] = [
-  {
-    id: 1,
-    title: "OEM/ODM 墙纸胶定制服务",
-    description: "为品牌商和经销商提供专业的墙纸胶OEM/ODM定制服务，从配方研发到包装设计的一站式解决方案",
-    features: [
-      "专业研发团队",
-      "先进生产设备",
-      "严格质量控制",
-      "个性化包装",
-      "快速交付",
-      "技术支持"
-    ],
-    process: [
-      {
-        step: 1,
-        title: "需求沟通",
-        description: "详细了解客户需求，包括产品规格、包装要求、数量等"
-      },
-      {
-        step: 2,
-        title: "配方研发",
-        description: "根据需求进行配方设计和样品制作"
-      },
-      {
-        step: 3,
-        title: "样品确认",
-        description: "客户确认样品，进行必要的调整"
-      },
-      {
-        step: 4,
-        title: "批量生产",
-        description: "确认订单后进行批量生产"
-      },
-      {
-        step: 5,
-        title: "质量检测",
-        description: "严格的质量检测确保产品符合标准"
-      },
-      {
-        step: 6,
-        title: "包装发货",
-        description: "按客户要求进行包装并安排发货"
-      }
-    ],
-    capabilities: [
-      "年产能10000吨",
-      "10条自动化生产线",
-      "ISO9001认证",
-      "SGS环保认证",
-      "专业质检团队",
-      "24小时技术支持"
-    ],
-    images: ["/api/placeholder/800/600", "/api/placeholder/800/600"],
-    seo_title: "OEM/ODM墙纸胶定制服务 - 专业墙纸胶代工生产厂家",
-    seo_description: "提供专业的墙纸胶OEM/ODM定制服务，拥有先进生产设备和专业研发团队，支持个性化包装和快速交付。",
-    seo_keywords: "墙纸胶OEM,墙纸胶ODM,墙纸胶代工,定制墙纸胶,墙纸胶生产厂家",
-    status: "published",
-    version: 1,
-    created_at: "2025-09-10 15:00:00",
-    updated_at: "2025-09-10 15:00:00"
-  }
-];
-
-const mockVersions: OEMVersion[] = [
-  {
-    id: 1,
-    version: 1,
-    content: mockOEMServices[0],
-    created_at: "2025-09-10 15:00:00",
-    created_by: "管理员",
-    action: "created"
-  }
-];
-
 export function AdminOEM() {
   const [oemService, setOEMService] = useState<OEMService | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -127,21 +53,125 @@ export function AdminOEM() {
   });
 
   useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setOEMService(mockOEMServices[0]);
-      setFormData(mockOEMServices[0]);
-      setIsLoading(false);
-    }, 500);
+    fetchOEMData();
   }, []);
 
-  const handleSave = () => {
+  const fetchOEMData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/admin/oem', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('admin-token') || 'admin-session'}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('获取OEM数据失败');
+      }
+      
+      const result = await response.json();
+      if (result.success && result.data) {
+        setOEMService(result.data);
+        setFormData(result.data);
+      } else {
+        // 如果没有数据，使用默认值
+        const defaultData: OEMService = {
+          id: 1,
+          title: '',
+          description: '',
+          features: [],
+          process: [],
+          capabilities: [],
+          images: [],
+          seo_title: '',
+          seo_description: '',
+          seo_keywords: '',
+          status: 'published',
+          version: 1,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        setOEMService(defaultData);
+        setFormData(defaultData);
+      }
+    } catch (error) {
+      console.error('获取OEM数据失败:', error);
+      toast.error('获取OEM数据失败');
+      
+      // 使用默认数据
+      const defaultData: OEMService = {
+        id: 1,
+        title: '',
+        description: '',
+        features: [],
+        process: [],
+        capabilities: [],
+        images: [],
+        seo_title: '',
+        seo_description: '',
+        seo_keywords: '',
+        status: 'published',
+        version: 1,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      setOEMService(defaultData);
+      setFormData(defaultData);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!formData.title) {
+      toast.error('请填写服务标题');
+      return;
+    }
+
+    console.log('🚀 开始保存OEM数据:', {
+      title: formData.title,
+      imagesCount: (formData.images || []).length,
+      images: formData.images,
+      allFormData: formData
+    });
+
     setIsSaving(true);
-    setTimeout(() => {
-      setOEMService(formData as OEMService);
+    try {
+      const saveData = {
+        ...formData,
+        id: oemService?.id || 1,
+        // 确保images字段是一个有效的数组
+        images: (formData.images || []).filter(img => img && img.trim() !== '')
+      };
+
+      console.log('📤 发送保存数据:', saveData);
+
+      const response = await fetch('/api/admin/oem', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('admin-token') || 'admin-session'}`
+        },
+        body: JSON.stringify(saveData)
+      });
+
+      const result = await response.json();
+      console.log('📝 保存响应:', result);
+
+      if (response.ok && result.success) {
+        toast.success('OEM服务信息已更新！');
+        setOEMService(formData as OEMService);
+        setIsEditing(false);
+        console.log('✅ 保存成功');
+      } else {
+        throw new Error(result.error?.message || '保存失败');
+      }
+    } catch (error) {
+      console.error('❌ 保存OEM数据失败:', error);
+      toast.error(error instanceof Error ? error.message : '保存失败');
+    } finally {
       setIsSaving(false);
-      alert('OEM服务信息已更新！');
-    }, 1000);
+    }
   };
 
   const handleFeatureChange = (index: number, value: string) => {
@@ -199,15 +229,27 @@ export function AdminOEM() {
   };
 
   const handleImageChange = (index: number, value: string) => {
+    console.log('🔄 处理图片变更:', { index, value, currentImages: formData.images });
+
     const newImages = [...(formData.images || [])];
+
+    // 确保数组有足够长度
+    while (newImages.length <= index) {
+      newImages.push('');
+    }
+
     newImages[index] = value;
+    console.log('📝 更新后的图片数组:', newImages);
+
     setFormData({ ...formData, images: newImages });
   };
 
   const addImage = () => {
+    const newImages = [...(formData.images || []), ''];
+    console.log('➕ 添加新图片槽位，当前图片数组:', newImages);
     setFormData({
       ...formData,
-      images: [...(formData.images || []), '']
+      images: newImages
     });
   };
 
@@ -408,26 +450,46 @@ export function AdminOEM() {
 
           <div className="bg-white shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">服务图片</h3>
-              {(formData.images || []).map((image, index) => (
-                <div key={index} className="flex items-center gap-2 mb-2">
-                  <input
-                    type="text"
-                    className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    value={image}
-                    onChange={(e) => handleImageChange(index, e.target.value)}
-                    placeholder="输入图片URL..."
-                  />
-                  <button
-                    className="text-red-600 hover:text-red-800"
-                    onClick={() => removeImage(index)}
-                  >
-                    删除
-                  </button>
+              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+                服务图片
+                <span className="text-sm text-gray-500 ml-2">
+                  (当前 {(formData.images || []).length} 张图片)
+                </span>
+              </h3>
+
+              {/* 调试信息 */}
+              <div className="mb-4 p-3 bg-gray-50 rounded-md">
+                <div className="text-xs text-gray-600">
+                  <p><strong>调试信息:</strong></p>
+                  <p>当前图片数组: {JSON.stringify(formData.images || [])}</p>
+                  <p>数组长度: {(formData.images || []).length}</p>
                 </div>
-              ))}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {(formData.images || []).map((image, index) => (
+                  <div key={index} className="relative border border-gray-200 rounded-lg p-2">
+                    <div className="text-xs text-gray-500 mb-1">
+                      图片 #{index + 1}: {image ? '已上传' : '等待上传'}
+                    </div>
+                    <ImageUpload
+                      value={image}
+                      onChange={(url) => handleImageChange(index, url)}
+                      folder="oem"
+                      className="w-full"
+                    />
+                    <button
+                      type="button"
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 z-10"
+                      onClick={() => removeImage(index)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
               <button
-                className="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50 text-sm"
+                className="mt-4 px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50 text-sm"
                 onClick={addImage}
               >
                 添加图片
@@ -510,25 +572,10 @@ export function AdminOEM() {
             <div className="px-4 py-5 sm:p-6">
               <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">版本历史</h3>
               <div className="space-y-4">
-                {mockVersions.map((version) => (
-                  <div key={version.id} className="flex justify-between items-center p-4 border rounded-lg">
-                    <div>
-                      <p className="font-medium">版本 {version.version}</p>
-                      <p className="text-sm text-gray-600">
-                        创建时间: {version.created_at} | 创建者: {version.created_by} | 操作: {version.action}
-                      </p>
-                    </div>
-                    <button
-                      className="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50 text-sm"
-                      onClick={() => {
-                        setFormData(version.content);
-                        alert('已加载版本 ' + version.version);
-                      }}
-                    >
-                      恢复此版本
-                    </button>
-                  </div>
-                ))}
+                <div className="text-center text-gray-500 py-8">
+                  <p>暂无版本历史记录</p>
+                  <p className="text-sm mt-2">功能开发中...</p>
+                </div>
               </div>
             </div>
           </div>
