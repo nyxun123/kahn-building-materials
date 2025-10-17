@@ -123,20 +123,20 @@ export function AdminOEM() {
   };
 
   const handleSave = async () => {
-    if (!formData.title) {
-      toast.error('请填写服务标题');
-      return;
-    }
+    console.log('🚀 handleSave函数开始执行');
 
-    console.log('🚀 开始保存OEM数据:', {
-      title: formData.title,
-      imagesCount: (formData.images || []).length,
-      images: formData.images,
-      allFormData: formData
-    });
-
-    setIsSaving(true);
     try {
+      // 步骤1：基本验证
+      console.log('📋 步骤1：基本验证');
+      if (!formData.title) {
+        console.error('❌ 验证失败：标题为空');
+        toast.error('请填写服务标题');
+        return;
+      }
+      console.log('✅ 基本验证通过');
+
+      // 步骤2：准备数据
+      console.log('📋 步骤2：准备保存数据');
       const saveData = {
         ...formData,
         id: oemService?.id || 1,
@@ -144,7 +144,22 @@ export function AdminOEM() {
         images: (formData.images || []).filter(img => img && img.trim() !== '')
       };
 
-      console.log('📤 发送保存数据:', saveData);
+      console.log('📤 准备发送的数据:', {
+        title: saveData.title,
+        imagesCount: saveData.images.length,
+        images: saveData.images,
+        allFields: Object.keys(saveData)
+      });
+
+      // 步骤3：设置保存状态
+      console.log('📋 步骤3：设置保存状态');
+      setIsSaving(true);
+      console.log('✅ 保存状态已设置');
+
+      // 步骤4：发送API请求
+      console.log('📋 步骤4：发送API请求');
+      console.log('🌐 API URL:', '/api/admin/oem');
+      console.log('🔑 Authorization:', `Bearer ${localStorage.getItem('admin-token') || 'admin-session'}`);
 
       const response = await fetch('/api/admin/oem', {
         method: 'PUT',
@@ -155,21 +170,67 @@ export function AdminOEM() {
         body: JSON.stringify(saveData)
       });
 
-      const result = await response.json();
-      console.log('📝 保存响应:', result);
+      console.log('📡 API响应状态:', response.status, response.statusText);
+      console.log('📡 API响应头:', Object.fromEntries(response.headers.entries()));
 
+      // 步骤5：处理响应
+      console.log('📋 步骤5：处理API响应');
+
+      let result;
+      try {
+        const responseText = await response.text();
+        console.log('📄 原始响应文本:', responseText);
+        result = JSON.parse(responseText);
+        console.log('📝 解析后的响应数据:', result);
+      } catch (parseError) {
+        console.error('❌ 响应解析失败:', parseError);
+        throw new Error(`服务器响应格式错误: ${parseError.message}`);
+      }
+
+      // 步骤6：检查响应状态
+      console.log('📋 步骤6：检查响应状态');
       if (response.ok && result.success) {
+        console.log('✅ 保存成功');
         toast.success('OEM服务信息已更新！');
         setOEMService(formData as OEMService);
         setIsEditing(false);
-        console.log('✅ 保存成功');
+
+        // 触发数据重新获取以验证保存结果
+        console.log('🔄 重新获取数据验证保存结果...');
+        setTimeout(() => {
+          fetchOEMData();
+        }, 1000);
+
       } else {
-        throw new Error(result.error?.message || '保存失败');
+        console.error('❌ 保存失败:', {
+          status: response.status,
+          statusText: response.statusText,
+          result: result
+        });
+        throw new Error(result.error?.message || `保存失败 (${response.status})`);
       }
+
     } catch (error) {
-      console.error('❌ 保存OEM数据失败:', error);
-      toast.error(error instanceof Error ? error.message : '保存失败');
+      console.error('💥 handleSave函数执行失败:', error);
+      console.error('错误类型:', error.constructor.name);
+      console.error('错误消息:', error.message);
+      console.error('错误堆栈:', error.stack);
+
+      // 显示详细的错误信息
+      const errorMessage = error instanceof Error ? error.message : '未知错误';
+      toast.error(`保存失败: ${errorMessage}`, {
+        duration: 5000
+      });
+
+      // 如果是网络错误，显示额外提示
+      if (error.message.includes('fetch') || error.message.includes('network')) {
+        toast.error('网络连接问题，请检查网络连接后重试', {
+          duration: 3000
+        });
+      }
+
     } finally {
+      console.log('🏁 handleSave函数执行完成，重置保存状态');
       setIsSaving(false);
     }
   };
@@ -523,8 +584,23 @@ export function AdminOEM() {
 
           <div className="flex justify-end space-x-3">
             <button
-              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-              onClick={handleSave}
+              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={(e) => {
+                console.log('🖱️ 保存按钮被点击');
+                console.log('🖱️ 事件对象:', e);
+                console.log('🖱️ 按钮状态:', { isSaving, formData, oemService });
+
+                // 防止重复点击
+                if (isSaving) {
+                  console.log('⚠️ 正在保存中，忽略点击');
+                  return;
+                }
+
+                console.log('🚀 开始执行handleSave');
+                handleSave().catch(error => {
+                  console.error('💥 handleSave调用失败:', error);
+                });
+              }}
               disabled={isSaving}
             >
               {isSaving ? '保存中...' : '保存'}
