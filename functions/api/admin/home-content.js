@@ -97,9 +97,23 @@ export async function onRequestPut(context) {
     }
 
     // 解析请求数据
-    const { id, content_zh, content_en, content_ru } = await request.json();
-    
+    const requestData = await request.json();
+
+    console.log('🔍 调试信息 - 接收到的Home Content数据:', {
+      id: requestData.id,
+      hasContentZh: !!requestData.content_zh,
+      hasContentEn: !!requestData.content_en,
+      hasContentRu: !!requestData.content_ru,
+      contentZhLength: requestData.content_zh?.length || 0,
+      contentEnLength: requestData.content_en?.length || 0,
+      contentRuLength: requestData.content_ru?.length || 0,
+      isImageUrl: requestData.content_zh?.startsWith('https://') || false
+    });
+
+    const { id, content_zh, content_en, content_ru } = requestData;
+
     if (!id || isNaN(parseInt(id))) {
+      console.error('❌ 无效的内容ID:', id);
       return new Response(JSON.stringify({
         error: { message: '无效的内容ID' }
       }), {
@@ -110,10 +124,12 @@ export async function onRequestPut(context) {
         }
       });
     }
-    
+
+    console.log('📝 开始更新Home Content数据...');
+
     // 更新内容数据
     const result = await env.DB.prepare(`
-      UPDATE page_contents 
+      UPDATE page_contents
       SET content_zh = ?, content_en = ?, content_ru = ?, updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `).bind(
@@ -122,6 +138,11 @@ export async function onRequestPut(context) {
       content_ru || '',
       parseInt(id)
     ).run();
+
+    console.log('✅ Home Content更新完成:', {
+      changes: result.changes || 0,
+      success: result.success || false
+    });
     
     // 返回更新后的内容
     const updatedContent = await env.DB.prepare(
