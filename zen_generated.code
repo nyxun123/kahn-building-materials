@@ -1,0 +1,346 @@
+<GENERATED-CODE>
+I will now provide the full code for the refactor.
+
+1.  **Update `functions/api/admin/home-content.js`**: This file will be refactored to handle a single document for the home page. It will now perform an `upsert` operation for `PUT` requests and fetch the single document for `GET` requests, creating a default if one doesn't exist. The API will now respond to `GET /api/admin/home-content/home` and `PUT /api/admin/home-content/home`.
+
+2.  **Update `src/pages/admin/home-content.tsx`**: This file will be completely refactored to use `refine`'s `useOne` and `useUpdate` hooks instead of `useList`. The complex state management and helper functions (`getFieldContent`) will be removed, and the form will bind directly to the nested JSON structure.
+
+Here is the code for the changes.
+
+<UPDATED_EXISTING_FILE: functions/api/admin/home-content.js>
+```javascript
+/**
+ * Handles requests for the home page content, managed as a single document.
+ * This function supports fetching and updating the entire content structure in one operation.
+ *
+ * Endpoint: /api/admin/home-content/home
+ */
+
+// Default structure for the home page content if it doesn't exist in the database.
+const defaultContentData = {
+  video: {
+    title: { zh: "", en: "", ru: "" },
+    subtitle: { zh: "", en: "", ru: "" },
+    video_url: "",
+    description: { zh: "", en: "", ru: "" },
+  },
+  oem: {
+    title: { zh: "", en: "", ru: "" },
+    image_url: "",
+    description: { zh: "", en: "", ru: "" },
+  },
+  semi: {
+    title: { zh: "", en: "", ru: "" },
+    image_url: "",
+    description: { zh: "", en: "", ru: "" },
+  },
+};
+
+/**
+ * Responds with a standard JSON format.
+ * @param {object} data - The payload to send.
+ * @param {number} [status=200] - The HTTP status code.
+ * @returns {Response}
+ */
+function jsonResponse(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    headers: { "Content-Type": "application/json" },
+    status: status,
+  });
+}
+
+/**
+ * GET request handler.
+ * Fetches the single home page content document. If it doesn't exist,
+ * it returns a default structure, ensuring the frontend always receives valid data.
+ * @param {object} context - The Cloudflare Pages function context.
+ * @returns {Promise<Response>}
+ */
+export async function onRequestGet(context) {
+  const { env } = context;
+  const pageKey = "home";
+
+  try {
+    const ps = env.DB.prepare("SELECT * FROM page_contents WHERE page_key = ?").bind(pageKey);
+    let result = await ps.first();
+
+    if (!result) {
+      // If no record exists, return the default structure.
+      // This is crucial for the first-time setup on the frontend.
+      return jsonResponse({
+        id: pageKey, // refine expects an id
+        page_key: pageKey,
+        content_data: defaultContentData,
+      });
+    }
+
+    // The 'id' field is required by refine's data provider for `useOne`.
+    const responseData = {
+      ...result,
+      id: result.page_key,
+      content_data: JSON.parse(result.content_data || "{}"),
+    };
+
+    return jsonResponse(responseData);
+  } catch (error) {
+    console.error("Failed to fetch home content:", error);
+    return jsonResponse({ error: "Database query failed" }, 500);
+  }
+}
+
+/**
+ * PUT request handler.
+ * Updates or creates (upserts) the home page content document.
+ * This provides an atomic update for the entire page.
+ * @param {object} context - The Cloudflare Pages function context.
+ * @returns {Promise<Response>}
+ */
+export async function onRequestPut(context) {
+  const { request, env } = context;
+  const pageKey = "home";
+
+  try {
+    const body = await request.json();
+    const contentData = JSON.stringify(body.content_data || {});
+
+    // Use INSERT ... ON CONFLICT for an atomic upsert operation.
+    const ps = env.DB.prepare(
+      `INSERT INTO page_contents (page_key, content_data) VALUES (?, ?)
+       ON CONFLICT(page_key) DO UPDATE SET content_data = excluded.content_data, updated_at = CURRENT_TIMESTAMP
+       RETURNING *;`
+    ).bind(pageKey, contentData);
+
+    const result = await ps.first();
+
+    if (!result) {
+        throw new Error("Upsert operation failed to return the record.");
+    }
+
+    const responseData = {
+        ...result,
+        id: result.page_key,
+        content_data: JSON.parse(result.content_data || "{}"),
+    };
+
+    return jsonResponse(responseData);
+  } catch (error) {
+    console.error("Failed to update home content:", error);
+    const errorMessage = error instanceof SyntaxError ? "Invalid JSON in request body" : "Database update failed";
+    return jsonResponse({ error: errorMessage }, error instanceof SyntaxError ? 400 : 500);
+  }
+}
+
+/**
+ * Main request handler.
+ * Delegates to GET or PUT handlers based on the request method.
+ * We only handle requests for the specific resource id 'home'.
+ * @param {object} context - The Cloudflare Pages function context.
+ * @returns {Promise<Response>}
+ */
+export async function onRequest(context) {
+  const { request, params } = context;
+
+  // This API now only manages a single document, identified by 'home'.
+  // The path should be /api/admin/home-content/home
+  const resourceId = params.path?.[0];
+  if (resourceId !== 'home') {
+    return jsonResponse({ error: `Resource not found. Use /api/admin/home-content/home` }, 404);
+  }
+
+  switch (request.method) {
+    case "GET":
+      return onRequestGet(context);
+    case "PUT":
+      return onRequestPut(context);
+    default:
+      return new Response("Method Not Allowed", { status: 405 });
+  }
+}
+```
+</UPDATED_EXISTING_FILE>
+
+<UPDATED_EXISTING_FILE: src/pages/admin/home-content.tsx>
+```tsx
+import React from "react";
+import {
+  Edit,
+  useForm,
+  useSelect,
+  useOne,
+} from "@refinedev/antd";
+import { Form, Input, Tabs, Card, Typography, Spin } from "antd";
+
+const { Title } = Typography;
+const { TabPane } = Tabs;
+const { TextArea } = Input;
+
+// Define the structure for a single section's content
+interface SectionContent {
+  title: Record<string, string>;
+  description: Record<string, string>;
+  image_url?: string;
+  subtitle?: Record<string, string>;
+  video_url?: string;
+}
+
+// Define the overall structure of the home page content
+interface HomeContentData {
+  video: SectionContent;
+  oem: SectionContent;
+  semi: SectionContent;
+}
+
+export const HomeContentEdit: React.FC = () => {
+  // Fetch language options for tabs
+  const { selectProps: languageSelectProps } = useSelect({
+    resource: "languages",
+    optionLabel: "name",
+    optionValue: "key",
+    defaultValue: "zh",
+  });
+  const languages = languageSelectProps.options || [];
+
+  // Fetch the single document for home page content
+  const { queryResult } = useOne<any>({
+    resource: "home-content",
+    id: "home", // The static ID for our single document
+  });
+  const record = queryResult?.data?.data;
+
+  // useForm hook for handling form state and submissions
+  const { formProps, saveButtonProps, formLoading } = useForm<any>({
+    // Enable the form once the initial data has been fetched
+    queryOptions: {
+      enabled: !!record,
+    },
+    // The resource and id for the update operation
+    resource: "home-content",
+    id: "home",
+    // Transform form values before sending to the API
+    onMutationSuccess: () => {
+        // Optional: Add success notification
+    },
+    // The data is nested under 'content_data', so we need to wrap it
+    mutationMode: "optimistic",
+    prepareData: (values) => {
+      return { content_data: values };
+    },
+  });
+
+  // Set initial form values once data is loaded
+  React.useEffect(() => {
+    if (record?.content_data) {
+      formProps.form?.setFieldsValue(record.content_data);
+    }
+  }, [record, formProps.form]);
+
+  if (formLoading || queryResult.isLoading) {
+    return (
+      <Edit>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+          <Spin size="large" />
+        </div>
+      </Edit>
+    );
+  }
+
+  return (
+    <Edit saveButtonProps={saveButtonProps}>
+      <Form {...formProps} layout="vertical">
+        <Tabs defaultActiveKey={languages[0]?.value?.toString() || "zh"}>
+          {languages.map((lang: any) => (
+            <TabPane tab={lang.label} key={lang.value}>
+              {/* Video Section */}
+              <Card style={{ marginBottom: 24 }}>
+                <Title level={4}>演示视频 (Video Section)</Title>
+                <Form.Item
+                  label="标题 (Title)"
+                  name={["video", "title", lang.value]}
+                  rules={[{ required: true, message: "请输入标题" }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  label="副标题 (Subtitle)"
+                  name={["video", "subtitle", lang.value]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  label="描述 (Description)"
+                  name={["video", "description", lang.value]}
+                >
+                  <TextArea rows={4} />
+                </Form.Item>
+              </Card>
+
+              {/* OEM Section */}
+              <Card style={{ marginBottom: 24 }}>
+                <Title level={4}>OEM 定制 (OEM Section)</Title>
+                <Form.Item
+                  label="标题 (Title)"
+                  name={["oem", "title", lang.value]}
+                  rules={[{ required: true, message: "请输入标题" }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  label="描述 (Description)"
+                  name={["oem", "description", lang.value]}
+                >
+                  <TextArea rows={4} />
+                </Form.Item>
+              </Card>
+
+              {/* Semi-finished Section */}
+              <Card>
+                <Title level={4}>半成品小袋 (Semi-finished Section)</Title>
+                <Form.Item
+                  label="标题 (Title)"
+                  name={["semi", "title", lang.value]}
+                  rules={[{ required: true, message: "请输入标题" }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  label="描述 (Description)"
+                  name={["semi", "description", lang.value]}
+                >
+                  <TextArea rows={4} />
+                </Form.Item>
+              </Card>
+            </TabPane>
+          ))}
+        </Tabs>
+
+        {/* Non-translatable fields */}
+        <Card title="全局设置 (Global Settings)" style={{ marginTop: 24 }}>
+          <Form.Item
+            label="视频链接 (Video URL)"
+            name={["video", "video_url"]}
+            rules={[{ type: "url", message: "请输入有效的URL" }]}
+          >
+            <Input placeholder="https://example.com/video.mp4" />
+          </Form.Item>
+          <Form.Item
+            label="OEM 图片链接 (OEM Image URL)"
+            name={["oem", "image_url"]}
+            rules={[{ type: "url", message: "请输入有效的URL" }]}
+          >
+            <Input placeholder="https://example.com/oem.jpg" />
+          </Form.Item>
+          <Form.Item
+            label="半成品图片链接 (Semi-finished Image URL)"
+            name={["semi", "image_url"]}
+            rules={[{ type: "url", message: "请输入有效的URL" }]}
+          >
+            <Input placeholder="https://example.com/semi.jpg" />
+          </Form.Item>
+        </Card>
+      </Form>
+    </Edit>
+  );
+};
+```
+</UPDATED_EXISTING_FILE>
+</GENERATED-CODE>

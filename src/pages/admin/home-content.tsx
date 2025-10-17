@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Card,
   Flex,
@@ -11,8 +11,8 @@ import {
   Select,
   SelectItem,
 } from "@tremor/react";
-import { useList, useUpdate, useCreate } from "@refinedev/core";
-import { Save, XCircle, Plus, Video, Package, Factory } from "lucide-react";
+import { useOne, useUpdate } from "@refinedev/core";
+import { Save, XCircle, Video, Package, Factory, Upload } from "lucide-react";
 import ImageUpload from "@/components/ImageUpload";
 
 const HOME_SECTIONS = [
@@ -21,140 +21,122 @@ const HOME_SECTIONS = [
   { key: "semi", label: "半成品小袋", icon: <Package className="h-4 w-4" /> },
 ];
 
-const CONTENT_FIELDS = [
-  { key: "title", label: "标题" },
-  { key: "subtitle", label: "副标题" },
-  { key: "description", label: "描述" },
-  { key: "url", label: "链接/URL" },
-  { key: "image", label: "图片", type: "image" },
-  { key: "video", label: "视频", type: "video" }, // 添加视频字段
+const LANGUAGES = [
+  { code: "zh", name: "中文" },
+  { code: "en", name: "English" },
+  { code: "ru", name: "Русский" },
 ];
 
-function HomeContentManager() {
-  const [activeSection, setActiveSection] = useState("video");
-  const [editingField, setEditingField] = useState<string | null>(null);
-  const [formState, setFormState] = useState({
-    content_zh: "",
-    content_en: "",
-    content_ru: "",
-  });
+// 默认内容结构
+const defaultContentData = {
+  video: {
+    title: { zh: "", en: "", ru: "" },
+    subtitle: { zh: "", en: "", ru: "" },
+    video_url: "",
+    description: { zh: "", en: "", ru: "" },
+  },
+  oem: {
+    title: { zh: "", en: "", ru: "" },
+    image_url: "",
+    description: { zh: "", en: "", ru: "" },
+  },
+  semi: {
+    title: { zh: "", en: "", ru: "" },
+    image_url: "",
+    description: { zh: "", en: "", ru: "" },
+  },
+};
 
-  const { data, refetch, isLoading } = useList({
+function HomeContentManagerNew() {
+  const [activeSection, setActiveSection] = useState("video");
+  const [activeLanguage, setActiveLanguage] = useState("zh");
+  const [hasChanges, setHasChanges] = useState(false);
+  const [formData, setFormData] = useState(defaultContentData);
+
+  // 获取单个首页内容文档
+  const { data, refetch, isLoading } = useOne({
     resource: "home-content",
-    pagination: {
-      pageSize: 100,
-    },
-    meta: {
-      query: { page_key: "home" },
-    },
+    id: "home",
     queryOptions: {
-      keepPreviousData: true,
       staleTime: 60_000,
-    },
+      onSuccess: (data) => {
+        console.log('📦 获取到首页内容:', data);
+        if (data?.data?.content_data) {
+          setFormData(data.data.content_data);
+        }
+      },
+      onError: (error) => {
+        console.error('❌ 获取首页内容失败:', error);
+      }
+    }
   });
 
   const { mutate: updateContent, isLoading: saving } = useUpdate();
-  const { mutate: createContent, isLoading: creating } = useCreate();
 
-  const records = data?.data ?? [];
+  const currentSection = HOME_SECTIONS.find(s => s.key === activeSection);
+  const sectionData = formData[activeSection] || {};
 
-  // 获取特定板块的内容
-  const getSectionContent = (sectionKey: string) => {
-    return records.filter((record: any) => 
-      record.section_key.startsWith(sectionKey + "_")
-    );
-  };
-
-  // 获取特定字段的内容
-  const getFieldContent = (sectionKey: string, fieldKey: string) => {
-    return records.find((record: any) => 
-      record.section_key === `${sectionKey}_${fieldKey}`
-    );
-  };
-
-  useEffect(() => {
-    if (editingField) {
-      const current = getFieldContent(activeSection, editingField);
-      if (current) {
-        setFormState({
-          content_zh: current.content_zh || "",
-          content_en: current.content_en || "",
-          content_ru: current.content_ru || "",
-        });
-      } else {
-        setFormState({
-          content_zh: "",
-          content_en: "",
-          content_ru: "",
-        });
-      }
-    }
-  }, [activeSection, editingField, records]);
-
-  const handleEdit = (fieldKey: string) => {
-    setEditingField(fieldKey);
-  };
-
-  const handleCancel = () => {
-    setEditingField(null);
-  };
-
-  const handleSave = () => {
-    if (!editingField) return;
-
-    const sectionContent = getFieldContent(activeSection, editingField);
-    
-    const contentData = {
-      page_key: "home",
-      section_key: `${activeSection}_${editingField}`,
-      content_zh: formState.content_zh,
-      content_en: formState.content_en,
-      content_ru: formState.content_ru,
-      // 根据字段类型设置content_type
-      ...(editingField === "image" && { content_type: "image" }),
-      ...(editingField === "video" && { content_type: "video" }),
-      ...(editingField === "url" && { content_type: "url" }),
+  // 处理表单数据变化
+  const handleFieldChange = (field: string, value: any) => {
+    const newFormData = {
+      ...formData,
+      [activeSection]: {
+        ...formData[activeSection],
+        [field]: value,
+      },
     };
+    setFormData(newFormData);
+    setHasChanges(true);
+  };
 
-    if (sectionContent) {
-      // 更新现有内容
-      updateContent(
-        {
-          resource: "home-content",
-          id: sectionContent.id,
-          values: contentData,
+  // 处理多语言字段变化
+  const handleLanguageFieldChange = (field: string, language: string, value: string) => {
+    const newFormData = {
+      ...formData,
+      [activeSection]: {
+        ...formData[activeSection],
+        [field]: {
+          ...formData[activeSection]?.[field],
+          [language]: value,
         },
-        {
-          onSuccess: () => {
-            setEditingField(null);
-            refetch();
-            alert('保存成功！');
-          },
-          onError: (error) => {
-            console.error('保存失败:', error);
-            alert('保存失败: ' + (error.message || '未知错误'));
-          },
-        }
-      );
-    } else {
-      // 创建新内容
-      createContent(
-        {
-          resource: "home-content",
-          values: contentData,
+      },
+    };
+    setFormData(newFormData);
+    setHasChanges(true);
+  };
+
+  // 保存操作
+  const handleSave = async () => {
+    console.log('🚀 开始保存首页内容...');
+
+    updateContent(
+      {
+        resource: "home-content",
+        id: "home",
+        values: {
+          content_data: formData,
         },
-        {
-          onSuccess: () => {
-            setEditingField(null);
-            refetch();
-            alert('保存成功！');
-          },
-          onError: (error) => {
-            console.error('保存失败:', error);
-            alert('保存失败: ' + (error.message || '未知错误'));
-          },
-        }
-      );
+      },
+      {
+        onSuccess: (response) => {
+          console.log('✅ 保存成功:', response);
+          setHasChanges(false);
+          alert('首页内容保存成功！');
+          refetch();
+        },
+        onError: (error) => {
+          console.error('❌ 保存失败:', error);
+          alert('保存失败: ' + (error.message || '未知错误'));
+        },
+      }
+    );
+  };
+
+  // 重置操作
+  const handleReset = () => {
+    if (data?.data?.content_data) {
+      setFormData(data.data.content_data);
+      setHasChanges(false);
     }
   };
 
@@ -182,13 +164,13 @@ function HomeContentManager() {
       try {
         setUploading(true);
 
-        // 使用修复后的上传服务
+        // 使用上传服务
         const { uploadService } = await import('@/lib/upload-service');
         const result = await uploadService.uploadWithRetry(file, {
           folder,
           maxSize: 100,
           acceptVideo: true,
-          allowedTypes: ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime', 'video/mov', 'video/avi']
+          allowedTypes: allowedTypes
         });
 
         onChange(result.url);
@@ -200,7 +182,7 @@ function HomeContentManager() {
         setUploading(false);
       }
     };
-    
+
     return (
       <div className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center">
         <input
@@ -211,8 +193,8 @@ function HomeContentManager() {
           id="video-upload"
           disabled={uploading}
         />
-        <label 
-          htmlFor="video-upload" 
+        <label
+          htmlFor="video-upload"
           className={`cursor-pointer flex flex-col items-center justify-center ${uploading ? 'opacity-50' : ''}`}
         >
           {uploading ? (
@@ -231,8 +213,8 @@ function HomeContentManager() {
         {value && (
           <div className="mt-3 text-left">
             <Text className="text-xs text-gray-500">已上传视频链接:</Text>
-            <TextInput 
-              value={value} 
+            <TextInput
+              value={value}
               onChange={(e) => onChange(e.target.value)}
               className="mt-1"
             />
@@ -242,15 +224,51 @@ function HomeContentManager() {
     );
   };
 
-  const currentSection = HOME_SECTIONS.find(s => s.key === activeSection);
-  
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>
-        <Text className="text-2xl font-bold text-slate-900">首页内容管理</Text>
+        <Title className="text-2xl font-bold text-slate-900">首页内容管理（单文档模式）</Title>
         <Text className="text-slate-500">管理首页演示视频、OEM定制、半成品小袋板块内容</Text>
       </div>
 
+      {/* 操作按钮区域 */}
+      <Card>
+        <Flex justifyContent="between" alignItems="center">
+          <Flex alignItems="center" className="gap-3">
+            {hasChanges && (
+              <Badge color="orange">有未保存的更改</Badge>
+            )}
+          </Flex>
+          <Flex justifyContent="end" className="gap-2">
+            <Button
+              variant="secondary"
+              icon={XCircle}
+              onClick={handleReset}
+              disabled={!hasChanges}
+            >
+              重置
+            </Button>
+            <Button
+              icon={Save}
+              loading={saving}
+              onClick={handleSave}
+              disabled={!hasChanges}
+            >
+              保存更改
+            </Button>
+          </Flex>
+        </Flex>
+      </Card>
+
+      {/* 板块选择 */}
       <Card>
         <div className="mb-6">
           <Text className="text-lg font-semibold text-slate-900 mb-4">选择板块</Text>
@@ -259,13 +277,12 @@ function HomeContentManager() {
               <Card
                 key={section.key}
                 className={`cursor-pointer border transition hover:shadow-sm ${
-                  activeSection === section.key 
-                    ? "border-indigo-300 bg-indigo-50" 
+                  activeSection === section.key
+                    ? "border-indigo-300 bg-indigo-50"
                     : "border-slate-200"
                 }`}
                 onClick={() => {
                   setActiveSection(section.key);
-                  setEditingField(null);
                 }}
               >
                 <Flex alignItems="center" className="gap-3">
@@ -277,289 +294,129 @@ function HomeContentManager() {
           </div>
         </div>
 
+        {/* 语言选择 */}
+        <div className="mb-6">
+          <Text className="text-lg font-semibold text-slate-900 mb-4">选择语言</Text>
+          <div className="flex gap-2">
+            {LANGUAGES.map((lang) => (
+              <Button
+                key={lang.code}
+                size="xs"
+                variant={activeLanguage === lang.code ? "primary" : "secondary"}
+                onClick={() => setActiveLanguage(lang.code)}
+              >
+                {lang.name}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {/* 编辑区域 */}
         {currentSection && (
           <div>
-            <Flex justifyContent="between" alignItems="center" className="mb-4">
-              <Text className="text-lg font-semibold text-slate-900">
-                {currentSection.label}板块内容
-              </Text>
-              <Badge color="indigo">
-                {getSectionContent(activeSection).length} 个内容项
-              </Badge>
-            </Flex>
+            <Text className="text-lg font-semibold text-slate-900 mb-4">
+              {currentSection.label}内容编辑
+            </Text>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {CONTENT_FIELDS.map((field) => {
-                // 只在特定板块显示特定字段
-                if (field.key === "video" && activeSection !== "video") return null;
-                if (field.key === "image" && activeSection === "video") return null;
-                
-                const fieldContent = getFieldContent(activeSection, field.key);
-                const isEditing = editingField === field.key;
-                
-                return (
-                  <Card 
-                    key={field.key} 
-                    className={`border transition ${
-                      isEditing 
-                        ? "border-indigo-300 bg-indigo-50" 
-                        : "border-slate-200 hover:border-slate-300"
-                    }`}
-                  >
-                    <Flex justifyContent="between" alignItems="start" className="mb-3">
-                      <Text className="font-medium text-slate-900">{field.label}</Text>
-                      <Button 
-                        size="xs" 
-                        variant="light"
-                        onClick={() => handleEdit(field.key)}
-                      >
-                        {isEditing ? "编辑中..." : "编辑"}
-                      </Button>
-                    </Flex>
-                    
-                    {isEditing ? (
-                      <div className="space-y-3">
-                        {field.type === "image" ? (
-                          // 图片上传字段
-                          <div>
-                            <Text className="text-xs text-slate-500 mb-2">上传图片</Text>
-                            <ImageUpload
-                              value={formState.content_zh}
-                              onChange={(url) => setFormState(prev => ({ ...prev, content_zh: url }))}
-                              folder={activeSection === "oem" ? "home/oem" : activeSection === "semi" ? "home/semi" : "home"}
-                            />
-                            <div className="mt-3">
-                              <Text className="text-xs text-slate-500">中文</Text>
-                              <TextInput
-                                placeholder="或输入图片URL"
-                                value={formState.content_zh}
-                                onChange={(e) =>
-                                  setFormState(prev => ({ ...prev, content_zh: e.target.value }))
-                                }
-                              />
-                            </div>
-                            <div className="mt-3">
-                              <Text className="text-xs text-slate-500">英文</Text>
-                              <TextInput
-                                placeholder="或输入图片URL"
-                                value={formState.content_en}
-                                onChange={(e) =>
-                                  setFormState(prev => ({ ...prev, content_en: e.target.value }))
-                                }
-                              />
-                            </div>
-                            <div className="mt-3">
-                              <Text className="text-xs text-slate-500">俄文</Text>
-                              <TextInput
-                                placeholder="或输入图片URL"
-                                value={formState.content_ru}
-                                onChange={(e) =>
-                                  setFormState(prev => ({ ...prev, content_ru: e.target.value }))
-                                }
-                              />
-                            </div>
-                          </div>
-                        ) : field.type === "video" ? (
-                          // 视频上传字段
-                          <div>
-                            <Text className="text-xs text-slate-500 mb-2">上传视频</Text>
-                            <VideoUpload
-                              value={formState.content_zh}
-                              onChange={(url) => setFormState(prev => ({ ...prev, content_zh: url }))}
-                              folder="home/video"
-                            />
-                            <div className="mt-3">
-                              <Text className="text-xs text-slate-500">中文</Text>
-                              <TextInput
-                                placeholder="或输入视频URL"
-                                value={formState.content_zh}
-                                onChange={(e) =>
-                                  setFormState(prev => ({ ...prev, content_zh: e.target.value }))
-                                }
-                              />
-                            </div>
-                            <div className="mt-3">
-                              <Text className="text-xs text-slate-500">英文</Text>
-                              <TextInput
-                                placeholder="或输入视频URL"
-                                value={formState.content_en}
-                                onChange={(e) =>
-                                  setFormState(prev => ({ ...prev, content_en: e.target.value }))
-                                }
-                              />
-                            </div>
-                            <div className="mt-3">
-                              <Text className="text-xs text-slate-500">俄文</Text>
-                              <TextInput
-                                placeholder="或输入视频URL"
-                                value={formState.content_ru}
-                                onChange={(e) =>
-                                  setFormState(prev => ({ ...prev, content_ru: e.target.value }))
-                                }
-                              />
-                            </div>
-                          </div>
-                        ) : (
-                          // 普通文本字段
-                          <>
-                            <div>
-                              <Text className="text-xs text-slate-500">中文</Text>
-                              <Textarea
-                                className="mt-1 min-h-[80px]"
-                                value={formState.content_zh}
-                                onChange={(e) =>
-                                  setFormState(prev => ({ ...prev, content_zh: e.target.value }))
-                                }
-                              />
-                            </div>
-                            <div>
-                              <Text className="text-xs text-slate-500">英文</Text>
-                              <Textarea
-                                className="mt-1 min-h-[80px]"
-                                value={formState.content_en}
-                                onChange={(e) =>
-                                  setFormState(prev => ({ ...prev, content_en: e.target.value }))
-                                }
-                              />
-                            </div>
-                            <div>
-                              <Text className="text-xs text-slate-500">俄文</Text>
-                              <Textarea
-                                className="mt-1 min-h-[80px]"
-                                value={formState.content_ru}
-                                onChange={(e) =>
-                                  setFormState(prev => ({ ...prev, content_ru: e.target.value }))
-                                }
-                              />
-                            </div>
-                          </>
-                        )}
-                        <Flex justifyContent="end" className="gap-2 mt-2">
-                          <Button 
-                            variant="secondary" 
-                            size="xs" 
-                            icon={XCircle} 
-                            onClick={handleCancel}
-                          >
-                            取消
-                          </Button>
-                          <Button 
-                            size="xs" 
-                            icon={Save} 
-                            loading={saving || creating} 
-                            onClick={handleSave}
-                          >
-                            保存
-                          </Button>
-                        </Flex>
+            <div className="space-y-6">
+              {/* 多语言文本字段 */}
+              <Card>
+                <Text className="font-medium text-slate-900 mb-4">标题</Text>
+                <div className="space-y-3">
+                  {LANGUAGES.map((lang) => (
+                    <div key={`${currentSection.key}_title_${lang.code}`}>
+                      <Text className="text-xs text-slate-500 mb-1">{lang.name}</Text>
+                      <TextInput
+                        value={sectionData.title?.[lang.code] || ""}
+                        onChange={(e) => handleLanguageFieldChange("title", lang.code, e.target.value)}
+                        placeholder={`输入${lang.name}标题`}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              {/* 副标题（仅视频板块） */}
+              {activeSection === "video" && (
+                <Card>
+                  <Text className="font-medium text-slate-900 mb-4">副标题</Text>
+                  <div className="space-y-3">
+                    {LANGUAGES.map((lang) => (
+                      <div key={`video_subtitle_${lang.code}`}>
+                        <Text className="text-xs text-slate-500 mb-1">{lang.name}</Text>
+                        <TextInput
+                          value={sectionData.subtitle?.[lang.code] || ""}
+                          onChange={(e) => handleLanguageFieldChange("subtitle", lang.code, e.target.value)}
+                          placeholder={`输入${lang.name}副标题`}
+                        />
                       </div>
-                    ) : (
-                      <div className="space-y-2">
-                        {field.type === "image" ? (
-                          // 图片预览
-                          <>
-                            {fieldContent?.content_zh ? (
-                              <div className="space-y-2">
-                                <div>
-                                  <Text className="text-xs text-slate-500">中文</Text>
-                                  <div className="mt-1">
-                                    <img 
-                                      src={fieldContent.content_zh} 
-                                      alt="预览" 
-                                      className="max-h-32 object-contain rounded border"
-                                      onError={(e) => {
-                                        e.currentTarget.style.display = 'none';
-                                      }}
-                                    />
-                                  </div>
-                                </div>
-                                {fieldContent.content_en && (
-                                  <div>
-                                    <Text className="text-xs text-slate-500">英文</Text>
-                                    <Text className="block mt-1 text-slate-700 line-clamp-1">
-                                      {fieldContent.content_en}
-                                    </Text>
-                                  </div>
-                                )}
-                                {fieldContent.content_ru && (
-                                  <div>
-                                    <Text className="text-xs text-slate-500">俄文</Text>
-                                    <Text className="block mt-1 text-slate-700 line-clamp-1">
-                                      {fieldContent.content_ru}
-                                    </Text>
-                                  </div>
-                                )}
-                              </div>
-                            ) : (
-                              <Text className="text-slate-500 italic">未设置图片</Text>
-                            )}
-                          </>
-                        ) : field.type === "video" ? (
-                          // 视频链接显示
-                          <>
-                            {fieldContent?.content_zh ? (
-                              <div className="space-y-2">
-                                <div>
-                                  <Text className="text-xs text-slate-500">中文</Text>
-                                  <TextInput 
-                                    value={fieldContent.content_zh} 
-                                    readOnly
-                                    className="mt-1"
-                                  />
-                                </div>
-                                {fieldContent.content_en && (
-                                  <div>
-                                    <Text className="text-xs text-slate-500">英文</Text>
-                                    <TextInput 
-                                      value={fieldContent.content_en} 
-                                      readOnly
-                                      className="mt-1"
-                                    />
-                                  </div>
-                                )}
-                                {fieldContent.content_ru && (
-                                  <div>
-                                    <Text className="text-xs text-slate-500">俄文</Text>
-                                    <TextInput 
-                                      value={fieldContent.content_ru} 
-                                      readOnly
-                                      className="mt-1"
-                                    />
-                                  </div>
-                                )}
-                              </div>
-                            ) : (
-                              <Text className="text-slate-500 italic">未设置视频</Text>
-                            )}
-                          </>
-                        ) : (
-                          // 普通文本内容
-                          <>
-                            <div className="text-sm">
-                              <Text className="text-xs text-slate-500">中文</Text>
-                              <Text className="block mt-1 text-slate-700 line-clamp-2">
-                                {fieldContent?.content_zh || "未设置"}
-                              </Text>
-                            </div>
-                            <div className="text-sm">
-                              <Text className="text-xs text-slate-500">英文</Text>
-                              <Text className="block mt-1 text-slate-700 line-clamp-2">
-                                {fieldContent?.content_en || "未设置"}
-                              </Text>
-                            </div>
-                            <div className="text-sm">
-                              <Text className="text-xs text-slate-500">俄文</Text>
-                              <Text className="block mt-1 text-slate-700 line-clamp-2">
-                                {fieldContent?.content_ru || "未设置"}
-                              </Text>
-                            </div>
-                          </>
-                        )}
-                      </div>
+                    ))}
+                  </div>
+                </Card>
+              )}
+
+              {/* 描述 */}
+              <Card>
+                <Text className="font-medium text-slate-900 mb-4">描述</Text>
+                <div className="space-y-3">
+                  {LANGUAGES.map((lang) => (
+                    <div key={`${currentSection.key}_description_${lang.code}`}>
+                      <Text className="text-xs text-slate-500 mb-1">{lang.name}</Text>
+                      <Textarea
+                        className="min-h-[100px]"
+                        value={sectionData.description?.[lang.code] || ""}
+                        onChange={(e) => handleLanguageFieldChange("description", lang.code, e.target.value)}
+                        placeholder={`输入${lang.name}描述`}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              {/* 媒体文件 */}
+              <Card>
+                <Text className="font-medium text-slate-900 mb-4">
+                  {activeSection === "video" ? "视频文件" : "图片文件"}
+                </Text>
+
+                {activeSection === "video" ? (
+                  <div>
+                    <Text className="text-xs text-slate-500 mb-2">上传视频</Text>
+                    <VideoUpload
+                      value={sectionData.video_url || ""}
+                      onChange={(url) => handleFieldChange("video_url", url)}
+                      folder="home/video"
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <Text className="text-xs text-slate-500 mb-2">上传图片</Text>
+                    <ImageUpload
+                      value={sectionData.image_url || ""}
+                      onChange={(url) => handleFieldChange("image_url", url)}
+                      folder={`home/${activeSection}`}
+                    />
+                  </div>
+                )}
+
+                {/* URL输入框 */}
+                <div className="mt-4">
+                  <Text className="text-xs text-slate-500 mb-2">
+                    或直接输入{activeSection === "video" ? "视频" : "图片"}URL
+                  </Text>
+                  <TextInput
+                    value={activeSection === "video"
+                      ? (sectionData.video_url || "")
+                      : (sectionData.image_url || "")
+                    }
+                    onChange={(e) => handleFieldChange(
+                      activeSection === "video" ? "video_url" : "image_url",
+                      e.target.value
                     )}
-                  </Card>
-                );
-              })}
+                    placeholder={`https://example.com/${activeSection}.${activeSection === "video" ? "mp4" : "jpg"}`}
+                  />
+                </div>
+              </Card>
             </div>
           </div>
         )}
@@ -568,4 +425,4 @@ function HomeContentManager() {
   );
 }
 
-export default HomeContentManager;
+export default HomeContentManagerNew;
