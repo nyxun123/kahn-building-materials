@@ -1,0 +1,36 @@
+{
+  "timestamp": "2025-10-15T06:27:13.168Z",
+  "version": "2.1.0-home-content-management",
+  "changes": [
+    "修复 API 端点 /api/admin/products/[id] 的数据格式返回问题",
+    "增强前端数据提供者的错误处理和重试机制",
+    "优化产品编辑组件针对 Cloudflare 环境的数据回显逻辑",
+    "添加详细的调试日志和错误提示",
+    "禁用缓存确保获取最新数据",
+    "增强数据类型转换和验证机制",
+    "新增首页内容管理功能（演示视频、OEM定制、半成品小袋）",
+    "新增首页内容管理API端点 /api/admin/home-content",
+    "新增首页内容管理前端页面 /admin/home-content"
+  ],
+  "fixes": [
+    "产品编辑页面数据丢失问题",
+    "Cloudflare D1 数据库数据序列化问题",
+    "生产环境网络延迟导致的数据加载问题",
+    "React 表单在异步环境下的数据回显问题",
+    "首页内容无法管理的问题",
+    "多语言内容编辑不一致的问题"
+  ],
+  "new_features": [
+    "首页内容管理（演示视频、OEM定制、半成品小袋）",
+    "多语言内容编辑支持（中文、英文、俄语）",
+    "实时内容预览功能",
+    "响应式管理界面"
+  ],
+  "deployment": {
+    "platform": "Cloudflare Pages",
+    "project": "kahn-building-materials",
+    "url": "https://kn-wallpaperglue.com",
+    "admin_url": "https://kn-wallpaperglue.com/admin",
+    "home_content_admin_url": "https://kn-wallpaperglue.com/admin/home-content"
+  }
+}

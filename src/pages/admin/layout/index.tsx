@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Outlet, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Toaster } from 'react-hot-toast';
 import { BarChart3, Home, Inbox, LogOut, Menu, Package, Settings, X } from 'lucide-react';
 
 import { LanguageSwitcher } from '@/components/language-switcher';
@@ -221,6 +222,7 @@ export default function AdminLayout() {
           <div className="py-6">
             <Outlet />
           </div>
+          <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
         </main>
       </div>
     </div>

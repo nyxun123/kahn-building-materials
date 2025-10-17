@@ -20,6 +20,7 @@ import {
   Search,
   TrendingUp,
   MapPin,
+  Home,
 } from "lucide-react";
 import { AdminProvider } from "./refine/admin-provider";
 
@@ -47,6 +48,12 @@ const NAV_ITEMS = [
     description: "多语言内容与模块文案",
     path: "/admin/content",
     icon: FileText,
+  },
+  {
+    label: "首页内容",
+    description: "首页板块内容管理",
+    path: "/admin/home-content",
+    icon: Home,
   },
   {
     label: "公司信息",

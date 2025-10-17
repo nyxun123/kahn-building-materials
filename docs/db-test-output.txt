@@ -1,0 +1,30 @@
+数据库路径: /Users/nll/Documents/可以用的网站/data/backend-management.db
+首页新板块内容:
+  oem_subtitle: 
+    中文: 卡恩拥有超过23年的墙纸胶生产经验，为全球客户提供专业的OEM/ODM代工服务。我们可以根据您的要求定制产品配方、包装和品牌。
+    英文: Karn has over 23 years of wallpaper adhesive production experience, providing professional OEM/ODM services to global clients. We can customize product formulations, packaging, and branding according to your requirements.
+    俄文: Карн имеет более чем 23-летний опыт производства клея для обоев, предоставляя профессиональные OEM/ODM услуги клиентам по всему миру. Мы можем настраивать формулы продукции, упаковку и брендинг в соответствии с вашими требованиями.
+  oem_title: 
+    中文: OEM代工定制服务
+    英文: OEM Custom Manufacturing Services
+    俄文: OEM услуги по индивидуальному производству
+  semi_subtitle: 
+    中文: 我们提供200g至500g铝膜袋小包装的半成品墙纸胶，适合小面积装修需求和零售市场。这些产品便于存储和运输，使用时只需加水即可。
+    英文: We provide 200g to 500g aluminum foil bag small packaging of semi-finished wallpaper adhesive, suitable for small-area renovation needs and retail markets. These products are easy to store and transport, requiring only water addition before use.
+    俄文: Мы предоставляем полуфабрикаты клея для обоев в алюминиевых пакетах от 200г до 500г, подходящие для небольших площадей ремонта и розничных рынков. Эта продукция удобна для хранения и транспортировки, требует только добавления воды перед использованием.
+  semi_title: 
+    中文: 半成品墙纸胶小包装
+    英文: Semi-Finished Wallpaper Adhesive Small Packaging
+    俄文: Полуфабрикаты клея для обоев в малой упаковке
+  video_subtitle: 
+    中文: 通过视频了解我们的产品特点和使用方法
+    英文: Learn about our product features and usage methods through video
+    俄文: Узнайте о функциях и методах использования нашей продукции через видео
+  video_title: 
+    中文: 产品演示视频
+    英文: Product Demo Video
+    俄文: Видео демонстрации продукции
+  video_url: 
+    中文: https://www.youtube.com/embed/dQw4w9WgXcQ
+    英文: https://www.youtube.com/embed/dQw4w9WgXcQ
+    俄文: https://www.youtube.com/embed/dQw4w9WgXcQ

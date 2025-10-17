@@ -75,7 +75,14 @@ pnpm dev
 
 ### Cloudflare Pages 部署
 
-本项目已优化支持 Cloudflare Pages 部署。详细部署步骤请参考 [CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md)。
+本项目已优化支持 Cloudflare Pages 部署。
+
+#### 当前部署状态：
+- **部署平台**: Cloudflare Pages
+- **项目名称**: kahn-building-materials
+- **生产URL**: https://kn-wallpaperglue.com
+- **管理后台**: https://kn-wallpaperglue.com/admin
+- **最新部署**: https://f27dd00a.kahn-building-materials.pages.dev
 
 #### 快速部署步骤：
 
@@ -87,6 +94,15 @@ pnpm dev
    - 输出目录: `dist`
 5. 设置环境变量
 6. 部署项目
+
+#### 部署后验证：
+部署完成后，可通过以下方式验证功能：
+
+1. 访问主页确认网站正常运行
+2. 进入管理后台 `/admin` 登录
+3. 导航到OEM定制页面 `/admin/oem`
+4. 上传测试图片并保存
+5. 在网站首页验证图片显示
 
 ## 🌐 多语言支持
 

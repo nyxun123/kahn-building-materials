@@ -131,10 +131,9 @@ export class UploadNotificationService {
     const typeText = fileTypeCategory === 'image' ? '图片' : '视频';
     const icon = fileTypeCategory === 'image' ? '🖼️' : '🎬';
 
-    toast.success(`${typeText}已删除`, {
+    toast.success(`${typeText}已删除: ${fileName}`, {
       icon,
-      duration: 3000,
-      description: fileName
+      duration: 3000
     });
   }
 }

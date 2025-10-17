@@ -2,8 +2,9 @@ import sqlite3 from 'sqlite3';
 import { promisify } from 'util';
 import path from 'path';
 import fs from 'fs';
-import { createContentVersionsTable } from './migrations/create-content-versions-table.js';
-import { createContentApprovalsTable } from './migrations/create-content-approvals-table.js';
+import { createContentVersionsTable } from './migrations/create-content-versions-table';
+import { createContentApprovalsTable } from './migrations/create-content-approvals-table';
+import { createPageContentsTable } from './migrations/create-page-contents-table';
 
 type Database = sqlite3.Database;
 const Database = sqlite3.Database;
@@ -135,7 +136,8 @@ export class DatabaseService {
         this.createUserRolesTable,
         this.createRolePermissionsTable,
         createContentVersionsTable,
-        createContentApprovalsTable
+        createContentApprovalsTable,
+        createPageContentsTable
       ];
 
       // 执行未运行的迁移
@@ -319,30 +321,30 @@ export class DatabaseService {
     // 插入默认权限
     const defaultPermissions = [
       // 用户管理权限
-      { id: 'users:read', name: '查看用户', description: '查看用户列表和详情', category: '用户管理' },
-      { id: 'users:create', name: '创建用户', description: '创建新用户', category: '用户管理' },
-      { id: 'users:update', name: '更新用户', description: '修改用户信息', category: '用户管理' },
-      { id: 'users:delete', name: '删除用户', description: '删除用户账户', category: '用户管理' },
-      { id: 'users:roles:manage', name: '管理用户角色', description: '分配和修改用户角色', category: '用户管理' },
+      { id: 'users:read', name: '查看用户', description: '查看用户列表和详情', category: '用户管理', is_system_permission: 1 },
+      { id: 'users:create', name: '创建用户', description: '创建新用户', category: '用户管理', is_system_permission: 1 },
+      { id: 'users:update', name: '更新用户', description: '修改用户信息', category: '用户管理', is_system_permission: 1 },
+      { id: 'users:delete', name: '删除用户', description: '删除用户账户', category: '用户管理', is_system_permission: 1 },
+      { id: 'users:roles:manage', name: '管理用户角色', description: '分配和修改用户角色', category: '用户管理', is_system_permission: 1 },
 
       // 内容管理权限
-      { id: 'content:read', name: '查看内容', description: '查看所有内容', category: '内容管理' },
-      { id: 'content:create', name: '创建内容', description: '创建新内容', category: '内容管理' },
-      { id: 'content:update', name: '更新内容', description: '修改内容信息', category: '内容管理' },
-      { id: 'content:delete', name: '删除内容', description: '删除内容', category: '内容管理' },
-      { id: 'content:publish', name: '发布内容', description: '发布和撤回内容', category: '内容管理' },
+      { id: 'content:read', name: '查看内容', description: '查看所有内容', category: '内容管理', is_system_permission: 1 },
+      { id: 'content:create', name: '创建内容', description: '创建新内容', category: '内容管理', is_system_permission: 1 },
+      { id: 'content:update', name: '更新内容', description: '修改内容信息', category: '内容管理', is_system_permission: 1 },
+      { id: 'content:delete', name: '删除内容', description: '删除内容', category: '内容管理', is_system_permission: 1 },
+      { id: 'content:publish', name: '发布内容', description: '发布和撤回内容', category: '内容管理', is_system_permission: 1 },
 
       // 系统管理权限
-      { id: 'system:settings:read', name: '查看系统设置', description: '查看系统配置', category: '系统管理' },
-      { id: 'system:settings:update', name: '更新系统设置', description: '修改系统配置', category: '系统管理' },
-      { id: 'system:logs:view', name: '查看系统日志', description: '查看审计和系统日志', category: '系统管理' },
-      { id: 'system:backup:manage', name: '管理备份', description: '创建和恢复系统备份', category: '系统管理' }
+      { id: 'system:settings:read', name: '查看系统设置', description: '查看系统配置', category: '系统管理', is_system_permission: 1 },
+      { id: 'system:settings:update', name: '更新系统设置', description: '修改系统配置', category: '系统管理', is_system_permission: 1 },
+      { id: 'system:logs:view', name: '查看系统日志', description: '查看审计和系统日志', category: '系统管理', is_system_permission: 1 },
+      { id: 'system:backup:manage', name: '管理备份', description: '创建和恢复系统备份', category: '系统管理', is_system_permission: 1 }
     ];
 
     for (const perm of defaultPermissions) {
       await this.run(
         `INSERT OR IGNORE INTO permissions (id, name, description, category, is_system_permission) VALUES (?, ?, ?, ?, ?)`,
-        [perm.id, perm.name, perm.description, perm.category, 1]
+        [perm.id, perm.name, perm.description, perm.category, perm.is_system_permission]
       );
     }
   }

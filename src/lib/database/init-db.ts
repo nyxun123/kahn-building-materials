@@ -1,6 +1,6 @@
-import { DatabaseService } from './db-service.js';
-import { UserServiceDB } from '../auth/user-service-db.js';
-import { AuditLogService } from '../auth/audit-log.js';
+import { DatabaseService } from './db-service';
+import { UserServiceDB } from '../auth/user-service-db';
+import { AuditLogService } from '../auth/audit-log';
 
 /**
  * 数据库初始化脚本

@@ -24,7 +24,9 @@ function preDeploymentChecks() {
   const requiredFiles = [
     'functions/api/admin/products/[id].js',
     'src/pages/admin/product-edit.tsx',
-    'src/pages/admin/refine/data-provider.ts'
+    'src/pages/admin/refine/data-provider.ts',
+    'functions/api/admin/home-content.js',  // 新增首页内容管理API
+    'src/pages/admin/home-content.tsx'      // 新增首页内容管理页面
   ];
   
   console.log('🔍 检查关键文件:');
@@ -73,6 +75,21 @@ function preDeploymentChecks() {
   
   componentChecks.forEach(check => {
     const found = check.pattern.test(componentContent);
+    console.log(`   ${check.name}: ${found ? '✅' : '❌'}`);
+  });
+  
+  // 检查首页内容管理功能
+  console.log('\n🔍 验证首页内容管理功能:');
+  const homeContentAPIFile = join(__dirname, 'functions/api/admin/home-content.js');
+  const homeContentAPIContent = readFileSync(homeContentAPIFile, 'utf8');
+  
+  const homeContentAPIChecks = [
+    { name: '首页内容获取API', pattern: /page_key = 'home'/ },
+    { name: '多语言内容更新', pattern: /content_zh.*content_en.*content_ru/ }
+  ];
+  
+  homeContentAPIChecks.forEach(check => {
+    const found = check.pattern.test(homeContentAPIContent);
     console.log(`   ${check.name}: ${found ? '✅' : '❌'}`);
   });
   
@@ -143,31 +160,46 @@ function generateDeploymentReport() {
   
   const report = {
     timestamp: new Date().toISOString(),
-    version: '2.0.0-cloudflare-fix',
+    version: '2.1.0-home-content-management',
     changes: [
       '修复 API 端点 /api/admin/products/[id] 的数据格式返回问题',
       '增强前端数据提供者的错误处理和重试机制',
       '优化产品编辑组件针对 Cloudflare 环境的数据回显逻辑',
       '添加详细的调试日志和错误提示',
       '禁用缓存确保获取最新数据',
-      '增强数据类型转换和验证机制'
+      '增强数据类型转换和验证机制',
+      '新增首页内容管理功能（演示视频、OEM定制、半成品小袋）',
+      '新增首页内容管理API端点 /api/admin/home-content',
+      '新增首页内容管理前端页面 /admin/home-content'
     ],
     fixes: [
       '产品编辑页面数据丢失问题',
       'Cloudflare D1 数据库数据序列化问题',
       '生产环境网络延迟导致的数据加载问题',
-      'React 表单在异步环境下的数据回显问题'
+      'React 表单在异步环境下的数据回显问题',
+      '首页内容无法管理的问题',
+      '多语言内容编辑不一致的问题'
+    ],
+    new_features: [
+      '首页内容管理（演示视频、OEM定制、半成品小袋）',
+      '多语言内容编辑支持（中文、英文、俄语）',
+      '实时内容预览功能',
+      '响应式管理界面'
     ],
     deployment: {
       platform: 'Cloudflare Pages',
       project: 'kahn-building-materials',
       url: 'https://kn-wallpaperglue.com',
-      admin_url: 'https://kn-wallpaperglue.com/admin'
+      admin_url: 'https://kn-wallpaperglue.com/admin',
+      home_content_admin_url: 'https://kn-wallpaperglue.com/admin/home-content'
     }
   };
   
   console.log('🔧 主要修复内容:');
   report.fixes.forEach(fix => console.log(`   • ${fix}`));
+  
+  console.log('\n✨ 新增功能:');
+  report.new_features.forEach(feature => console.log(`   • ${feature}`));
   
   console.log('\n📝 代码变更:');
   report.changes.forEach(change => console.log(`   • ${change}`));
@@ -177,6 +209,7 @@ function generateDeploymentReport() {
   console.log(`   • 项目: ${report.deployment.project}`);
   console.log(`   • 主站: ${report.deployment.url}`);
   console.log(`   • 管理后台: ${report.deployment.admin_url}`);
+  console.log(`   • 首页内容管理: ${report.deployment.home_content_admin_url}`);
   
   // 保存部署报告
   writeFileSync(

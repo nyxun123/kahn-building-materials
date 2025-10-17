@@ -18,6 +18,7 @@
     "badge": "Product Demonstration",
     "title": "Product Demo Video",
     "subtitle": "Learn about our product features and usage methods through video",
+    "no_video": "No video content available",
     "features": {
       "mixing": {
         "title": "Simple Mixing Steps",
@@ -50,6 +51,7 @@
   "oem": {
     "badge": "Custom Services",
     "title": "OEM Custom Manufacturing Services",
+    "subtitle": "Karn has over 23 years of wallpaper adhesive production experience, providing professional OEM/ODM services to global clients. We can customize product formulations, packaging, and branding according to your requirements.",
     "description": "Karn has over 23 years of wallpaper adhesive production experience, providing professional OEM/ODM services to global clients. We can customize product formulations, packaging, and branding according to your requirements.",
     "image_alt": "OEM Custom Services",
     "features": {
@@ -63,6 +65,7 @@
   "semi": {
     "badge": "Convenient Solutions",
     "title": "Semi-Finished Wallpaper Adhesive Small Packaging",
+    "subtitle": "We provide 200g to 500g aluminum foil bag small packaging of semi-finished wallpaper adhesive, suitable for small-area renovation needs and retail markets. These products are easy to store and transport, requiring only water addition before use.",
     "description": "We provide 200g to 500g aluminum foil bag small packaging of semi-finished wallpaper adhesive, suitable for small-area renovation needs and retail markets. These products are easy to store and transport, requiring only water addition before use.",
     "image_alt": "Semi-finished Small Packaging Wallpaper Adhesive",
     "features": {

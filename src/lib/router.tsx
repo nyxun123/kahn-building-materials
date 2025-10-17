@@ -19,6 +19,7 @@ const AdminProductsPage = lazy(() => import('@/pages/admin/products'));
 const AdminProductEditPage = lazy(() => import('@/pages/admin/product-edit'));
 const AdminMessagesPage = lazy(() => import('@/pages/admin/messages'));
 const AdminContentPage = lazy(() => import('@/pages/admin/content'));
+const AdminHomeContentPage = lazy(() => import('@/pages/admin/home-content'));
 const AdminCompanyInfoPage = lazy(() => import('@/pages/admin/company-info'));
 const AdminSEOPage = lazy(() => import('@/pages/admin/seo'));
 const AdminAnalyticsPage = lazy(() => import('@/pages/admin/analytics'));
@@ -99,6 +100,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <AdminContentPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'home-content',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <AdminHomeContentPage />
           </Suspense>
         ),
       },
@@ -185,6 +194,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <AdminContentPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'home-content',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <AdminHomeContentPage />
           </Suspense>
         ),
       },
