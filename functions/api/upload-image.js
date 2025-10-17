@@ -6,6 +6,13 @@ export async function onRequestPost(context) {
   console.log('🚀 开始处理图片上传请求');
   
   try {
+    // 认证检查
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader) {
+      console.error('❌ 图片上传失败: 缺少认证头');
+      return createErrorResponse(401, '需要登录才能上传图片');
+    }
+
     // 检查Content-Type并支持多种格式
     const contentType = request.headers.get('content-type') || '';
     
@@ -31,12 +38,14 @@ export async function onRequestPost(context) {
       console.log('📁 处理JSON格式上传');
       const jsonData = await request.json();
       
-      if (!jsonData.imageData || !jsonData.fileName) {
-        return createErrorResponse(400, 'JSON格式需要包含imageData和fileName字段');
+      // 兼容不同的字段名
+      const imageData = jsonData.imageData || jsonData.fileData;
+      if (!imageData || !jsonData.fileName) {
+        return createErrorResponse(400, 'JSON格式需要包含imageData或fileData和fileName字段');
       }
-      
+
       // 解析base64数据
-      const matches = jsonData.imageData.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+      const matches = imageData.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
       if (!matches || matches.length !== 3) {
         return createErrorResponse(400, '无效的base64图片数据格式');
       }
@@ -182,8 +191,10 @@ export async function onRequestPost(context) {
         throw new Error('R2上传失败，未返回结果');
       }
       
-      // 构建公共访问URL - 使用用户内存中的正确域名
-      const imageUrl = `https://pub-b9f0c2c358074609bf8701513c879957.r2.dev/${safeFileName}`;
+      // 构建公共访问URL - 使用配置的R2桶公共域名
+      // 尝试使用环境变量，回退到默认域名
+      const r2Domain = env.R2_PUBLIC_DOMAIN || env.CF_R2_PUBLIC_DOMAIN || 'https://pub-b9f0c2c358074609bf8701513c879957.r2.dev';
+      const imageUrl = `${r2Domain}/${safeFileName}`;
       const elapsedTime = performance.now() - startTime;
       
       console.log('✅ R2上传成功:', { url: imageUrl, time: `${elapsedTime.toFixed(2)}ms` });

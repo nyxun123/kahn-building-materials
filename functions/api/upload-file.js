@@ -6,6 +6,13 @@ export async function onRequestPost(context) {
   console.log('🚀 开始处理文件上传请求');
 
   try {
+    // 认证检查
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader) {
+      console.error('❌ 文件上传失败: 缺少认证头');
+      return createErrorResponse(401, '需要登录才能上传文件');
+    }
+
     // 检查Content-Type并支持多种格式
     const contentType = request.headers.get('content-type') || '';
 
@@ -116,27 +123,26 @@ export async function onRequestPost(context) {
 
     // 检查是否配置了R2存储桶
     if (!env.IMAGE_BUCKET) {
-      console.log('⚠️ R2存储桶未配置，使用base64回退');
-      // 返回base64格式的文件数据
-      const arrayBuffer = await file.arrayBuffer();
-      const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-      const dataUrl = `data:${file.type};base64,${base64}`;
+      console.log('🛠️ 本地开发环境：返回模拟URL，避免base64回退');
+
+      // 本地开发环境返回模拟URL，而不是base64
+      const mockUrl = `https://via.placeholder.com/400x300.png/000000/FFFFFF?text=Dev+Mock:+${encodeURIComponent(file.name)}`;
 
       const elapsedTime = performance.now() - startTime;
 
       return new Response(JSON.stringify({
         code: 200,
-        message: `${fileTypeCategory === 'image' ? '图片' : '视频'}上传成功 (Base64)`,
+        message: `${fileTypeCategory === 'image' ? '图片' : '视频'}上传成功 (开发模式模拟)`,
         data: {
-          original: dataUrl,
+          original: mockUrl,
           fileName: safeFileName,
           fileSize: file.size,
           fileType: file.type,
           fileTypeCategory: fileTypeCategory,
-          uploadMethod: 'base64',
+          uploadMethod: 'dev_mock',
           uploadTime: elapsedTime,
           fullUrls: {
-            original: dataUrl
+            original: mockUrl
           }
         }
       }), {
@@ -175,9 +181,21 @@ export async function onRequestPost(context) {
         throw new Error('R2上传失败，未返回结果');
       }
 
-      // 构建公共访问URL
-      const fileUrl = `https://pub-b9f0c2c358074609bf8701513c879957.r2.dev/${safeFileName}`;
+      // 构建公共访问URL - 优先使用自定义域名
+      // 自定义域名需要在Cloudflare R2桶设置中配置
+      const customDomain = env.R2_PUBLIC_DOMAIN;
+      const fallbackDomain = 'https://pub-b9f0c2c358074609bf8701513c879957.r2.dev';
+      const baseUrl = customDomain || fallbackDomain;
+      const fileUrl = `${baseUrl}/${safeFileName}`;
       const elapsedTime = performance.now() - startTime;
+
+      // 记录使用的域名
+      if (customDomain) {
+        console.log(`✅ 使用自定义域名: ${customDomain}`);
+      } else {
+        console.log(`⚠️ 使用默认R2域名: ${fallbackDomain}`);
+        console.log('💡 提示：配置R2自定义域名可改善用户体验');
+      }
 
       console.log(`✅ R2上传成功 (${fileTypeCategory}):`, { url: fileUrl, time: `${elapsedTime.toFixed(2)}ms` });
 
@@ -207,32 +225,21 @@ export async function onRequestPost(context) {
 
     } catch (r2Error) {
       console.error('❌ R2上传失败:', r2Error);
-      console.log('🔄 回退到base64方式');
 
-      // R2失败时回退到base64方式
-      const arrayBuffer = await file.arrayBuffer();
-      const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-      const dataUrl = `data:${file.type};base64,${base64}`;
-
+      // R2失败时返回明确的错误，不再回退到base64
+      // 这样可以避免数据不一致的问题
       const elapsedTime = performance.now() - startTime;
 
       return new Response(JSON.stringify({
-        code: 200,
-        message: `${fileTypeCategory === 'image' ? '图片' : '视频'}上传成功 (Base64回退)`,
-        data: {
-          original: dataUrl,
-          fileName: safeFileName,
-          fileSize: file.size,
-          fileType: file.type,
-          fileTypeCategory: fileTypeCategory,
-          uploadMethod: 'base64_fallback',
+        code: 500,
+        message: `${fileTypeCategory === 'image' ? '图片' : '视频'}上传失败`,
+        error: {
+          details: r2Error.message || 'R2存储上传失败',
           uploadTime: elapsedTime,
-          fullUrls: {
-            original: dataUrl
-          }
+          suggestion: '请检查文件大小和格式，或稍后重试'
         }
       }), {
-        status: 200,
+        status: 500,
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
