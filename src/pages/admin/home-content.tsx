@@ -40,7 +40,7 @@ function HomeContentManager() {
   });
 
   const { data, refetch, isLoading } = useList({
-    resource: "contents",
+    resource: "home-content",
     pagination: {
       pageSize: 100,
     },
@@ -120,7 +120,7 @@ function HomeContentManager() {
       // 更新现有内容
       updateContent(
         {
-          resource: "contents",
+          resource: "home-content",
           id: sectionContent.id,
           values: contentData,
         },
@@ -128,6 +128,11 @@ function HomeContentManager() {
           onSuccess: () => {
             setEditingField(null);
             refetch();
+            alert('保存成功！');
+          },
+          onError: (error) => {
+            console.error('保存失败:', error);
+            alert('保存失败: ' + (error.message || '未知错误'));
           },
         }
       );
@@ -135,13 +140,18 @@ function HomeContentManager() {
       // 创建新内容
       createContent(
         {
-          resource: "contents",
+          resource: "home-content",
           values: contentData,
         },
         {
           onSuccess: () => {
             setEditingField(null);
             refetch();
+            alert('保存成功！');
+          },
+          onError: (error) => {
+            console.error('保存失败:', error);
+            alert('保存失败: ' + (error.message || '未知错误'));
           },
         }
       );

@@ -15,6 +15,7 @@ const resourceMap: ResourceMap = {
   products: "products",
   messages: "contacts",
   contents: "contents",
+  "home-content": "home-content",
   "company-info": "company/info",
   "company-content": "company/content",
 };
