@@ -99,72 +99,113 @@ function HomeContentManager() {
     setEditingField(null);
   };
 
-  const handleSave = () => {
-    if (!editingField) return;
+  const handleSave = async () => {
+    if (!editingField) {
+      console.error('❌ 没有编辑中的字段');
+      return;
+    }
+
+    console.log('🚀 开始保存操作:', {
+      activeSection,
+      editingField,
+      formState,
+      hasContentZh: !!formState.content_zh,
+      hasContentEn: !!formState.content_en,
+      hasContentRu: !!formState.content_ru
+    });
 
     const sectionContent = getFieldContent(activeSection, editingField);
-    
+
     const contentData = {
       page_key: "home",
       section_key: `${activeSection}_${editingField}`,
-      content_zh: formState.content_zh,
-      content_en: formState.content_en,
-      content_ru: formState.content_ru,
+      content_zh: formState.content_zh || "",
+      content_en: formState.content_en || "",
+      content_ru: formState.content_ru || "",
       // 根据字段类型设置content_type
       ...(editingField === "image" && { content_type: "image" }),
       ...(editingField === "video" && { content_type: "video" }),
       ...(editingField === "url" && { content_type: "url" }),
+      ...(editingField === "title" && { content_type: "title" }),
+      ...(editingField === "subtitle" && { content_type: "subtitle" }),
+      ...(editingField === "description" && { content_type: "description" }),
     };
 
-    if (sectionContent) {
-      // 更新现有内容
-      updateContent(
-        {
-          resource: "home-content",
-          id: sectionContent.id,
-          values: contentData,
-        },
-        {
-          onSuccess: () => {
-            setEditingField(null);
-            refetch();
-            alert('保存成功！');
-          },
-          onError: (error) => {
-            console.error('保存失败:', error);
-            alert('保存失败: ' + (error.message || '未知错误'));
-          },
-        }
-      );
-    } else {
-      // 创建新内容
-      createContent(
-        {
-          resource: "home-content",
-          values: contentData,
-        },
-        {
-          onSuccess: () => {
-            setEditingField(null);
-            refetch();
-            alert('保存成功！');
-          },
-          onError: (error) => {
-            console.error('保存失败:', error);
-            alert('保存失败: ' + (error.message || '未知错误'));
-          },
-        }
-      );
+    console.log('📦 准备保存的数据:', contentData);
+
+    try {
+      if (sectionContent) {
+        console.log('📝 更新现有内容，ID:', sectionContent.id);
+        // 更新现有内容
+        await new Promise((resolve, reject) => {
+          updateContent(
+            {
+              resource: "home-content",
+              id: sectionContent.id,
+              values: contentData,
+            },
+            {
+              onSuccess: (response) => {
+                console.log('✅ 更新成功:', response);
+                resolve(response);
+              },
+              onError: (error) => {
+                console.error('❌ 更新失败:', error);
+                reject(error);
+              },
+            }
+          );
+        });
+      } else {
+        console.log('📝 创建新内容');
+        // 创建新内容
+        await new Promise((resolve, reject) => {
+          createContent(
+            {
+              resource: "home-content",
+              values: contentData,
+            },
+            {
+              onSuccess: (response) => {
+                console.log('✅ 创建成功:', response);
+                resolve(response);
+              },
+              onError: (error) => {
+                console.error('❌ 创建失败:', error);
+                reject(error);
+              },
+            }
+          );
+        });
+      }
+
+      // 保存成功后的处理
+      setEditingField(null);
+      await refetch();
+      alert('保存成功！');
+
+    } catch (error) {
+      console.error('💥 保存操作失败:', error);
+      const errorMessage = error instanceof Error ? error.message : '未知错误';
+      alert(`保存失败: ${errorMessage}`);
     }
   };
 
   // 自定义视频上传组件
-  const VideoUpload = ({ value, onChange, folder = "home" }) => {
+  const VideoUpload = ({ value, onChange, folder = "home/video" }) => {
     const [uploading, setUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
 
     const handleFileChange = async (e) => {
       const file = e.target.files?.[0];
       if (!file) return;
+
+      console.log('🎬 开始视频上传:', {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type,
+        folder: folder
+      });
 
       // 验证文件类型
       const allowedTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime', 'video/mov', 'video/avi'];
@@ -181,23 +222,36 @@ function HomeContentManager() {
 
       try {
         setUploading(true);
+        setUploadProgress(0);
 
-        // 使用修复后的上传服务
+        // 使用统一的上传服务
         const { uploadService } = await import('@/lib/upload-service');
-        const result = await uploadService.uploadWithRetry(file, {
+        console.log('📤 调用上传服务...');
+
+        const result = await uploadService.uploadVideo(file, {
           folder,
           maxSize: 100,
-          acceptVideo: true,
-          allowedTypes: ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime', 'video/mov', 'video/avi']
+          allowedTypes: allowedTypes,
+          onProgress: (progress) => {
+            setUploadProgress(progress);
+            console.log(`📊 上传进度: ${progress}%`);
+          }
         });
 
+        console.log('✅ 视频上传成功:', result);
         onChange(result.url);
-        alert('视频上传成功！');
+
+        // 更好的成功提示
+        const fileSize = (result.fileSize / 1024 / 1024).toFixed(2);
+        alert(`视频上传成功！\n文件名: ${result.fileName}\n大小: ${fileSize}MB\n上传方式: ${result.uploadMethod === 'cloudflare' ? '云端存储' : '本地存储'}`);
+
       } catch (error) {
-        console.error('视频上传失败:', error);
-        alert('视频上传失败: ' + (error.message || '未知错误'));
+        console.error('❌ 视频上传失败:', error);
+        const errorMessage = error instanceof Error ? error.message : '未知错误';
+        alert(`视频上传失败: ${errorMessage}`);
       } finally {
         setUploading(false);
+        setUploadProgress(0);
       }
     };
     
@@ -211,31 +265,47 @@ function HomeContentManager() {
           id="video-upload"
           disabled={uploading}
         />
-        <label 
-          htmlFor="video-upload" 
+        <label
+          htmlFor="video-upload"
           className={`cursor-pointer flex flex-col items-center justify-center ${uploading ? 'opacity-50' : ''}`}
         >
           {uploading ? (
-            <div className="flex flex-col items-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mb-2"></div>
-              <Text className="text-sm text-gray-600">上传中...</Text>
+            <div className="flex flex-col items-center w-full">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
+              <Text className="text-sm text-gray-600 mb-2">上传中...</Text>
+              {uploadProgress > 0 && (
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+              )}
+              <Text className="text-xs text-gray-500 mt-2">{uploadProgress}%</Text>
             </div>
           ) : (
             <div className="flex flex-col items-center">
               <Video className="h-8 w-8 text-gray-400 mb-2" />
               <Text className="text-sm font-medium text-gray-600">点击上传视频</Text>
-              <Text className="text-xs text-gray-500 mt-1">支持 MP4, WebM, OGG, MOV 格式</Text>
+              <Text className="text-xs text-gray-500 mt-1">支持 MP4, WebM, OGG, MOV, AVI 格式</Text>
+              <Text className="text-xs text-gray-400 mt-1">最大文件大小: 100MB</Text>
             </div>
           )}
         </label>
         {value && (
           <div className="mt-3 text-left">
-            <Text className="text-xs text-gray-500">已上传视频链接:</Text>
-            <TextInput 
-              value={value} 
+            <Text className="text-xs text-gray-500 mb-1">已上传视频链接:</Text>
+            <TextInput
+              value={value}
               onChange={(e) => onChange(e.target.value)}
               className="mt-1"
+              placeholder="视频URL将显示在这里"
             />
+            {value && (
+              <div className="mt-2">
+                <Text className="text-xs text-blue-600">✅ 视频已上传</Text>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -325,37 +395,45 @@ function HomeContentManager() {
                             <Text className="text-xs text-slate-500 mb-2">上传图片</Text>
                             <ImageUpload
                               value={formState.content_zh}
-                              onChange={(url) => setFormState(prev => ({ ...prev, content_zh: url }))}
-                              folder={activeSection === "oem" ? "home/oem" : activeSection === "semi" ? "home/semi" : "home"}
+                              onChange={(url) => {
+                                console.log('🖼️ 图片上传回调:', url);
+                                setFormState(prev => ({ ...prev, content_zh: url }));
+                              }}
+                              folder={`home/${activeSection}`}
+                              preview={true}
+                              className="w-full"
                             />
                             <div className="mt-3">
-                              <Text className="text-xs text-slate-500">中文</Text>
+                              <Text className="text-xs text-slate-500 mb-1">中文内容</Text>
                               <TextInput
                                 placeholder="或输入图片URL"
                                 value={formState.content_zh}
-                                onChange={(e) =>
-                                  setFormState(prev => ({ ...prev, content_zh: e.target.value }))
-                                }
+                                onChange={(e) => {
+                                  console.log('📝 中文URL输入:', e.target.value);
+                                  setFormState(prev => ({ ...prev, content_zh: e.target.value }));
+                                }}
                               />
                             </div>
                             <div className="mt-3">
-                              <Text className="text-xs text-slate-500">英文</Text>
+                              <Text className="text-xs text-slate-500 mb-1">英文内容</Text>
                               <TextInput
                                 placeholder="或输入图片URL"
                                 value={formState.content_en}
-                                onChange={(e) =>
-                                  setFormState(prev => ({ ...prev, content_en: e.target.value }))
-                                }
+                                onChange={(e) => {
+                                  console.log('📝 英文URL输入:', e.target.value);
+                                  setFormState(prev => ({ ...prev, content_en: e.target.value }));
+                                }}
                               />
                             </div>
                             <div className="mt-3">
-                              <Text className="text-xs text-slate-500">俄文</Text>
+                              <Text className="text-xs text-slate-500 mb-1">俄文内容</Text>
                               <TextInput
                                 placeholder="或输入图片URL"
                                 value={formState.content_ru}
-                                onChange={(e) =>
-                                  setFormState(prev => ({ ...prev, content_ru: e.target.value }))
-                                }
+                                onChange={(e) => {
+                                  console.log('📝 俄文URL输入:', e.target.value);
+                                  setFormState(prev => ({ ...prev, content_ru: e.target.value }));
+                                }}
                               />
                             </div>
                           </div>
@@ -365,37 +443,43 @@ function HomeContentManager() {
                             <Text className="text-xs text-slate-500 mb-2">上传视频</Text>
                             <VideoUpload
                               value={formState.content_zh}
-                              onChange={(url) => setFormState(prev => ({ ...prev, content_zh: url }))}
+                              onChange={(url) => {
+                                console.log('🎬 视频上传回调:', url);
+                                setFormState(prev => ({ ...prev, content_zh: url }));
+                              }}
                               folder="home/video"
                             />
                             <div className="mt-3">
-                              <Text className="text-xs text-slate-500">中文</Text>
+                              <Text className="text-xs text-slate-500 mb-1">中文内容</Text>
                               <TextInput
                                 placeholder="或输入视频URL"
                                 value={formState.content_zh}
-                                onChange={(e) =>
-                                  setFormState(prev => ({ ...prev, content_zh: e.target.value }))
-                                }
+                                onChange={(e) => {
+                                  console.log('📝 中文视频URL输入:', e.target.value);
+                                  setFormState(prev => ({ ...prev, content_zh: e.target.value }));
+                                }}
                               />
                             </div>
                             <div className="mt-3">
-                              <Text className="text-xs text-slate-500">英文</Text>
+                              <Text className="text-xs text-slate-500 mb-1">英文内容</Text>
                               <TextInput
                                 placeholder="或输入视频URL"
                                 value={formState.content_en}
-                                onChange={(e) =>
-                                  setFormState(prev => ({ ...prev, content_en: e.target.value }))
-                                }
+                                onChange={(e) => {
+                                  console.log('📝 英文视频URL输入:', e.target.value);
+                                  setFormState(prev => ({ ...prev, content_en: e.target.value }));
+                                }}
                               />
                             </div>
                             <div className="mt-3">
-                              <Text className="text-xs text-slate-500">俄文</Text>
+                              <Text className="text-xs text-slate-500 mb-1">俄文内容</Text>
                               <TextInput
                                 placeholder="或输入视频URL"
                                 value={formState.content_ru}
-                                onChange={(e) =>
-                                  setFormState(prev => ({ ...prev, content_ru: e.target.value }))
-                                }
+                                onChange={(e) => {
+                                  console.log('📝 俄文视频URL输入:', e.target.value);
+                                  setFormState(prev => ({ ...prev, content_ru: e.target.value }));
+                                }}
                               />
                             </div>
                           </div>
@@ -435,21 +519,24 @@ function HomeContentManager() {
                           </>
                         )}
                         <Flex justifyContent="end" className="gap-2 mt-2">
-                          <Button 
-                            variant="secondary" 
-                            size="xs" 
-                            icon={XCircle} 
+                          <Button
+                            variant="secondary"
+                            size="xs"
+                            icon={XCircle}
                             onClick={handleCancel}
+                            disabled={saving || creating}
                           >
                             取消
                           </Button>
-                          <Button 
-                            size="xs" 
-                            icon={Save} 
-                            loading={saving || creating} 
+                          <Button
+                            size="xs"
+                            icon={Save}
+                            loading={saving || creating}
+                            disabled={saving || creating}
                             onClick={handleSave}
+                            className="min-w-[80px]"
                           >
-                            保存
+                            {saving || creating ? '保存中...' : '保存'}
                           </Button>
                         </Flex>
                       </div>

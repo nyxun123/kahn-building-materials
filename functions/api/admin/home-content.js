@@ -72,6 +72,7 @@ export async function onRequestPost(context) {
     // 认证检查
     const authHeader = request.headers.get('Authorization');
     if (!authHeader) {
+      console.error('❌ 创建内容失败: 缺少认证头');
       return new Response(JSON.stringify({
         error: { message: '需要登录' }
       }), {
@@ -85,6 +86,7 @@ export async function onRequestPost(context) {
 
     // 数据库检查
     if (!env.DB) {
+      console.error('❌ 创建内容失败: D1数据库未配置');
       return new Response(JSON.stringify({
         error: { message: 'D1数据库未配置' }
       }), {
@@ -97,15 +99,39 @@ export async function onRequestPost(context) {
     }
 
     // 解析请求数据
-    const requestData = await request.json();
+    let requestData;
+    try {
+      requestData = await request.json();
+      console.log('🔍 收到创建Home Content请求:', {
+        url: request.url,
+        method: request.method,
+        headers: Object.fromEntries(request.headers.entries())
+      });
+    } catch (parseError) {
+      console.error('❌ JSON解析失败:', parseError);
+      return new Response(JSON.stringify({
+        error: { message: '请求数据格式错误（无效的JSON）' }
+      }), {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
 
-    console.log('🔍 调试信息 - 创建新的Home Content数据:', {
+    console.log('📋 创建Home Content数据详情:', {
       page_key: requestData.page_key,
       section_key: requestData.section_key,
       content_type: requestData.content_type,
       hasContentZh: !!requestData.content_zh,
+      contentZhLength: requestData.content_zh?.length || 0,
       hasContentEn: !!requestData.content_en,
-      hasContentRu: !!requestData.content_ru
+      contentEnLength: requestData.content_en?.length || 0,
+      hasContentRu: !!requestData.content_ru,
+      contentRuLength: requestData.content_ru?.length || 0,
+      isImageUrl: requestData.content_zh?.startsWith('https://') || false,
+      isVideoUrl: requestData.content_zh?.startsWith('https://') && (requestData.content_type === 'video') || false
     });
 
     const {
@@ -118,10 +144,11 @@ export async function onRequestPost(context) {
       sort_order = 0
     } = requestData;
 
-    if (!page_key || !section_key) {
-      console.error('❌ 缺少必要参数:', { page_key, section_key });
+    // 参数验证
+    if (!page_key) {
+      console.error('❌ 缺少page_key参数');
       return new Response(JSON.stringify({
-        error: { message: '缺少必要参数: page_key 或 section_key' }
+        error: { message: '缺少必要参数: page_key' }
       }), {
         status: 400,
         headers: {
@@ -131,38 +158,82 @@ export async function onRequestPost(context) {
       });
     }
 
-    console.log('📝 开始创建Home Content数据...');
+    if (!section_key) {
+      console.error('❌ 缺少section_key参数');
+      return new Response(JSON.stringify({
+        error: { message: '缺少必要参数: section_key' }
+      }), {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+
+    console.log('📝 开始创建Home Content记录...');
 
     // 插入新内容数据
-    const result = await env.DB.prepare(`
-      INSERT INTO page_contents (
-        page_key, section_key, content_zh, content_en, content_ru,
-        content_type, sort_order, is_active, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-    `).bind(
-      page_key,
-      section_key,
-      content_zh || '',
-      content_en || '',
-      content_ru || '',
-      content_type,
-      sort_order
-    ).run();
+    let result;
+    try {
+      result = await env.DB.prepare(`
+        INSERT INTO page_contents (
+          page_key, section_key, content_zh, content_en, content_ru,
+          content_type, sort_order, is_active, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      `).bind(
+        page_key,
+        section_key,
+        content_zh || '',
+        content_en || '',
+        content_ru || '',
+        content_type,
+        sort_order
+      ).run();
 
-    console.log('✅ Home Content创建完成:', {
-      meta: result.meta,
-      success: result.success || false,
-      lastRowId: result.meta.last_row_id
-    });
+      console.log('✅ 数据库插入成功:', {
+        success: result.success,
+        changes: result.changes,
+        meta: result.meta,
+        lastRowId: result.meta?.last_row_id
+      });
+
+      if (!result.success || result.changes === 0) {
+        throw new Error('数据库插入失败');
+      }
+
+    } catch (dbError) {
+      console.error('❌ 数据库操作失败:', dbError);
+      throw new Error(`数据库操作失败: ${dbError.message}`);
+    }
 
     // 返回创建后的内容
-    const createdContent = await env.DB.prepare(
-      'SELECT * FROM page_contents WHERE id = ?'
-    ).bind(result.meta.last_row_id).first();
+    let createdContent;
+    try {
+      createdContent = await env.DB.prepare(
+        'SELECT * FROM page_contents WHERE id = ?'
+      ).bind(result.meta.last_row_id).first();
+
+      if (!createdContent) {
+        throw new Error('创建后查询失败');
+      }
+
+      console.log('✅ 创建成功，返回数据:', {
+        id: createdContent.id,
+        page_key: createdContent.page_key,
+        section_key: createdContent.section_key,
+        content_type: createdContent.content_type
+      });
+
+    } catch (queryError) {
+      console.error('❌ 查询创建结果失败:', queryError);
+      throw new Error(`查询创建结果失败: ${queryError.message}`);
+    }
 
     return new Response(JSON.stringify({
       success: true,
-      data: createdContent
+      data: createdContent,
+      message: '内容创建成功'
     }), {
       status: 201,
       headers: {
@@ -172,11 +243,30 @@ export async function onRequestPost(context) {
     });
 
   } catch (error) {
-    console.error('创建首页内容失败:', error);
+    console.error('💥 创建首页内容失败:', {
+      error: error.message,
+      stack: error.stack,
+      timestamp: new Date().toISOString()
+    });
+
+    let errorMessage = '创建内容失败';
+    let statusCode = 500;
+
+    if (error instanceof SyntaxError) {
+      errorMessage = '请求数据格式错误';
+      statusCode = 400;
+    } else if (error.message.includes('参数')) {
+      errorMessage = error.message;
+      statusCode = 400;
+    } else if (error.message.includes('数据库')) {
+      errorMessage = '数据库操作失败';
+      statusCode = 500;
+    }
+
     return new Response(JSON.stringify({
-      error: { message: `创建内容失败: ${error.message}` }
+      error: { message: `${errorMessage}: ${error.message}` }
     }), {
-      status: 500,
+      status: statusCode,
       headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
