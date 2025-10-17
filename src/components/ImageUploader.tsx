@@ -58,7 +58,11 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       
       console.log('✅ 上传成功:', result);
       onImageUpload(result.url);
-      toast.success('图片上传成功');
+
+      // 详细的成功提示
+      const uploadMethod = result.uploadMethod === 'cloudflare' ? '云端存储' : '本地存储';
+      const fileSize = (result.fileSize / 1024 / 1024).toFixed(2);
+      toast.success(`图片上传成功！${uploadMethod} (${fileSize}MB)`);
       
     } catch (error) {
       console.error('❌ 图片上传失败:', error);

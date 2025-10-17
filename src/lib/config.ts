@@ -9,6 +9,7 @@ export const API_CONFIG = {
     PRODUCT_DETAIL: (code: string) => `/api/products/${code}`,
     CONTACT: '/api/contact',
     UPLOAD_IMAGE: '/api/upload-image',
+    UPLOAD_FILE: '/api/upload-file',
     COMPANY_INFO: (section: string) => `/api/company/info/${section}`,
     COMPANY_CONTENT: (type: string) => `/api/company/content/${type}`,
     

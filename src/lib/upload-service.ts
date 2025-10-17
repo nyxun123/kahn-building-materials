@@ -7,12 +7,15 @@ interface UploadOptions {
   maxSize?: number; // MB
   allowedTypes?: string[];
   onProgress?: (progress: number) => void;
+  acceptVideo?: boolean; // 是否支持视频
 }
 
 interface UploadResult {
   url: string;
   fileName: string;
   fileSize: number;
+  fileType: string;
+  fileTypeCategory: 'image' | 'video';
   uploadMethod: 'cloudflare' | 'base64';
 }
 
@@ -29,8 +32,8 @@ class UploadService {
   async uploadImage(file: File, options: UploadOptions = {}): Promise<UploadResult> {
     const {
       folder = 'products',
-      maxSize = 5,
-      allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
+      maxSize = 10,
+      allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml']
     } = options;
 
     // 验证文件
@@ -38,6 +41,33 @@ class UploadService {
 
     // 直接上传到Cloudflare Worker，不使用base64回退
     return await this.uploadToCloudflare(file, folder);
+  }
+
+  async uploadVideo(file: File, options: UploadOptions = {}): Promise<UploadResult> {
+    const {
+      folder = 'videos',
+      maxSize = 100,
+      allowedTypes = ['video/mp4', 'video/mov', 'video/avi', 'video/wmv', 'video/flv', 'video/webm', 'video/mkv']
+    } = options;
+
+    // 验证文件
+    this.validateFile(file, maxSize, allowedTypes);
+
+    // 上传视频到Cloudflare Worker
+    return await this.uploadFileToCloudflare(file, folder);
+  }
+
+  async uploadFile(file: File, options: UploadOptions = {}): Promise<UploadResult> {
+    const { folder = 'general', acceptVideo = false } = options;
+
+    // 根据文件类型自动选择上传方法
+    if (file.type.startsWith('image/')) {
+      return await this.uploadImage(file, { ...options, folder });
+    } else if (file.type.startsWith('video/') && acceptVideo) {
+      return await this.uploadVideo(file, { ...options, folder });
+    } else {
+      throw new Error(`不支持的文件类型: ${file.type}`);
+    }
   }
 
   private validateFile(file: File, maxSize: number, allowedTypes: string[]) {
@@ -65,30 +95,58 @@ class UploadService {
         url: result.url,
         fileName: file.name,
         fileSize: file.size,
+        fileType: file.type,
+        fileTypeCategory: file.type.startsWith('image/') ? 'image' : 'video',
         uploadMethod: 'cloudflare'
       };
     } catch (error) {
       console.error('Cloudflare上传失败:', error);
-      throw new Error(`图片上传失败: ${error.message || '未知错误'}`);
+      throw new Error(`文件上传失败: ${error.message || '未知错误'}`);
+    }
+  }
+
+  private async uploadFileToCloudflare(file: File, folder: string): Promise<UploadResult> {
+    try {
+      const { CloudflareWorkerFileUpload } = await import('./cloudflare-worker-file-upload');
+      const uploader = CloudflareWorkerFileUpload.getInstance();
+      const result = await uploader.uploadFileToWorker(file, folder);
+
+      if (!result.success || !result.url) {
+        throw new Error(result.error || '文件上传失败');
+      }
+
+      return {
+        url: result.url,
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type,
+        fileTypeCategory: file.type.startsWith('image/') ? 'image' : 'video',
+        uploadMethod: 'cloudflare'
+      };
+    } catch (error) {
+      console.error('文件上传失败:', error);
+      throw new Error(`文件上传失败: ${error.message || '未知错误'}`);
     }
   }
 
   private async uploadToBase64(file: File, folder: string): Promise<UploadResult> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      
+
       reader.onload = () => {
         const base64 = reader.result as string;
         const fileName = `${folder}/${Date.now()}_${file.name}`;
-        
+
         resolve({
           url: base64,
           fileName,
           fileSize: file.size,
+          fileType: file.type,
+          fileTypeCategory: file.type.startsWith('image/') ? 'image' : 'video',
           uploadMethod: 'base64'
         });
       };
-      
+
       reader.onerror = () => reject(new Error('文件读取失败'));
       reader.readAsDataURL(file);
     });
