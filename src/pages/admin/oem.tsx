@@ -242,6 +242,15 @@ export function AdminOEM() {
     console.log('📝 更新后的图片数组:', newImages);
 
     setFormData({ ...formData, images: newImages });
+
+    // 实时验证图片URL是否有效
+    if (value && value.startsWith('https://')) {
+      console.log('🔍 验证图片URL:', value);
+      const img = new Image();
+      img.onload = () => console.log('✅ 图片URL验证成功');
+      img.onerror = () => console.warn('⚠️ 图片URL可能无效');
+      img.src = value;
+    }
   };
 
   const addImage = () => {

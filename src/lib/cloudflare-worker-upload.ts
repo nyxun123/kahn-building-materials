@@ -72,15 +72,27 @@ export class CloudflareWorkerUpload {
 
       const data = await response.json();
       console.log('✅ 上传响应数据:', data);
-      
+
       if (data.code !== 200) {
         throw new Error(data.message || '上传失败');
       }
 
+      // 处理不同的响应格式
+      let imageUrl = data.data?.original || data.data?.url;
+      let uploadMethod = data.data?.uploadMethod || 'cloudflare';
+
+      // 如果是完整的URL对象，提取original URL
+      if (data.data?.fullUrls?.original) {
+        imageUrl = data.data.fullUrls.original;
+      }
+
+      console.log('🔗 提取的图片URL:', imageUrl);
+      console.log('📤 上传方法:', uploadMethod);
+
       return {
         success: true,
-        url: data.data?.original || data.data?.url,
-        method: data.data?.uploadMethod || 'cloudflare'
+        url: imageUrl,
+        method: uploadMethod === 'cloudflare_r2' ? 'cloudflare' : uploadMethod
       };
     } catch (error) {
       console.error('❌ Worker上传失败:', error);

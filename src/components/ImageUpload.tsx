@@ -66,6 +66,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       });
 
       console.log('✅ 上传成功:', result);
+      console.log('🔗 返回的URL:', result.url);
+      console.log('📤 上传方法:', result.uploadMethod);
+
       onChange(result.url);
 
       // 详细的成功提示
