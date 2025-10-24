@@ -5,7 +5,6 @@ import { Menu, X, Phone, Mail, MapPin, ChevronDown, Building2 } from 'lucide-rea
 
 import { cn } from '@/lib/utils';
 import { LanguageSwitcher } from './language-switcher';
-import { ThemeToggle } from './theme-toggle';
 import { Button } from './ui/button';
 import { enforceMainDomainLanguage } from '@/lib/i18n';
 
@@ -142,10 +141,7 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
                 {t('header.consult_now')}
               </Button>
             </Link>
-            <div className="flex items-center space-x-3">
-              <LanguageSwitcher />
-              <ThemeToggle />
-            </div>
+            <LanguageSwitcher />
           </div>
 
           {/* 移动端菜单按钮 */}
@@ -217,7 +213,6 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
 
             <div className="flex items-center space-x-4 pt-4 border-t border-gray-200">
               <LanguageSwitcher />
-              <ThemeToggle />
             </div>
           </div>
         </div>

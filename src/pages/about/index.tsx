@@ -16,7 +16,7 @@ export default function AboutPage() {
       </Helmet>
 
       {/* 页面标题区 */}
-      <section className="bg-gradient-to-r from-green-500 to-green-700 dark:from-green-600 dark:to-green-800 py-16 md:py-24">
+      <section className="bg-gradient-to-r from-green-500 to-green-700 py-16 md:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             {t('about:hero.title')}
@@ -215,7 +215,7 @@ export default function AboutPage() {
       </section>
 
       {/* CTA区域 */}
-      <section className="py-16 md:py-24 bg-gradient-to-r from-primary to-accent dark:from-primary dark:to-accent text-white">
+      <section className="py-16 md:py-24 bg-gradient-to-r from-primary to-accent text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl md:text-3xl font-bold mb-6">
             {t('about:cta.title')}

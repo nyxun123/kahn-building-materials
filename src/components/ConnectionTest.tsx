@@ -147,7 +147,7 @@ export function ConnectionTest({ show = false }: ConnectionTestProps) {
   if (!show) return null;
 
   return (
-    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4">
+    <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-lg">数据库连接测试</h3>
         <button

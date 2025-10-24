@@ -16,7 +16,7 @@ interface UploadResult {
   fileSize: number;
   fileType: string;
   fileTypeCategory: 'image' | 'video';
-  uploadMethod: 'cloudflare' | 'base64';
+  uploadMethod: 'cloudflare' | 'cloudflare_r2' | 'base64' | 'base64_fallback';
 }
 
 class UploadService {
@@ -158,9 +158,18 @@ class UploadService {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         console.log(`上传尝试 ${attempt}/${maxRetries}`);
-        const result = await this.uploadImage(file, options);
-        console.log('上传成功:', result);
-        return result;
+        // 根据文件类型选择上传方法
+        if (file.type.startsWith('image/')) {
+          const result = await this.uploadImage(file, options);
+          console.log('上传成功:', result);
+          return result;
+        } else if (file.type.startsWith('video/')) {
+          const result = await this.uploadVideo(file, options);
+          console.log('上传成功:', result);
+          return result;
+        } else {
+          throw new Error(`不支持的文件类型: ${file.type}`);
+        }
       } catch (error) {
         lastError = error as Error;
         console.error(`上传失败 (尝试 ${attempt}):`, error);

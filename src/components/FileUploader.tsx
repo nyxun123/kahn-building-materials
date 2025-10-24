@@ -134,7 +134,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
 
       {preview ? (
         <div className="relative group">
-          <div className="relative rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-gray-50 dark:bg-gray-800">
+          <div className="relative rounded-lg border border-gray-200 overflow-hidden bg-gray-50">
             {preview.type === 'image' ? (
               <img
                 src={preview.url}
@@ -182,7 +182,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         </div>
       ) : (
         <div
-          className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
+          className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
           onClick={() => fileInputRef.current?.click()}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
@@ -193,13 +193,13 @@ const FileUploader: React.FC<FileUploaderProps> = ({
             </div>
 
             <div>
-              <p className="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">
+              <p className="text-lg font-medium text-gray-600 mb-2">
                 {uploading ? '上传中...' : title}
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-500">
+              <p className="text-sm text-gray-500">
                 {description}
               </p>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+              <p className="text-xs text-gray-400 mt-1">
                 图片最大 {maxSize}MB {allowVideo ? '，视频最大 100MB' : ''}
               </p>
             </div>
@@ -219,7 +219,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
       )}
 
       {uploading && !preview && (
-        <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+        <div className="text-center text-sm text-gray-600">
           <div className="flex items-center justify-center space-x-2">
             <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-primary"></div>
             <span>正在处理文件...</span>

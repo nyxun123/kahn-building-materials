@@ -45,7 +45,14 @@ export default function HomePage() {
           contentData?.forEach((item: any) => {
             const lang = i18n.language || 'en';
             const langKey = `content_${lang}`;
-            contentMap[item.section_key] = item[langKey] || item.content_en || item.content_zh || '';
+            const contentValue = item[langKey] || item.content_en || item.content_zh || '';
+            
+            // 特殊处理OEM图片
+            if (item.section_key === 'oem_image') {
+              contentMap['oem_images'] = [contentValue];
+            } else {
+              contentMap[item.section_key] = contentValue;
+            }
             
             // 如果是数组内容，尝试解析
             if (item.section_key.includes('features') || item.section_key.includes('capabilities') || item.section_key.includes('process') || item.section_key.includes('images')) {

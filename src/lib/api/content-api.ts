@@ -3,7 +3,7 @@
 export async function getPageContents(pageKey?: string): Promise<any[]> {
   try {
     // 构建查询URL
-    let url = '/api/content-local';
+    let url = '/api/content';
     if (pageKey) {
       url += `?page=${encodeURIComponent(pageKey)}`;
     }

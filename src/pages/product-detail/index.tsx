@@ -168,7 +168,7 @@ export default function ProductDetailPage() {
               </div>
             )}
 
-            <div className="prose dark:prose-invert mb-6">
+            <div className="prose mb-6">
               <h3 className="text-lg font-semibold mb-2">{t('products:description')}</h3>
               <p>{getLocalizedContent('description')}</p>
             </div>
@@ -192,7 +192,7 @@ export default function ProductDetailPage() {
             {getLocalizedContent('specifications') && (
               <div className="mb-6">
                 <h3 className="text-lg font-semibold mb-3">{t('products:specifications')}</h3>
-                <div className="prose dark:prose-invert">
+                <div className="prose">
                   <p>{getLocalizedContent('specifications')}</p>
                 </div>
               </div>
@@ -202,7 +202,7 @@ export default function ProductDetailPage() {
             {getLocalizedContent('applications') && (
               <div className="mb-6">
                 <h3 className="text-lg font-semibold mb-3">{t('products:applications')}</h3>
-                <div className="prose dark:prose-invert">
+                <div className="prose">
                   <p>{getLocalizedContent('applications')}</p>
                 </div>
               </div>
@@ -215,7 +215,7 @@ export default function ProductDetailPage() {
                   <Package className="h-5 w-5 mr-2" />
                   {t('products:packaging')}
                 </h3>
-                <div className="prose dark:prose-invert">
+                <div className="prose">
                   <p>{getLocalizedContent('packaging_options')}</p>
                 </div>
               </div>

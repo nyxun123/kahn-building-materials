@@ -62,12 +62,13 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
       onVideoUpload(result.url);
 
       // 显示详细的成功通知
+      const uploadMethod = result.uploadMethod === 'cloudflare' || result.uploadMethod === 'cloudflare_r2' || result.uploadMethod === 'base64_fallback' ? '云端存储' : '本地存储';
       uploadNotification.showUploadSuccess({
         fileName: file.name,
         fileSize: result.fileSize,
         fileType: result.fileType,
         fileTypeCategory: result.fileTypeCategory,
-        uploadMethod: result.uploadMethod,
+        uploadMethod: uploadMethod,
         uploadTime: Date.now() // 简化处理，实际应该从后端获取
       });
 
@@ -138,7 +139,7 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
 
       {preview ? (
         <div className="relative group">
-          <div className="relative rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-black">
+          <div className="relative rounded-lg border border-gray-200 overflow-hidden bg-black">
             <video
               src={preview}
               controls
@@ -178,7 +179,7 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
         </div>
       ) : (
         <div
-          className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
+          className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
           onClick={() => fileInputRef.current?.click()}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
@@ -189,10 +190,10 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
             </div>
 
             <div>
-              <p className="text-lg font-medium text-gray-600 dark:text-gray-400 mb-2">
+              <p className="text-lg font-medium text-gray-600 mb-2">
                 {uploading ? '上传中...' : '点击或拖拽上传视频'}
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-500">
+              <p className="text-sm text-gray-500">
                 支持 MP4, MOV, AVI, WebM 格式，最大 {maxSize}MB
               </p>
             </div>
@@ -212,7 +213,7 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
       )}
 
       {uploading && !preview && (
-        <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+        <div className="text-center text-sm text-gray-600">
           <div className="flex items-center justify-center space-x-2">
             <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-primary"></div>
             <span>正在处理视频文件...</span>
@@ -221,16 +222,16 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
       )}
 
       {/* 使用提示 */}
-      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-3">
+      <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
         <div className="flex items-start">
           <div className="flex-shrink-0">
             <RiPlayCircleLine className="w-5 h-5 text-blue-400" />
           </div>
           <div className="ml-3">
-            <h3 className="text-sm font-medium text-blue-800 dark:text-blue-200">
+            <h3 className="text-sm font-medium text-blue-800">
               视频上传提示
             </h3>
-            <div className="mt-1 text-sm text-blue-700 dark:text-blue-300">
+            <div className="mt-1 text-sm text-blue-700">
               <ul className="list-disc list-inside space-y-1">
                 <li>支持主流视频格式，建议使用 MP4 格式以获得最佳兼容性</li>
                 <li>视频文件较大时上传可能需要较长时间，请耐心等待</li>

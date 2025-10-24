@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
-import { ThemeProvider } from 'next-themes';
 import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'react-hot-toast';
 
@@ -22,10 +21,8 @@ function App() {
     <ServiceWorkerProvider>
       <ErrorBoundary>
         <HelmetProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <Toaster position="top-center" />
-            <RouterProvider router={router} />
-          </ThemeProvider>
+          <Toaster position="top-center" />
+          <RouterProvider router={router} />
         </HelmetProvider>
       </ErrorBoundary>
     </ServiceWorkerProvider>

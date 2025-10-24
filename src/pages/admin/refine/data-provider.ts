@@ -254,7 +254,7 @@ export const adminDataProvider: DataProvider = {
     let data: BaseRecord;
     if (Array.isArray(payload.data)) {
       data = payload.data[0];
-    } else if (payload.data) {
+    } else if ("data" in payload) {
       data = payload.data;
     } else {
       data = payload as unknown as BaseRecord;
@@ -289,7 +289,7 @@ export const adminDataProvider: DataProvider = {
     let data: BaseRecord;
     if (Array.isArray(payload.data)) {
       data = payload.data[0];
-    } else if (payload.data) {
+    } else if ("data" in payload) {
       data = payload.data;
     } else {
       data = payload as unknown as BaseRecord;

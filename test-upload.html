@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>上传功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            transition: border-color 0.3s;
+        }
+        .upload-area:hover {
+            border-color: #007bff;
+        }
+        .upload-area.dragover {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .preview {
+            max-width: 300px;
+            max-height: 300px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .log {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cloudflare 上传功能测试</h1>
+        
+        <div class="info">
+            <strong>测试目标:</strong> 验证图片和视频上传功能是否正常工作
+            <br><strong>部署地址:</strong> <a href="https://2a6f67dd.kahn-building-materials.pages.dev" target="_blank">https://2a6f67dd.kahn-building-materials.pages.dev</a>
+        </div>
+
+        <div class="upload-area" id="uploadArea">
+            <p>拖拽文件到此处或点击选择文件</p>
+            <p>支持图片 (JPEG, PNG, WebP, GIF) 和视频 (MP4, MOV, AVI)</p>
+            <input type="file" id="fileInput" accept="image/*,video/*" style="display: none;">
+            <button onclick="document.getElementById('fileInput').click()">选择文件</button>
+        </div>
+
+        <div>
+            <button id="testImageBtn">测试图片上传</button>
+            <button id="testVideoBtn">测试视频上传</button>
+            <button id="testApiBtn">测试API连通性</button>
+            <button id="clearLogBtn">清空日志</button>
+        </div>
+
+        <div id="result"></div>
+        
+        <div class="log" id="log">
+            <div>🚀 测试日志将显示在这里...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://2a6f67dd.kahn-building-materials.pages.dev';
+        let selectedFile = null;
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const colorMap = {
+                'info': '#0c5460',
+                'success': '#155724',
+                'error': '#721c24',
+                'warning': '#856404'
+            };
+            
+            logDiv.innerHTML += `<div style="color: ${colorMap[type]}; margin: 2px 0;">[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function showResult(message, type = 'info') {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+
+        function createPreview(file) {
+            if (file.type.startsWith('image/')) {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.className = 'preview';
+                return img;
+            } else if (file.type.startsWith('video/')) {
+                const video = document.createElement('video');
+                video.src = URL.createObjectURL(file);
+                video.className = 'preview';
+                video.controls = true;
+                return video;
+            }
+            return null;
+        }
+
+        // 文件选择处理
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleFileSelect(file);
+            }
+        });
+
+        // 拖拽处理
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                handleFileSelect(file);
+            }
+        });
+
+        function handleFileSelect(file) {
+            selectedFile = file;
+            log(`📁 选择文件: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB, ${file.type})`);
+            
+            const preview = createPreview(file);
+            if (preview) {
+                const existingPreview = uploadArea.querySelector('img, video');
+                if (existingPreview) {
+                    existingPreview.remove();
+                }
+                uploadArea.appendChild(preview);
+            }
+        }
+
+        // 上传函数
+        async function uploadFile(file, folder = 'test') {
+            if (!file) {
+                showResult('请先选择文件', 'error');
+                return;
+            }
+
+            log(`🚀 开始上传: ${file.name}`);
+            showResult('正在上传...', 'info');
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('folder', folder);
+
+            try {
+                const response = await fetch(`${API_BASE}/api/upload-image`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Authorization': 'Bearer admin-token'
+                    }
+                });
+
+                log(`📝 响应状态: ${response.status} ${response.statusText}`);
+
+                const data = await response.json();
+                log(`📄 响应数据: ${JSON.stringify(data, null, 2)}`);
+
+                if (response.ok && data.code === 200) {
+                    const url = data.data?.original || data.data?.url;
+                    const method = data.data?.uploadMethod || 'unknown';
+                    
+                    showResult(`
+                        ✅ 上传成功!<br>
+                        文件: ${file.name}<br>
+                        方法: ${method}<br>
+                        URL: <a href="${url}" target="_blank">${url}</a>
+                    `, 'success');
+                    
+                    log(`✅ 上传成功: ${method}`);
+                    
+                    // 显示上传的文件
+                    if (url) {
+                        const resultDiv = document.getElementById('result');
+                        if (file.type.startsWith('image/')) {
+                            resultDiv.innerHTML += `<br><img src="${url}" style="max-width: 200px; border-radius: 4px;">`;
+                        } else if (file.type.startsWith('video/')) {
+                            resultDiv.innerHTML += `<br><video src="${url}" controls style="max-width: 200px; border-radius: 4px;"></video>`;
+                        }
+                    }
+                } else {
+                    throw new Error(data.message || `上传失败 (${response.status})`);
+                }
+            } catch (error) {
+                log(`❌ 上传失败: ${error.message}`, 'error');
+                showResult(`❌ 上传失败: ${error.message}`, 'error');
+            }
+        }
+
+        // API连通性测试
+        async function testApiConnection() {
+            log('🔍 测试API连通性...');
+            showResult('正在测试API连通性...', 'info');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/products?limit=1`);
+                log(`📝 API响应状态: ${response.status} ${response.statusText}`);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ API连通正常: ${JSON.stringify(data, null, 2)}`);
+                    showResult('✅ API连通正常', 'success');
+                } else {
+                    throw new Error(`API响应异常: ${response.status}`);
+                }
+            } catch (error) {
+                log(`❌ API连通性测试失败: ${error.message}`, 'error');
+                showResult(`❌ API连通性测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        // 创建测试文件
+        function createTestImage() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 200;
+            canvas.height = 200;
+            const ctx = canvas.getContext('2d');
+            
+            // 绘制测试图片
+            ctx.fillStyle = '#007bff';
+            ctx.fillRect(0, 0, 200, 200);
+            ctx.fillStyle = 'white';
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('测试图片', 100, 100);
+            
+            return new Promise(resolve => {
+                canvas.toBlob(resolve, 'image/jpeg', 0.8);
+            });
+        }
+
+        // 事件监听器
+        document.getElementById('testImageBtn').addEventListener('click', async () => {
+            const testFile = await createTestImage();
+            testFile.name = `test-image-${Date.now()}.jpg`;
+            await uploadFile(testFile, 'test-images');
+        });
+
+        document.getElementById('testVideoBtn').addEventListener('click', () => {
+            if (selectedFile && selectedFile.type.startsWith('video/')) {
+                uploadFile(selectedFile, 'test-videos');
+            } else {
+                showResult('请先选择一个视频文件', 'error');
+                log('⚠️ 需要先选择视频文件', 'warning');
+            }
+        });
+
+        document.getElementById('testApiBtn').addEventListener('click', testApiConnection);
+
+        document.getElementById('clearLogBtn').addEventListener('click', () => {
+            document.getElementById('log').innerHTML = '<div>🚀 日志已清空...</div>';
+        });
+
+        // 页面加载时自动测试API连通性
+        window.addEventListener('load', () => {
+            log('🚀 页面加载完成，开始自动测试...');
+            setTimeout(testApiConnection, 1000);
+        });
+    </script>
+</body>
+</html>

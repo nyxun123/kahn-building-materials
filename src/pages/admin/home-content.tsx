@@ -133,51 +133,58 @@ function HomeContentManager() {
 
     console.log('📦 准备保存的数据:', contentData);
 
-    try {
-      if (sectionContent) {
-        console.log('📝 更新现有内容，ID:', sectionContent.id);
-        // 更新现有内容
-        await new Promise((resolve, reject) => {
-          updateContent(
-            {
-              resource: "home-content",
-              id: sectionContent.id,
-              values: contentData,
-            },
-            {
-              onSuccess: (response) => {
-                console.log('✅ 更新成功:', response);
-                resolve(response);
-              },
-              onError: (error) => {
-                console.error('❌ 更新失败:', error);
-                reject(error);
-              },
-            }
-          );
-        });
-      } else {
-        console.log('📝 创建新内容');
-        // 创建新内容
-        await new Promise((resolve, reject) => {
-          createContent(
-            {
-              resource: "home-content",
-              values: contentData,
-            },
-            {
-              onSuccess: (response) => {
-                console.log('✅ 创建成功:', response);
-                resolve(response);
-              },
-              onError: (error) => {
-                console.error('❌ 创建失败:', error);
-                reject(error);
-              },
-            }
-          );
-        });
+    // 使用直接API调用替代Refine框架
+    const getAuthToken = () => {
+      try {
+        const adminAuth = localStorage.getItem("admin-auth");
+        if (adminAuth) {
+          const parsed = JSON.parse(adminAuth);
+          return parsed?.token || 'admin-session';
+        }
+        const tempAuth = localStorage.getItem("temp-admin-auth");
+        if (tempAuth) {
+          return 'temp-admin';
+        }
+      } catch (error) {
+        console.warn("读取认证信息失败", error);
       }
+      return 'admin-token'; // 默认token
+    };
+
+    const authToken = getAuthToken();
+    const apiUrl = sectionContent
+      ? `/api/admin/home-content/${sectionContent.id}`
+      : `/api/admin/home-content`;
+    
+    const method = sectionContent ? 'PUT' : 'POST';
+
+    console.log('🌐 发送直接API请求:', {
+      url: apiUrl,
+      method,
+      authToken: authToken.substring(0, 10) + '...',
+      hasData: !!contentData
+    });
+
+    try {
+      const response = await fetch(apiUrl, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify(contentData)
+      });
+
+      console.log('📝 API响应状态:', response.status, response.statusText);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ API响应错误:', errorText);
+        throw new Error(`保存失败 (${response.status}): ${errorText || response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log('✅ 保存成功响应:', result);
 
       // 保存成功后的处理
       setEditingField(null);
@@ -185,7 +192,12 @@ function HomeContentManager() {
       alert('保存成功！');
 
     } catch (error) {
-      console.error('💥 保存操作失败:', error);
+      console.error('💥 保存操作失败:', {
+        error: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+      
       const errorMessage = error instanceof Error ? error.message : '未知错误';
       alert(`保存失败: ${errorMessage}`);
     }
@@ -231,11 +243,7 @@ function HomeContentManager() {
         const result = await uploadService.uploadVideo(file, {
           folder,
           maxSize: 100,
-          allowedTypes: allowedTypes,
-          onProgress: (progress) => {
-            setUploadProgress(progress);
-            console.log(`📊 上传进度: ${progress}%`);
-          }
+          allowedTypes: allowedTypes
         });
 
         console.log('✅ 视频上传成功:', result);

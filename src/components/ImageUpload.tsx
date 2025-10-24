@@ -72,7 +72,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       onChange(result.url);
 
       // 详细的成功提示
-      const uploadMethod = result.uploadMethod === 'cloudflare' ? '云端存储' : '本地存储';
+      const uploadMethod = result.uploadMethod === 'cloudflare' || result.uploadMethod === 'cloudflare_r2' || result.uploadMethod === 'base64_fallback' ? '云端存储' : '本地存储';
       const fileSize = (result.fileSize / 1024 / 1024).toFixed(2);
       toast.success(`图片上传成功！${uploadMethod} (${fileSize}MB)`);
       
@@ -159,7 +159,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       
       {value && preview ? (
         <div className="relative group">
-          <div className="border-2 border-gray-300 dark:border-gray-600 rounded-md overflow-hidden">
+          <div className="border-2 border-gray-300 rounded-md overflow-hidden">
             <img
               src={getImagePreview()}
               alt="预览图片"
@@ -205,8 +205,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={`
-            border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-md p-8 
-            cursor-pointer hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800 
+            border-2 border-dashed border-gray-300 rounded-md p-8 
+            cursor-pointer hover:border-primary hover:bg-gray-50 
             transition-colors duration-200 text-center
             ${dragOver ? 'border-primary bg-primary/5' : ''}
             ${uploading ? 'cursor-not-allowed opacity-50' : ''}

@@ -137,7 +137,7 @@ export default function ContactPage() {
       </Helmet>
 
       {/* 页面标题区 */}
-      <section className="bg-gradient-to-r from-green-500 to-green-700 dark:from-green-600 dark:to-green-800 py-16 md:py-24">
+      <section className="bg-gradient-to-r from-green-500 to-green-700 py-16 md:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             {t('contact:hero.title')}

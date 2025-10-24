@@ -104,7 +104,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           <img
             src={preview}
             alt="预览"
-            className="w-full h-48 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
+            className="w-full h-48 object-cover rounded-lg border border-gray-200"
           />
           <button
             onClick={handleRemoveImage}
@@ -121,17 +121,17 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         </div>
       ) : (
         <div
-          className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
+          className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
           onClick={() => fileInputRef.current?.click()}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
         >
           <div className="space-y-2">
             <RiUploadCloudLine className="w-12 h-12 mx-auto text-gray-400" />
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-600">
               {uploading ? '上传中...' : '点击或拖拽上传图片'}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-500">
+            <p className="text-xs text-gray-500">
               支持 JPG, PNG, WebP 格式，最大 {maxSize}MB
             </p>
           </div>
@@ -139,7 +139,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       )}
 
       {uploading && !preview && (
-        <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+        <div className="text-center text-sm text-gray-600">
           正在上传图片...
         </div>
       )}

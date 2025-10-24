@@ -276,7 +276,7 @@ const ProductForm = () => {
           <div className="flex items-center">
             <button
               onClick={() => navigate('/admin/products')}
-              className="flex items-center text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 mr-4"
+              className="flex items-center text-gray-600 hover:text-gray-800 mr-4"
             >
               <RiArrowLeftLine className="mr-1" />
               返回产品列表
@@ -296,34 +296,34 @@ const ProductForm = () => {
           )}
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
             {/* 基本信息 */}
             <div>
               <h3 className="text-lg font-medium mb-4">基本信息</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     产品代码 *
                   </label>
                   <input
                     type="text"
                     value={formData.product_code}
                     onChange={(e) => handleInputChange('product_code', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
                     placeholder="如: WG-001"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     分类 *
                   </label>
                   <select
                     value={formData.category}
                     onChange={(e) => handleInputChange('category', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
                     required
                   >
                     <option value="adhesive">胶水产品</option>
@@ -342,42 +342,42 @@ const ProductForm = () => {
               <h3 className="text-lg font-medium mb-4">产品名称</h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     中文名称 *
                   </label>
                   <input
                     type="text"
                     value={formData.name_zh}
                     onChange={(e) => handleInputChange('name_zh', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
                     placeholder="产品的中文名称"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     英文名称 *
                   </label>
                   <input
                     type="text"
                     value={formData.name_en}
                     onChange={(e) => handleInputChange('name_en', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
                     placeholder="Product English name"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     俄文名称
                   </label>
                   <input
                     type="text"
                     value={formData.name_ru}
                     onChange={(e) => handleInputChange('name_ru', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
                     placeholder="Русское название продукта"
                   />
                 </div>
@@ -389,40 +389,40 @@ const ProductForm = () => {
               <h3 className="text-lg font-medium mb-4">产品描述</h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     中文描述
                   </label>
                   <textarea
                     value={formData.description_zh}
                     onChange={(e) => handleInputChange('description_zh', e.target.value)}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
                     placeholder="详细的产品描述"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     英文描述
                   </label>
                   <textarea
                     value={formData.description_en}
                     onChange={(e) => handleInputChange('description_en', e.target.value)}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
                     placeholder="Detailed product description"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     俄文描述
                   </label>
                   <textarea
                     value={formData.description_ru}
                     onChange={(e) => handleInputChange('description_ru', e.target.value)}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
                     placeholder="Подробное описание продукта"
                   />
                 </div>
@@ -434,7 +434,7 @@ const ProductForm = () => {
               <h3 className="text-lg font-medium mb-4">价格和设置</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     价格
                   </label>
                   <input
@@ -442,33 +442,33 @@ const ProductForm = () => {
                     step="0.01"
                     value={formData.price}
                     onChange={(e) => handleInputChange('price', parseFloat(e.target.value) || 0)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
                     placeholder="25.00"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     价格区间
                   </label>
                   <input
                     type="text"
                     value={formData.price_range}
                     onChange={(e) => handleInputChange('price_range', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
                     placeholder="20-30元/包"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     排序顺序
                   </label>
                   <input
                     type="number"
                     value={formData.sort_order}
                     onChange={(e) => handleInputChange('sort_order', parseInt(e.target.value) || 0)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
                     placeholder="0"
                   />
                 </div>
@@ -479,7 +479,7 @@ const ProductForm = () => {
             <div>
               <h3 className="text-lg font-medium mb-4">产品图片</h3>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   主图片
                 </label>
                 
@@ -514,14 +514,14 @@ const ProductForm = () => {
                 
                 {/* 手动输入图片URL的选项 */}
                 <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     或手动输入图片URL
                   </label>
                   <input
                     type="url"
                     value={formData.image_url}
                     onChange={(e) => handleInputChange('image_url', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
                     placeholder="https://example.com/image.jpg"
                   />
                   <p className="text-xs text-gray-500 mt-1">
@@ -542,18 +542,18 @@ const ProductForm = () => {
                   onChange={(e) => handleInputChange('is_active', e.target.checked)}
                   className="mr-2"
                 />
-                <label htmlFor="is_active" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label htmlFor="is_active" className="text-sm font-medium text-gray-700">
                   启用产品（启用后在前端显示）
                 </label>
               </div>
             </div>
 
             {/* 提交按钮 */}
-            <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
               <button
                 type="button"
                 onClick={() => navigate('/admin/products')}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 取消
               </button>

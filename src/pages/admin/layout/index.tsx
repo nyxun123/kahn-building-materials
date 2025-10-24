@@ -5,7 +5,6 @@ import { Toaster } from 'react-hot-toast';
 import { BarChart3, Home, Inbox, LogOut, Menu, Package, Settings, X } from 'lucide-react';
 
 import { LanguageSwitcher } from '@/components/language-switcher';
-import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { TempAuth } from '@/lib/temp-auth';
 
@@ -130,7 +129,6 @@ export default function AdminLayout() {
                 {t('admin:sidebar.logout')}
               </Button>
               <div className="flex items-center space-x-2">
-                <ThemeToggle />
                 <LanguageSwitcher />
               </div>
             </div>
@@ -184,7 +182,6 @@ export default function AdminLayout() {
                   {t('admin:sidebar.logout')}
                 </Button>
                 <div className="flex items-center space-x-2">
-                  <ThemeToggle />
                   <LanguageSwitcher />
                   <Button asChild variant="ghost" size="icon">
                     <Link to="/zh">

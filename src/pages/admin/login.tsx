@@ -84,16 +84,16 @@ const Login = () => {
         <title>{t('login.page_title')} | 杭州卡恩新型建材有限公司</title>
       </Helmet>
 
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
-        <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
           <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
+            <h2 className="text-3xl font-extrabold text-gray-900">
               管理员登录
             </h2>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <p className="mt-2 text-sm text-gray-600">
               请输入您的管理员账号和密码
             </p>
-            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-md">
+            <div className="mt-4 p-3 bg-blue-50 text-blue-700 rounded-md">
               <p className="text-sm">
                 使用您的管理员账号登录系统
               </p>
@@ -103,7 +103,7 @@ const Login = () => {
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   电子邮箱
                 </label>
                 <input
@@ -113,7 +113,7 @@ const Login = () => {
                   autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className={`mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary dark:text-white`}
+                  className={`mt-1 block w-full px-3 py-2 bg-white border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary`}
                 />
                 {errors.email && (
                   <p className="mt-1 text-sm text-red-500">{errors.email}</p>
@@ -121,7 +121,7 @@ const Login = () => {
               </div>
               
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                   密码
                 </label>
                 <input
@@ -131,7 +131,7 @@ const Login = () => {
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border ${errors.password ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary dark:text-white`}
+                  className={`mt-1 block w-full px-3 py-2 bg-white border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary`}
                 />
                 {errors.password && (
                   <p className="mt-1 text-sm text-red-500">{errors.password}</p>

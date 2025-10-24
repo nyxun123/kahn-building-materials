@@ -118,9 +118,9 @@ const ContactsPage = () => {
 
   const getStatusBadge = (status: Contact['status']) => {
     const badges = {
-      new: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
-      replied: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400', 
-      archived: 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
+      new: 'bg-green-100 text-green-800',
+      replied: 'bg-blue-100 text-blue-800',
+      archived: 'bg-gray-100 text-gray-800'
     };
     
     const labels = {
@@ -152,7 +152,7 @@ const ContactsPage = () => {
 
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-gray-900">
             联系消息管理
           </h1>
           <button 
@@ -165,7 +165,7 @@ const ContactsPage = () => {
 
         {contacts.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400">暂无联系消息</p>
+            <p className="text-gray-500">暂无联系消息</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -173,18 +173,18 @@ const ContactsPage = () => {
               <div
                 key={contact.id}
                 className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                  contact.is_read 
-                    ? 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700' 
-                    : 'bg-blue-50 dark:bg-blue-900/10 border-blue-200 dark:border-blue-800'
+                  contact.is_read
+                    ? 'bg-white border-gray-200'
+                    : 'bg-blue-50 border-blue-200'
                 }`}
                 onClick={() => setSelectedContact(contact)}
               >
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                    <h3 className="font-semibold text-gray-900">
                       {contact.name}
                     </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-gray-600">
                       {contact.email} | {contact.company || '个人客户'}
                     </p>
                   </div>
@@ -196,7 +196,7 @@ const ContactsPage = () => {
                   </div>
                 </div>
                 
-                <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
+                <p className="text-sm text-gray-700 line-clamp-2">
                   {contact.message}
                 </p>
                 
@@ -228,10 +228,10 @@ const ContactsPage = () => {
         {/* 联系详情弹窗 */}
         {selectedContact && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                  <h2 className="text-xl font-bold text-gray-900">
                     联系详情
                   </h2>
                   <button
@@ -244,53 +244,53 @@ const ContactsPage = () => {
                 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium text-gray-700">
                       姓名
                     </label>
-                    <p className="text-gray-900 dark:text-white">{selectedContact.name}</p>
+                    <p className="text-gray-900">{selectedContact.name}</p>
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium text-gray-700">
                       邮箱
                     </label>
-                    <p className="text-gray-900 dark:text-white">{selectedContact.email}</p>
+                    <p className="text-gray-900">{selectedContact.email}</p>
                   </div>
                   
                   {selectedContact.phone && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <label className="block text-sm font-medium text-gray-700">
                         电话
                       </label>
-                      <p className="text-gray-900 dark:text-white">{selectedContact.phone}</p>
+                      <p className="text-gray-900">{selectedContact.phone}</p>
                     </div>
                   )}
                   
                   {selectedContact.company && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <label className="block text-sm font-medium text-gray-700">
                         公司
                       </label>
-                      <p className="text-gray-900 dark:text-white">{selectedContact.company}</p>
+                      <p className="text-gray-900">{selectedContact.company}</p>
                     </div>
                   )}
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium text-gray-700">
                       消息内容
                     </label>
-                    <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-md">
-                      <p className="text-gray-900 dark:text-white whitespace-pre-wrap">
+                    <div className="p-3 bg-gray-50 rounded-md">
+                      <p className="text-gray-900 whitespace-pre-wrap">
                         {selectedContact.message}
                       </p>
                     </div>
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium text-gray-700">
                       提交时间
                     </label>
-                    <p className="text-gray-900 dark:text-white">
+                    <p className="text-gray-900">
                       {formatDate(selectedContact.created_at)}
                     </p>
                   </div>

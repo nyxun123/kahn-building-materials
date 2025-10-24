@@ -57,21 +57,21 @@ export function LanguageSwitcher() {
         <Button 
           variant="outline" 
           size="sm" 
-          className="h-9 px-3 bg-white/80 dark:bg-gray-800/80 border-green-200 dark:border-green-700 hover:bg-green-50 dark:hover:bg-green-900/20 hover:border-green-300 dark:hover:border-green-600 transition-all duration-200" 
+          className="h-9 px-3 bg-white/80 border-green-200 hover:bg-green-50 hover:border-green-300 transition-all duration-200" 
           aria-label={t('switch_language')}
         >
-          <Globe className="h-4 w-4 mr-2 text-green-600 dark:text-green-400" />
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <Globe className="h-4 w-4 mr-2 text-green-600" />
+          <span className="text-sm font-medium text-gray-700">
             {currentLanguage?.flag} {currentLanguage?.label}
           </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-48 bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg border-green-100 dark:border-green-800 shadow-lg"
+        className="w-48 bg-white/95 backdrop-blur-lg border-green-100 shadow-lg"
       >
         <div className="p-2">
-          <div className="text-xs font-medium text-gray-500 dark:text-gray-400 px-2 py-1 mb-1">
+          <div className="text-xs font-medium text-gray-500 px-2 py-1 mb-1">
             选择语言 / Select Language
           </div>
           {LANGUAGE_OPTIONS.map((lang) => (
@@ -81,19 +81,19 @@ export function LanguageSwitcher() {
               className={cn(
                 "flex items-center justify-between px-3 py-2.5 rounded-md cursor-pointer transition-all duration-200",
                 currentLang === lang.value 
-                  ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300" 
-                  : "text-gray-700 dark:text-gray-300 hover:bg-green-50/50 dark:hover:bg-green-900/10 hover:text-green-600 dark:hover:text-green-400"
+                  ? "bg-green-50 text-green-700" 
+                  : "text-gray-700 hover:bg-green-50/50 hover:text-green-600"
               )}
             >
               <div className="flex items-center">
                 <span className="text-lg mr-3">{lang.flag}</span>
                 <div>
                   <div className="text-sm font-medium">{lang.label}</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">{lang.nativeName}</div>
+                  <div className="text-xs text-gray-500">{lang.nativeName}</div>
                 </div>
               </div>
               {currentLang === lang.value && (
-                <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
+                <Check className="h-4 w-4 text-green-600" />
               )}
             </DropdownMenuItem>
           ))}
