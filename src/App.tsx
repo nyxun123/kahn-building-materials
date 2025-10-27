@@ -12,6 +12,8 @@ function App() {
   // 防止移动端滑动时的滚动条问题
   useEffect(() => {
     document.body.classList.add('overflow-x-hidden');
+    // 强制更新版本标记
+    document.body.setAttribute('data-version', '2025.10.27-hotfix');
     return () => {
       document.body.classList.remove('overflow-x-hidden');
     };

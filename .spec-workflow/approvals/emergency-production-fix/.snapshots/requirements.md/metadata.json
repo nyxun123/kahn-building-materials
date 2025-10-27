@@ -1,0 +1,14 @@
+{
+  "filePath": ".spec-workflow/specs/emergency-production-fix/requirements.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-10-27T05:00:29.698Z",
+      "trigger": "initial",
+      "approvalId": "approval_1761541229694_dc7ykrjj5",
+      "approvalTitle": "紧急生产问题修复需求文档"
+    }
+  ]
+}

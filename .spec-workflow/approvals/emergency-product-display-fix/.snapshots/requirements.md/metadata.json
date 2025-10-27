@@ -1,0 +1,14 @@
+{
+  "filePath": ".spec-workflow/specs/emergency-product-display-fix/requirements.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-10-27T05:01:40.891Z",
+      "trigger": "initial",
+      "approvalId": "approval_1761541300887_ealf6cnup",
+      "approvalTitle": "Emergency Product Display Fix Requirements"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "filePath": ".spec-workflow/specs/product-detail-route-fix/requirements.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-10-27T04:36:21.693Z",
+      "trigger": "initial",
+      "approvalId": "approval_1761539781688_orkcsetji",
+      "approvalTitle": "产品详情页路由修复需求文档"
+    }
+  ]
+}

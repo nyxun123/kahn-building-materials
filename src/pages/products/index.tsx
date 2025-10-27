@@ -29,7 +29,33 @@ const ProductsPage = memo(function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  
+  const [lastUpdated, setLastUpdated] = useState<number>(Date.now());
+
+  // 强制刷新产品列表
+  const forceRefreshProducts = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      // 清除localStorage缓存
+      localStorage.removeItem('products-cache');
+
+      // 强制获取最新数据
+      const result = await fetch('/api/products?_t=' + Date.now()); // 添加时间戳绕过缓存
+      const data = await result.json();
+
+      if (data.success) {
+        setProducts(data.data);
+        setCachedProducts(data.data);
+        setLastUpdated(Date.now());
+      } else {
+        console.error('获取产品失败:', data.message);
+      }
+    } catch (error) {
+      console.error('强制刷新产品失败:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   // 使用防抖优化搜索
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   
@@ -67,14 +93,8 @@ const ProductsPage = memo(function ProductsPage() {
       setIsLoading(true);
       
       try {
-        // 优先使用缓存
-        if (cachedProducts.length > 0) {
-          setProducts(cachedProducts);
-          setIsLoading(false);
-        }
-        
-        // 使用优化的fetch
-        const result = await optimizedFetch('/api/products', {}, { ttl: 5 * 60 * 1000 });
+        // 使用优化的fetch，禁用缓存确保获取最新数据
+        const result = await optimizedFetch('/api/products', {}, { ttl: 0 }); // 禁用缓存
         
         if (result.success) {
           setProducts(result.data);
@@ -99,34 +119,51 @@ const ProductsPage = memo(function ProductsPage() {
   }, [cachedProducts, setCachedProducts]);
 
   // 优化的产品卡片组件
-  const ProductCard = memo(({ product }: { product: Product }) => (
-    <div className="group relative overflow-hidden rounded-lg border bg-background p-6 shadow-sm transition-all hover:shadow-md">
-      {product.image_url ? (
-        <div className="aspect-square mb-5 overflow-hidden rounded-md bg-muted">
-          <LazyImage
-            src={product.image_url}
-            alt={getProductName(product)}
-            className="h-full w-full object-cover object-center transition-all group-hover:scale-105"
-          />
-        </div>
-      ) : (
-        <div className="aspect-square mb-5 overflow-hidden rounded-md bg-muted flex items-center justify-center text-muted-foreground">
-          {t('home:products.no_image')}
-        </div>
-      )}
-      <h3 className="text-lg font-semibold">{getProductName(product)}</h3>
-      <p className="mt-2 line-clamp-3 text-muted-foreground">
-        {getProductDescription(product)}
-      </p>
-      <Link 
-        to={`/products/${product.product_code}`}
-        className="mt-4 inline-flex items-center text-sm font-medium text-primary hover:underline"
-      >
-        {t('cta.learn_more')}
-        <ArrowRight className="ml-1 h-4 w-4" />
-      </Link>
-    </div>
-  ));
+  const ProductCard = memo(({ product }: { product: Product }) => {
+    const currentLang = i18n.language || 'zh';
+    const productDetailUrl = `/${currentLang}/products/${product.product_code}`;
+
+    return (
+      <div className="group relative overflow-hidden rounded-lg border bg-background p-6 shadow-sm transition-all hover:shadow-md">
+        {/* 可点击的图片区域 */}
+        <Link to={productDetailUrl} className="block">
+          {product.image_url ? (
+            <div className="aspect-square mb-5 overflow-hidden rounded-md bg-muted cursor-pointer">
+              <LazyImage
+                src={product.image_url}
+                alt={getProductName(product)}
+                className="h-full w-full object-cover object-center transition-all group-hover:scale-105"
+              />
+              {/* 点击提示覆盖层 */}
+              <div className="absolute inset-0 bg-black/0 opacity-0 group-hover:opacity-10 transition-all duration-200 flex items-center justify-center">
+                <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 bg-white/90 rounded-full p-3">
+                  <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 9l3 3m0 0l-3-3m3 3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="aspect-square mb-5 overflow-hidden rounded-md bg-muted flex items-center justify-center text-muted-foreground cursor-pointer">
+              {t('home:products.no_image')}
+            </div>
+          )}
+        </Link>
+
+        <h3 className="text-lg font-semibold">{getProductName(product)}</h3>
+        <p className="mt-2 line-clamp-3 text-muted-foreground">
+          {getProductDescription(product)}
+        </p>
+        <Link
+          to={productDetailUrl}
+          className="mt-4 inline-flex items-center text-sm font-medium text-primary hover:underline"
+        >
+          {t('cta.learn_more')}
+          <ArrowRight className="ml-1 h-4 w-4" />
+        </Link>
+      </div>
+    );
+  });
 
   return (
     <>
@@ -147,17 +184,33 @@ const ProductsPage = memo(function ProductsPage() {
         </div>
       </section>
 
-      {/* 搜索区 */}
+      {/* 搜索和刷新区 */}
       <section className="py-8 bg-background border-b">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-md mx-auto">
-            <input
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+            <div className="max-w-md mx-auto flex-1">
+              <input
               type="text"
               placeholder={t('products:search_placeholder')}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+            </div>
+            <button
+              onClick={forceRefreshProducts}
+              disabled={isLoading}
+              className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
+            >
+              {isLoading ? (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              )}
+              刷新产品
+            </button>
           </div>
         </div>
       </section>

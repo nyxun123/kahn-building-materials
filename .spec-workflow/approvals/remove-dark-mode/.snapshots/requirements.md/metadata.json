@@ -1,0 +1,14 @@
+{
+  "filePath": "/Users/nll/Documents/可以用的网站/.spec-workflow/specs/remove-dark-mode/requirements.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-10-27T04:11:05.270Z",
+      "trigger": "initial",
+      "approvalId": "approval_1761538265265_zzm48aofh",
+      "approvalTitle": "Remove Dark Mode Feature Requirements"
+    }
+  ]
+}

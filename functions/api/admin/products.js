@@ -52,6 +52,7 @@ export async function onRequestGet(context) {
 
       const productsPromise = env.DB.prepare(`
           SELECT id, product_code, name_zh, name_en, name_ru,
+                 description_zh, description_en, description_ru,
                  price_range, image_url, category,
                  is_active, sort_order, created_at, updated_at
           FROM products 

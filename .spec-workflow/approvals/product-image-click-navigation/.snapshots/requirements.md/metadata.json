@@ -1,0 +1,14 @@
+{
+  "filePath": ".spec-workflow/specs/product-image-click-navigation/requirements.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-10-27T05:48:37.750Z",
+      "trigger": "initial",
+      "approvalId": "approval_1761544117747_4alc5k5dk",
+      "approvalTitle": "产品图片点击跳转功能需求文档"
+    }
+  ]
+}

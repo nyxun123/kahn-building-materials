@@ -18,21 +18,24 @@ interface Product {
   features_zh: string[];
   features_en: string[];
   features_ru: string[];
-  specifications_zh: string;
-  specifications_en: string;
-  specifications_ru: string;
-  applications_zh: string;
-  applications_en: string;
-  applications_ru: string;
-  packaging_options_zh: string;
-  packaging_options_en: string;
-  packaging_options_ru: string;
+  specifications_zh: string | null;
+  specifications_en: string | null;
+  specifications_ru: string | null;
+  applications_zh: string | null;
+  applications_en: string | null;
+  applications_ru: string | null;
+  packaging_options_zh: string | null;
+  packaging_options_en: string | null;
+  packaging_options_ru: string | null;
   price_range: string;
   image_url: string;
+  gallery_images: string[];
   is_active: boolean;
   sort_order: number;
   created_at: string;
   updated_at: string;
+  category: string;
+  tags: string[];
 }
 
 export default function ProductDetailPage() {
@@ -61,8 +64,12 @@ export default function ProductDetailPage() {
           throw new Error(`获取产品详情失败: ${response.status}`);
         }
         
-        const data = await response.json();
-        setProduct(data);
+        const result = await response.json();
+        if (result.success) {
+          setProduct(result.data);
+        } else {
+          setError(result.message || t('products:product_not_found'));
+        }
       } catch (err) {
         console.error('获取产品详情失败:', err);
         setError(t('products:product_not_found'));
@@ -95,7 +102,8 @@ export default function ProductDetailPage() {
     const fallbackKeyEn = 'features_en' as keyof typeof product;
     const fallbackKeyZh = 'features_zh' as keyof typeof product;
     
-    return (product[featureKey] as string[]) || (product[fallbackKeyEn] as string[]) || (product[fallbackKeyZh] as string[]) || [];
+    const features = (product[featureKey] as string[]) || (product[fallbackKeyEn] as string[]) || (product[fallbackKeyZh] as string[]) || [];
+    return Array.isArray(features) ? features : [];
   };
 
   if (isLoading) {
@@ -168,10 +176,12 @@ export default function ProductDetailPage() {
               </div>
             )}
 
-            <div className="prose mb-6">
-              <h3 className="text-lg font-semibold mb-2">{t('products:description')}</h3>
-              <p>{getLocalizedContent('description')}</p>
-            </div>
+            {getLocalizedContent('description') && (
+              <div className="prose mb-6">
+                <h3 className="text-lg font-semibold mb-2">{t('products:description')}</h3>
+                <p>{getLocalizedContent('description')}</p>
+              </div>
+            )}
 
             {/* 产品特点 */}
             {getLocalizedFeatures().length > 0 && (
