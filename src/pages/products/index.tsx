@@ -93,8 +93,9 @@ const ProductsPage = memo(function ProductsPage() {
       setIsLoading(true);
       
       try {
-        // 使用优化的fetch，禁用缓存确保获取最新数据
-        const result = await optimizedFetch('/api/products', {}, { ttl: 0 }); // 禁用缓存
+        // 直接使用 fetch 获取产品数据
+        const response = await fetch('/api/products');
+        const result = await response.json();
         
         if (result.success) {
           setProducts(result.data);

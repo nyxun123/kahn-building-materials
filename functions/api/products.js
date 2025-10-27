@@ -4,6 +4,15 @@ export async function onRequestGet(context) {
   
   try {
     const url = new URL(request.url);
+    const pathSegments = url.pathname.split('/').filter(segment => segment);
+    
+    // 检查是否是获取单个产品的请求
+    if (pathSegments.length === 3 && pathSegments[0] === 'api' && pathSegments[1] === 'products') {
+      const productCode = pathSegments[2];
+      return await getProductDetail(productCode, env);
+    }
+    
+    // 否则处理产品列表请求
     const page = Math.max(1, parseInt(url.searchParams.get('page') || '1'));
     const limit = Math.min(50, Math.max(1, parseInt(url.searchParams.get('limit') || '20')));
     const offset = (page - 1) * limit;
@@ -52,7 +61,10 @@ export async function onRequestGet(context) {
           SELECT id, product_code, name_zh, name_en, name_ru,
                  description_zh, description_en, description_ru,
                  price_range, image_url, category, features_zh, features_en, features_ru,
-                 sort_order, created_at, updated_at
+                 specifications_zh, specifications_en, specifications_ru,
+                 applications_zh, applications_en, applications_ru,
+                 packaging_options_zh, packaging_options_en, packaging_options_ru,
+                 tags, sort_order, created_at, updated_at
           FROM products 
           ${whereClause}
           ORDER BY sort_order ASC, created_at DESC 
@@ -73,6 +85,7 @@ export async function onRequestGet(context) {
         features_zh: parseJsonArray(product.features_zh),
         features_en: parseJsonArray(product.features_en),
         features_ru: parseJsonArray(product.features_ru),
+        tags: parseJsonArray(product.tags),
         is_active: true // 公开API只返回已发布产品
       }));
       
@@ -123,6 +136,98 @@ export async function onRequestGet(context) {
     }), {
       status: 500,
       headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+  }
+}
+
+// 获取单个产品详情的函数
+async function getProductDetail(productCode, env) {
+  try {
+    if (!productCode) {
+      return new Response(JSON.stringify({
+        success: false,
+        message: '产品代码不能为空'
+      }), {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+
+    if (!env.DB) {
+      return new Response(JSON.stringify({
+        success: false,
+        message: 'D1数据库未配置'
+      }), {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+
+    // 查询产品详情
+    const product = await env.DB.prepare(`
+        SELECT id, product_code, name_zh, name_en, name_ru,
+               description_zh, description_en, description_ru,
+               price_range, image_url, category, features_zh, features_en, features_ru,
+               specifications_zh, specifications_en, specifications_ru,
+               applications_zh, applications_en, applications_ru,
+               packaging_options_zh, packaging_options_en, packaging_options_ru,
+               tags, gallery_images, is_active, sort_order, created_at, updated_at
+        FROM products 
+        WHERE product_code = ? AND is_active = 1
+    `).bind(productCode).first();
+
+    if (!product) {
+      return new Response(JSON.stringify({
+        success: false,
+        message: '产品不存在或已下架'
+      }), {
+        status: 404,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+
+    // 处理产品数据
+    const processedProduct = {
+      ...product,
+      features_zh: parseJsonArray(product.features_zh),
+      features_en: parseJsonArray(product.features_en),
+      features_ru: parseJsonArray(product.features_ru),
+      tags: parseJsonArray(product.tags),
+      gallery_images: parseJsonArray(product.gallery_images)
+    };
+
+    return new Response(JSON.stringify({
+      success: true,
+      data: processedProduct
+    }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Cache-Control': 'public, max-age=600' // 10分钟缓存
+      }
+    });
+
+  } catch (error) {
+    console.error('获取产品详情失败:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      message: '获取产品详情失败'
+    }), {
+      status: 500,
+      headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
       }
