@@ -38,6 +38,17 @@ interface Product {
   tags: string[];
 }
 
+// 处理图片URL，确保相对路径转换为完整URL
+const processImageUrl = (url: string): string => {
+  if (!url) return '';
+  // 如果是相对路径，转换为完整URL
+  if (url.startsWith('/')) {
+    return `https://kn-wallpaperglue.com${url}`;
+  }
+  // 如果已经是完整URL或base64，直接返回
+  return url;
+};
+
 export default function ProductDetailPage() {
   const { productCode } = useParams<{ productCode: string }>();
   const navigate = useNavigate();
@@ -54,7 +65,15 @@ export default function ProductDetailPage() {
       setError(null);
       
       try {
-        const response = await fetch(`/api/products/${productCode}`);
+        // 使用添加时间戳的方式绕过缓存
+        const cacheBuster = `?_t=${Date.now()}`;
+        const response = await fetch(`/api/products/${productCode}${cacheBuster}`, {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
         
         if (!response.ok) {
           if (response.status === 404) {
@@ -150,7 +169,7 @@ export default function ProductDetailPage() {
           <div className="bg-muted rounded-lg overflow-hidden">
             {product.image_url ? (
               <img 
-                src={product.image_url} 
+                src={processImageUrl(product.image_url)} 
                 alt={getLocalizedContent('name')} 
                 className="w-full h-full object-contain"
               />
