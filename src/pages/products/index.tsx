@@ -90,14 +90,26 @@ const ProductsPage = memo(function ProductsPage() {
 
   useEffect(() => {
     async function fetchProducts() {
+      console.log('开始获取产品列表数据...');
       setIsLoading(true);
       
       try {
-        // 直接使用 fetch 获取产品数据
-        const response = await fetch('/api/products');
+        // 使用添加时间戳的方式绕过缓存
+        const cacheBuster = `?_t=${Date.now()}`;
+        const response = await fetch(`/api/products${cacheBuster}`, {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
+        
+        console.log('API响应状态:', response.status);
         const result = await response.json();
+        console.log('API响应数据:', result);
         
         if (result.success) {
+          console.log('产品数据获取成功，产品数量:', result.data.length);
           setProducts(result.data);
           setCachedProducts(result.data);
         } else {
@@ -113,6 +125,7 @@ const ProductsPage = memo(function ProductsPage() {
         }
       } finally {
         setIsLoading(false);
+        console.log('产品列表数据加载完成');
       }
     }
 
