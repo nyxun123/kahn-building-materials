@@ -90,7 +90,6 @@ const ProductsPage = memo(function ProductsPage() {
 
   useEffect(() => {
     async function fetchProducts() {
-      console.log('开始获取产品列表数据...');
       setIsLoading(true);
       
       try {
@@ -103,13 +102,9 @@ const ProductsPage = memo(function ProductsPage() {
             'Expires': '0'
           }
         });
-        
-        console.log('API响应状态:', response.status);
         const result = await response.json();
-        console.log('API响应数据:', result);
         
         if (result.success) {
-          console.log('产品数据获取成功，产品数量:', result.data.length);
           setProducts(result.data);
           setCachedProducts(result.data);
         } else {
@@ -125,7 +120,6 @@ const ProductsPage = memo(function ProductsPage() {
         }
       } finally {
         setIsLoading(false);
-        console.log('产品列表数据加载完成');
       }
     }
 
