@@ -59,7 +59,14 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     async function fetchProductDetail() {
-      if (!productCode) return;
+      console.log('产品详情页面加载，产品代码:', productCode);
+      
+      if (!productCode) {
+        console.log('产品代码为空');
+        setError('产品代码不能为空');
+        setIsLoading(false);
+        return;
+      }
       
       setIsLoading(true);
       setError(null);
@@ -75,8 +82,11 @@ export default function ProductDetailPage() {
           }
         });
         
+        console.log('API响应状态:', response.status);
+        
         if (!response.ok) {
           if (response.status === 404) {
+            console.log('产品未找到');
             setError(t('products:product_not_found'));
             return;
           }
@@ -84,9 +94,13 @@ export default function ProductDetailPage() {
         }
         
         const result = await response.json();
+        console.log('API响应数据:', result);
+        
         if (result.success) {
+          console.log('产品数据:', result.data);
           setProduct(result.data);
         } else {
+          console.log('API返回错误:', result.message);
           setError(result.message || t('products:product_not_found'));
         }
       } catch (err) {
