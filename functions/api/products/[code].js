@@ -1,10 +1,11 @@
 // 公开单个产品API - 通过产品代码获取产品详情
 export async function onRequestGet(context) {
   const { request, env, params } = context;
-  
+
   try {
-    const productCode = params.code;
-    
+    // URL 解码产品代码，支持中文产品代码
+    const productCode = params.code ? decodeURIComponent(params.code) : null;
+
     if (!productCode) {
       return new Response(JSON.stringify({
         success: false,
