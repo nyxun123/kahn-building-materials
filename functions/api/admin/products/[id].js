@@ -1,20 +1,14 @@
+import { authenticate, createUnauthorizedResponse } from '../../../lib/jwt-auth.js';
+
 // 单个产品的操作 - GET, PUT, DELETE
 export async function onRequestGet(context) {
   const { request, env, params } = context;
-  
+
   try {
-    // 认证检查
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({
-        error: { message: '需要登录' }
-      }), {
-        status: 401,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+    // JWT 认证检查
+    const auth = await authenticate(request, env);
+    if (!auth.authenticated) {
+      return createUnauthorizedResponse(auth.error);
     }
     
     // 数据库检查
@@ -168,20 +162,12 @@ export async function onRequestGet(context) {
 // 更新产品 - PUT请求
 export async function onRequestPut(context) {
   const { request, env, params } = context;
-  
+
   try {
-    // 认证检查
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({
-        error: { message: '需要登录' }
-      }), {
-        status: 401,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+    // JWT 认证检查
+    const auth = await authenticate(request, env);
+    if (!auth.authenticated) {
+      return createUnauthorizedResponse(auth.error);
     }
     
     // 数据库检查
@@ -481,20 +467,12 @@ export async function onRequestPut(context) {
 // 删除产品 - DELETE请求
 export async function onRequestDelete(context) {
   const { request, env, params } = context;
-  
+
   try {
-    // 认证检查
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({
-        error: { message: '需要登录' }
-      }), {
-        status: 401,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+    // JWT 认证检查
+    const auth = await authenticate(request, env);
+    if (!auth.authenticated) {
+      return createUnauthorizedResponse(auth.error);
     }
     
     // 数据库检查
