@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Token管理测试</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      border-bottom: 2px solid #4CAF50;
+      padding-bottom: 10px;
+    }
+    h2 {
+      color: #555;
+      margin-top: 0;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    button.danger {
+      background: #f44336;
+    }
+    button.danger:hover {
+      background: #da190b;
+    }
+    .info {
+      background: #e3f2fd;
+      border-left: 4px solid #2196F3;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+    .success {
+      background: #e8f5e9;
+      border-left: 4px solid #4CAF50;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+    .error {
+      background: #ffebee;
+      border-left: 4px solid #f44336;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+    .warning {
+      background: #fff3e0;
+      border-left: 4px solid #ff9800;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+    pre {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 12px;
+    }
+    .status {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .status.valid {
+      background: #4CAF50;
+      color: white;
+    }
+    .status.expired {
+      background: #f44336;
+      color: white;
+    }
+    .status.expiring {
+      background: #ff9800;
+      color: white;
+    }
+    input {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin: 5px;
+      width: 200px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔐 Token管理测试工具</h1>
+
+  <div class="container">
+    <h2>1. 登录测试</h2>
+    <div>
+      <input type="email" id="email" placeholder="邮箱" value="niexianlei0@gmail.com">
+      <input type="password" id="password" placeholder="密码" value="XIANche041758">
+      <button onclick="testLogin()">登录</button>
+    </div>
+    <div id="loginResult"></div>
+  </div>
+
+  <div class="container">
+    <h2>2. Token状态检查</h2>
+    <button onclick="checkTokenStatus()">检查Token状态</button>
+    <button onclick="showTokenDetails()">显示Token详情</button>
+    <div id="tokenStatus"></div>
+  </div>
+
+  <div class="container">
+    <h2>3. Token刷新测试</h2>
+    <button onclick="testTokenRefresh()">手动刷新Token</button>
+    <button onclick="testAutoRefresh()">测试自动刷新</button>
+    <div id="refreshResult"></div>
+  </div>
+
+  <div class="container">
+    <h2>4. API调用测试</h2>
+    <button onclick="testDashboardAPI()">测试Dashboard API</button>
+    <button onclick="testProductsAPI()">测试Products API</button>
+    <div id="apiResult"></div>
+  </div>
+
+  <div class="container">
+    <h2>5. 清理操作</h2>
+    <button class="danger" onclick="clearTokens()">清除所有Token</button>
+    <button class="danger" onclick="clearAllStorage()">清除所有存储</button>
+    <div id="clearResult"></div>
+  </div>
+
+  <script>
+    // 登录测试
+    async function testLogin() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const resultDiv = document.getElementById('loginResult');
+
+      try {
+        resultDiv.innerHTML = '<div class="info">正在登录...</div>';
+
+        const response = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          // 保存Token
+          if (data.accessToken && data.refreshToken) {
+            const expiresAt = Date.now() + (data.expiresIn * 1000);
+            localStorage.setItem('admin_access_token', data.accessToken);
+            localStorage.setItem('admin_refresh_token', data.refreshToken);
+            localStorage.setItem('admin_token_expiry', expiresAt.toString());
+            localStorage.setItem('admin_user_info', JSON.stringify(data.user));
+          }
+
+          resultDiv.innerHTML = `
+            <div class="success">
+              <strong>✅ 登录成功！</strong><br>
+              用户: ${data.user.name} (${data.user.email})<br>
+              角色: ${data.user.role}<br>
+              Token有效期: ${data.expiresIn}秒 (${Math.floor(data.expiresIn / 60)}分钟)
+            </div>
+            <pre>${JSON.stringify(data, null, 2)}</pre>
+          `;
+        } else {
+          resultDiv.innerHTML = `
+            <div class="error">
+              <strong>❌ 登录失败</strong><br>
+              ${data.message || '未知错误'}
+            </div>
+          `;
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `
+          <div class="error">
+            <strong>❌ 登录异常</strong><br>
+            ${error.message}
+          </div>
+        `;
+      }
+    }
+
+    // 检查Token状态
+    function checkTokenStatus() {
+      const resultDiv = document.getElementById('tokenStatus');
+      const accessToken = localStorage.getItem('admin_access_token');
+      const refreshToken = localStorage.getItem('admin_refresh_token');
+      const expiryStr = localStorage.getItem('admin_token_expiry');
+      const userInfo = localStorage.getItem('admin_user_info');
+
+      if (!accessToken || !refreshToken || !expiryStr) {
+        resultDiv.innerHTML = '<div class="warning">⚠️ 未找到Token，请先登录</div>';
+        return;
+      }
+
+      const expiry = parseInt(expiryStr);
+      const now = Date.now();
+      const remainingMs = expiry - now;
+      const remainingMin = Math.floor(remainingMs / 60000);
+      const remainingSec = Math.floor((remainingMs % 60000) / 1000);
+
+      let status, statusClass;
+      if (remainingMs <= 0) {
+        status = '已过期';
+        statusClass = 'expired';
+      } else if (remainingMs < 60000) {
+        status = '即将过期';
+        statusClass = 'expiring';
+      } else {
+        status = '有效';
+        statusClass = 'valid';
+      }
+
+      resultDiv.innerHTML = `
+        <div class="info">
+          <strong>Token状态: <span class="status ${statusClass}">${status}</span></strong><br>
+          剩余时间: ${remainingMin}分${remainingSec}秒<br>
+          过期时间: ${new Date(expiry).toLocaleString()}<br>
+          Access Token: ${accessToken.substring(0, 50)}...<br>
+          Refresh Token: ${refreshToken.substring(0, 50)}...<br>
+          用户信息: ${userInfo ? '已保存' : '未保存'}
+        </div>
+      `;
+    }
+
+    // 显示Token详情
+    function showTokenDetails() {
+      const resultDiv = document.getElementById('tokenStatus');
+      const accessToken = localStorage.getItem('admin_access_token');
+      const refreshToken = localStorage.getItem('admin_refresh_token');
+      const userInfo = localStorage.getItem('admin_user_info');
+
+      if (!accessToken) {
+        resultDiv.innerHTML = '<div class="warning">⚠️ 未找到Token</div>';
+        return;
+      }
+
+      try {
+        // 解析JWT Token
+        const parts = accessToken.split('.');
+        const payload = JSON.parse(atob(parts[1]));
+
+        resultDiv.innerHTML = `
+          <div class="info">
+            <strong>Access Token Payload:</strong>
+            <pre>${JSON.stringify(payload, null, 2)}</pre>
+            <strong>用户信息:</strong>
+            <pre>${userInfo || '未保存'}</pre>
+          </div>
+        `;
+      } catch (error) {
+        resultDiv.innerHTML = `
+          <div class="error">
+            <strong>❌ 解析Token失败</strong><br>
+            ${error.message}
+          </div>
+        `;
+      }
+    }
+
+    // 测试Token刷新
+    async function testTokenRefresh() {
+      const resultDiv = document.getElementById('refreshResult');
+      const refreshToken = localStorage.getItem('admin_refresh_token');
+
+      if (!refreshToken) {
+        resultDiv.innerHTML = '<div class="warning">⚠️ 未找到Refresh Token</div>';
+        return;
+      }
+
+      try {
+        resultDiv.innerHTML = '<div class="info">正在刷新Token...</div>';
+
+        const response = await fetch('/api/admin/refresh-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refreshToken })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.accessToken) {
+          // 保存新Token
+          const expiresAt = Date.now() + (data.expiresIn * 1000);
+          localStorage.setItem('admin_access_token', data.accessToken);
+          localStorage.setItem('admin_refresh_token', data.refreshToken);
+          localStorage.setItem('admin_token_expiry', expiresAt.toString());
+
+          resultDiv.innerHTML = `
+            <div class="success">
+              <strong>✅ Token刷新成功！</strong><br>
+              新Token有效期: ${data.expiresIn}秒 (${Math.floor(data.expiresIn / 60)}分钟)
+            </div>
+          `;
+        } else {
+          resultDiv.innerHTML = `
+            <div class="error">
+              <strong>❌ Token刷新失败</strong><br>
+              ${data.message || '未知错误'}
+            </div>
+          `;
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `
+          <div class="error">
+            <strong>❌ Token刷新异常</strong><br>
+            ${error.message}
+          </div>
+        `;
+      }
+    }
+
+    // 测试自动刷新
+    async function testAutoRefresh() {
+      const resultDiv = document.getElementById('refreshResult');
+      resultDiv.innerHTML = '<div class="info">测试自动刷新机制...</div>';
+
+      // 模拟Token即将过期
+      const expiresAt = Date.now() + 30000; // 30秒后过期
+      localStorage.setItem('admin_token_expiry', expiresAt.toString());
+
+      resultDiv.innerHTML += '<div class="warning">已将Token过期时间设置为30秒后</div>';
+      resultDiv.innerHTML += '<div class="info">请等待30秒后刷新页面或调用API，应该会自动刷新Token</div>';
+    }
+
+    // 测试Dashboard API
+    async function testDashboardAPI() {
+      const resultDiv = document.getElementById('apiResult');
+      const accessToken = localStorage.getItem('admin_access_token');
+
+      if (!accessToken) {
+        resultDiv.innerHTML = '<div class="warning">⚠️ 未找到Access Token，请先登录</div>';
+        return;
+      }
+
+      try {
+        resultDiv.innerHTML = '<div class="info">正在调用Dashboard API...</div>';
+
+        const response = await fetch('/api/admin/dashboard/stats', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          resultDiv.innerHTML = `
+            <div class="success">
+              <strong>✅ Dashboard API调用成功！</strong>
+            </div>
+            <pre>${JSON.stringify(data, null, 2)}</pre>
+          `;
+        } else {
+          resultDiv.innerHTML = `
+            <div class="error">
+              <strong>❌ API调用失败 (${response.status})</strong><br>
+              ${data.message || JSON.stringify(data)}
+            </div>
+          `;
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `
+          <div class="error">
+            <strong>❌ API调用异常</strong><br>
+            ${error.message}
+          </div>
+        `;
+      }
+    }
+
+    // 测试Products API
+    async function testProductsAPI() {
+      const resultDiv = document.getElementById('apiResult');
+      const accessToken = localStorage.getItem('admin_access_token');
+
+      if (!accessToken) {
+        resultDiv.innerHTML = '<div class="warning">⚠️ 未找到Access Token，请先登录</div>';
+        return;
+      }
+
+      try {
+        resultDiv.innerHTML = '<div class="info">正在调用Products API...</div>';
+
+        const response = await fetch('/api/admin/products?page=1&limit=5', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          resultDiv.innerHTML = `
+            <div class="success">
+              <strong>✅ Products API调用成功！</strong><br>
+              获取到 ${data.data?.length || 0} 个产品
+            </div>
+            <pre>${JSON.stringify(data, null, 2)}</pre>
+          `;
+        } else {
+          resultDiv.innerHTML = `
+            <div class="error">
+              <strong>❌ API调用失败 (${response.status})</strong><br>
+              ${data.message || JSON.stringify(data)}
+            </div>
+          `;
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `
+          <div class="error">
+            <strong>❌ API调用异常</strong><br>
+            ${error.message}
+          </div>
+        `;
+      }
+    }
+
+    // 清除Token
+    function clearTokens() {
+      localStorage.removeItem('admin_access_token');
+      localStorage.removeItem('admin_refresh_token');
+      localStorage.removeItem('admin_token_expiry');
+      localStorage.removeItem('admin_user_info');
+      
+      document.getElementById('clearResult').innerHTML = '<div class="success">✅ Token已清除</div>';
+    }
+
+    // 清除所有存储
+    function clearAllStorage() {
+      localStorage.clear();
+      document.getElementById('clearResult').innerHTML = '<div class="success">✅ 所有存储已清除</div>';
+    }
+
+    // 页面加载时自动检查Token状态
+    window.onload = function() {
+      checkTokenStatus();
+    };
+  </script>
+</body>
+</html>
+

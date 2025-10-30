@@ -51,11 +51,15 @@ const storeSession = (user: LoginResponse["user"], accessToken?: string, refresh
 };
 
 const readSession = () => {
-  // 优先从 AuthManager 读取
+  // 优先从 AuthManager 读取用户信息
   const user = AuthManager.getUserInfo();
-  const accessToken = AuthManager.getAccessToken();
+
+  // 注意：这里不检查 token 是否过期，只检查是否存在
+  // Token 的有效性检查应该在实际使用时进行（API 调用时）
+  const accessToken = localStorage.getItem('admin_access_token');
 
   if (user && accessToken) {
+    console.log('✅ 从 AuthManager 读取会话信息');
     return {
       user,
       accessToken,
@@ -65,8 +69,13 @@ const readSession = () => {
 
   // 回退到旧的存储方式
   const raw = localStorage.getItem(AUTH_KEY) || localStorage.getItem("temp-admin-auth");
-  if (!raw) return null;
+  if (!raw) {
+    console.warn('⚠️ 未找到会话信息');
+    return null;
+  }
+
   try {
+    console.log('✅ 从旧存储读取会话信息');
     return JSON.parse(raw);
   } catch (error) {
     console.warn("解析管理员会话失败", error);
