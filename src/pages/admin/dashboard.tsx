@@ -28,13 +28,32 @@ interface DashboardResponse {
 }
 
 const fetchDashboard = async (): Promise<DashboardResponse["data"]> => {
-  // 使用 AuthManager 获取有效的 JWT token
+  // 获取 JWT token - 优先使用 AuthManager，失败则直接从 localStorage 读取
   const { AuthManager } = await import("@/lib/auth-manager");
-  const token = await AuthManager.getValidAccessToken();
+  let token = await AuthManager.getValidAccessToken();
 
-  // 如果没有有效的 token，抛出错误
+  // 如果 AuthManager 返回 null，直接从 localStorage 读取（不检查过期）
   if (!token) {
-    console.error('❌ 未找到有效的认证Token');
+    console.warn('⚠️ AuthManager 未返回 token，尝试直接从 localStorage 读取');
+    token = localStorage.getItem('admin_access_token');
+
+    // 如果还是没有，尝试从旧的存储位置读取
+    if (!token) {
+      const adminAuth = localStorage.getItem('admin-auth');
+      if (adminAuth) {
+        try {
+          const parsed = JSON.parse(adminAuth);
+          token = parsed?.accessToken || null;
+        } catch (e) {
+          console.error('解析 admin-auth 失败:', e);
+        }
+      }
+    }
+  }
+
+  // 如果还是没有有效的 token，抛出错误
+  if (!token) {
+    console.error('❌ 未找到任何认证Token');
     throw new Error("未登录或登录已过期，请重新登录");
   }
 
