@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { ArrowRight } from 'lucide-react';
-import { optimizedFetch } from '@/lib/api-cache';
 import { useDebounce, useLocalStorage } from '@/lib/performance-utils';
 import { LazyImage } from '@/components/LazyImage';
 
@@ -31,6 +30,9 @@ const ProductsPage = memo(function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [lastUpdated, setLastUpdated] = useState<number>(Date.now());
 
+  // 缓存产品数据到localStorage
+  const [cachedProducts, setCachedProducts] = useLocalStorage<Product[]>('products-cache', []);
+
   // 强制刷新产品列表
   const forceRefreshProducts = useCallback(async () => {
     setIsLoading(true);
@@ -38,23 +40,25 @@ const ProductsPage = memo(function ProductsPage() {
       // 清除localStorage缓存
       localStorage.removeItem('products-cache');
 
+      console.log('🔄 强制刷新产品数据...');
       // 强制获取最新数据
       const result = await fetch('/api/products?_t=' + Date.now()); // 添加时间戳绕过缓存
       const data = await result.json();
 
-      if (data.success) {
+      if (data.success && Array.isArray(data.data)) {
+        console.log(`✅ 刷新成功，获取 ${data.data.length} 个产品`);
         setProducts(data.data);
         setCachedProducts(data.data);
         setLastUpdated(Date.now());
       } else {
-        console.error('获取产品失败:', data.message);
+        console.error('❌ 获取产品失败:', data.message);
       }
     } catch (error) {
-      console.error('强制刷新产品失败:', error);
+      console.error('❌ 强制刷新产品失败:', error);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [setCachedProducts]);
 
   // 使用防抖优化搜索
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -84,17 +88,16 @@ const ProductsPage = memo(function ProductsPage() {
              description.toLowerCase().includes(searchLower);
     });
   }, [products, debouncedSearchTerm, getProductName, getProductDescription]);
-  
-  // 缓存产品数据到localStorage
-  const [cachedProducts, setCachedProducts] = useLocalStorage<Product[]>('products-cache', []);
 
   useEffect(() => {
     async function fetchProducts() {
       setIsLoading(true);
-      
+
       try {
         // 使用添加时间戳的方式绕过缓存
         const cacheBuster = `?_t=${Date.now()}`;
+        console.log('🔍 正在获取产品数据...', `/api/products${cacheBuster}`);
+
         const response = await fetch(`/api/products${cacheBuster}`, {
           headers: {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -102,20 +105,37 @@ const ProductsPage = memo(function ProductsPage() {
             'Expires': '0'
           }
         });
+
+        console.log('📡 API响应状态:', response.status, response.statusText);
+
+        if (!response.ok) {
+          throw new Error(`HTTP错误! 状态: ${response.status}`);
+        }
+
         const result = await response.json();
-        
-        if (result.success) {
+        console.log('📦 API返回数据:', result);
+
+        if (result.success && Array.isArray(result.data)) {
+          console.log(`✅ 成功获取 ${result.data.length} 个产品`);
           setProducts(result.data);
           setCachedProducts(result.data);
         } else {
-          console.error('获取产品失败:', result.message);
-          if (cachedProducts.length === 0) {
+          console.error('❌ 获取产品失败:', result.message || '未知错误');
+          // 如果有缓存数据，使用缓存
+          if (cachedProducts && cachedProducts.length > 0) {
+            console.log('📦 使用缓存数据:', cachedProducts.length, '个产品');
+            setProducts(cachedProducts);
+          } else {
             setProducts([]);
           }
         }
       } catch (error) {
-        console.error('获取产品失败:', error);
-        if (cachedProducts.length === 0) {
+        console.error('❌ 获取产品失败:', error);
+        // 如果有缓存数据，使用缓存
+        if (cachedProducts && cachedProducts.length > 0) {
+          console.log('📦 使用缓存数据:', cachedProducts.length, '个产品');
+          setProducts(cachedProducts);
+        } else {
           setProducts([]);
         }
       } finally {
@@ -124,7 +144,7 @@ const ProductsPage = memo(function ProductsPage() {
     }
 
     fetchProducts();
-  }, [cachedProducts, setCachedProducts]);
+  }, []);
 
   // 优化的产品卡片组件
   const ProductCard = memo(({ product }: { product: Product }) => {

@@ -1,66 +1,46 @@
 // 首页内容管理API
+import { authenticate, createUnauthorizedResponse } from '../../lib/jwt-auth.js';
+import { rateLimitMiddleware } from '../../lib/rate-limit.js';
+import { createCorsResponse, createCorsErrorResponse, handleCorsPreFlight } from '../../lib/cors.js';
+
 export async function onRequestGet(context) {
   const { request, env } = context;
-  
+
   try {
-    // 认证检查
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({
-        error: { message: '需要登录' }
-      }), {
-        status: 401,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+    // 速率限制检查
+    const rateLimit = await rateLimitMiddleware(request, env, 'admin');
+    if (!rateLimit.allowed) {
+      return rateLimit.response;
+    }
+
+    // JWT 认证检查
+    const auth = await authenticate(request, env);
+    if (!auth.authenticated) {
+      return createUnauthorizedResponse(auth.error);
     }
     
     // 数据库检查
     if (!env.DB) {
-      return new Response(JSON.stringify({
-        error: { message: 'D1数据库未配置' }
-      }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+      return createCorsErrorResponse('D1数据库未配置', 500, request);
     }
 
     // 获取首页内容数据
     const contents = await env.DB.prepare(`
-      SELECT id, page_key, section_key, content_zh, content_en, content_ru, 
+      SELECT id, page_key, section_key, content_zh, content_en, content_ru,
              content_type, is_active, sort_order, created_at, updated_at
-      FROM page_contents 
+      FROM page_contents
       WHERE page_key = 'home' AND is_active = 1
       ORDER BY sort_order, created_at DESC
     `).all();
-    
-    return new Response(JSON.stringify({
+
+    return createCorsResponse({
       success: true,
       data: contents.results || []
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
-    });
-    
+    }, 200, request);
+
   } catch (error) {
     console.error('获取首页内容数据错误:', error);
-    return new Response(JSON.stringify({
-      error: { message: '获取数据失败' }
-    }), {
-      status: 500,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
-    });
+    return createCorsErrorResponse('获取数据失败', 500, request);
   }
 }
 
@@ -69,19 +49,16 @@ export async function onRequestPost(context) {
   const { request, env } = context;
 
   try {
-    // 认证检查
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader) {
-      console.error('❌ 创建内容失败: 缺少认证头');
-      return new Response(JSON.stringify({
-        error: { message: '需要登录' }
-      }), {
-        status: 401,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+    // 速率限制检查
+    const rateLimit = await rateLimitMiddleware(request, env, 'admin');
+    if (!rateLimit.allowed) {
+      return rateLimit.response;
+    }
+
+    // JWT 认证检查
+    const auth = await authenticate(request, env);
+    if (!auth.authenticated) {
+      return createUnauthorizedResponse(auth.error);
     }
 
     // 数据库检查

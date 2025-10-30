@@ -3,7 +3,7 @@
  * 实现资源缓存和离线支持
  */
 
-const CACHE_NAME = 'wallpaper-glue-v1.0.0';
+const CACHE_NAME = 'wallpaper-glue-v1.0.1';
 const STATIC_CACHE = 'static-resources-v1';
 const DYNAMIC_CACHE = 'dynamic-resources-v1';
 const API_CACHE = 'api-responses-v1';
@@ -144,6 +144,19 @@ function isStaticAsset(request) {
 // 处理 API 请求 - 网络优先，缓存备用
 async function handleApiRequest(request) {
   const cacheName = API_CACHE;
+  
+  // 检查是否是带时间戳的请求（用于绕过缓存）
+  const url = new URL(request.url);
+  if (url.searchParams.has('_t')) {
+    console.log('🔄 检测到时间戳参数，直接发起网络请求:', request.url);
+    try {
+      const networkResponse = await fetch(request);
+      return networkResponse;
+    } catch (error) {
+      console.error('❌ 网络请求失败:', error);
+      throw error;
+    }
+  }
   
   try {
     // 尝试网络请求

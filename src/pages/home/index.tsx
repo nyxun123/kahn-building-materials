@@ -100,8 +100,15 @@ export default function HomePage() {
           });
         }
         
-        // 获取热门产品 - 修复API调用
-        const productsResponse = await fetch('/api/products?limit=3');
+        // 获取热门产品 - 修复API调用，添加时间戳绕过缓存
+        const cacheBuster = `?limit=3&_t=${Date.now()}`;
+        const productsResponse = await fetch(`/api/products${cacheBuster}`, {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
         const productsData = await productsResponse.json();
         
         if (productsResponse.ok && productsData.success) {
