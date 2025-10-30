@@ -21,6 +21,7 @@ const AdminProductEditPage = lazy(() => import('@/pages/admin/product-edit'));
 const AdminMessagesPage = lazy(() => import('@/pages/admin/messages'));
 const AdminContentPage = lazy(() => import('@/pages/admin/content'));
 const AdminHomeContentPage = lazy(() => import('@/pages/admin/home-content'));
+const AdminMediaLibraryPage = lazy(() => import('@/pages/admin/media-library'));
 const AdminCompanyInfoPage = lazy(() => import('@/pages/admin/company-info'));
 const AdminSEOPage = lazy(() => import('@/pages/admin/seo'));
 const AdminAnalyticsPage = lazy(() => import('@/pages/admin/analytics'));
@@ -109,6 +110,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <AdminHomeContentPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'media-library',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <AdminMediaLibraryPage />
           </Suspense>
         ),
       },
@@ -203,6 +212,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <AdminHomeContentPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'media-library',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <AdminMediaLibraryPage />
           </Suspense>
         ),
       },

@@ -19,6 +19,7 @@ const resourceMap: ResourceMap = {
   "home-content": "home-content",
   "company-info": "company/info",
   "company-content": "company/content",
+  media: "media",
 };
 
 const resolveEndpoint = (resource: string): string => {
