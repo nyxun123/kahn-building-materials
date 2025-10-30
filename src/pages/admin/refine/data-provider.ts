@@ -87,8 +87,26 @@ async function parseResponse<T>(response: Response): Promise<T> {
   const data = text ? JSON.parse(text) : {};
 
   if (!response.ok) {
+    // 处理多种错误格式
+    let errorMessage = response.statusText;
+
+    if (data?.error) {
+      // 如果 error 是字符串，直接使用
+      if (typeof data.error === 'string') {
+        errorMessage = data.error;
+      }
+      // 如果 error 是对象，尝试获取 message 属性
+      else if (typeof data.error === 'object' && data.error.message) {
+        errorMessage = data.error.message;
+      }
+    }
+    // 如果有 message 字段，使用它
+    else if (data?.message) {
+      errorMessage = data.message;
+    }
+
     const error: HttpError = {
-      message: data?.error?.message || data?.message || response.statusText,
+      message: errorMessage,
       statusCode: response.status,
     };
     throw error;

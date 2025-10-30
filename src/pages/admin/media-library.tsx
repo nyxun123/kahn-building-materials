@@ -118,8 +118,10 @@ export default function MediaLibrary() {
         setUploadedFileUrl('');
         refetch();
       },
-      onError: (error) => {
-        toast.error(`保存失败: ${error.message}`);
+      onError: (error: any) => {
+        console.error('保存媒体文件失败:', error);
+        const errorMessage = error?.message || error?.error || error?.toString() || '保存失败';
+        toast.error(`保存失败: ${errorMessage}`);
       },
     });
   };
