@@ -28,33 +28,17 @@ interface DashboardResponse {
 }
 
 const fetchDashboard = async (): Promise<DashboardResponse["data"]> => {
-  // 获取 JWT token
-  let token: string | null = null;
-
-  try {
-    // 优先从 admin-auth 获取 JWT token
-    const adminAuth = localStorage.getItem("admin-auth");
-    if (adminAuth) {
-      const parsed = JSON.parse(adminAuth);
-      token = parsed?.accessToken || parsed?.token || null;
-    }
-
-    // 如果没有找到 token，尝试从其他存储位置获取
-    if (!token) {
-      const tempAuth = localStorage.getItem("temp-admin-auth");
-      if (tempAuth) {
-        const parsed = JSON.parse(tempAuth);
-        token = parsed?.accessToken || parsed?.token || null;
-      }
-    }
-  } catch (error) {
-    console.warn("读取认证信息失败", error);
-  }
+  // 使用 AuthManager 获取有效的 JWT token
+  const { AuthManager } = await import("@/lib/auth-manager");
+  const token = await AuthManager.getValidAccessToken();
 
   // 如果没有有效的 token，抛出错误
   if (!token) {
+    console.error('❌ 未找到有效的认证Token');
     throw new Error("未登录或登录已过期，请重新登录");
   }
+
+  console.log('🔑 使用 JWT Token 请求仪表盘数据');
 
   const headers = {
     "Content-Type": "application/json",
@@ -66,8 +50,8 @@ const fetchDashboard = async (): Promise<DashboardResponse["data"]> => {
   if (!response.ok) {
     // 如果是 401 错误，清除本地存储并提示重新登录
     if (response.status === 401) {
-      localStorage.removeItem("admin-auth");
-      localStorage.removeItem("temp-admin-auth");
+      console.error('❌ Token已过期，清除认证信息');
+      AuthManager.clearTokens();
       throw new Error("登录已过期，请重新登录");
     }
 
@@ -76,6 +60,7 @@ const fetchDashboard = async (): Promise<DashboardResponse["data"]> => {
   }
 
   const payload = (await response.json()) as DashboardResponse;
+  console.log('✅ 仪表盘数据获取成功');
   return payload.data;
 };
 

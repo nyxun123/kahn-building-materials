@@ -6,6 +6,7 @@ import type {
   LogicalFilter,
   CrudSorting,
 } from "@refinedev/core";
+import { AuthManager } from "@/lib/auth-manager";
 
 const API_BASE = "/api/admin";
 
@@ -25,23 +26,42 @@ const resolveEndpoint = (resource: string): string => {
   return `${API_BASE}/${mapped}`;
 };
 
-const getAuthHeader = () => {
+const getAuthHeader = async () => {
   if (typeof window === "undefined") return {};
+
   try {
+    // 优先使用 AuthManager 获取有效的 JWT Token
+    const token = await AuthManager.getValidAccessToken();
+    if (token) {
+      console.log('🔑 使用 JWT Token');
+      return { Authorization: `Bearer ${token}` };
+    }
+
+    // 回退到旧的认证方式
     const adminAuth = localStorage.getItem("admin-auth");
     if (adminAuth) {
       const parsed = JSON.parse(adminAuth);
-      return parsed?.token
-        ? { Authorization: `Bearer ${parsed.token}` }
-        : { Authorization: "Bearer admin-session" };
+      if (parsed?.accessToken) {
+        console.log('🔑 使用旧格式 Access Token');
+        return { Authorization: `Bearer ${parsed.accessToken}` };
+      }
+      if (parsed?.token) {
+        console.log('🔑 使用旧格式 Token');
+        return { Authorization: `Bearer ${parsed.token}` };
+      }
     }
+
     const tempAuth = localStorage.getItem("temp-admin-auth");
     if (tempAuth) {
+      console.log('🔑 使用临时认证');
       return { Authorization: "Bearer temp-admin" };
     }
+
+    console.warn('⚠️ 未找到有效的认证Token');
   } catch (error) {
     console.warn("读取本地认证信息失败", error);
   }
+
   return {};
 };
 
@@ -116,7 +136,7 @@ export const adminDataProvider: DataProvider = {
 
     const headers = {
       "Content-Type": "application/json",
-      ...getAuthHeader(),
+      ...(await getAuthHeader()),
     };
 
     const url = buildUrl(resource, undefined, params);
@@ -134,7 +154,7 @@ export const adminDataProvider: DataProvider = {
   getOne: async ({ resource, id }) => {
     const headers = {
       "Content-Type": "application/json",
-      ...getAuthHeader(),
+      ...(await getAuthHeader()),
     };
 
     const url = buildUrl(resource, id);
@@ -235,7 +255,7 @@ export const adminDataProvider: DataProvider = {
   create: async ({ resource, variables }) => {
     const headers = {
       "Content-Type": "application/json",
-      ...getAuthHeader(),
+      ...(await getAuthHeader()),
     };
 
     const url = buildUrl(resource);
@@ -270,7 +290,7 @@ export const adminDataProvider: DataProvider = {
   update: async ({ resource, id, variables }) => {
     const headers = {
       "Content-Type": "application/json",
-      ...getAuthHeader(),
+      ...(await getAuthHeader()),
     };
 
     const url = buildUrl(resource, id);
@@ -305,7 +325,7 @@ export const adminDataProvider: DataProvider = {
   deleteOne: async ({ resource, id }) => {
     const headers = {
       "Content-Type": "application/json",
-      ...getAuthHeader(),
+      ...(await getAuthHeader()),
     };
 
     const url = buildUrl(resource, id);

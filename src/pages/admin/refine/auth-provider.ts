@@ -1,4 +1,5 @@
 import type { AuthBindings } from "@refinedev/core";
+import { AuthManager } from "@/lib/auth-manager";
 
 type LoginPayload = {
   email: string;
@@ -6,29 +7,63 @@ type LoginPayload = {
 };
 
 type LoginResponse = {
+  success?: boolean;
   user?: {
-    id: string;
+    id: number;
     email: string;
     name?: string;
     role?: string;
   };
+  accessToken?: string;
+  refreshToken?: string;
+  expiresIn?: number;
   authType?: string;
   error?: { message?: string };
+  message?: string;
 };
 
 const AUTH_KEY = "admin-auth";
 
-const storeSession = (user: LoginResponse["user"], token?: string) => {
+const storeSession = (user: LoginResponse["user"], accessToken?: string, refreshToken?: string, expiresIn?: number) => {
   if (!user) return;
+
+  // 使用 AuthManager 保存 JWT tokens
+  if (accessToken && refreshToken && expiresIn) {
+    AuthManager.saveTokens(accessToken, refreshToken, expiresIn);
+    AuthManager.saveUserInfo({
+      id: user.id,
+      email: user.email,
+      name: user.name || '',
+      role: user.role || 'admin'
+    });
+    console.log('✅ JWT Tokens 已保存');
+  }
+
+  // 同时保存到旧的存储位置以保持兼容性
   const session = {
     user,
-    token: token || `admin-${Date.now()}`,
+    accessToken,
+    refreshToken,
+    expiresIn,
     loginTime: new Date().toISOString(),
   };
   localStorage.setItem(AUTH_KEY, JSON.stringify(session));
 };
 
 const readSession = () => {
+  // 优先从 AuthManager 读取
+  const user = AuthManager.getUserInfo();
+  const accessToken = AuthManager.getAccessToken();
+
+  if (user && accessToken) {
+    return {
+      user,
+      accessToken,
+      loginTime: new Date().toISOString()
+    };
+  }
+
+  // 回退到旧的存储方式
   const raw = localStorage.getItem(AUTH_KEY) || localStorage.getItem("temp-admin-auth");
   if (!raw) return null;
   try {
@@ -48,6 +83,7 @@ export const authProvider: AuthBindings = {
     };
 
     try {
+      console.log('🔐 开始登录...');
       const response = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -55,17 +91,22 @@ export const authProvider: AuthBindings = {
       });
 
       const data: LoginResponse = await response.json();
+      console.log('📦 登录响应:', data);
 
-      if (response.ok && data.user) {
-        storeSession(data.user);
+      if (response.ok && data.success && data.user && data.accessToken && data.refreshToken) {
+        // 保存 JWT tokens 和用户信息
+        storeSession(data.user, data.accessToken, data.refreshToken, data.expiresIn || 900);
+        console.log('✅ 登录成功，已保存认证信息');
         return {
           success: true,
           redirectTo: "/admin/dashboard",
         };
       }
 
-      throw new Error(data.error?.message || "登录失败");
+      throw new Error(data.message || data.error?.message || "登录失败");
     } catch (error) {
+      console.error('❌ 登录失败:', error);
+
       // 回退到临时认证
       const tempAuth = window.localStorage.getItem("temp-admin-auth");
       if (tempAuth) {
@@ -84,6 +125,8 @@ export const authProvider: AuthBindings = {
   },
 
   logout: async () => {
+    console.log('🚪 退出登录');
+    AuthManager.clearTokens();
     localStorage.removeItem(AUTH_KEY);
     localStorage.removeItem("temp-admin-auth");
     return {
