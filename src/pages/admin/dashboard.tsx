@@ -28,32 +28,53 @@ interface DashboardResponse {
 }
 
 const fetchDashboard = async (): Promise<DashboardResponse["data"]> => {
+  // 获取 JWT token
+  let token: string | null = null;
+
+  try {
+    // 优先从 admin-auth 获取 JWT token
+    const adminAuth = localStorage.getItem("admin-auth");
+    if (adminAuth) {
+      const parsed = JSON.parse(adminAuth);
+      token = parsed?.accessToken || parsed?.token || null;
+    }
+
+    // 如果没有找到 token，尝试从其他存储位置获取
+    if (!token) {
+      const tempAuth = localStorage.getItem("temp-admin-auth");
+      if (tempAuth) {
+        const parsed = JSON.parse(tempAuth);
+        token = parsed?.accessToken || parsed?.token || null;
+      }
+    }
+  } catch (error) {
+    console.warn("读取认证信息失败", error);
+  }
+
+  // 如果没有有效的 token，抛出错误
+  if (!token) {
+    throw new Error("未登录或登录已过期，请重新登录");
+  }
+
   const headers = {
     "Content-Type": "application/json",
-    ...(() => {
-      try {
-        const adminAuth = localStorage.getItem("admin-auth");
-        if (adminAuth) {
-          const parsed = JSON.parse(adminAuth);
-          return parsed?.token
-            ? { Authorization: `Bearer ${parsed.token}` }
-            : { Authorization: "Bearer admin-session" };
-        }
-        if (localStorage.getItem("temp-admin-auth")) {
-          return { Authorization: "Bearer temp-admin" };
-        }
-      } catch (error) {
-        console.warn("读取认证信息失败", error);
-      }
-      return {};
-    })(),
+    "Authorization": `Bearer ${token}`,
   };
 
   const response = await fetch("/api/admin/dashboard/stats", { headers });
+
   if (!response.ok) {
+    // 如果是 401 错误，清除本地存储并提示重新登录
+    if (response.status === 401) {
+      localStorage.removeItem("admin-auth");
+      localStorage.removeItem("temp-admin-auth");
+      throw new Error("登录已过期，请重新登录");
+    }
+
     const text = await response.text();
     throw new Error(text || "仪表盘数据获取失败");
   }
+
   const payload = (await response.json()) as DashboardResponse;
   return payload.data;
 };

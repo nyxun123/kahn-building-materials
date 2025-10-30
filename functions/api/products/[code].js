@@ -35,6 +35,8 @@ export async function onRequestGet(context) {
     }
 
     try {
+      console.log('🔍 查询产品详情，产品代码:', productCode);
+
       // 查询产品详情 - 只返回已发布的产品
       const product = await env.DB.prepare(`
         SELECT id, product_code, name_zh, name_en, name_ru,
@@ -44,16 +46,39 @@ export async function onRequestGet(context) {
                features_zh, features_en, features_ru,
                packaging_options_zh, packaging_options_en, packaging_options_ru,
                price, price_range, image_url, gallery_images,
-               category, tags, sort_order,
+               category, tags, sort_order, is_active,
                created_at, updated_at
-        FROM products 
+        FROM products
         WHERE product_code = ? AND is_active = 1
       `).bind(productCode).first();
-      
+
+      console.log('📦 查询结果:', product ? '找到产品' : '未找到产品');
+
       if (!product) {
+        // 检查产品是否存在但未激活
+        const inactiveProduct = await env.DB.prepare(`
+          SELECT id, product_code, is_active FROM products WHERE product_code = ?
+        `).bind(productCode).first();
+
+        if (inactiveProduct) {
+          console.warn('⚠️ 产品存在但未激活:', inactiveProduct);
+          return new Response(JSON.stringify({
+            success: false,
+            message: '产品已下架或未发布',
+            data: null
+          }), {
+            status: 404,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+            }
+          });
+        }
+
+        console.warn('❌ 产品不存在:', productCode);
         return new Response(JSON.stringify({
           success: false,
-          message: '产品不存在或已下架',
+          message: '产品不存在',
           data: null
         }), {
           status: 404,

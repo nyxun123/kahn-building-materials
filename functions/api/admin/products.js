@@ -1,19 +1,13 @@
+import { authenticate, createUnauthorizedResponse } from '../../lib/jwt-auth.js';
+
 export async function onRequestGet(context) {
   const { request, env } = context;
-  
+
   try {
-    // 快速认证检查
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({
-        error: { message: '需要登录' }
-      }), {
-        status: 401,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+    // JWT 认证检查
+    const auth = await authenticate(request, env);
+    if (!auth.authenticated) {
+      return createUnauthorizedResponse(auth.error);
     }
     
     const url = new URL(request.url);
@@ -120,20 +114,12 @@ export async function onRequestGet(context) {
 // 创建产品 - POST请求
 export async function onRequestPost(context) {
   const { request, env } = context;
-  
+
   try {
-    // 认证检查
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({
-        error: { message: '需要登录' }
-      }), {
-        status: 401,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+    // JWT 认证检查
+    const auth = await authenticate(request, env);
+    if (!auth.authenticated) {
+      return createUnauthorizedResponse(auth.error);
     }
     
     // 数据库检查
@@ -151,8 +137,14 @@ export async function onRequestPost(context) {
 
     // 解析请求数据
     const productData = await request.json();
-    console.log('创建产品数据:', productData);
-    
+    console.log('📝 创建产品数据:', {
+      product_code: productData.product_code,
+      name_zh: productData.name_zh,
+      is_active: productData.is_active,
+      category: productData.category,
+      has_image: !!productData.image_url
+    });
+
     // 基础验证
     if (!productData.product_code || !productData.name_zh) {
       return new Response(JSON.stringify({
@@ -281,14 +273,23 @@ export async function onRequestPost(context) {
       productData.meta_description_en || '',
       productData.meta_description_ru || ''
     ).run();
-    
-    console.log('✅ 产品创建成功:', result.meta.last_row_id);
-    
+
+    const newProductId = result.meta.last_row_id;
+    console.log('✅ 产品创建成功，ID:', newProductId);
+
     // 返回创建的产品
     const newProduct = await env.DB.prepare(
       'SELECT * FROM products WHERE id = ?'
-    ).bind(result.meta.last_row_id).first();
-    
+    ).bind(newProductId).first();
+
+    console.log('📦 新产品详情:', {
+      id: newProduct.id,
+      product_code: newProduct.product_code,
+      name_zh: newProduct.name_zh,
+      is_active: newProduct.is_active,
+      image_url: newProduct.image_url ? '已设置' : '未设置'
+    });
+
     return new Response(JSON.stringify({
       success: true,
       data: newProduct
