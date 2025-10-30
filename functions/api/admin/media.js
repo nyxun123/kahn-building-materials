@@ -1,7 +1,7 @@
 // 媒体文件管理 API
 // 支持获取、创建、更新、删除媒体文件记录
 
-import { verifyJWT } from '../../lib/jwt-auth.js';
+import { authenticate, createUnauthorizedResponse } from '../../lib/jwt-auth.js';
 
 // GET - 获取媒体文件列表
 export async function onRequestGet(context) {
@@ -9,16 +9,9 @@ export async function onRequestGet(context) {
 
   try {
     // 验证JWT Token
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader) {
-      return createErrorResponse(401, '需要登录');
-    }
-
-    const token = authHeader.replace('Bearer ', '');
-    const payload = await verifyJWT(token, env.JWT_SECRET);
-    
-    if (!payload) {
-      return createErrorResponse(401, '无效的认证令牌');
+    const auth = await authenticate(request, env);
+    if (!auth.authenticated) {
+      return createUnauthorizedResponse('需要登录');
     }
 
     // 解析查询参数
@@ -99,16 +92,9 @@ export async function onRequestPost(context) {
 
   try {
     // 验证JWT Token
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader) {
-      return createErrorResponse(401, '需要登录');
-    }
-
-    const token = authHeader.replace('Bearer ', '');
-    const payload = await verifyJWT(token, env.JWT_SECRET);
-    
-    if (!payload) {
-      return createErrorResponse(401, '无效的认证令牌');
+    const auth = await authenticate(request, env);
+    if (!auth.authenticated) {
+      return createUnauthorizedResponse('需要登录');
     }
 
     const data = await request.json();
@@ -177,16 +163,9 @@ export async function onRequestPut(context) {
 
   try {
     // 验证JWT Token
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader) {
-      return createErrorResponse(401, '需要登录');
-    }
-
-    const token = authHeader.replace('Bearer ', '');
-    const payload = await verifyJWT(token, env.JWT_SECRET);
-    
-    if (!payload) {
-      return createErrorResponse(401, '无效的认证令牌');
+    const auth = await authenticate(request, env);
+    if (!auth.authenticated) {
+      return createUnauthorizedResponse('需要登录');
     }
 
     const url = new URL(request.url);
@@ -258,16 +237,9 @@ export async function onRequestDelete(context) {
 
   try {
     // 验证JWT Token
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader) {
-      return createErrorResponse(401, '需要登录');
-    }
-
-    const token = authHeader.replace('Bearer ', '');
-    const payload = await verifyJWT(token, env.JWT_SECRET);
-    
-    if (!payload) {
-      return createErrorResponse(401, '无效的认证令牌');
+    const auth = await authenticate(request, env);
+    if (!auth.authenticated) {
+      return createUnauthorizedResponse('需要登录');
     }
 
     const url = new URL(request.url);
