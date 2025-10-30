@@ -55,20 +55,38 @@ const Login = () => {
       }
 
       const result = await response.json();
+      console.log('📦 登录响应:', result);
 
-      if (result.user) {
-        // 存储用户信息到 localStorage
+      if (result.success && result.user && result.accessToken && result.refreshToken) {
+        // 使用 AuthManager 保存 JWT tokens
+        const { AuthManager } = await import('@/lib/auth-manager');
+
+        // 保存 JWT tokens
+        AuthManager.saveTokens(result.accessToken, result.refreshToken, result.expiresIn || 900);
+
+        // 保存用户信息
+        AuthManager.saveUserInfo({
+          id: result.user.id,
+          email: result.user.email,
+          name: result.user.name || '',
+          role: result.user.role || 'admin'
+        });
+
+        // 同时保存到旧的存储位置以保持兼容性
         localStorage.setItem('admin-auth', JSON.stringify({
           user: result.user,
-          token: `admin-${Date.now()}`,
+          accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
+          expiresIn: result.expiresIn,
           loginTime: new Date().toISOString(),
-          authType: result.authType
+          authType: result.authType || 'JWT'
         }));
-        
+
+        console.log('✅ JWT Tokens 已保存');
         toast.success('登录成功！');
         navigate('/admin/dashboard');
       } else {
-        throw new Error('认证失败');
+        throw new Error(result.message || '认证失败');
       }
     } catch (error: any) {
       console.error('Login error:', error);
