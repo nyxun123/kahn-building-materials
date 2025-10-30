@@ -36,21 +36,34 @@ export class CloudflareWorkerUpload {
       formData.append('file', file);
       formData.append('folder', folder);
 
-      // 获取认证token
+      // 获取认证token - 使用 AuthManager
       const getAuthToken = () => {
         try {
+          // 优先从新的JWT Token存储中读取
+          const accessToken = localStorage.getItem('admin_access_token');
+          if (accessToken) {
+            console.log('✅ 使用 JWT Access Token');
+            return accessToken;
+          }
+
+          // 回退到旧的存储方式
           const adminAuth = localStorage.getItem("admin-auth");
           if (adminAuth) {
             const parsed = JSON.parse(adminAuth);
+            console.log('⚠️ 使用旧的 admin-auth token');
             return parsed?.token || 'admin-session';
           }
+
           const tempAuth = localStorage.getItem("temp-admin-auth");
           if (tempAuth) {
+            console.log('⚠️ 使用临时 token');
             return 'temp-admin';
           }
         } catch (error) {
           console.warn("读取认证信息失败", error);
         }
+
+        console.error('❌ 未找到任何认证token');
         return 'admin-token'; // 默认token
       };
 
