@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第一阶段修复功能测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .test-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-card h2 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .test-card .status {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+
+        .test-card .status.pending {
+            background: #ffc107;
+        }
+
+        .test-card .status.success {
+            background: #28a745;
+        }
+
+        .test-card .status.error {
+            background: #dc3545;
+        }
+
+        .test-card button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .test-card button:hover {
+            background: #5568d3;
+        }
+
+        .test-card button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .summary {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-item .label {
+            color: #666;
+        }
+
+        .summary-item .value {
+            font-weight: bold;
+        }
+
+        .summary-item .value.pass {
+            color: #28a745;
+        }
+
+        .summary-item .value.fail {
+            color: #dc3545;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 第一阶段修复功能测试</h1>
+            <p>验证图片上传、API 响应格式和认证机制的修复</p>
+        </div>
+
+        <div class="test-grid">
+            <!-- 测试 1: 登录 -->
+            <div class="test-card">
+                <h2>
+                    <span class="status pending" id="status-login"></span>
+                    测试 1: 登录 API
+                </h2>
+                <p style="color: #666; font-size: 13px; margin-bottom: 10px;">验证登录功能和响应格式</p>
+                <div class="input-group">
+                    <label>邮箱</label>
+                    <input type="email" id="email" value="admin@kn-wallpaperglue.com">
+                </div>
+                <div class="input-group">
+                    <label>密码</label>
+                    <input type="password" id="password" value="Admin@123456">
+                </div>
+                <button onclick="testLogin()">执行测试</button>
+                <div class="result" id="result-login" style="display: none;"></div>
+            </div>
+
+            <!-- 测试 2: 获取内容 -->
+            <div class="test-card">
+                <h2>
+                    <span class="status pending" id="status-contents"></span>
+                    测试 2: 获取内容列表
+                </h2>
+                <p style="color: #666; font-size: 13px; margin-bottom: 10px;">验证 API 响应格式一致性</p>
+                <button onclick="testGetContents()" id="btn-contents" disabled>执行测试</button>
+                <div class="result" id="result-contents" style="display: none;"></div>
+            </div>
+
+            <!-- 测试 3: 无认证请求 -->
+            <div class="test-card">
+                <h2>
+                    <span class="status pending" id="status-noauth"></span>
+                    测试 3: 无认证请求
+                </h2>
+                <p style="color: #666; font-size: 13px; margin-bottom: 10px;">验证无 token 请求被拒绝</p>
+                <button onclick="testNoAuth()">执行测试</button>
+                <div class="result" id="result-noauth" style="display: none;"></div>
+            </div>
+
+            <!-- 测试 4: 无效认证 -->
+            <div class="test-card">
+                <h2>
+                    <span class="status pending" id="status-invalid"></span>
+                    测试 4: 无效认证请求
+                </h2>
+                <p style="color: #666; font-size: 13px; margin-bottom: 10px;">验证无效 token 被拒绝</p>
+                <button onclick="testInvalidAuth()">执行测试</button>
+                <div class="result" id="result-invalid" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- 测试总结 -->
+        <div class="summary">
+            <h2>📊 测试总结</h2>
+            <div class="summary-item">
+                <span class="label">登录 API</span>
+                <span class="value" id="summary-login">⏳ 待测试</span>
+            </div>
+            <div class="summary-item">
+                <span class="label">获取内容</span>
+                <span class="value" id="summary-contents">⏳ 待测试</span>
+            </div>
+            <div class="summary-item">
+                <span class="label">无认证拒绝</span>
+                <span class="value" id="summary-noauth">⏳ 待测试</span>
+            </div>
+            <div class="summary-item">
+                <span class="label">无效认证拒绝</span>
+                <span class="value" id="summary-invalid">⏳ 待测试</span>
+            </div>
+            <div class="summary-item" style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #667eea;">
+                <span class="label" style="font-weight: bold;">总体结果</span>
+                <span class="value" id="summary-total">⏳ 待测试</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8788';
+        let token = null;
+
+        function log(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = 'result ' + (isError ? 'error' : 'success');
+            element.textContent = message;
+        }
+
+        function setStatus(statusId, status) {
+            const element = document.getElementById(statusId);
+            element.className = 'status ' + status;
+        }
+
+        function updateSummary(summaryId, passed) {
+            const element = document.getElementById(summaryId);
+            element.className = 'value ' + (passed ? 'pass' : 'fail');
+            element.textContent = passed ? '✅ 通过' : '❌ 失败';
+        }
+
+        async function makeRequest(method, path, body = null, headers = {}) {
+            try {
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...headers
+                    }
+                };
+
+                if (body) {
+                    options.body = JSON.stringify(body);
+                }
+
+                const response = await fetch(API_BASE + path, options);
+                const data = await response.json();
+
+                return { status: response.status, body: data };
+            } catch (error) {
+                throw new Error(`请求失败: ${error.message}`);
+            }
+        }
+
+        async function testLogin() {
+            setStatus('status-login', 'pending');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await makeRequest('POST', '/api/admin/login', { email, password });
+
+                let message = `状态码: ${response.status}\n\n`;
+                message += `响应内容:\n${JSON.stringify(response.body, null, 2)}\n\n`;
+
+                // 验证响应格式
+                const requiredFields = ['success', 'code', 'message', 'data', 'timestamp'];
+                const missingFields = requiredFields.filter(f => !(f in response.body));
+
+                if (missingFields.length > 0) {
+                    message += `❌ 缺少字段: ${missingFields.join(', ')}`;
+                    log('result-login', message, true);
+                    setStatus('status-login', 'error');
+                    updateSummary('summary-login', false);
+                    return;
+                }
+
+                if (response.body.data && response.body.data.accessToken) {
+                    token = response.body.data.accessToken;
+                    message += `✅ 登录成功，已获得 Token\n`;
+                    message += `Token: ${token.substring(0, 50)}...`;
+                    log('result-login', message, false);
+                    setStatus('status-login', 'success');
+                    updateSummary('summary-login', true);
+                    document.getElementById('btn-contents').disabled = false;
+                } else {
+                    message += `❌ 响应中没有 accessToken`;
+                    log('result-login', message, true);
+                    setStatus('status-login', 'error');
+                    updateSummary('summary-login', false);
+                }
+            } catch (error) {
+                log('result-login', `❌ 错误: ${error.message}`, true);
+                setStatus('status-login', 'error');
+                updateSummary('summary-login', false);
+            }
+        }
+
+        async function testGetContents() {
+            setStatus('status-contents', 'pending');
+
+            if (!token) {
+                log('result-contents', '❌ 请先执行登录测试', true);
+                setStatus('status-contents', 'error');
+                updateSummary('summary-contents', false);
+                return;
+            }
+
+            try {
+                const response = await makeRequest('GET', '/api/admin/contents', null, {
+                    'Authorization': `Bearer ${token}`
+                });
+
+                let message = `状态码: ${response.status}\n\n`;
+                message += `响应内容:\n${JSON.stringify(response.body, null, 2)}\n\n`;
+
+                // 验证响应格式
+                const requiredFields = ['success', 'code', 'message', 'data', 'timestamp'];
+                const missingFields = requiredFields.filter(f => !(f in response.body));
+
+                if (missingFields.length > 0) {
+                    message += `❌ 缺少字段: ${missingFields.join(', ')}`;
+                    log('result-contents', message, true);
+                    setStatus('status-contents', 'error');
+                    updateSummary('summary-contents', false);
+                    return;
+                }
+
+                message += `✅ 响应格式正确\n`;
+                message += `✅ 包含所有必需字段`;
+                log('result-contents', message, false);
+                setStatus('status-contents', 'success');
+                updateSummary('summary-contents', true);
+            } catch (error) {
+                log('result-contents', `❌ 错误: ${error.message}`, true);
+                setStatus('status-contents', 'error');
+                updateSummary('summary-contents', false);
+            }
+        }
+
+        async function testNoAuth() {
+            setStatus('status-noauth', 'pending');
+
+            try {
+                const response = await makeRequest('GET', '/api/admin/contents');
+
+                let message = `状态码: ${response.status}\n\n`;
+                message += `响应内容:\n${JSON.stringify(response.body, null, 2)}\n\n`;
+
+                if (response.status === 401) {
+                    message += `✅ 正确拒绝无认证请求 (401)`;
+                    log('result-noauth', message, false);
+                    setStatus('status-noauth', 'success');
+                    updateSummary('summary-noauth', true);
+                } else {
+                    message += `❌ 应该返回 401，但返回 ${response.status}`;
+                    log('result-noauth', message, true);
+                    setStatus('status-noauth', 'error');
+                    updateSummary('summary-noauth', false);
+                }
+            } catch (error) {
+                log('result-noauth', `❌ 错误: ${error.message}`, true);
+                setStatus('status-noauth', 'error');
+                updateSummary('summary-noauth', false);
+            }
+        }
+
+        async function testInvalidAuth() {
+            setStatus('status-invalid', 'pending');
+
+            try {
+                const response = await makeRequest('GET', '/api/admin/contents', null, {
+                    'Authorization': 'Bearer invalid-token-12345'
+                });
+
+                let message = `状态码: ${response.status}\n\n`;
+                message += `响应内容:\n${JSON.stringify(response.body, null, 2)}\n\n`;
+
+                if (response.status === 401) {
+                    message += `✅ 正确拒绝无效认证请求 (401)`;
+                    log('result-invalid', message, false);
+                    setStatus('status-invalid', 'success');
+                    updateSummary('summary-invalid', true);
+                } else {
+                    message += `❌ 应该返回 401，但返回 ${response.status}`;
+                    log('result-invalid', message, true);
+                    setStatus('status-invalid', 'error');
+                    updateSummary('summary-invalid', false);
+                }
+            } catch (error) {
+                log('result-invalid', `❌ 错误: ${error.message}`, true);
+                setStatus('status-invalid', 'error');
+                updateSummary('summary-invalid', false);
+            }
+        }
+    </script>
+</body>
+</html>
+

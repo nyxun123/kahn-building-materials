@@ -1,6 +1,7 @@
 import { authenticate, createUnauthorizedResponse } from '../../lib/jwt-auth.js';
 import { rateLimitMiddleware } from '../../lib/rate-limit.js';
-import { createCorsResponse, createCorsErrorResponse, handleCorsPreFlight } from '../../lib/cors.js';
+import { createCorsSuccessResponse, createCorsErrorResponse, handleCorsPreFlight } from '../../lib/cors.js';
+import { createServerErrorResponse } from '../../lib/api-response.js';
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -20,15 +21,23 @@ export async function onRequestGet(context) {
     
     const url = new URL(request.url);
     const timeRange = url.searchParams.get('range') || '7d';
-    
+
     // 生成模拟分析数据
     const analyticsData = generateAnalyticsData(timeRange);
 
-    return createCorsResponse(analyticsData, 200, request);
+    return createCorsSuccessResponse({
+      data: analyticsData,
+      message: '获取分析数据成功',
+      request
+    });
 
   } catch (error) {
     console.error('分析API错误:', error);
-    return createCorsErrorResponse('获取分析数据失败', 500, request);
+    return createServerErrorResponse({
+      message: '获取分析数据失败',
+      error: error.message,
+      request
+    });
   }
 }
 

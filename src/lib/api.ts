@@ -1,12 +1,37 @@
 // API配置
+import { AuthManager } from './auth-manager';
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
+/**
+ * 获取带有认证 headers 的 fetch 选项
+ */
+async function getAuthenticatedFetchOptions(options: RequestInit = {}): Promise<RequestInit> {
+  const token = await AuthManager.getValidAccessToken();
+
+  if (!token) {
+    // Token 无效，清除认证信息并重定向到登录页
+    AuthManager.clearTokens();
+    window.location.href = '/admin/login';
+    throw new Error('认证失败，请重新登录');
+  }
+
+  return {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      ...options.headers
+    }
+  };
+}
 
 // 产品API
 export const productAPI = {
   // 获取产品列表
   async getProducts(filters?: Record<string, any>) {
     let url = '/api/admin/products';
-    
+
     if (filters) {
       const params = new URLSearchParams();
       Object.entries(filters).forEach(([key, value]) => {
@@ -19,7 +44,8 @@ export const productAPI = {
       }
     }
 
-    const response = await fetch(url);
+    const options = await getAuthenticatedFetchOptions();
+    const response = await fetch(url, options);
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
@@ -29,7 +55,8 @@ export const productAPI = {
 
   // 获取单个产品
   async getProduct(id: number) {
-    const response = await fetch(`/api/admin/products/${id}`);
+    const options = await getAuthenticatedFetchOptions();
+    const response = await fetch(`/api/admin/products/${id}`, options);
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
@@ -39,14 +66,12 @@ export const productAPI = {
 
   // 创建产品
   async createProduct(product: any) {
-    const response = await fetch('/api/admin/products', {
+    const options = await getAuthenticatedFetchOptions({
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(product)
     });
-    
+    const response = await fetch('/api/admin/products', options);
+
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
@@ -56,14 +81,12 @@ export const productAPI = {
 
   // 更新产品
   async updateProduct(id: number, updates: any) {
-    const response = await fetch(`/api/admin/products/${id}`, {
+    const options = await getAuthenticatedFetchOptions({
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(updates)
     });
-    
+    const response = await fetch(`/api/admin/products/${id}`, options);
+
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
@@ -73,10 +96,11 @@ export const productAPI = {
 
   // 删除产品
   async deleteProduct(id: number) {
-    const response = await fetch(`/api/admin/products/${id}`, {
+    const options = await getAuthenticatedFetchOptions({
       method: 'DELETE'
     });
-    
+    const response = await fetch(`/api/admin/products/${id}`, options);
+
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
@@ -100,7 +124,7 @@ export const productAPI = {
 export const contactAPI = {
   async getMessages(filters?: Record<string, any>) {
     let url = '/api/admin/contacts';
-    
+
     if (filters) {
       const params = new URLSearchParams();
       Object.entries(filters).forEach(([key, value]) => {
@@ -113,7 +137,8 @@ export const contactAPI = {
       }
     }
 
-    const response = await fetch(url);
+    const options = await getAuthenticatedFetchOptions();
+    const response = await fetch(url, options);
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
@@ -129,7 +154,7 @@ export const contactAPI = {
       },
       body: JSON.stringify({ data: message })
     });
-    
+
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
@@ -138,14 +163,12 @@ export const contactAPI = {
   },
 
   async updateMessageStatus(id: number, status: string) {
-    const response = await fetch(`/api/admin/contacts/${id}`, {
+    const options = await getAuthenticatedFetchOptions({
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({ status })
     });
-    
+    const response = await fetch(`/api/admin/contacts/${id}`, options);
+
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
@@ -158,7 +181,7 @@ export const contactAPI = {
 export const contentAPI = {
   async getContents(filters?: Record<string, any>) {
     let url = '/api/admin/contents';
-    
+
     if (filters) {
       const params = new URLSearchParams();
       Object.entries(filters).forEach(([key, value]) => {
@@ -171,7 +194,8 @@ export const contentAPI = {
       }
     }
 
-    const response = await fetch(url);
+    const options = await getAuthenticatedFetchOptions();
+    const response = await fetch(url, options);
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
@@ -180,14 +204,12 @@ export const contentAPI = {
   },
 
   async updateContent(id: number, updates: any) {
-    const response = await fetch(`/api/admin/contents/${id}`, {
+    const options = await getAuthenticatedFetchOptions({
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(updates)
     });
-    
+    const response = await fetch(`/api/admin/contents/${id}`, options);
+
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
@@ -203,14 +225,25 @@ export const imageAPI = {
     formData.append('file', file);
     formData.append('folder', folder);
 
+    // 获取认证 token
+    const token = await AuthManager.getValidAccessToken();
+    if (!token) {
+      AuthManager.clearTokens();
+      window.location.href = '/admin/login';
+      throw new Error('认证失败，请重新登录');
+    }
+
     // 使用云函数上传
     const response = await fetch('/api/upload-image', {
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
       body: formData
     });
 
     const result = await response.json();
-    
+
     if (result.code !== 200) {
       throw new Error(result.message);
     }
@@ -219,11 +252,8 @@ export const imageAPI = {
   },
 
   async uploadBase64Image(base64: string, fileName: string, folder: string = 'products') {
-    const response = await fetch('/api/upload-image', {
+    const options = await getAuthenticatedFetchOptions({
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({
         file: base64,
         fileName,
@@ -231,8 +261,10 @@ export const imageAPI = {
       })
     });
 
+    const response = await fetch('/api/upload-image', options);
+
     const result = await response.json();
-    
+
     if (result.code !== 200) {
       throw new Error(result.message);
     }
@@ -262,7 +294,8 @@ export const subscribeToChanges = (tableName: string, callback: (payload: any) =
   // 每30秒轮询一次数据更新
   const interval = setInterval(async () => {
     try {
-      const response = await fetch(`/api/admin/${tableName}`);
+      const options = await getAuthenticatedFetchOptions();
+      const response = await fetch(`/api/admin/${tableName}`, options);
       if (response.ok) {
         const data = await response.json();
         // 模拟Supabase的payload格式
@@ -276,7 +309,7 @@ export const subscribeToChanges = (tableName: string, callback: (payload: any) =
       console.error(`轮询${tableName}失败:`, error);
     }
   }, 30000);
-  
+
   // 返回清理函数
   return () => clearInterval(interval);
 };

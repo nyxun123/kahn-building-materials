@@ -1,4 +1,5 @@
 import { authenticate, createUnauthorizedResponse } from '../../../lib/jwt-auth.js';
+import { validateProduct, sanitizeObject } from '../../../lib/validation.js';
 
 // 单个产品的操作 - GET, PUT, DELETE
 export async function onRequestGet(context) {
@@ -199,12 +200,31 @@ export async function onRequestPut(context) {
     // 解析请求数据
     const productData = await request.json();
     console.log('更新产品数据:', productData);
-    
+
+    // 数据验证
+    const validation = validateProduct(productData, true);
+    if (!validation.valid) {
+      return new Response(JSON.stringify({
+        success: false,
+        code: 400,
+        message: validation.error
+      }), {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+
+    // 清理数据
+    const cleanedData = sanitizeObject(productData);
+
     // 检查产品是否存在
     const existingProduct = await env.DB.prepare(
       'SELECT id FROM products WHERE id = ?'
     ).bind(productId).first();
-    
+
     if (!existingProduct) {
       return new Response(JSON.stringify({
         error: { message: '产品不存在' }
@@ -218,10 +238,10 @@ export async function onRequestPut(context) {
     }
     
     // 如果修改了产品代码，检查是否重复
-    if (productData.product_code) {
+    if (cleanedData.product_code) {
       const duplicateProduct = await env.DB.prepare(
         'SELECT id FROM products WHERE product_code = ? AND id != ?'
-      ).bind(productData.product_code, productId).first();
+      ).bind(cleanedData.product_code, productId).first();
       
       if (duplicateProduct) {
         return new Response(JSON.stringify({
@@ -239,173 +259,173 @@ export async function onRequestPut(context) {
     // 构建动态更新查询 - 支持所有可能的字段
     const updateFields = [];
     const updateValues = [];
-    
+
     // 基础字段
-    if (productData.product_code !== undefined) {
+    if (cleanedData.product_code !== undefined) {
       updateFields.push('product_code = ?');
-      updateValues.push(productData.product_code);
+      updateValues.push(cleanedData.product_code);
     }
-    if (productData.name_zh !== undefined) {
+    if (cleanedData.name_zh !== undefined) {
       updateFields.push('name_zh = ?');
-      updateValues.push(productData.name_zh);
+      updateValues.push(cleanedData.name_zh);
     }
-    if (productData.name_en !== undefined) {
+    if (cleanedData.name_en !== undefined) {
       updateFields.push('name_en = ?');
-      updateValues.push(productData.name_en);
+      updateValues.push(cleanedData.name_en);
     }
-    if (productData.name_ru !== undefined) {
+    if (cleanedData.name_ru !== undefined) {
       updateFields.push('name_ru = ?');
-      updateValues.push(productData.name_ru);
+      updateValues.push(cleanedData.name_ru);
     }
     
     // 描述字段
-    if (productData.description_zh !== undefined) {
+    if (cleanedData.description_zh !== undefined) {
       updateFields.push('description_zh = ?');
-      updateValues.push(productData.description_zh);
+      updateValues.push(cleanedData.description_zh);
     }
-    if (productData.description_en !== undefined) {
+    if (cleanedData.description_en !== undefined) {
       updateFields.push('description_en = ?');
-      updateValues.push(productData.description_en);
+      updateValues.push(cleanedData.description_en);
     }
-    if (productData.description_ru !== undefined) {
+    if (cleanedData.description_ru !== undefined) {
       updateFields.push('description_ru = ?');
-      updateValues.push(productData.description_ru);
+      updateValues.push(cleanedData.description_ru);
     }
-    
+
     // 规格字段
-    if (productData.specifications_zh !== undefined) {
+    if (cleanedData.specifications_zh !== undefined) {
       updateFields.push('specifications_zh = ?');
-      updateValues.push(productData.specifications_zh);
+      updateValues.push(cleanedData.specifications_zh);
     }
-    if (productData.specifications_en !== undefined) {
+    if (cleanedData.specifications_en !== undefined) {
       updateFields.push('specifications_en = ?');
-      updateValues.push(productData.specifications_en);
+      updateValues.push(cleanedData.specifications_en);
     }
-    if (productData.specifications_ru !== undefined) {
+    if (cleanedData.specifications_ru !== undefined) {
       updateFields.push('specifications_ru = ?');
-      updateValues.push(productData.specifications_ru);
+      updateValues.push(cleanedData.specifications_ru);
     }
-    
+
     // 应用字段
-    if (productData.applications_zh !== undefined) {
+    if (cleanedData.applications_zh !== undefined) {
       updateFields.push('applications_zh = ?');
-      updateValues.push(productData.applications_zh);
+      updateValues.push(cleanedData.applications_zh);
     }
-    if (productData.applications_en !== undefined) {
+    if (cleanedData.applications_en !== undefined) {
       updateFields.push('applications_en = ?');
-      updateValues.push(productData.applications_en);
+      updateValues.push(cleanedData.applications_en);
     }
-    if (productData.applications_ru !== undefined) {
+    if (cleanedData.applications_ru !== undefined) {
       updateFields.push('applications_ru = ?');
-      updateValues.push(productData.applications_ru);
+      updateValues.push(cleanedData.applications_ru);
     }
-    
+
     // 特性字段
-    if (productData.features_zh !== undefined) {
+    if (cleanedData.features_zh !== undefined) {
       updateFields.push('features_zh = ?');
-      updateValues.push(typeof productData.features_zh === 'string' ? productData.features_zh : '[]');
+      updateValues.push(typeof cleanedData.features_zh === 'string' ? cleanedData.features_zh : '[]');
     }
-    if (productData.features_en !== undefined) {
+    if (cleanedData.features_en !== undefined) {
       updateFields.push('features_en = ?');
-      updateValues.push(typeof productData.features_en === 'string' ? productData.features_en : '[]');
+      updateValues.push(typeof cleanedData.features_en === 'string' ? cleanedData.features_en : '[]');
     }
-    if (productData.features_ru !== undefined) {
+    if (cleanedData.features_ru !== undefined) {
       updateFields.push('features_ru = ?');
-      updateValues.push(typeof productData.features_ru === 'string' ? productData.features_ru : '[]');
+      updateValues.push(typeof cleanedData.features_ru === 'string' ? cleanedData.features_ru : '[]');
     }
-    
+
     // 图片和媒体字段
-    if (productData.image_url !== undefined) {
+    if (cleanedData.image_url !== undefined) {
       updateFields.push('image_url = ?');
-      updateValues.push(productData.image_url);
+      updateValues.push(cleanedData.image_url);
     }
-    if (productData.gallery_images !== undefined) {
+    if (cleanedData.gallery_images !== undefined) {
       updateFields.push('gallery_images = ?');
-      updateValues.push(productData.gallery_images);
+      updateValues.push(cleanedData.gallery_images);
     }
-    
+
     // 价格字段
-    if (productData.price !== undefined) {
+    if (cleanedData.price !== undefined) {
       updateFields.push('price = ?');
-      updateValues.push(typeof productData.price === 'number' ? productData.price : 0);
+      updateValues.push(typeof cleanedData.price === 'number' ? cleanedData.price : 0);
     }
-    if (productData.price_range !== undefined) {
+    if (cleanedData.price_range !== undefined) {
       updateFields.push('price_range = ?');
-      updateValues.push(productData.price_range);
+      updateValues.push(cleanedData.price_range);
     }
-    
+
     // 包装选项字段
-    if (productData.packaging_options_zh !== undefined) {
+    if (cleanedData.packaging_options_zh !== undefined) {
       updateFields.push('packaging_options_zh = ?');
-      updateValues.push(productData.packaging_options_zh);
+      updateValues.push(cleanedData.packaging_options_zh);
     }
-    if (productData.packaging_options_en !== undefined) {
+    if (cleanedData.packaging_options_en !== undefined) {
       updateFields.push('packaging_options_en = ?');
-      updateValues.push(productData.packaging_options_en);
+      updateValues.push(cleanedData.packaging_options_en);
     }
-    if (productData.packaging_options_ru !== undefined) {
+    if (cleanedData.packaging_options_ru !== undefined) {
       updateFields.push('packaging_options_ru = ?');
-      updateValues.push(productData.packaging_options_ru);
+      updateValues.push(cleanedData.packaging_options_ru);
     }
-    
+
     // 分类和标签
-    if (productData.category !== undefined) {
+    if (cleanedData.category !== undefined) {
       updateFields.push('category = ?');
-      updateValues.push(productData.category);
+      updateValues.push(cleanedData.category);
     }
-    if (productData.tags !== undefined) {
+    if (cleanedData.tags !== undefined) {
       updateFields.push('tags = ?');
-      updateValues.push(productData.tags);
+      updateValues.push(cleanedData.tags);
     }
-    
+
     // 状态字段
-    if (productData.is_active !== undefined) {
+    if (cleanedData.is_active !== undefined) {
       updateFields.push('is_active = ?');
-      updateValues.push(productData.is_active ? 1 : 0);
+      updateValues.push(cleanedData.is_active ? 1 : 0);
     }
-    if (productData.is_featured !== undefined) {
+    if (cleanedData.is_featured !== undefined) {
       updateFields.push('is_featured = ?');
-      updateValues.push(productData.is_featured ? 1 : 0);
+      updateValues.push(cleanedData.is_featured ? 1 : 0);
     }
-    if (productData.sort_order !== undefined) {
+    if (cleanedData.sort_order !== undefined) {
       updateFields.push('sort_order = ?');
-      updateValues.push(typeof productData.sort_order === 'number' ? productData.sort_order : 0);
+      updateValues.push(typeof cleanedData.sort_order === 'number' ? cleanedData.sort_order : 0);
     }
-    
+
     // 库存字段
-    if (productData.stock_quantity !== undefined) {
+    if (cleanedData.stock_quantity !== undefined) {
       updateFields.push('stock_quantity = ?');
-      updateValues.push(typeof productData.stock_quantity === 'number' ? productData.stock_quantity : 0);
+      updateValues.push(typeof cleanedData.stock_quantity === 'number' ? cleanedData.stock_quantity : 0);
     }
-    if (productData.min_order_quantity !== undefined) {
+    if (cleanedData.min_order_quantity !== undefined) {
       updateFields.push('min_order_quantity = ?');
-      updateValues.push(typeof productData.min_order_quantity === 'number' ? productData.min_order_quantity : 1);
+      updateValues.push(typeof cleanedData.min_order_quantity === 'number' ? cleanedData.min_order_quantity : 1);
     }
-    
+
     // SEO字段
-    if (productData.meta_title_zh !== undefined) {
+    if (cleanedData.meta_title_zh !== undefined) {
       updateFields.push('meta_title_zh = ?');
-      updateValues.push(productData.meta_title_zh);
+      updateValues.push(cleanedData.meta_title_zh);
     }
-    if (productData.meta_title_en !== undefined) {
+    if (cleanedData.meta_title_en !== undefined) {
       updateFields.push('meta_title_en = ?');
-      updateValues.push(productData.meta_title_en);
+      updateValues.push(cleanedData.meta_title_en);
     }
-    if (productData.meta_title_ru !== undefined) {
+    if (cleanedData.meta_title_ru !== undefined) {
       updateFields.push('meta_title_ru = ?');
-      updateValues.push(productData.meta_title_ru);
+      updateValues.push(cleanedData.meta_title_ru);
     }
-    if (productData.meta_description_zh !== undefined) {
+    if (cleanedData.meta_description_zh !== undefined) {
       updateFields.push('meta_description_zh = ?');
-      updateValues.push(productData.meta_description_zh);
+      updateValues.push(cleanedData.meta_description_zh);
     }
-    if (productData.meta_description_en !== undefined) {
+    if (cleanedData.meta_description_en !== undefined) {
       updateFields.push('meta_description_en = ?');
-      updateValues.push(productData.meta_description_en);
+      updateValues.push(cleanedData.meta_description_en);
     }
-    if (productData.meta_description_ru !== undefined) {
+    if (cleanedData.meta_description_ru !== undefined) {
       updateFields.push('meta_description_ru = ?');
-      updateValues.push(productData.meta_description_ru);
+      updateValues.push(cleanedData.meta_description_ru);
     }
     
     // 总是更新时间戳

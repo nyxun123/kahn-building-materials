@@ -51,9 +51,11 @@ export async function onRequestPost(context) {
       'SELECT id FROM admins WHERE email = ?'
     ).bind('admin@kn-wallpaperglue.com').first();
 
+    const defaultPassword = 'Admin@123456';  // 强密码
+    let credentialsCreated = false;
+
     if (!existingAdmin) {
       // 生成安全的密码哈希
-      const defaultPassword = 'Admin@123456';  // 强密码
       const passwordHash = await hashPassword(defaultPassword);
 
       // 创建默认管理员账户
@@ -71,24 +73,25 @@ export async function onRequestPost(context) {
       console.log('📧 Email: admin@kn-wallpaperglue.com');
       console.log('🔑 Password:', defaultPassword);
       console.log('⚠️ 请立即修改默认密码！');
+      credentialsCreated = true;
     } else {
       console.log('ℹ️ 默认管理员账户已存在');
     }
 
     // 列出所有管理员（不包含密码哈希）
     const admins = await env.DB.prepare(
-      'SELECT id, email, name, role, is_active, created_at FROM admins ORDER BY created_at DESC'
+      'SELECT id, email, name, role, created_at FROM admins ORDER BY created_at DESC'
     ).all();
 
     return new Response(JSON.stringify({
       success: true,
       message: '管理员表和默认账户创建成功',
       admins: admins.results,
-      defaultCredentials: existingAdmin ? null : {
+      defaultCredentials: credentialsCreated ? {
         email: 'admin@kn-wallpaperglue.com',
         password: defaultPassword,
         warning: '请立即修改默认密码！'
-      }
+      } : null
     }), {
       status: 200,
       headers: {

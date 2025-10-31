@@ -1,6 +1,7 @@
 import { authenticate, createUnauthorizedResponse } from '../../lib/jwt-auth.js';
 import { rateLimitMiddleware } from '../../lib/rate-limit.js';
-import { createCorsResponse, createCorsErrorResponse, handleCorsPreFlight } from '../../lib/cors.js';
+import { createCorsErrorResponse, createCorsSuccessResponse, handleCorsPreFlight } from '../../lib/cors.js';
+import { createServerErrorResponse } from '../../lib/api-response.js';
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -25,7 +26,10 @@ export async function onRequestGet(context) {
     
     // 纯D1数据库查询
     if (!env.DB) {
-      return createCorsErrorResponse('D1数据库未配置', 500, request);
+      return createServerErrorResponse({
+        message: 'D1数据库未配置',
+        request
+      });
     }
 
     try {
@@ -42,23 +46,33 @@ export async function onRequestGet(context) {
         SELECT COUNT(*) as total FROM contacts
       `).first();
 
-      return createCorsResponse({
+      return createCorsSuccessResponse({
         data: contacts.results || [],
+        message: '获取联系数据成功',
         pagination: {
           page,
           limit,
           total: countResult?.total || 0,
           totalPages: Math.ceil((countResult?.total || 0) / limit)
-        }
-      }, 200, request);
+        },
+        request
+      });
     } catch (dbError) {
       console.error('D1查询失败:', dbError);
-      return createCorsErrorResponse(`数据库查询失败: ${dbError.message}`, 500, request);
+      return createServerErrorResponse({
+        message: '数据库查询失败',
+        error: dbError.message,
+        request
+      });
     }
 
   } catch (error) {
     console.error('获取联系数据错误:', error);
-    return createCorsErrorResponse('获取数据失败', 500, request);
+    return createServerErrorResponse({
+      message: '获取数据失败',
+      error: error.message,
+      request
+    });
   }
 }
 

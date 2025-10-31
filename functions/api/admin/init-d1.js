@@ -87,9 +87,9 @@ export async function onRequestPost(context) {
       {
         page_key: 'oem',
         section_key: 'oem_images',
-        content_zh: '["/images/oem_manufacturing_custom_packaging_uv_stickers.jpg"]',
-        content_en: '["/images/oem_manufacturing_custom_packaging_uv_stickers.jpg"]',
-        content_ru: '["/images/oem_manufacturing_custom_packaging_uv_stickers.jpg"]',
+        content_zh: '["/images/oem-home.png"]',
+        content_en: '["/images/oem-home.png"]',
+        content_ru: '["/images/oem-home.png"]',
         content_type: 'json',
         sort_order: 4
       },

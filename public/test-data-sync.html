@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>前后端数据同步测试</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .section {
+      margin-bottom: 30px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+
+    .section h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-icon {
+      font-size: 20px;
+    }
+
+    .test-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 12px;
+      margin-bottom: 10px;
+      background: white;
+      border-radius: 6px;
+      border-left: 4px solid #ddd;
+    }
+
+    .test-item.success {
+      border-left-color: #4caf50;
+      background: #f1f8f4;
+    }
+
+    .test-item.error {
+      border-left-color: #f44336;
+      background: #fef5f5;
+    }
+
+    .test-item.loading {
+      border-left-color: #2196f3;
+      background: #f3f7ff;
+    }
+
+    .test-status {
+      font-size: 20px;
+      min-width: 30px;
+    }
+
+    .test-info {
+      flex: 1;
+    }
+
+    .test-name {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .test-message {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid #e0e0e0;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #667eea;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .log-container {
+      background: #1e1e1e;
+      color: #00ff00;
+      padding: 15px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 15px;
+    }
+
+    .log-line {
+      margin-bottom: 5px;
+      word-break: break-all;
+    }
+
+    .log-success {
+      color: #4caf50;
+    }
+
+    .log-error {
+      color: #f44336;
+    }
+
+    .log-info {
+      color: #2196f3;
+    }
+
+    .log-warn {
+      color: #ff9800;
+    }
+
+    .footer {
+      background: #f5f5f5;
+      padding: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: #e0e0e0;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🧪 前后端数据同步测试</h1>
+      <p>验证后端修改是否能正确反映到前端</p>
+    </div>
+
+    <div class="content">
+      <!-- 控制按钮 -->
+      <div class="section">
+        <h2><span class="section-icon">⚙️</span> 测试控制</h2>
+        <div class="button-group">
+          <button class="btn-primary" onclick="runAllTests()">运行所有测试</button>
+          <button class="btn-secondary" onclick="clearLogs()">清空日志</button>
+          <button class="btn-secondary" onclick="clearCache()">清空缓存</button>
+          <button class="btn-secondary" onclick="reloadPage()">刷新页面</button>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressBar"></div>
+        </div>
+      </div>
+
+      <!-- 测试结果 -->
+      <div class="section">
+        <h2><span class="section-icon">📊</span> 测试结果</h2>
+        <div id="testResults"></div>
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-value" id="passCount">0</div>
+            <div class="stat-label">通过</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="failCount">0</div>
+            <div class="stat-label">失败</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="totalCount">0</div>
+            <div class="stat-label">总计</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="passRate">0%</div>
+            <div class="stat-label">通过率</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 日志 -->
+      <div class="section">
+        <h2><span class="section-icon">📝</span> 测试日志</h2>
+        <div class="log-container" id="logContainer"></div>
+      </div>
+
+      <!-- 数据验证 -->
+      <div class="section">
+        <h2><span class="section-icon">🔍</span> 数据验证</h2>
+        <div class="button-group">
+          <button class="btn-secondary" onclick="verifyProductData()">验证产品数据</button>
+          <button class="btn-secondary" onclick="verifyImageUrls()">验证图片 URL</button>
+          <button class="btn-secondary" onclick="verifyCache()">验证缓存</button>
+        </div>
+        <div id="verifyResults"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>💡 提示: 打开浏览器开发者工具 (F12) 查看详细日志</p>
+      <p>🔗 前端: http://localhost:5173 | 后端: http://localhost:8788</p>
+    </div>
+  </div>
+
+  <script>
+    let testResults = [];
+    let passCount = 0;
+    let failCount = 0;
+
+    function log(message, type = 'info') {
+      const logContainer = document.getElementById('logContainer');
+      const line = document.createElement('div');
+      line.className = `log-line log-${type}`;
+      const timestamp = new Date().toLocaleTimeString();
+      line.textContent = `[${timestamp}] ${message}`;
+      logContainer.appendChild(line);
+      logContainer.scrollTop = logContainer.scrollHeight;
+      console.log(`[${type.toUpperCase()}] ${message}`);
+    }
+
+    function addTestResult(name, success, message) {
+      const resultsDiv = document.getElementById('testResults');
+      const item = document.createElement('div');
+      item.className = `test-item ${success ? 'success' : 'error'}`;
+      item.innerHTML = `
+        <div class="test-status">${success ? '✅' : '❌'}</div>
+        <div class="test-info">
+          <div class="test-name">${name}</div>
+          <div class="test-message">${message}</div>
+        </div>
+      `;
+      resultsDiv.appendChild(item);
+
+      if (success) {
+        passCount++;
+      } else {
+        failCount++;
+      }
+
+      updateStats();
+    }
+
+    function updateStats() {
+      const total = passCount + failCount;
+      const rate = total > 0 ? ((passCount / total) * 100).toFixed(1) : 0;
+      
+      document.getElementById('passCount').textContent = passCount;
+      document.getElementById('failCount').textContent = failCount;
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('passRate').textContent = rate + '%';
+      
+      const progressBar = document.getElementById('progressBar');
+      progressBar.style.width = rate + '%';
+    }
+
+    async function runAllTests() {
+      log('开始运行所有测试...', 'info');
+      passCount = 0;
+      failCount = 0;
+      document.getElementById('testResults').innerHTML = '';
+
+      // 测试 1: 检查后端服务
+      try {
+        const response = await fetch('/api/admin/login', { method: 'POST' });
+        if (response.status === 401 || response.status === 400) {
+          addTestResult('后端服务检查', true, '后端服务正常运行');
+          log('✅ 后端服务正常', 'success');
+        } else {
+          addTestResult('后端服务检查', false, `异常状态码: ${response.status}`);
+          log('❌ 后端服务异常', 'error');
+        }
+      } catch (error) {
+        addTestResult('后端服务检查', false, error.message);
+        log(`❌ 后端服务错误: ${error.message}`, 'error');
+        return;
+      }
+
+      // 测试 2: 登录
+      try {
+        const response = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: 'admin@kn-wallpaperglue.com',
+            password: 'Admin@123456'
+          })
+        });
+        const data = await response.json();
+        if (data.data?.accessToken) {
+          addTestResult('管理员登录', true, '登录成功');
+          log('✅ 登录成功', 'success');
+          localStorage.setItem('test-token', data.data.accessToken);
+        } else {
+          addTestResult('管理员登录', false, data.message || '登录失败');
+          log('❌ 登录失败', 'error');
+          return;
+        }
+      } catch (error) {
+        addTestResult('管理员登录', false, error.message);
+        log(`❌ 登录错误: ${error.message}`, 'error');
+        return;
+      }
+
+      const token = localStorage.getItem('test-token');
+
+      // 测试 3: 获取产品列表
+      try {
+        const response = await fetch('/api/admin/products?page=1&limit=5', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        if (data.success && Array.isArray(data.data)) {
+          addTestResult('获取产品列表', true, `成功获取 ${data.data.length} 个产品`);
+          log(`✅ 获取产品列表成功: ${data.data.length} 个产品`, 'success');
+        } else {
+          addTestResult('获取产品列表', false, data.message || '获取失败');
+          log('❌ 获取产品列表失败', 'error');
+        }
+      } catch (error) {
+        addTestResult('获取产品列表', false, error.message);
+        log(`❌ 获取产品列表错误: ${error.message}`, 'error');
+      }
+
+      // 测试 4: 获取首页内容
+      try {
+        const response = await fetch('/api/admin/home-content', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        if (data.success && Array.isArray(data.data)) {
+          addTestResult('获取首页内容', true, `成功获取 ${data.data.length} 条内容`);
+          log(`✅ 获取首页内容成功: ${data.data.length} 条`, 'success');
+        } else {
+          addTestResult('获取首页内容', false, data.message || '获取失败');
+          log('❌ 获取首页内容失败', 'error');
+        }
+      } catch (error) {
+        addTestResult('获取首页内容', false, error.message);
+        log(`❌ 获取首页内容错误: ${error.message}`, 'error');
+      }
+
+      // 测试 5: 获取公开产品列表
+      try {
+        const response = await fetch(`/api/products?_t=${Date.now()}`);
+        const data = await response.json();
+        if (data.success && Array.isArray(data.data)) {
+          addTestResult('获取公开产品列表', true, `成功获取 ${data.data.length} 个产品`);
+          log(`✅ 获取公开产品列表成功: ${data.data.length} 个`, 'success');
+        } else {
+          addTestResult('获取公开产品列表', false, data.message || '获取失败');
+          log('❌ 获取公开产品列表失败', 'error');
+        }
+      } catch (error) {
+        addTestResult('获取公开产品列表', false, error.message);
+        log(`❌ 获取公开产品列表错误: ${error.message}`, 'error');
+      }
+
+      log('测试完成！', 'success');
+    }
+
+    function clearLogs() {
+      document.getElementById('logContainer').innerHTML = '';
+      log('日志已清空', 'info');
+    }
+
+    function clearCache() {
+      localStorage.clear();
+      log('缓存已清空', 'success');
+    }
+
+    function reloadPage() {
+      location.reload();
+    }
+
+    function verifyProductData() {
+      log('验证产品数据...', 'info');
+      fetch('/api/products?_t=' + Date.now())
+        .then(r => r.json())
+        .then(data => {
+          const resultsDiv = document.getElementById('verifyResults');
+          resultsDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+          log('✅ 产品数据验证完成', 'success');
+        })
+        .catch(error => {
+          log(`❌ 产品数据验证失败: ${error.message}`, 'error');
+        });
+    }
+
+    function verifyImageUrls() {
+      log('验证图片 URL...', 'info');
+      const images = document.querySelectorAll('img');
+      const resultsDiv = document.getElementById('verifyResults');
+      let html = '<ul>';
+      images.forEach((img, index) => {
+        const isR2 = img.src.includes('r2.dev');
+        html += `<li>图片 ${index}: ${img.src.substring(0, 50)}... (${isR2 ? '✅ R2' : '❌ 非 R2'})</li>`;
+      });
+      html += '</ul>';
+      resultsDiv.innerHTML = html;
+      log(`✅ 图片 URL 验证完成: 共 ${images.length} 张图片`, 'success');
+    }
+
+    function verifyCache() {
+      log('验证缓存...', 'info');
+      const cached = localStorage.getItem('products-cache');
+      const resultsDiv = document.getElementById('verifyResults');
+      if (cached) {
+        resultsDiv.innerHTML = `<pre>${JSON.stringify(JSON.parse(cached), null, 2)}</pre>`;
+        log('✅ 缓存数据验证完成', 'success');
+      } else {
+        resultsDiv.innerHTML = '<p>❌ 没有缓存数据</p>';
+        log('❌ 没有缓存数据', 'warn');
+      }
+    }
+
+    // 页面加载时的初始化
+    window.addEventListener('load', () => {
+      log('测试页面已加载', 'info');
+      log('点击"运行所有测试"开始测试', 'info');
+    });
+  </script>
+</body>
+</html>
+

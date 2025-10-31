@@ -1,4 +1,10 @@
-import { authenticate, createUnauthorizedResponse } from '../../lib/jwt-auth.js';
+import { authenticate } from '../../lib/jwt-auth.js';
+import {
+  createSuccessResponse,
+  createServerErrorResponse,
+  createUnauthorizedResponse,
+  createPaginationInfo
+} from '../../lib/api-response.js';
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -7,9 +13,12 @@ export async function onRequestGet(context) {
     // JWT 认证检查
     const auth = await authenticate(request, env);
     if (!auth.authenticated) {
-      return createUnauthorizedResponse(auth.error);
+      return createUnauthorizedResponse({
+        message: auth.error || '未授权',
+        request
+      });
     }
-    
+
     const url = new URL(request.url);
     const page = Math.max(1, parseInt(url.searchParams.get('page') || '1'));
     const limit = Math.min(50, Math.max(1, parseInt(url.searchParams.get('limit') || '20')));
@@ -18,14 +27,9 @@ export async function onRequestGet(context) {
     
     // 快速数据库检查
     if (!env.DB) {
-      return new Response(JSON.stringify({
-        error: { message: 'D1数据库未配置' }
-      }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createServerErrorResponse({
+        message: 'D1数据库未配置',
+        request
       });
     }
 
@@ -61,52 +65,32 @@ export async function onRequestGet(context) {
         : countStatement.first();
 
       const [productsResult, countResult] = await Promise.all([productsPromise, countPromise]);
-      
-      return new Response(JSON.stringify({
-        success: true,
+
+      return createSuccessResponse({
         data: productsResult.results || [],
-        pagination: {
-          page,
-          limit,
-          total: countResult?.total || 0,
-          totalPages: Math.ceil((countResult?.total || 0) / limit)
-        },
-        meta: {
-          searchTerm,
-          timestamp: new Date().toISOString()
-        }
-      }), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
+        message: '获取产品列表成功',
+        pagination: createPaginationInfo(page, limit, countResult?.total || 0),
+        request,
+        additionalHeaders: {
           'Cache-Control': 'no-cache'
         }
       });
 
     } catch (dbError) {
       console.error('产品查询失败:', dbError);
-      return new Response(JSON.stringify({
-        error: { message: `数据库查询失败: ${dbError.message}` }
-      }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createServerErrorResponse({
+        message: '数据库查询失败',
+        error: dbError.message,
+        request
       });
     }
-    
+
   } catch (error) {
     console.error('获取产品列表错误:', error);
-    return new Response(JSON.stringify({
-      error: { message: '获取产品列表失败' }
-    }), {
-      status: 500,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+    return createServerErrorResponse({
+      message: '获取产品列表失败',
+      error: error.message,
+      request
     });
   }
 }
@@ -119,19 +103,17 @@ export async function onRequestPost(context) {
     // JWT 认证检查
     const auth = await authenticate(request, env);
     if (!auth.authenticated) {
-      return createUnauthorizedResponse(auth.error);
+      return createUnauthorizedResponse({
+        message: auth.error || '未授权',
+        request
+      });
     }
-    
+
     // 数据库检查
     if (!env.DB) {
-      return new Response(JSON.stringify({
-        error: { message: 'D1数据库未配置' }
-      }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createServerErrorResponse({
+        message: 'D1数据库未配置',
+        request
       });
     }
 
@@ -147,31 +129,23 @@ export async function onRequestPost(context) {
 
     // 基础验证
     if (!productData.product_code || !productData.name_zh) {
-      return new Response(JSON.stringify({
-        error: { message: '产品代码和中文名称为必填项' }
-      }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createErrorResponse({
+        code: 400,
+        message: '产品代码和中文名称为必填项',
+        request
       });
     }
-    
+
     // 检查产品代码是否已存在
     const existingProduct = await env.DB.prepare(
       'SELECT id FROM products WHERE product_code = ?'
     ).bind(productData.product_code).first();
-    
+
     if (existingProduct) {
-      return new Response(JSON.stringify({
-        error: { message: '产品代码已存在' }
-      }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createErrorResponse({
+        code: 400,
+        message: '产品代码已存在',
+        request
       });
     }
     
@@ -290,39 +264,27 @@ export async function onRequestPost(context) {
       image_url: newProduct.image_url ? '已设置' : '未设置'
     });
 
-    return new Response(JSON.stringify({
-      success: true,
-      data: newProduct
-    }), {
-      status: 201,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+    return createSuccessResponse({
+      data: newProduct,
+      message: '产品创建成功',
+      code: 201,
+      request
     });
-    
+
   } catch (error) {
     console.error('创建产品失败:', error);
-    return new Response(JSON.stringify({
-      error: { message: `创建产品失败: ${error.message}` }
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+    return createServerErrorResponse({
+      message: '创建产品失败',
+      error: error.message,
+      request
     });
   }
 }
 
+import { handleCorsPreFlight } from '../../lib/cors.js';
+import { createErrorResponse } from '../../lib/api-response.js';
+
 export async function onRequestOptions(context) {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Max-Age': '86400',
-    },
-  });
+  const { request } = context;
+  return handleCorsPreFlight(request);
 }

@@ -1,4 +1,7 @@
 // 通用文件上传API - 支持图片和视频 - Cloudflare Pages Function
+import { authenticate } from '../lib/jwt-auth.js';
+import { createErrorResponse, createServerErrorResponse, createSuccessResponse } from '../lib/api-response.js';
+
 export async function onRequestPost(context) {
   const { request, env } = context;
   const startTime = performance.now();
@@ -6,11 +9,15 @@ export async function onRequestPost(context) {
   console.log('🚀 开始处理文件上传请求');
 
   try {
-    // 认证检查
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader) {
-      console.error('❌ 文件上传失败: 缺少认证头');
-      return createErrorResponse(401, '需要登录才能上传文件');
+    // JWT 认证检查
+    const auth = await authenticate(request, env);
+    if (!auth.authenticated) {
+      console.error('❌ 文件上传失败: 认证失败');
+      return createErrorResponse({
+        code: 401,
+        message: auth.error || '需要登录才能上传文件',
+        request
+      });
     }
 
     // 检查Content-Type并支持多种格式
@@ -27,7 +34,11 @@ export async function onRequestPost(context) {
         console.log('✅ FormData 解析成功');
       } catch (formError) {
         console.error('❌ FormData 解析失败:', formError);
-        return createErrorResponse(400, '文件解析失败，请重新选择文件');
+        return createErrorResponse({
+          code: 400,
+          message: '文件解析失败，请重新选择文件',
+          request
+        });
       }
 
       file = formData.get('file');
@@ -39,13 +50,21 @@ export async function onRequestPost(context) {
       const jsonData = await request.json();
 
       if (!jsonData.fileData || !jsonData.fileName) {
-        return createErrorResponse(400, 'JSON格式需要包含fileData和fileName字段');
+        return createErrorResponse({
+          code: 400,
+          message: 'JSON格式需要包含fileData和fileName字段',
+          request
+        });
       }
 
       // 解析base64数据
       const matches = jsonData.fileData.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
       if (!matches || matches.length !== 3) {
-        return createErrorResponse(400, '无效的base64文件数据格式');
+        return createErrorResponse({
+          code: 400,
+          message: '无效的base64文件数据格式',
+          request
+        });
       }
 
       const mimeType = matches[1];
@@ -68,7 +87,11 @@ export async function onRequestPost(context) {
       folder = jsonData.folder || 'general';
 
     } else {
-      return createErrorResponse(400, '请使用multipart/form-data或application/json格式上传文件');
+      return createErrorResponse({
+        code: 400,
+        message: '请使用multipart/form-data或application/json格式上传文件',
+        request
+      });
     }
 
     console.log('📁 文件信息:', {
@@ -81,7 +104,11 @@ export async function onRequestPost(context) {
 
     // 验证文件存在性
     if (!file || !file.name || !file.size) {
-      return createErrorResponse(400, '请选择有效的文件');
+      return createErrorResponse({
+        code: 400,
+        message: '请选择有效的文件',
+        request
+      });
     }
 
     // 根据文件类型设置不同的限制
@@ -99,18 +126,30 @@ export async function onRequestPost(context) {
       maxSize = 100 * 1024 * 1024; // 100MB for videos
       fileTypeCategory = 'video';
     } else {
-      return createErrorResponse(400, `不支持的文件类型: ${fileType}。只支持图片和视频文件。`);
+      return createErrorResponse({
+        code: 400,
+        message: `不支持的文件类型: ${fileType}。只支持图片和视频文件。`,
+        request
+      });
     }
 
     // 验证文件类型
     if (!allowedTypes.includes(fileType)) {
-      return createErrorResponse(400, `不支持的${fileTypeCategory === 'image' ? '图片' : '视频'}格式: ${fileType}`);
+      return createErrorResponse({
+        code: 400,
+        message: `不支持的${fileTypeCategory === 'image' ? '图片' : '视频'}格式: ${fileType}`,
+        request
+      });
     }
 
     // 验证文件大小
     if (file.size > maxSize) {
       const maxSizeMB = (maxSize / 1024 / 1024).toFixed(0);
-      return createErrorResponse(413, `${fileTypeCategory === 'image' ? '图片' : '视频'}大小超过限制 (${(file.size / 1024 / 1024).toFixed(2)}MB > ${maxSizeMB}MB)`);
+      return createErrorResponse({
+        code: 413,
+        message: `${fileTypeCategory === 'image' ? '图片' : '视频'}大小超过限制 (${(file.size / 1024 / 1024).toFixed(2)}MB > ${maxSizeMB}MB)`,
+        request
+      });
     }
 
     // 生成安全的文件名
@@ -250,7 +289,11 @@ export async function onRequestPost(context) {
 
   } catch (error) {
     console.error('文件上传API错误:', error);
-    return createErrorResponse(500, `文件上传失败: ${error.message}`);
+    return createServerErrorResponse({
+      message: '文件上传失败',
+      error: error.message,
+      request
+    });
   }
 }
 
@@ -264,23 +307,5 @@ export async function onRequestOptions(context) {
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       'Access-Control-Max-Age': '86400',
     },
-  });
-}
-
-// 创建错误响应的辅助函数
-function createErrorResponse(status, message) {
-  console.error(`❌ API错误 [${status}]:`, message);
-
-  return new Response(JSON.stringify({
-    code: status,
-    message: message,
-    error: true
-  }), {
-    status: status,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Cache-Control': 'no-cache'
-    }
   });
 }

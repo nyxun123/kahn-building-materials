@@ -1,7 +1,13 @@
 // 图片上传API - Cloudflare Pages Function
-import { authenticate, createUnauthorizedResponse } from '../lib/jwt-auth.js';
+import { authenticate } from '../lib/jwt-auth.js';
 import { rateLimitMiddleware } from '../lib/rate-limit.js';
 import { createCorsResponse, createCorsErrorResponse, handleCorsPreFlight } from '../lib/cors.js';
+import {
+  createSuccessResponse,
+  createServerErrorResponse,
+  createUnauthorizedResponse,
+  createErrorResponse
+} from '../lib/api-response.js';
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -20,7 +26,10 @@ export async function onRequestPost(context) {
     const auth = await authenticate(request, env);
     if (!auth.authenticated) {
       console.error('❌ 图片上传失败: 认证失败');
-      return createUnauthorizedResponse(auth.error);
+      return createUnauthorizedResponse({
+        message: auth.error || '未授权',
+        request
+      });
     }
 
     // 检查Content-Type并支持多种格式
@@ -206,6 +215,7 @@ export async function onRequestPost(context) {
         code: 200,
         message: `${fileTypeCategory === 'image' ? '图片' : '视频'}上传成功`,
         data: {
+          url: imageUrl,
           original: imageUrl,
           large: imageUrl,
           medium: imageUrl,
@@ -242,6 +252,7 @@ export async function onRequestPost(context) {
         code: 200,
         message: `${fileTypeCategory === 'image' ? '图片' : '视频'}上传成功 (Base64回退)`,
         data: {
+          url: dataUrl,
           original: dataUrl,
           large: dataUrl,
           medium: dataUrl,
@@ -276,13 +287,21 @@ export async function onRequestOptions(context) {
   return handleCorsPreFlight(request);
 }
 
-// 创建本地错误响应的辅助函数（包装 CORS 工具）
+// 创建本地错误响应的辅助函数（使用统一格式）
 function createLocalErrorResponse(status, message, request) {
   console.error(`❌ API错误 [${status}]:`, message);
-  return createCorsErrorResponse(message, status, request);
+  return createErrorResponse({
+    code: status,
+    message,
+    request
+  });
 }
 
-// 创建本地成功响应的辅助函数（包装 CORS 工具）
+// 创建本地成功响应的辅助函数（使用统一格式）
 function createLocalSuccessResponse(data, request) {
-  return createCorsResponse(data, 200, request, { 'Cache-Control': 'no-cache' });
+  return createSuccessResponse({
+    data,
+    request,
+    additionalHeaders: { 'Cache-Control': 'no-cache' }
+  });
 }

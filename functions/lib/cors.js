@@ -17,8 +17,10 @@ const ALLOWED_ORIGINS = [
   'https://kn-wallpaperglue.com',                      // 生产环境
   'https://6622cb5c.kn-wallpaperglue.pages.dev',      // Pages 预览环境
   'http://localhost:5173',                             // Vite 开发服务器
+  'http://localhost:5174',                             // Vite 开发服务器（备用端口）
   'http://localhost:3000',                             // 备用开发端口
   'http://127.0.0.1:5173',                             // 本地 IP
+  'http://127.0.0.1:5174',                             // 本地 IP（备用端口）
   'http://127.0.0.1:3000',                             // 本地 IP 备用
 ];
 
@@ -123,19 +125,43 @@ export function handleCorsPreFlight(request) {
  */
 export function createCorsErrorResponse(message, status, request) {
   return createCorsResponse({
+    success: false,
     code: status,
-    message
+    message,
+    timestamp: new Date().toISOString()
   }, status, request);
 }
 
 /**
  * 创建成功响应（带 CORS）
- * @param {Object} data - 响应数据
- * @param {Request} request - 请求对象
+ * @param {Object} options - 选项对象
+ * @param {Object} options.data - 响应数据
+ * @param {string} options.message - 成功消息
+ * @param {Object} options.pagination - 分页信息（可选）
+ * @param {Request} options.request - 请求对象
+ * @param {number} options.code - HTTP 状态码（默认 200）
  * @returns {Response} 成功响应
  */
-export function createCorsSuccessResponse(data, request) {
-  return createCorsResponse(data, 200, request);
+export function createCorsSuccessResponse({
+  data = null,
+  message = '操作成功',
+  pagination = null,
+  request = null,
+  code = 200
+} = {}) {
+  const responseBody = {
+    success: true,
+    code,
+    message,
+    data,
+    timestamp: new Date().toISOString()
+  };
+
+  if (pagination) {
+    responseBody.pagination = pagination;
+  }
+
+  return createCorsResponse(responseBody, code, request);
 }
 
 /**

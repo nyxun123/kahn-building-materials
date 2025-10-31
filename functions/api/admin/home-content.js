@@ -2,6 +2,13 @@
 import { authenticate, createUnauthorizedResponse } from '../../lib/jwt-auth.js';
 import { rateLimitMiddleware } from '../../lib/rate-limit.js';
 import { createCorsResponse, createCorsErrorResponse, handleCorsPreFlight } from '../../lib/cors.js';
+import { validateContent, sanitizeObject } from '../../lib/validation.js';
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  createServerErrorResponse,
+  createPaginationInfo
+} from '../../lib/api-response.js';
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -16,12 +23,18 @@ export async function onRequestGet(context) {
     // JWT 认证检查
     const auth = await authenticate(request, env);
     if (!auth.authenticated) {
-      return createUnauthorizedResponse(auth.error);
+      return createUnauthorizedResponse({
+        message: auth.error || '未授权',
+        request
+      });
     }
-    
+
     // 数据库检查
     if (!env.DB) {
-      return createCorsErrorResponse('D1数据库未配置', 500, request);
+      return createServerErrorResponse({
+        message: 'D1数据库未配置',
+        request
+      });
     }
 
     // 获取首页内容数据
@@ -33,14 +46,19 @@ export async function onRequestGet(context) {
       ORDER BY sort_order, created_at DESC
     `).all();
 
-    return createCorsResponse({
-      success: true,
-      data: contents.results || []
-    }, 200, request);
+    return createSuccessResponse({
+      data: contents.results || [],
+      message: '获取首页内容成功',
+      request
+    });
 
   } catch (error) {
     console.error('获取首页内容数据错误:', error);
-    return createCorsErrorResponse('获取数据失败', 500, request);
+    return createServerErrorResponse({
+      message: '获取数据失败',
+      error: error.message,
+      request
+    });
   }
 }
 
@@ -58,20 +76,18 @@ export async function onRequestPost(context) {
     // JWT 认证检查
     const auth = await authenticate(request, env);
     if (!auth.authenticated) {
-      return createUnauthorizedResponse(auth.error);
+      return createUnauthorizedResponse({
+        message: auth.error || '未授权',
+        request
+      });
     }
 
     // 数据库检查
     if (!env.DB) {
       console.error('❌ 创建内容失败: D1数据库未配置');
-      return new Response(JSON.stringify({
-        error: { message: 'D1数据库未配置' }
-      }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createServerErrorResponse({
+        message: 'D1数据库未配置',
+        request
       });
     }
 
@@ -86,14 +102,10 @@ export async function onRequestPost(context) {
       });
     } catch (parseError) {
       console.error('❌ JSON解析失败:', parseError);
-      return new Response(JSON.stringify({
-        error: { message: '请求数据格式错误（无效的JSON）' }
-      }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createErrorResponse({
+        code: 400,
+        message: '请求数据格式错误（无效的JSON）',
+        request
       });
     }
 
@@ -124,27 +136,19 @@ export async function onRequestPost(context) {
     // 参数验证
     if (!page_key) {
       console.error('❌ 缺少page_key参数');
-      return new Response(JSON.stringify({
-        error: { message: '缺少必要参数: page_key' }
-      }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createErrorResponse({
+        code: 400,
+        message: '缺少必要参数: page_key',
+        request
       });
     }
 
     if (!section_key) {
       console.error('❌ 缺少section_key参数');
-      return new Response(JSON.stringify({
-        error: { message: '缺少必要参数: section_key' }
-      }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createErrorResponse({
+        code: 400,
+        message: '缺少必要参数: section_key',
+        request
       });
     }
 
@@ -207,16 +211,11 @@ export async function onRequestPost(context) {
       throw new Error(`查询创建结果失败: ${queryError.message}`);
     }
 
-    return new Response(JSON.stringify({
-      success: true,
+    return createSuccessResponse({
       data: createdContent,
-      message: '内容创建成功'
-    }), {
-      status: 201,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+      message: '内容创建成功',
+      code: 201,
+      request
     });
 
   } catch (error) {
@@ -240,14 +239,11 @@ export async function onRequestPost(context) {
       statusCode = 500;
     }
 
-    return new Response(JSON.stringify({
-      error: { message: `${errorMessage}: ${error.message}` }
-    }), {
-      status: statusCode,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+    return createErrorResponse({
+      code: statusCode,
+      message: errorMessage,
+      error: error.message,
+      request
     });
   }
 }
@@ -255,32 +251,22 @@ export async function onRequestPost(context) {
 // 更新首页内容
 export async function onRequestPut(context) {
   const { request, env } = context;
-  
+
   try {
-    // 认证检查
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({
-        error: { message: '需要登录' }
-      }), {
-        status: 401,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+    // JWT 认证检查
+    const auth = await authenticate(request, env);
+    if (!auth.authenticated) {
+      return createUnauthorizedResponse({
+        message: auth.error || '未授权',
+        request
       });
     }
-    
+
     // 数据库检查
     if (!env.DB) {
-      return new Response(JSON.stringify({
-        error: { message: 'D1数据库未配置' }
-      }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createServerErrorResponse({
+        message: 'D1数据库未配置',
+        request
       });
     }
 
@@ -311,16 +297,25 @@ export async function onRequestPut(context) {
 
     if (!id || isNaN(parseInt(id))) {
       console.error('❌ 无效的内容ID:', id);
-      return new Response(JSON.stringify({
-        error: { message: '无效的内容ID' }
-      }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createErrorResponse({
+        code: 400,
+        message: '无效的内容ID',
+        request
       });
     }
+
+    // 数据验证
+    const validation = validateContent(requestData);
+    if (!validation.valid) {
+      return createErrorResponse({
+        code: 400,
+        message: validation.error,
+        request
+      });
+    }
+
+    // 清理数据
+    const cleanedData = sanitizeObject(requestData);
 
     console.log('📝 开始更新Home Content数据...');
 
@@ -328,33 +323,33 @@ export async function onRequestPut(context) {
     let updateFields = [];
     let bindValues = [];
 
-    if (page_key !== undefined) {
+    if (cleanedData.page_key !== undefined) {
       updateFields.push('page_key = ?');
-      bindValues.push(page_key);
+      bindValues.push(cleanedData.page_key);
     }
-    if (section_key !== undefined) {
+    if (cleanedData.section_key !== undefined) {
       updateFields.push('section_key = ?');
-      bindValues.push(section_key);
+      bindValues.push(cleanedData.section_key);
     }
-    if (content_zh !== undefined) {
+    if (cleanedData.content_zh !== undefined) {
       updateFields.push('content_zh = ?');
-      bindValues.push(content_zh);
+      bindValues.push(cleanedData.content_zh);
     }
-    if (content_en !== undefined) {
+    if (cleanedData.content_en !== undefined) {
       updateFields.push('content_en = ?');
-      bindValues.push(content_en);
+      bindValues.push(cleanedData.content_en);
     }
-    if (content_ru !== undefined) {
+    if (cleanedData.content_ru !== undefined) {
       updateFields.push('content_ru = ?');
-      bindValues.push(content_ru);
+      bindValues.push(cleanedData.content_ru);
     }
-    if (content_type !== undefined) {
+    if (cleanedData.content_type !== undefined) {
       updateFields.push('content_type = ?');
-      bindValues.push(content_type);
+      bindValues.push(cleanedData.content_type);
     }
-    if (sort_order !== undefined) {
+    if (cleanedData.sort_order !== undefined) {
       updateFields.push('sort_order = ?');
-      bindValues.push(sort_order);
+      bindValues.push(cleanedData.sort_order);
     }
 
     updateFields.push('updated_at = CURRENT_TIMESTAMP');
@@ -377,40 +372,24 @@ export async function onRequestPut(context) {
     const updatedContent = await env.DB.prepare(
       'SELECT * FROM page_contents WHERE id = ?'
     ).bind(parseInt(id)).first();
-    
-    return new Response(JSON.stringify({
-      success: true,
-      data: updatedContent
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+
+    return createSuccessResponse({
+      data: updatedContent,
+      message: '内容更新成功',
+      request
     });
-    
+
   } catch (error) {
     console.error('更新首页内容失败:', error);
-    return new Response(JSON.stringify({
-      error: { message: `更新内容失败: ${error.message}` }
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+    return createServerErrorResponse({
+      message: '更新内容失败',
+      error: error.message,
+      request
     });
   }
 }
 
 export async function onRequestOptions(context) {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Max-Age': '86400',
-    },
-  });
+  const { request } = context;
+  return handleCorsPreFlight(request);
 }

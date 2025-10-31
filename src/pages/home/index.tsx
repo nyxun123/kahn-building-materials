@@ -89,7 +89,7 @@ export default function HomePage() {
             video_url: t('home:video.url'),
             oem_title: t('home:oem.title'),
             oem_description: t('home:oem.description'), // Updated from oem_subtitle
-            oem_images: ['/images/oem_manufacturing_custom_packaging_uv_stickers.jpg'],
+            oem_images: ['/images/oem-home.png'],
             semi_title: t('home:semi.title'),
             semi_subtitle: t('home:semi.description'),
             why_us_title: t('home:why_us.title'),
@@ -207,7 +207,7 @@ export default function HomePage() {
           video_url: t('home:video.url'),
           oem_title: t('home:oem.title'),
           oem_description: t('home:oem.description'), // Updated from oem_subtitle
-          oem_images: ['/images/oem_manufacturing_custom_packaging_uv_stickers.jpg'],
+          oem_images: ['/images/oem-home.png'],
           semi_title: t('home:semi.title'),
           semi_subtitle: t('home:semi.description'),
           why_us_title: t('home:why_us.title'),
@@ -529,7 +529,7 @@ export default function HomePage() {
                 {/* 主图片 */}
                 <div className="rounded-sm overflow-hidden shadow-xl relative">
                   <img 
-                    src={pageContent.oem_images && pageContent.oem_images.length > 0 ? pageContent.oem_images[0] : '/images/oem_manufacturing_custom_packaging_uv_stickers.jpg'} 
+                    src={pageContent.oem_images && pageContent.oem_images.length > 0 ? pageContent.oem_images[0] : '/images/oem-home.png'} 
                     alt={t('home:oem.image_alt')} 
                     className="w-full h-auto object-cover rounded-sm"
                   />

@@ -59,9 +59,9 @@ echo "2️⃣  关键文件检查"
 echo "──────────────────────────"
 
 # 查找最新的index-*.js文件
-LATEST_INDEX_JS=$(ls -t dist/js/index-*.js 2>/dev/null | head -1 | xargs basename 2>/dev/null || echo "")
-
+LATEST_INDEX_JS=$(ls -t dist/js/index-*.js 2>/dev/null | head -1)
 if [ -n "$LATEST_INDEX_JS" ]; then
+  LATEST_INDEX_JS=$(basename "$LATEST_INDEX_JS")
   echo -e "${GREEN}✅ 找到最新构建文件: ${LATEST_INDEX_JS}${NC}"
   ls -lh "dist/js/${LATEST_INDEX_JS}"
 else

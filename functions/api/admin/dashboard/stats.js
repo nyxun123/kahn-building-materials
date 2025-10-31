@@ -1,6 +1,7 @@
 import { authenticate, createUnauthorizedResponse } from '../../../lib/jwt-auth.js';
 import { rateLimitMiddleware } from '../../../lib/rate-limit.js';
-import { createCorsResponse, createCorsErrorResponse, handleCorsPreFlight } from '../../../lib/cors.js';
+import { createCorsSuccessResponse, createCorsErrorResponse, handleCorsPreFlight } from '../../../lib/cors.js';
+import { createServerErrorResponse } from '../../../lib/api-response.js';
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -19,7 +20,10 @@ export async function onRequestGet(context) {
     }
     
     if (!env.DB) {
-      return createCorsErrorResponse('D1数据库未配置', 500, request);
+      return createServerErrorResponse({
+        message: 'D1数据库未配置',
+        request
+      });
     }
 
     try {
@@ -68,7 +72,7 @@ export async function onRequestGet(context) {
         ORDER BY count DESC
       `).all();
 
-      return createCorsResponse({
+      return createCorsSuccessResponse({
         data: {
           totalProducts: totalProducts?.count || 0,
           totalContacts: totalContacts?.count || 0,
@@ -78,19 +82,26 @@ export async function onRequestGet(context) {
           dailyContacts: dailyContacts.results || [],
           categoryStats: categoryStats.results || []
         },
-        meta: {
-          timestamp: new Date().toISOString()
-        }
-      }, 200, request, { 'Cache-Control': 'no-cache' });
+        message: '获取仪表板统计成功',
+        request
+      });
 
     } catch (dbError) {
       console.error('仪表板统计查询失败:', dbError);
-      return createCorsErrorResponse(`数据库查询失败: ${dbError.message}`, 500, request);
+      return createServerErrorResponse({
+        message: '数据库查询失败',
+        error: dbError.message,
+        request
+      });
     }
 
   } catch (error) {
     console.error('仪表板统计API错误:', error);
-    return createCorsErrorResponse('获取仪表板统计失败', 500, request);
+    return createServerErrorResponse({
+      message: '获取仪表板统计失败',
+      error: error.message,
+      request
+    });
   }
 }
 
