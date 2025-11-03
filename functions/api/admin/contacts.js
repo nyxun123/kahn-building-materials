@@ -1,7 +1,12 @@
-import { authenticate, createUnauthorizedResponse } from '../../lib/jwt-auth.js';
+import { authenticate } from '../../lib/jwt-auth.js';
 import { rateLimitMiddleware } from '../../lib/rate-limit.js';
-import { createCorsErrorResponse, createCorsSuccessResponse, handleCorsPreFlight } from '../../lib/cors.js';
-import { createServerErrorResponse } from '../../lib/api-response.js';
+import { handleCorsPreFlight } from '../../lib/cors.js';
+import {
+  createSuccessResponse,
+  createServerErrorResponse,
+  createUnauthorizedResponse,
+  createPaginationInfo
+} from '../../lib/api-response.js';
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -16,7 +21,10 @@ export async function onRequestGet(context) {
     // JWT 认证检查
     const auth = await authenticate(request, env);
     if (!auth.authenticated) {
-      return createUnauthorizedResponse(auth.error);
+      return createUnauthorizedResponse({
+        message: auth.error || '未授权',
+        request
+      });
     }
     
     const url = new URL(request.url);
@@ -46,15 +54,10 @@ export async function onRequestGet(context) {
         SELECT COUNT(*) as total FROM contacts
       `).first();
 
-      return createCorsSuccessResponse({
+      return createSuccessResponse({
         data: contacts.results || [],
         message: '获取联系数据成功',
-        pagination: {
-          page,
-          limit,
-          total: countResult?.total || 0,
-          totalPages: Math.ceil((countResult?.total || 0) / limit)
-        },
+        pagination: createPaginationInfo(page, limit, countResult?.total || 0),
         request
       });
     } catch (dbError) {

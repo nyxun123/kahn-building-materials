@@ -1,7 +1,11 @@
-import { authenticate, createUnauthorizedResponse } from '../../../lib/jwt-auth.js';
+import { authenticate } from '../../../lib/jwt-auth.js';
 import { rateLimitMiddleware } from '../../../lib/rate-limit.js';
-import { createCorsSuccessResponse, createCorsErrorResponse, handleCorsPreFlight } from '../../../lib/cors.js';
-import { createServerErrorResponse } from '../../../lib/api-response.js';
+import { handleCorsPreFlight } from '../../../lib/cors.js';
+import {
+  createSuccessResponse,
+  createServerErrorResponse,
+  createUnauthorizedResponse
+} from '../../../lib/api-response.js';
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -16,7 +20,10 @@ export async function onRequestGet(context) {
     // JWT 认证检查
     const auth = await authenticate(request, env);
     if (!auth.authenticated) {
-      return createUnauthorizedResponse(auth.error);
+      return createUnauthorizedResponse({
+        message: auth.error || '未授权',
+        request
+      });
     }
     
     if (!env.DB) {
@@ -72,7 +79,7 @@ export async function onRequestGet(context) {
         ORDER BY count DESC
       `).all();
 
-      return createCorsSuccessResponse({
+      return createSuccessResponse({
         data: {
           totalProducts: totalProducts?.count || 0,
           totalContacts: totalContacts?.count || 0,

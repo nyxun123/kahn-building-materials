@@ -298,9 +298,15 @@ function createLocalErrorResponse(status, message, request) {
 }
 
 // 创建本地成功响应的辅助函数（使用统一格式）
-function createLocalSuccessResponse(data, request) {
+function createLocalSuccessResponse(responseData, request) {
+  // 如果传入的是完整的响应对象（包含 code, message, data），提取其中字段
+  // 否则直接使用传入的数据
+  const data = responseData.data || responseData;
+  const message = responseData.message || '操作成功';
+  
   return createSuccessResponse({
     data,
+    message,
     request,
     additionalHeaders: { 'Cache-Control': 'no-cache' }
   });

@@ -85,10 +85,22 @@ export class AuthManager {
     const expiry = parseInt(expiryStr);
     const now = Date.now();
     
-    // 检查是否已过期或即将过期（提前 1 分钟）
-    if (now >= expiry - this.REFRESH_BUFFER_MS) {
-      console.warn('⚠️ Access token 已过期或即将过期');
+    // 检查是否已过期（而不是即将过期）
+    // 只有在真正过期时才返回 null，避免登录后立即失效
+    if (now >= expiry) {
+      console.warn('⚠️ Access token 已过期', {
+        now: new Date(now).toLocaleString(),
+        expiry: new Date(expiry).toLocaleString(),
+        diff: Math.round((expiry - now) / 1000) + '秒'
+      });
       return null;
+    }
+    
+    // 如果即将过期（少于 2 分钟），记录警告但不阻止使用
+    if (now >= expiry - (2 * 60 * 1000)) {
+      console.warn('⚠️ Access token 即将过期，建议刷新', {
+        remaining: Math.round((expiry - now) / 1000) + '秒'
+      });
     }
     
     return token;
@@ -165,19 +177,27 @@ export class AuthManager {
 
   /**
    * 获取有效的 access token
-   * 如果 token 不存在或即将过期，自动刷新
+   * 如果 token 不存在或已过期，尝试刷新
    * 
    * @returns 有效的 access token，如果无法获取则返回 null
    */
   static async getValidAccessToken(): Promise<string | null> {
     let token = this.getAccessToken();
     
-    // 如果 token 不存在或即将过期，尝试刷新
+    // 如果 token 不存在或已过期，尝试刷新
     if (!token) {
+      console.log('🔄 Token 不存在或已过期，尝试刷新...');
       const refreshed = await this.refreshToken();
       if (refreshed) {
         token = this.getAccessToken();
+        if (token) {
+          console.log('✅ Token 刷新成功');
+        }
+      } else {
+        console.warn('⚠️ Token 刷新失败');
       }
+    } else {
+      console.log('✅ 使用现有的有效 Token');
     }
     
     return token;

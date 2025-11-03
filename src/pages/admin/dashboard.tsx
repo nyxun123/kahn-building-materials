@@ -16,6 +16,9 @@ import { useNavigate } from "react-router-dom";
 import { MessageCircle, PackageSearch, Activity } from "lucide-react";
 
 interface DashboardResponse {
+  success?: boolean;
+  code?: number;
+  message?: string;
   data: {
     totalProducts: number;
     totalContacts: number;
@@ -79,8 +82,19 @@ const fetchDashboard = async (): Promise<DashboardResponse["data"]> => {
   }
 
   const payload = (await response.json()) as DashboardResponse;
-  console.log('✅ 仪表盘数据获取成功');
-  return payload.data;
+  console.log('✅ 仪表盘数据获取成功:', payload);
+  
+  // 处理统一的响应格式：{ success, code, message, data: {...} }
+  if (payload.success && payload.data) {
+    return payload.data;
+  }
+  
+  // 兼容旧格式
+  if (payload.data) {
+    return payload.data;
+  }
+  
+  throw new Error("仪表盘数据格式错误");
 };
 
 const Dashboard = () => {

@@ -1,4 +1,13 @@
 // 公开产品API - 不需要认证，供前端展示使用
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  createServerErrorResponse,
+  createNotFoundResponse,
+  createPaginationInfo
+} from '../lib/api-response.js';
+import { handleCorsPreFlight } from '../lib/cors.js';
+
 export async function onRequestGet(context) {
   const { request, env } = context;
   
@@ -9,7 +18,7 @@ export async function onRequestGet(context) {
     // 检查是否是获取单个产品的请求
     if (pathSegments.length === 3 && pathSegments[0] === 'api' && pathSegments[1] === 'products') {
       const productCode = pathSegments[2];
-      return await getProductDetail(productCode, env);
+      return await getProductDetail(productCode, env, request);
     }
     
     // 否则处理产品列表请求
@@ -21,16 +30,9 @@ export async function onRequestGet(context) {
     
     // 数据库检查
     if (!env.DB) {
-      return new Response(JSON.stringify({
-        success: false,
+      return createServerErrorResponse({
         message: 'D1数据库未配置',
-        data: []
-      }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+        request
       });
     }
 
@@ -89,89 +91,56 @@ export async function onRequestGet(context) {
         is_active: true // 公开API只返回已发布产品
       }));
       
-      return new Response(JSON.stringify({
-        success: true,
+      return createSuccessResponse({
         data: processedProducts,
-        pagination: {
-          page,
-          limit,
-          total: countResult?.total || 0,
-          totalPages: Math.ceil((countResult?.total || 0) / limit)
-        },
-        meta: {
-          category,
-          searchTerm,
-          timestamp: new Date().toISOString()
-        }
-      }), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
+        message: '获取产品列表成功',
+        pagination: createPaginationInfo(page, limit, countResult?.total || 0),
+        request,
+        additionalHeaders: {
           'Cache-Control': 'public, max-age=300' // 5分钟缓存
         }
       });
 
     } catch (dbError) {
       console.error('公开产品查询失败:', dbError);
-      return new Response(JSON.stringify({
-        success: false,
-        message: `数据库查询失败: ${dbError.message}`,
-        data: []
-      }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createServerErrorResponse({
+        message: '数据库查询失败',
+        error: dbError.message,
+        request
       });
     }
     
   } catch (error) {
     console.error('获取公开产品列表错误:', error);
-    return new Response(JSON.stringify({
-      success: false,
+    return createServerErrorResponse({
       message: '获取产品列表失败',
-      data: []
-    }), {
-      status: 500,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+      error: error.message,
+      request
     });
   }
 }
 
 // 获取单个产品详情的函数
-async function getProductDetail(productCode, env) {
+async function getProductDetail(productCode, env, request = null) {
   try {
     if (!productCode) {
-      return new Response(JSON.stringify({
-        success: false,
-        message: '产品代码不能为空'
-      }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createErrorResponse({
+        code: 400,
+        message: '产品代码不能为空',
+        request
       });
     }
 
     if (!env.DB) {
-      return new Response(JSON.stringify({
-        success: false,
-        message: 'D1数据库未配置'
-      }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createServerErrorResponse({
+        message: 'D1数据库未配置',
+        request
       });
     }
 
+    // 解码URL编码的产品代码（支持中文产品代码）
+    const decodedProductCode = decodeURIComponent(productCode);
+    
     // 查询产品详情
     const product = await env.DB.prepare(`
         SELECT id, product_code, name_zh, name_en, name_ru,
@@ -183,18 +152,12 @@ async function getProductDetail(productCode, env) {
                tags, gallery_images, is_active, sort_order, created_at, updated_at
         FROM products 
         WHERE product_code = ? AND is_active = 1
-    `).bind(productCode).first();
+    `).bind(decodedProductCode).first();
 
     if (!product) {
-      return new Response(JSON.stringify({
-        success: false,
-        message: '产品不存在或已下架'
-      }), {
-        status: 404,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createNotFoundResponse({
+        message: '产品不存在或已下架',
+        request
       });
     }
 
@@ -208,44 +171,29 @@ async function getProductDetail(productCode, env) {
       gallery_images: parseJsonArray(product.gallery_images)
     };
 
-    return new Response(JSON.stringify({
-      success: true,
-      data: processedProduct
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
+    return createSuccessResponse({
+      data: processedProduct,
+      message: '获取产品详情成功',
+      request,
+      additionalHeaders: {
         'Cache-Control': 'public, max-age=600' // 10分钟缓存
       }
     });
 
   } catch (error) {
     console.error('获取产品详情失败:', error);
-    return new Response(JSON.stringify({
-      success: false,
-      message: '获取产品详情失败'
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+    return createServerErrorResponse({
+      message: '获取产品详情失败',
+      error: error.message,
+      request
     });
   }
 }
 
 // 处理OPTIONS请求 (CORS预检)
 export async function onRequestOptions(context) {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-      'Access-Control-Max-Age': '86400',
-    },
-  });
+  const { request } = context;
+  return handleCorsPreFlight(request);
 }
 
 // 解析JSON数组字符串的辅助函数

@@ -8,6 +8,20 @@ type LoginPayload = {
 
 type LoginResponse = {
   success?: boolean;
+  code?: number;
+  message?: string;
+  data?: {
+    user?: {
+      id: number;
+      email: string;
+      name?: string;
+      role?: string;
+    };
+    accessToken?: string;
+    refreshToken?: string;
+    expiresIn?: number;
+    authType?: string;
+  };
   user?: {
     id: number;
     email: string;
@@ -19,7 +33,6 @@ type LoginResponse = {
   expiresIn?: number;
   authType?: string;
   error?: { message?: string };
-  message?: string;
 };
 
 const AUTH_KEY = "admin-auth";
@@ -99,12 +112,20 @@ export const authProvider: AuthBindings = {
         body: JSON.stringify(payload),
       });
 
-      const data: LoginResponse = await response.json();
-      console.log('📦 登录响应:', data);
+      const responseData: LoginResponse = await response.json();
+      console.log('📦 登录响应:', responseData);
 
-      if (response.ok && data.success && data.user && data.accessToken && data.refreshToken) {
+      // 处理统一的响应格式：{ success, code, message, data: { user, accessToken, refreshToken, expiresIn } }
+      // 优先使用 data 字段中的数据，如果没有则使用顶层字段（兼容旧格式）
+      const data = responseData.data || responseData;
+      const user = data.user || responseData.user;
+      const accessToken = data.accessToken || responseData.accessToken;
+      const refreshToken = data.refreshToken || responseData.refreshToken;
+      const expiresIn = data.expiresIn || responseData.expiresIn;
+      
+      if (response.ok && (responseData.success !== false) && user && accessToken && refreshToken) {
         // 保存 JWT tokens 和用户信息
-        storeSession(data.user, data.accessToken, data.refreshToken, data.expiresIn || 900);
+        storeSession(user, accessToken, refreshToken, expiresIn || 900);
         console.log('✅ 登录成功，已保存认证信息');
         return {
           success: true,
@@ -112,7 +133,10 @@ export const authProvider: AuthBindings = {
         };
       }
 
-      throw new Error(data.message || data.error?.message || "登录失败");
+      const errorMessage = responseData.message || (typeof data === 'object' && 'message' in data ? (data as any).message : null) || 
+                           (responseData.error?.message) || (typeof data === 'object' && 'error' in data ? (data as any).error?.message : null) || 
+                           "登录失败";
+      throw new Error(errorMessage);
     } catch (error) {
       console.error('❌ 登录失败:', error);
 
