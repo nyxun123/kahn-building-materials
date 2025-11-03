@@ -423,51 +423,86 @@ function HomeContentManager() {
                     {isEditing ? (
                       <div className="space-y-3">
                         {field.type === "image" ? (
-                          // 图片上传字段
-                          <div>
-                            <Text className="text-xs text-slate-500 mb-2">上传图片</Text>
-                            <ImageUpload
-                              value={formState.content_zh}
-                              onChange={(url) => {
-                                console.log('🖼️ 图片上传回调:', url);
-                                setFormState(prev => ({ ...prev, content_zh: url }));
-                              }}
-                              folder={`home/${activeSection}`}
-                              preview={true}
-                              className="w-full"
-                            />
-                            <div className="mt-3">
-                              <Text className="text-xs text-slate-500 mb-1">中文内容</Text>
-                              <TextInput
-                                placeholder="或输入图片URL"
+                          // 多语言图片上传字段 - 每个语言独立上传
+                          <div className="space-y-4">
+                            <Text className="text-xs text-slate-500 mb-3">为每个语言上传图片（可独立上传）</Text>
+                            
+                            {/* 中文图片上传 */}
+                            <div className="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                              <Text className="text-sm font-medium text-slate-900 mb-2">🇨🇳 中文图片</Text>
+                              <ImageUpload
                                 value={formState.content_zh}
-                                onChange={(e) => {
-                                  console.log('📝 中文URL输入:', e.target.value);
-                                  setFormState(prev => ({ ...prev, content_zh: e.target.value }));
+                                onChange={(url) => {
+                                  console.log('🖼️ 中文图片上传回调:', url);
+                                  setFormState(prev => ({ ...prev, content_zh: url }));
                                 }}
+                                folder={`home/${activeSection}/zh`}
+                                preview={true}
+                                className="w-full"
                               />
+                              <div className="mt-2">
+                                <Text className="text-xs text-slate-500 mb-1">或输入图片URL</Text>
+                                <TextInput
+                                  placeholder="https://..."
+                                  value={formState.content_zh}
+                                  onChange={(e) => {
+                                    console.log('📝 中文URL输入:', e.target.value);
+                                    setFormState(prev => ({ ...prev, content_zh: e.target.value }));
+                                  }}
+                                />
+                              </div>
                             </div>
-                            <div className="mt-3">
-                              <Text className="text-xs text-slate-500 mb-1">英文内容</Text>
-                              <TextInput
-                                placeholder="或输入图片URL"
+
+                            {/* 英文图片上传 */}
+                            <div className="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                              <Text className="text-sm font-medium text-slate-900 mb-2">🇬🇧 英文图片</Text>
+                              <ImageUpload
                                 value={formState.content_en}
-                                onChange={(e) => {
-                                  console.log('📝 英文URL输入:', e.target.value);
-                                  setFormState(prev => ({ ...prev, content_en: e.target.value }));
+                                onChange={(url) => {
+                                  console.log('🖼️ 英文图片上传回调:', url);
+                                  setFormState(prev => ({ ...prev, content_en: url }));
                                 }}
+                                folder={`home/${activeSection}/en`}
+                                preview={true}
+                                className="w-full"
                               />
+                              <div className="mt-2">
+                                <Text className="text-xs text-slate-500 mb-1">或输入图片URL</Text>
+                                <TextInput
+                                  placeholder="https://..."
+                                  value={formState.content_en}
+                                  onChange={(e) => {
+                                    console.log('📝 英文URL输入:', e.target.value);
+                                    setFormState(prev => ({ ...prev, content_en: e.target.value }));
+                                  }}
+                                />
+                              </div>
                             </div>
-                            <div className="mt-3">
-                              <Text className="text-xs text-slate-500 mb-1">俄文内容</Text>
-                              <TextInput
-                                placeholder="或输入图片URL"
+
+                            {/* 俄文图片上传 */}
+                            <div className="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                              <Text className="text-sm font-medium text-slate-900 mb-2">🇷🇺 俄文图片</Text>
+                              <ImageUpload
                                 value={formState.content_ru}
-                                onChange={(e) => {
-                                  console.log('📝 俄文URL输入:', e.target.value);
-                                  setFormState(prev => ({ ...prev, content_ru: e.target.value }));
+                                onChange={(url) => {
+                                  console.log('🖼️ 俄文图片上传回调:', url);
+                                  setFormState(prev => ({ ...prev, content_ru: url }));
                                 }}
+                                folder={`home/${activeSection}/ru`}
+                                preview={true}
+                                className="w-full"
                               />
+                              <div className="mt-2">
+                                <Text className="text-xs text-slate-500 mb-1">或输入图片URL</Text>
+                                <TextInput
+                                  placeholder="https://..."
+                                  value={formState.content_ru}
+                                  onChange={(e) => {
+                                    console.log('📝 俄文URL输入:', e.target.value);
+                                    setFormState(prev => ({ ...prev, content_ru: e.target.value }));
+                                  }}
+                                />
+                              </div>
                             </div>
                           </div>
                         ) : field.type === "video" ? (
