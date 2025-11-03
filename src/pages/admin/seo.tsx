@@ -16,6 +16,7 @@ import {
 } from "@tremor/react";
 import { Save, Globe, Search, MapPin, TrendingUp, AlertCircle } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { PageHeader, PageContent, TabLangInput, FormField, FormSection, StandardUploadButton } from "@/components/admin";
 
 interface SEOConfig {
   id?: number;
@@ -256,262 +257,278 @@ const SEOManager = () => {
   const { score, issues } = checkSEOScore();
 
   return (
-    <div className="space-y-6">
-      {/* 页面选择器和概览 */}
-      <Card>
-        <Flex justifyContent="between" alignItems="center">
-          <div>
-            <Title>SEO 管理中心</Title>
-            <Text className="text-slate-500">
-              优化搜索引擎排名和地理位置可见性
-            </Text>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-center">
-              <Metric className={`${score >= 80 ? 'text-green-600' : score >= 60 ? 'text-yellow-600' : 'text-red-600'}`}>
-                {score}
-              </Metric>
-              <Text className="text-xs">SEO评分</Text>
+    <PageContent maxWidth="2xl">
+      <div className="space-y-6">
+        <PageHeader
+          title="SEO 管理中心"
+          description="优化搜索引擎排名和地理位置可见性"
+          actions={
+            <div className="flex items-center gap-4">
+              <div className="text-center bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl px-4 py-2 border-2 border-emerald-200">
+                <Metric className={`text-2xl font-bold ${score >= 80 ? 'text-emerald-600' : score >= 60 ? 'text-amber-600' : 'text-red-600'}`}>
+                  {score}
+                </Metric>
+                <Text className="text-xs font-medium text-gray-600">SEO评分</Text>
+              </div>
+              <Select
+                value={selectedPage}
+                onValueChange={setSelectedPage}
+                className="border-2 border-gray-200 rounded-lg focus:border-indigo-500"
+              >
+                {PAGES.map((page) => (
+                  <SelectItem key={page.key} value={page.key}>
+                    {page.name}
+                  </SelectItem>
+                ))}
+              </Select>
             </div>
-            <Select value={selectedPage} onValueChange={setSelectedPage}>
-              {PAGES.map((page) => (
-                <SelectItem key={page.key} value={page.key}>
-                  {page.name}
-                </SelectItem>
-              ))}
-            </Select>
-          </div>
-        </Flex>
+          }
+        />
         
         {issues.length > 0 && (
-          <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <Card className="bg-gradient-to-br from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-xl shadow-sm">
             <Flex alignItems="center" className="gap-2 mb-2">
-              <AlertCircle className="h-4 w-4 text-yellow-600" />
-              <Text className="font-medium text-yellow-800">SEO优化建议</Text>
+              <AlertCircle className="h-5 w-5 text-amber-600" />
+              <Text className="font-semibold text-amber-800">SEO优化建议</Text>
             </Flex>
-            <ul className="text-sm text-yellow-700 space-y-1">
+            <ul className="text-sm text-amber-700 space-y-1 pl-7">
               {issues.map((issue, index) => (
                 <li key={index}>• {issue}</li>
               ))}
             </ul>
-          </div>
+          </Card>
         )}
-      </Card>
 
-      <Grid numItemsSm={1} numItemsLg={2} className="gap-6">
-        {/* 基础SEO设置 */}
-        <Card>
-          <Title className="flex items-center gap-2">
-            <Search className="h-5 w-5" />
-            基础SEO设置
-          </Title>
-          
-          <div className="mt-4 space-y-4">
-            <div className="space-y-3">
-              <Text className="font-medium">页面标题</Text>
-              <TextInput
-                placeholder="中文标题"
-                value={seoConfig.title_zh}
-                onChange={(e) => setSeoConfig({...seoConfig, title_zh: e.target.value})}
-              />
-              <TextInput
-                placeholder="英文标题"
-                value={seoConfig.title_en}
-                onChange={(e) => setSeoConfig({...seoConfig, title_en: e.target.value})}
-              />
-              <TextInput
-                placeholder="俄文标题"
-                value={seoConfig.title_ru}
-                onChange={(e) => setSeoConfig({...seoConfig, title_ru: e.target.value})}
-              />
-              <Text className="text-xs text-slate-500">
-                标题长度: {seoConfig.title_zh.length}/60 字符
-              </Text>
-            </div>
+        <Grid numItemsSm={1} numItemsLg={2} className="gap-6">
+          {/* 基础SEO设置 */}
+          <Card className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+            <Title className="flex items-center gap-2 mb-4 text-lg font-bold text-gray-900">
+              <Search className="h-5 w-5 text-indigo-600" />
+              基础SEO设置
+            </Title>
+            
+            <div className="space-y-6">
+              <FormSection title="页面标题">
+                <TabLangInput
+                  label="标题"
+                  values={{
+                    zh: seoConfig.title_zh,
+                    en: seoConfig.title_en,
+                    ru: seoConfig.title_ru,
+                  }}
+                  onChange={(lang, value) => {
+                    setSeoConfig({...seoConfig, [`title_${lang}`]: value});
+                  }}
+                  type="text"
+                />
+                <Text className="text-xs text-gray-500 mt-2">
+                  标题长度: {seoConfig.title_zh.length}/60 字符
+                </Text>
+              </FormSection>
 
-            <div className="space-y-3">
-              <Text className="font-medium">页面描述</Text>
-              <Textarea
-                placeholder="中文描述"
-                value={seoConfig.description_zh}
-                onChange={(e) => setSeoConfig({...seoConfig, description_zh: e.target.value})}
-                rows={3}
-              />
-              <Textarea
-                placeholder="英文描述"
-                value={seoConfig.description_en}
-                onChange={(e) => setSeoConfig({...seoConfig, description_en: e.target.value})}
-                rows={3}
-              />
-              <Textarea
-                placeholder="俄文描述"
-                value={seoConfig.description_ru}
-                onChange={(e) => setSeoConfig({...seoConfig, description_ru: e.target.value})}
-                rows={3}
-              />
-              <Text className="text-xs text-slate-500">
-                描述长度: {seoConfig.description_zh.length}/160 字符
-              </Text>
-            </div>
+              <FormSection title="页面描述">
+                <TabLangInput
+                  label="描述"
+                  values={{
+                    zh: seoConfig.description_zh,
+                    en: seoConfig.description_en,
+                    ru: seoConfig.description_ru,
+                  }}
+                  onChange={(lang, value) => {
+                    setSeoConfig({...seoConfig, [`description_${lang}`]: value});
+                  }}
+                  type="textarea"
+                />
+                <Text className="text-xs text-gray-500 mt-2">
+                  描述长度: {seoConfig.description_zh.length}/160 字符
+                </Text>
+              </FormSection>
 
-            <div className="space-y-3">
-              <Text className="font-medium">关键词 (用逗号分隔)</Text>
-              <TextInput
-                placeholder="中文关键词"
-                value={seoConfig.keywords_zh}
-                onChange={(e) => setSeoConfig({...seoConfig, keywords_zh: e.target.value})}
-              />
-              <TextInput
-                placeholder="英文关键词"
-                value={seoConfig.keywords_en}
-                onChange={(e) => setSeoConfig({...seoConfig, keywords_en: e.target.value})}
-              />
-              <TextInput
-                placeholder="俄文关键词"
-                value={seoConfig.keywords_ru}
-                onChange={(e) => setSeoConfig({...seoConfig, keywords_ru: e.target.value})}
-              />
-            </div>
+              <FormSection title="关键词">
+                <TabLangInput
+                  label="关键词 (用逗号分隔)"
+                  values={{
+                    zh: seoConfig.keywords_zh,
+                    en: seoConfig.keywords_en,
+                    ru: seoConfig.keywords_ru,
+                  }}
+                  onChange={(lang, value) => {
+                    setSeoConfig({...seoConfig, [`keywords_${lang}`]: value});
+                  }}
+                  type="text"
+                />
+              </FormSection>
           </div>
         </Card>
 
-        {/* 地理位置SEO */}
-        <Card>
-          <Title className="flex items-center gap-2">
-            <MapPin className="h-5 w-5" />
-            地理位置优化
-          </Title>
-          
-          <div className="mt-4 space-y-4">
-            <div>
-              <Text className="font-medium mb-2">地理区域</Text>
-              <Select value={seoConfig.geo_region} onValueChange={(value) => setSeoConfig({...seoConfig, geo_region: value})}>
-                <SelectItem value="CN-ZJ">浙江省</SelectItem>
-                <SelectItem value="CN-JS">江苏省</SelectItem>
-                <SelectItem value="CN-SH">上海市</SelectItem>
-                <SelectItem value="CN-BJ">北京市</SelectItem>
-                <SelectItem value="CN-GD">广东省</SelectItem>
+          {/* 地理位置SEO */}
+          <Card className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+            <Title className="flex items-center gap-2 mb-4 text-lg font-bold text-gray-900">
+              <MapPin className="h-5 w-5 text-indigo-600" />
+              地理位置SEO
+            </Title>
+            
+            <div className="space-y-4">
+              <FormField label="地理区域">
+                <Select
+                  value={seoConfig.geo_region}
+                  onValueChange={(value) => setSeoConfig({...seoConfig, geo_region: value})}
+                  className="border-2 border-gray-200 rounded-lg focus:border-indigo-500"
+                >
+                  <SelectItem value="CN-ZJ">浙江省</SelectItem>
+                  <SelectItem value="CN-JS">江苏省</SelectItem>
+                  <SelectItem value="CN-SH">上海市</SelectItem>
+                  <SelectItem value="CN-BJ">北京市</SelectItem>
+                  <SelectItem value="CN-GD">广东省</SelectItem>
+                </Select>
+              </FormField>
+
+              <FormField label="具体城市">
+                <TextInput
+                  placeholder="例如：杭州市"
+                  value={seoConfig.geo_placename}
+                  onChange={(e) => setSeoConfig({...seoConfig, geo_placename: e.target.value})}
+                  className="border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200"
+                />
+              </FormField>
+
+              <FormField label="GPS坐标 (纬度,经度)">
+                <TextInput
+                  placeholder="例如：30.2741,120.1551"
+                  value={seoConfig.geo_position}
+                  onChange={(e) => setSeoConfig({...seoConfig, geo_position: e.target.value})}
+                  className="border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200"
+                />
+                <Text className="text-xs text-gray-500 mt-1">
+                  精确的地理位置有助于本地搜索排名
+                </Text>
+              </FormField>
+
+              <FormSection title="社交媒体优化">
+                <TabLangInput
+                  label="社交媒体标题"
+                  values={{
+                    zh: seoConfig.og_title_zh,
+                    en: seoConfig.og_title_en,
+                    ru: seoConfig.og_title_ru,
+                  }}
+                  onChange={(lang, value) => {
+                    setSeoConfig({...seoConfig, [`og_title_${lang}`]: value});
+                  }}
+                  type="text"
+                />
+                <TabLangInput
+                  label="社交媒体描述"
+                  values={{
+                    zh: seoConfig.og_description_zh,
+                    en: seoConfig.og_description_en,
+                    ru: seoConfig.og_description_ru,
+                  }}
+                  onChange={(lang, value) => {
+                    setSeoConfig({...seoConfig, [`og_description_${lang}`]: value});
+                  }}
+                  type="textarea"
+                />
+                <FormField label="社交媒体图片URL">
+                  <div className="flex gap-2">
+                    <TextInput
+                      placeholder="社交媒体图片URL"
+                      value={seoConfig.og_image_url}
+                      onChange={(e) => setSeoConfig({...seoConfig, og_image_url: e.target.value})}
+                      className="flex-1 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200"
+                    />
+                    <StandardUploadButton
+                      onUpload={(url) => setSeoConfig({...seoConfig, og_image_url: url})}
+                      folder="seo"
+                    />
+                  </div>
+                </FormField>
+              </FormSection>
+            </div>
+          </Card>
+        </Grid>
+
+        {/* 结构化数据 */}
+        <Card className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+          <Flex justifyContent="between" alignItems="center" className="mb-4">
+            <Title className="flex items-center gap-2 text-lg font-bold text-gray-900">
+              <Globe className="h-5 w-5 text-indigo-600" />
+              结构化数据 (Schema.org)
+            </Title>
+            <div className="flex items-center gap-2">
+              <Select
+                value={seoConfig.schema_type}
+                onValueChange={(value) => setSeoConfig({...seoConfig, schema_type: value})}
+                className="border-2 border-gray-200 rounded-lg focus:border-indigo-500"
+              >
+                {SCHEMA_TYPES.map((type) => (
+                  <SelectItem key={type.value} value={type.value}>
+                    {type.label}
+                  </SelectItem>
+                ))}
               </Select>
+              <Button
+                variant="secondary"
+                onClick={generateSchema}
+                className="bg-white border-2 border-gray-300 text-gray-700 hover:border-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
+              >
+                生成Schema
+              </Button>
             </div>
+          </Flex>
+          
+          <FormField label="JSON-LD 结构化数据">
+            <Textarea
+              placeholder="JSON-LD 结构化数据"
+              value={seoConfig.schema_data}
+              onChange={(e) => setSeoConfig({...seoConfig, schema_data: e.target.value})}
+              rows={12}
+              className="font-mono text-sm border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200"
+            />
+            <Text className="text-xs text-gray-500 mt-2">
+              结构化数据帮助搜索引擎更好地理解网页内容
+            </Text>
+          </FormField>
+        </Card>
 
-            <div>
-              <Text className="font-medium mb-2">具体城市</Text>
-              <TextInput
-                placeholder="例如：杭州市"
-                value={seoConfig.geo_placename}
-                onChange={(e) => setSeoConfig({...seoConfig, geo_placename: e.target.value})}
-              />
-            </div>
-
-            <div>
-              <Text className="font-medium mb-2">GPS坐标 (纬度,经度)</Text>
-              <TextInput
-                placeholder="例如：30.2741,120.1551"
-                value={seoConfig.geo_position}
-                onChange={(e) => setSeoConfig({...seoConfig, geo_position: e.target.value})}
-              />
-              <Text className="text-xs text-slate-500 mt-1">
-                精确的地理位置有助于本地搜索排名
-              </Text>
-            </div>
-
-            <div className="mt-6">
-              <Title className="text-sm mb-3">社交媒体优化</Title>
-              <div className="space-y-3">
-                <TextInput
-                  placeholder="社交媒体标题 (中文)"
-                  value={seoConfig.og_title_zh}
-                  onChange={(e) => setSeoConfig({...seoConfig, og_title_zh: e.target.value})}
-                />
-                <TextInput
-                  placeholder="社交媒体标题 (英文)"
-                  value={seoConfig.og_title_en}
-                  onChange={(e) => setSeoConfig({...seoConfig, og_title_en: e.target.value})}
-                />
-                <Textarea
-                  placeholder="社交媒体描述"
-                  value={seoConfig.og_description_zh}
-                  onChange={(e) => setSeoConfig({...seoConfig, og_description_zh: e.target.value})}
-                  rows={2}
-                />
-                <TextInput
-                  placeholder="社交媒体图片URL"
-                  value={seoConfig.og_image_url}
-                  onChange={(e) => setSeoConfig({...seoConfig, og_image_url: e.target.value})}
+        {/* 控制面板 */}
+        <Card className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+          <Flex justifyContent="between" alignItems="center">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2">
+                <Text className="font-medium text-gray-700">启用SEO优化</Text>
+                <Switch
+                  checked={seoConfig.is_active}
+                  onChange={(checked) => setSeoConfig({...seoConfig, is_active: checked})}
                 />
               </div>
+              <div className="flex items-center gap-2">
+                <Text className="font-medium text-gray-700">优先级</Text>
+                <Select
+                  value={seoConfig.priority.toString()}
+                  onValueChange={(value) => setSeoConfig({...seoConfig, priority: parseInt(value)})}
+                  className="border-2 border-gray-200 rounded-lg focus:border-indigo-500"
+                >
+                  <SelectItem value="1">高</SelectItem>
+                  <SelectItem value="2">中</SelectItem>
+                  <SelectItem value="3">低</SelectItem>
+                </Select>
+              </div>
             </div>
-          </div>
-        </Card>
-      </Grid>
-
-      {/* 结构化数据 */}
-      <Card>
-        <Flex justifyContent="between" alignItems="center">
-          <Title className="flex items-center gap-2">
-            <Globe className="h-5 w-5" />
-            结构化数据 (Schema.org)
-          </Title>
-          <div className="flex items-center gap-2">
-            <Select value={seoConfig.schema_type} onValueChange={(value) => setSeoConfig({...seoConfig, schema_type: value})}>
-              {SCHEMA_TYPES.map((type) => (
-                <SelectItem key={type.value} value={type.value}>
-                  {type.label}
-                </SelectItem>
-              ))}
-            </Select>
-            <Button variant="secondary" onClick={generateSchema}>
-              生成Schema
+            
+            <Button
+              icon={Save}
+              loading={isSaving}
+              onClick={saveSEOConfig}
+              disabled={isSaving}
+              className="bg-gradient-to-r from-emerald-600 to-green-600 text-white font-medium hover:from-emerald-700 hover:to-green-700 hover:shadow-lg active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              保存SEO配置
             </Button>
-          </div>
-        </Flex>
-        
-        <div className="mt-4">
-          <Textarea
-            placeholder="JSON-LD 结构化数据"
-            value={seoConfig.schema_data}
-            onChange={(e) => setSeoConfig({...seoConfig, schema_data: e.target.value})}
-            rows={12}
-            className="font-mono text-sm"
-          />
-          <Text className="text-xs text-slate-500 mt-2">
-            结构化数据帮助搜索引擎更好地理解网页内容
-          </Text>
-        </div>
-      </Card>
-
-      {/* 控制面板 */}
-      <Card>
-        <Flex justifyContent="between" alignItems="center">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Text>启用SEO优化</Text>
-              <Switch
-                checked={seoConfig.is_active}
-                onChange={(checked) => setSeoConfig({...seoConfig, is_active: checked})}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <Text>优先级</Text>
-              <Select value={seoConfig.priority.toString()} onValueChange={(value) => setSeoConfig({...seoConfig, priority: parseInt(value)})}>
-                <SelectItem value="1">高</SelectItem>
-                <SelectItem value="2">中</SelectItem>
-                <SelectItem value="3">低</SelectItem>
-              </Select>
-            </div>
-          </div>
-          
-          <Button
-            icon={Save}
-            loading={isSaving}
-            onClick={saveSEOConfig}
-            className="bg-green-600 hover:bg-green-700"
-          >
-            保存SEO配置
-          </Button>
-        </Flex>
-      </Card>
-    </div>
+          </Flex>
+        </Card>
+      </div>
+    </PageContent>
   );
 };
 

@@ -22,11 +22,12 @@ import {
   Edit,
   X,
   Filter,
-  Search
+  Search,
+  Grid3x3,
+  List
 } from "lucide-react";
 import { toast } from "react-hot-toast";
-import ImageUpload from "@/components/ImageUpload";
-import VideoUpload from "@/components/VideoUpload";
+import { MediaUpload, PageHeader, PageContent, TabLangInput, FormSection } from "@/components/admin";
 
 interface MediaFile {
   id: number;
@@ -54,6 +55,7 @@ export default function MediaLibrary() {
   const [uploadType, setUploadType] = useState<'image' | 'video'>('image');
   const [editingMedia, setEditingMedia] = useState<MediaFile | null>(null);
   const [uploadedFileUrl, setUploadedFileUrl] = useState("");
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // 获取媒体文件列表
   const { data, refetch, isLoading } = useList<MediaFile>({
@@ -182,239 +184,358 @@ export default function MediaLibrary() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* 页面标题 */}
-      <div>
-        <Title className="text-2xl font-bold text-slate-900">媒体库</Title>
-        <Text className="text-slate-500">管理网站的图片和视频文件</Text>
-      </div>
+    <PageContent maxWidth="2xl">
+      <div className="space-y-6">
+        <PageHeader
+          title="媒体库"
+          description="管理网站的图片和视频文件"
+          actions={
+            <>
+              <div className="flex items-center gap-2 border border-gray-200 rounded-lg p-1">
+                <Button
+                  variant="light"
+                  size="sm"
+                  icon={Grid3x3}
+                  onClick={() => setViewMode('grid')}
+                  className={viewMode === 'grid' ? 'bg-indigo-50 text-indigo-600' : ''}
+                >
+                  网格
+                </Button>
+                <Button
+                  variant="light"
+                  size="sm"
+                  icon={List}
+                  onClick={() => setViewMode('list')}
+                  className={viewMode === 'list' ? 'bg-indigo-50 text-indigo-600' : ''}
+                >
+                  列表
+                </Button>
+              </div>
+              <Button
+                icon={ImageIcon}
+                onClick={() => {
+                  setUploadType('image');
+                  setShowUploadDialog(true);
+                }}
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg active:scale-95 transition-all duration-200"
+              >
+                上传图片
+              </Button>
+              <Button
+                icon={Video}
+                onClick={() => {
+                  setUploadType('video');
+                  setShowUploadDialog(true);
+                }}
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg active:scale-95 transition-all duration-200"
+              >
+                上传视频
+              </Button>
+            </>
+          }
+        />
 
-      {/* 操作栏 */}
-      <Card>
-        <Flex justifyContent="between" alignItems="center" className="gap-4">
-          <Flex alignItems="center" className="gap-3 flex-1">
-            {/* 搜索 */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <TextInput
-                placeholder="搜索文件名、标题、描述..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
+        {/* 操作栏 */}
+        <Card className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+          <Flex justifyContent="between" alignItems="center" className="gap-4">
+            <Flex alignItems="center" className="gap-3 flex-1">
+              {/* 搜索 */}
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <TextInput
+                  placeholder="搜索文件名、标题、描述..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200"
+                />
+              </div>
+
+              {/* 文件类型筛选 */}
+              <Select
+                value={fileTypeFilter}
+                onValueChange={setFileTypeFilter}
+                className="border-2 border-gray-200 rounded-lg focus:border-indigo-500"
+              >
+                <SelectItem value="all">所有类型</SelectItem>
+                <SelectItem value="image">图片</SelectItem>
+                <SelectItem value="video">视频</SelectItem>
+              </Select>
+
+              {/* 文件夹筛选 */}
+              <Select
+                value={folderFilter}
+                onValueChange={setFolderFilter}
+                className="border-2 border-gray-200 rounded-lg focus:border-indigo-500"
+              >
+                <SelectItem value="all">所有文件夹</SelectItem>
+                <SelectItem value="home">首页</SelectItem>
+                <SelectItem value="oem">OEM</SelectItem>
+                <SelectItem value="products">产品</SelectItem>
+                <SelectItem value="general">通用</SelectItem>
+              </Select>
+            </Flex>
+          </Flex>
+        </Card>
+
+        {/* 统计信息 */}
+        <Grid numItems={1} numItemsSm={2} numItemsLg={4} className="gap-4">
+          <Card className="bg-gradient-to-br from-white to-gray-50 rounded-xl border-l-4 border-l-indigo-500 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <Text className="text-sm font-medium text-gray-600">总文件数</Text>
+            <Title className="mt-2 text-3xl font-bold text-gray-900">{mediaFiles.length}</Title>
+          </Card>
+          <Card className="bg-gradient-to-br from-white to-gray-50 rounded-xl border-l-4 border-l-emerald-500 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <Text className="text-sm font-medium text-gray-600">图片</Text>
+            <Title className="mt-2 text-3xl font-bold text-gray-900">
+              {mediaFiles.filter(m => m.file_type === 'image').length}
+            </Title>
+          </Card>
+          <Card className="bg-gradient-to-br from-white to-gray-50 rounded-xl border-l-4 border-l-purple-500 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <Text className="text-sm font-medium text-gray-600">视频</Text>
+            <Title className="mt-2 text-3xl font-bold text-gray-900">
+              {mediaFiles.filter(m => m.file_type === 'video').length}
+            </Title>
+          </Card>
+          <Card className="bg-gradient-to-br from-white to-gray-50 rounded-xl border-l-4 border-l-amber-500 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <Text className="text-sm font-medium text-gray-600">搜索结果</Text>
+            <Title className="mt-2 text-3xl font-bold text-gray-900">{filteredMedia.length}</Title>
+          </Card>
+        </Grid>
+
+        {/* 媒体文件网格/列表 */}
+        <Card className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+          {isLoading ? (
+            <div className="text-center py-12">
+              <Text className="text-gray-500">加载中...</Text>
             </div>
+          ) : filteredMedia.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <ImageIcon className="h-16 w-16 text-gray-300" />
+                <Text className="text-gray-500 text-lg">暂无媒体文件</Text>
+                <Button
+                  icon={Upload}
+                  onClick={() => {
+                    setUploadType('image');
+                    setShowUploadDialog(true);
+                  }}
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg active:scale-95 transition-all duration-200"
+                >
+                  上传第一个文件
+                </Button>
+              </div>
+            </div>
+          ) : viewMode === 'grid' ? (
+            <Grid numItems={2} numItemsSm={3} numItemsLg={4} className="gap-4">
+              {filteredMedia.map((media) => (
+                <Card
+                  key={media.id}
+                  className="bg-white rounded-xl border-2 border-gray-200 hover:border-indigo-300 hover:shadow-lg transition-all duration-300 group overflow-hidden"
+                >
+                  {/* 文件预览 */}
+                  <div className="aspect-video bg-gray-100 rounded-t-lg overflow-hidden relative mb-3">
+                    {media.file_type === 'image' ? (
+                      <img
+                        src={media.file_url}
+                        alt={media.title_zh || media.file_name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <video
+                        src={media.file_url}
+                        className="w-full h-full object-cover"
+                        preload="metadata"
+                      />
+                    )}
+                    {/* 悬停覆盖层 */}
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-opacity duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                      <div className="flex gap-2">
+                        <Button
+                          size="xs"
+                          variant="secondary"
+                          icon={Edit}
+                          onClick={() => setEditingMedia(media as unknown as MediaFile)}
+                          className="bg-white text-gray-700 hover:bg-indigo-50"
+                        >
+                          编辑
+                        </Button>
+                        <Button
+                          size="xs"
+                          icon={Trash2}
+                          onClick={() => handleDelete(Number(media.id))}
+                          className="bg-gradient-to-r from-red-500 to-rose-600 text-white hover:from-red-600 hover:to-rose-700"
+                        >
+                          删除
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
 
-            {/* 文件类型筛选 */}
-            <Select value={fileTypeFilter} onValueChange={setFileTypeFilter}>
-              <SelectItem value="all">所有类型</SelectItem>
-              <SelectItem value="image">图片</SelectItem>
-              <SelectItem value="video">视频</SelectItem>
-            </Select>
+                  {/* 文件信息 */}
+                  <div className="space-y-2 px-2 pb-2">
+                    <Flex justifyContent="between" alignItems="start">
+                      <div className="flex-1 min-w-0">
+                        <Text className="font-semibold text-gray-900 truncate">
+                          {media.title_zh || media.file_name}
+                        </Text>
+                        <Text className="text-xs text-gray-500 truncate">
+                          {media.file_name}
+                        </Text>
+                      </div>
+                      <Badge
+                        color={media.file_type === 'image' ? 'blue' : 'purple'}
+                        className="rounded-full px-2 py-1 ml-2"
+                      >
+                        {media.file_type === 'image' ? '图片' : '视频'}
+                      </Badge>
+                    </Flex>
 
-            {/* 文件夹筛选 */}
-            <Select value={folderFilter} onValueChange={setFolderFilter}>
-              <SelectItem value="all">所有文件夹</SelectItem>
-              <SelectItem value="home">首页</SelectItem>
-              <SelectItem value="oem">OEM</SelectItem>
-              <SelectItem value="products">产品</SelectItem>
-              <SelectItem value="general">通用</SelectItem>
-            </Select>
-          </Flex>
+                    <Text className="text-xs text-gray-500">
+                      {formatFileSize(media.file_size)} • {new Date(media.created_at).toLocaleDateString()}
+                    </Text>
+                  </div>
+                </Card>
+              ))}
+            </Grid>
+          ) : (
+            <div className="space-y-2">
+              {filteredMedia.map((media) => (
+                <Card
+                  key={media.id}
+                  className="bg-white rounded-xl border-2 border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all duration-300"
+                >
+                  <Flex alignItems="center" className="gap-4">
+                    {/* 缩略图 */}
+                    <div className="w-24 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                      {media.file_type === 'image' ? (
+                        <img
+                          src={media.file_url}
+                          alt={media.title_zh || media.file_name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <video
+                          src={media.file_url}
+                          className="w-full h-full object-cover"
+                          preload="metadata"
+                        />
+                      )}
+                    </div>
 
-          {/* 上传按钮 */}
-          <Flex className="gap-2">
-            <Button
-              icon={ImageIcon}
-              onClick={() => {
-                setUploadType('image');
-                setShowUploadDialog(true);
-              }}
-            >
-              上传图片
-            </Button>
-            <Button
-              icon={Video}
-              onClick={() => {
-                setUploadType('video');
-                setShowUploadDialog(true);
-              }}
-            >
-              上传视频
-            </Button>
-          </Flex>
-        </Flex>
-      </Card>
-
-      {/* 统计信息 */}
-      <Grid numItems={1} numItemsSm={2} numItemsLg={4} className="gap-4">
-        <Card>
-          <Text>总文件数</Text>
-          <Title className="text-2xl">{mediaFiles.length}</Title>
-        </Card>
-        <Card>
-          <Text>图片</Text>
-          <Title className="text-2xl">
-            {mediaFiles.filter(m => m.file_type === 'image').length}
-          </Title>
-        </Card>
-        <Card>
-          <Text>视频</Text>
-          <Title className="text-2xl">
-            {mediaFiles.filter(m => m.file_type === 'video').length}
-          </Title>
-        </Card>
-        <Card>
-          <Text>搜索结果</Text>
-          <Title className="text-2xl">{filteredMedia.length}</Title>
-        </Card>
-      </Grid>
-
-      {/* 媒体文件网格 */}
-      <Card>
-        {isLoading ? (
-          <div className="text-center py-12">
-            <Text>加载中...</Text>
-          </div>
-        ) : filteredMedia.length === 0 ? (
-          <div className="text-center py-12">
-            <Text>暂无媒体文件</Text>
-          </div>
-        ) : (
-          <Grid numItems={2} numItemsSm={3} numItemsLg={4} className="gap-4">
-            {filteredMedia.map((media) => (
-              <Card key={media.id} className="relative group">
-                {/* 文件预览 */}
-                <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden mb-3">
-                  {media.file_type === 'image' ? (
-                    <img
-                      src={media.file_url}
-                      alt={media.title_zh || media.file_name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <video
-                      src={media.file_url}
-                      className="w-full h-full object-cover"
-                      preload="metadata"
-                    />
-                  )}
-                </div>
-
-                {/* 文件信息 */}
-                <div className="space-y-2">
-                  <Flex justifyContent="between" alignItems="start">
+                    {/* 文件信息 */}
                     <div className="flex-1 min-w-0">
-                      <Text className="font-medium truncate">
-                        {media.title_zh || media.file_name}
-                      </Text>
-                      <Text className="text-xs text-gray-500 truncate">
+                      <Flex justifyContent="between" alignItems="start" className="mb-1">
+                        <Text className="font-semibold text-gray-900 truncate">
+                          {media.title_zh || media.file_name}
+                        </Text>
+                        <Badge
+                          color={media.file_type === 'image' ? 'blue' : 'purple'}
+                          className="rounded-full px-2 py-1 ml-2"
+                        >
+                          {media.file_type === 'image' ? '图片' : '视频'}
+                        </Badge>
+                      </Flex>
+                      <Text className="text-sm text-gray-500 truncate mb-1">
                         {media.file_name}
                       </Text>
+                      <Text className="text-xs text-gray-400">
+                        {formatFileSize(media.file_size)} • {new Date(media.created_at).toLocaleDateString()}
+                      </Text>
                     </div>
-                    <Badge color={media.file_type === 'image' ? 'blue' : 'purple'}>
-                      {media.file_type === 'image' ? '图片' : '视频'}
-                    </Badge>
+
+                    {/* 操作按钮 */}
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        icon={Edit}
+                        onClick={() => setEditingMedia(media as unknown as MediaFile)}
+                        className="bg-white border-2 border-gray-300 text-gray-700 hover:border-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
+                      >
+                        编辑
+                      </Button>
+                      <Button
+                        size="sm"
+                        icon={Trash2}
+                        onClick={() => handleDelete(Number(media.id))}
+                        className="bg-gradient-to-r from-red-500 to-rose-600 text-white hover:from-red-600 hover:to-rose-700 hover:shadow-lg transition-all duration-200"
+                      >
+                        删除
+                      </Button>
+                    </div>
                   </Flex>
+                </Card>
+              ))}
+            </div>
+          )}
+        </Card>
 
-                  <Text className="text-xs text-gray-500">
-                    {formatFileSize(media.file_size)} • {new Date(media.created_at).toLocaleDateString()}
-                  </Text>
-
-                  {/* 操作按钮 */}
-                  <Flex className="gap-2 pt-2">
-                    <Button
-                      size="xs"
-                      variant="secondary"
-                      icon={Edit}
-                      onClick={() => setEditingMedia(media as unknown as MediaFile)}
-                      className="flex-1"
-                    >
-                      编辑
-                    </Button>
-                    <Button
-                      size="xs"
-                      variant="secondary"
-                      color="red"
-                      icon={Trash2}
-                      onClick={() => handleDelete(Number(media.id))}
-                    >
-                      删除
-                    </Button>
-                  </Flex>
-                </div>
-              </Card>
-            ))}
-          </Grid>
-        )}
-      </Card>
-
-      {/* 上传对话框 */}
-      {showUploadDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <Flex justifyContent="between" alignItems="center" className="mb-4">
-              <Title>上传{uploadType === 'image' ? '图片' : '视频'}</Title>
-              <Button
-                variant="light"
-                icon={X}
-                onClick={() => {
-                  setShowUploadDialog(false);
-                  setUploadedFileUrl('');
-                }}
-              />
-            </Flex>
-
-            <div className="space-y-4">
-              {/* 文件上传组件 */}
-              {uploadType === 'image' ? (
-                <ImageUpload
-                  value={uploadedFileUrl}
-                  onChange={handleFileUploaded}
-                  folder={folderFilter !== 'all' ? folderFilter : 'general'}
-                />
-              ) : (
-                <VideoUpload
-                  value={uploadedFileUrl}
-                  onChange={handleFileUploaded}
-                  folder={folderFilter !== 'all' ? folderFilter : 'general'}
-                />
-              )}
-
-              {/* 操作按钮 */}
-              <Flex justifyContent="end" className="gap-2 pt-4">
+        {/* 上传对话框 */}
+        {showUploadDialog && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl border-0 shadow-2xl">
+              <Flex justifyContent="between" alignItems="center" className="mb-6">
+                <Title className="text-xl font-bold text-gray-900">
+                  上传{uploadType === 'image' ? '图片' : '视频'}
+                </Title>
                 <Button
-                  variant="secondary"
+                  variant="light"
+                  icon={X}
                   onClick={() => {
                     setShowUploadDialog(false);
                     setUploadedFileUrl('');
                   }}
-                >
-                  取消
-                </Button>
-                <Button
-                  onClick={handleSaveMedia}
-                  disabled={!uploadedFileUrl}
-                >
-                  保存到媒体库
-                </Button>
+                  className="text-gray-400 hover:text-gray-600"
+                />
               </Flex>
-            </div>
-          </Card>
-        </div>
-      )}
 
-      {/* 编辑元数据对话框 */}
-      {editingMedia && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <Card className="w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-            <Flex justifyContent="between" alignItems="center" className="mb-4">
-              <Title>编辑媒体文件</Title>
-              <Button
-                variant="light"
-                icon={X}
-                onClick={() => setEditingMedia(null)}
-              />
-            </Flex>
+              <div className="space-y-6">
+                {/* 文件上传组件 */}
+                <MediaUpload
+                  value={uploadedFileUrl}
+                  onChange={handleFileUploaded}
+                  folder={folderFilter !== 'all' ? folderFilter : 'general'}
+                  type={uploadType}
+                  preview={true}
+                />
+
+                {/* 操作按钮 */}
+                <Flex justifyContent="end" className="gap-3 pt-4 border-t border-gray-200">
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setShowUploadDialog(false);
+                      setUploadedFileUrl('');
+                    }}
+                    className="bg-white border-2 border-gray-300 text-gray-700 hover:border-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
+                  >
+                    取消
+                  </Button>
+                  <Button
+                    onClick={handleSaveMedia}
+                    disabled={!uploadedFileUrl}
+                    className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    保存到媒体库
+                  </Button>
+                </Flex>
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {/* 编辑元数据对话框 */}
+        {editingMedia && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <Card className="w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl border-0 shadow-2xl">
+              <Flex justifyContent="between" alignItems="center" className="mb-6">
+                <Title className="text-xl font-bold text-gray-900">编辑媒体文件</Title>
+                <Button
+                  variant="light"
+                  icon={X}
+                  onClick={() => setEditingMedia(null)}
+                  className="text-gray-400 hover:text-gray-600"
+                />
+              </Flex>
 
             <div className="space-y-6">
               {/* 文件预览 */}
@@ -459,69 +580,38 @@ export default function MediaLibrary() {
               </div>
 
               {/* 多语言标题 */}
-              <div className="space-y-3">
-                <Text className="font-medium">标题</Text>
-                <div className="space-y-2">
-                  <TextInput
-                    placeholder="中文标题"
-                    value={editingMedia.title_zh || ''}
-                    onChange={(e) => setEditingMedia({
-                      ...editingMedia,
-                      title_zh: e.target.value
-                    })}
-                  />
-                  <TextInput
-                    placeholder="English Title"
-                    value={editingMedia.title_en || ''}
-                    onChange={(e) => setEditingMedia({
-                      ...editingMedia,
-                      title_en: e.target.value
-                    })}
-                  />
-                  <TextInput
-                    placeholder="Русский заголовок"
-                    value={editingMedia.title_ru || ''}
-                    onChange={(e) => setEditingMedia({
-                      ...editingMedia,
-                      title_ru: e.target.value
-                    })}
-                  />
-                </div>
-              </div>
+              <TabLangInput
+                label="标题"
+                values={{
+                  zh: editingMedia.title_zh || '',
+                  en: editingMedia.title_en || '',
+                  ru: editingMedia.title_ru || '',
+                }}
+                onChange={(lang, value) => {
+                  setEditingMedia({
+                    ...editingMedia,
+                    [`title_${lang}`]: value,
+                  });
+                }}
+                type="text"
+              />
 
               {/* 多语言描述 */}
-              <div className="space-y-3">
-                <Text className="font-medium">描述</Text>
-                <div className="space-y-2">
-                  <Textarea
-                    placeholder="中文描述"
-                    value={editingMedia.description_zh || ''}
-                    onChange={(e) => setEditingMedia({
-                      ...editingMedia,
-                      description_zh: e.target.value
-                    })}
-                    rows={3}
-                  />
-                  <Textarea
-                    placeholder="English Description"
-                    value={editingMedia.description_en || ''}
-                    onChange={(e) => setEditingMedia({
-                      ...editingMedia,
-                      description_en: e.target.value
-                    })}
-                    rows={3}
-                  />
-                  <Textarea
-                    placeholder="Русское описание"
-                    value={editingMedia.description_ru || ''}
-                    onChange={(e) => setEditingMedia({
-                      ...editingMedia,
-                      description_ru: e.target.value
-                    })}
-                    rows={3}
-                  />
-                </div>
-              </div>
+              <TabLangInput
+                label="描述"
+                values={{
+                  zh: editingMedia.description_zh || '',
+                  en: editingMedia.description_en || '',
+                  ru: editingMedia.description_ru || '',
+                }}
+                onChange={(lang, value) => {
+                  setEditingMedia({
+                    ...editingMedia,
+                    [`description_${lang}`]: value,
+                  });
+                }}
+                type="textarea"
+              />
 
               {/* 使用位置 */}
               <div className="space-y-3">
@@ -543,22 +633,27 @@ export default function MediaLibrary() {
               </div>
 
               {/* 操作按钮 */}
-              <Flex justifyContent="end" className="gap-2 pt-4 border-t">
+              <Flex justifyContent="end" className="gap-3 pt-6 border-t border-gray-200">
                 <Button
                   variant="secondary"
                   onClick={() => setEditingMedia(null)}
+                  className="bg-white border-2 border-gray-300 text-gray-700 hover:border-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
                 >
                   取消
                 </Button>
-                <Button onClick={handleUpdateMetadata}>
+                <Button
+                  onClick={handleUpdateMetadata}
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg active:scale-95 transition-all duration-200"
+                >
                   保存更改
                 </Button>
               </Flex>
             </div>
           </Card>
         </div>
-      )}
-    </div>
+        )}
+      </div>
+    </PageContent>
   );
 }
 

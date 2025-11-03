@@ -1,6 +1,12 @@
 import { authenticate, createUnauthorizedResponse } from '../../../lib/jwt-auth.js';
 import { rateLimitMiddleware } from '../../../lib/rate-limit.js';
-import { createCorsResponse, createCorsErrorResponse, handleCorsPreFlight } from '../../../lib/cors.js';
+import { handleCorsPreFlight } from '../../../lib/cors.js';
+import {
+  createSuccessResponse,
+  createServerErrorResponse,
+  createBadRequestResponse,
+  createUnauthorizedResponse as createUnauthorizedResponseFromApi,
+} from '../../../lib/api-response.js';
 
 export async function onRequestGet(context) {
   const { request, env, params } = context;
@@ -15,20 +21,18 @@ export async function onRequestGet(context) {
     // JWT 认证检查
     const auth = await authenticate(request, env);
     if (!auth.authenticated) {
-      return createUnauthorizedResponse(auth.error);
+      return createUnauthorizedResponse({
+        message: auth.error || '未授权',
+        request
+      });
     }
     
     const pageKey = params.page || 'home';
     
     if (!env.DB) {
-      return new Response(JSON.stringify({
-        error: { message: 'D1数据库未配置' }
-      }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createServerErrorResponse({
+        message: 'D1数据库未配置',
+        request
       });
     }
 
@@ -38,76 +42,55 @@ export async function onRequestGet(context) {
         SELECT * FROM seo_configs WHERE page_key = ?
       `).bind(pageKey).first();
       
-      if (seoConfig) {
-        return new Response(JSON.stringify(seoConfig), {
-          status: 200,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-          }
-        });
-      } else {
-        // 返回默认配置
-        const defaultConfig = {
-          page_key: pageKey,
-          page_name: getPageName(pageKey),
-          title_zh: '',
-          title_en: '',
-          title_ru: '',
-          description_zh: '',
-          description_en: '',
-          description_ru: '',
-          keywords_zh: '',
-          keywords_en: '',
-          keywords_ru: '',
-          geo_region: 'CN-ZJ',
-          geo_placename: '杭州市',
-          geo_position: '30.2741,120.1551',
-          og_title_zh: '',
-          og_title_en: '',
-          og_title_ru: '',
-          og_description_zh: '',
-          og_description_en: '',
-          og_description_ru: '',
-          og_image_url: '',
-          schema_type: 'Organization',
-          schema_data: '',
-          is_active: true,
-          priority: 1,
-          last_updated: new Date().toISOString(),
-        };
-        
-        return new Response(JSON.stringify(defaultConfig), {
-          status: 200,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-          }
-        });
-      }
+      const configData = seoConfig || {
+        page_key: pageKey,
+        page_name: getPageName(pageKey),
+        title_zh: '',
+        title_en: '',
+        title_ru: '',
+        description_zh: '',
+        description_en: '',
+        description_ru: '',
+        keywords_zh: '',
+        keywords_en: '',
+        keywords_ru: '',
+        geo_region: 'CN-ZJ',
+        geo_placename: '杭州市',
+        geo_position: '30.2741,120.1551',
+        og_title_zh: '',
+        og_title_en: '',
+        og_title_ru: '',
+        og_description_zh: '',
+        og_description_en: '',
+        og_description_ru: '',
+        og_image_url: '',
+        schema_type: 'Organization',
+        schema_data: '',
+        is_active: true,
+        priority: 1,
+        last_updated: new Date().toISOString(),
+      };
+      
+      return createSuccessResponse({
+        data: configData,
+        message: '获取SEO配置成功',
+        request
+      });
     } catch (dbError) {
       console.error('SEO配置查询失败:', dbError);
-      return new Response(JSON.stringify({
-        error: { message: `数据库查询失败: ${dbError.message}` }
-      }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createServerErrorResponse({
+        message: '数据库查询失败',
+        error: dbError.message,
+        request
       });
     }
     
   } catch (error) {
     console.error('SEO API错误:', error);
-    return new Response(JSON.stringify({
-      error: { message: '获取SEO配置失败' }
-    }), {
-      status: 500,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+    return createServerErrorResponse({
+      message: '获取SEO配置失败',
+      error: error.message,
+      request
     });
   }
 }
@@ -116,17 +99,18 @@ export async function onRequestPost(context) {
   const { request, env, params } = context;
   
   try {
-    // 认证检查
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({
-        error: { message: '需要登录' }
-      }), {
-        status: 401,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+    // 速率限制检查
+    const rateLimit = await rateLimitMiddleware(request, env, 'admin');
+    if (!rateLimit.allowed) {
+      return rateLimit.response;
+    }
+
+    // JWT 认证检查
+    const auth = await authenticate(request, env);
+    if (!auth.authenticated) {
+      return createUnauthorizedResponse({
+        message: auth.error || '未授权',
+        request
       });
     }
     
@@ -134,14 +118,9 @@ export async function onRequestPost(context) {
     const seoData = await request.json();
     
     if (!env.DB) {
-      return new Response(JSON.stringify({
-        error: { message: 'D1数据库未配置' }
-      }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createServerErrorResponse({
+        message: 'D1数据库未配置',
+        request
       });
     }
 
@@ -190,52 +169,37 @@ export async function onRequestPost(context) {
         new Date().toISOString()
       ).run();
       
-      return new Response(JSON.stringify({
-        message: 'SEO配置保存成功'
-      }), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      // 返回更新后的配置
+      const updatedConfig = await env.DB.prepare(`
+        SELECT * FROM seo_configs WHERE page_key = ?
+      `).bind(pageKey).first();
+      
+      return createSuccessResponse({
+        data: updatedConfig || seoData,
+        message: 'SEO配置保存成功',
+        request
       });
     } catch (dbError) {
       console.error('SEO配置保存失败:', dbError);
-      return new Response(JSON.stringify({
-        error: { message: `数据库保存失败: ${dbError.message}` }
-      }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createServerErrorResponse({
+        message: '数据库保存失败',
+        error: dbError.message,
+        request
       });
     }
     
   } catch (error) {
     console.error('SEO保存API错误:', error);
-    return new Response(JSON.stringify({
-      error: { message: '保存SEO配置失败' }
-    }), {
-      status: 500,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+    return createServerErrorResponse({
+      message: '保存SEO配置失败',
+      error: error.message,
+      request
     });
   }
 }
 
 export async function onRequestOptions(context) {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Max-Age': '86400',
-    },
-  });
+  return handleCorsPreFlight(context.request);
 }
 
 // 辅助函数

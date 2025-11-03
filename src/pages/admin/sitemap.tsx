@@ -20,6 +20,7 @@ import {
 } from "@tremor/react";
 import { Save, Download, RefreshCcw, Globe, Link, Plus, Trash2 } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { PageHeader, PageContent, InlineLangInput, FormField, FormSection, FormActions } from "@/components/admin";
 
 interface SitemapEntry {
   id?: number;
@@ -282,74 +283,70 @@ const SitemapManager = () => {
     );
 
     return (
-      <Card>
-        <Title>{entry ? "编辑" : "新增"}网站地图条目</Title>
-        <div className="mt-4 space-y-4">
+      <Card className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+        <Title className="flex items-center gap-2 text-lg font-bold text-gray-900 mb-6">
+          <Globe className="h-5 w-5 text-indigo-600" />
+          {entry ? "编辑" : "新增"}网站地图条目
+        </Title>
+        <div className="space-y-4">
           <Grid numItemsSm={1} numItemsLg={2} className="gap-4">
-            <div>
-              <Text className="font-medium mb-2">基础URL</Text>
+            <FormField label="基础URL">
               <TextInput
                 placeholder="/example"
                 value={formData.url}
                 onChange={(e) => setFormData({...formData, url: e.target.value})}
+                className="border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200"
               />
-            </div>
-            <div>
-              <Text className="font-medium mb-2">页面类型</Text>
+            </FormField>
+            <FormField label="页面类型">
               <Select 
                 value={formData.page_type} 
                 onValueChange={(value) => setFormData({...formData, page_type: value})}
+                className="border-2 border-gray-200 rounded-lg focus:border-indigo-500"
               >
                 {PAGE_TYPES.map(type => (
                   <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
                 ))}
               </Select>
-            </div>
+            </FormField>
           </Grid>
 
-          <div className="flex items-center gap-2">
-            <Text>启用多语言</Text>
-            <Switch
-              checked={formData.is_multilingual}
-              onChange={(checked) => setFormData({...formData, is_multilingual: checked})}
-            />
-          </div>
+          <FormField label="启用多语言">
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={formData.is_multilingual}
+                onChange={(checked) => setFormData({...formData, is_multilingual: checked})}
+              />
+              <Text className="text-sm text-gray-600">启用多语言URL支持</Text>
+            </div>
+          </FormField>
 
           {formData.is_multilingual && (
-            <Grid numItemsSm={1} numItemsLg={3} className="gap-4">
-              <div>
-                <Text className="font-medium mb-2">中文URL</Text>
-                <TextInput
-                  placeholder="/example"
-                  value={formData.url_zh}
-                  onChange={(e) => setFormData({...formData, url_zh: e.target.value})}
-                />
-              </div>
-              <div>
-                <Text className="font-medium mb-2">英文URL</Text>
-                <TextInput
-                  placeholder="/en/example"
-                  value={formData.url_en}
-                  onChange={(e) => setFormData({...formData, url_en: e.target.value})}
-                />
-              </div>
-              <div>
-                <Text className="font-medium mb-2">俄文URL</Text>
-                <TextInput
-                  placeholder="/ru/example"
-                  value={formData.url_ru}
-                  onChange={(e) => setFormData({...formData, url_ru: e.target.value})}
-                />
-              </div>
-            </Grid>
+            <FormField label="多语言URL">
+              <InlineLangInput
+                label="多语言URL"
+                values={{
+                  zh: formData.url_zh,
+                  en: formData.url_en,
+                  ru: formData.url_ru,
+                }}
+                onChange={(lang, value) => {
+                  setFormData({
+                    ...formData,
+                    [`url_${lang}`]: value,
+                  });
+                }}
+                type="url"
+              />
+            </FormField>
           )}
 
           <Grid numItemsSm={1} numItemsLg={3} className="gap-4">
-            <div>
-              <Text className="font-medium mb-2">优先级</Text>
+            <FormField label="优先级">
               <Select 
                 value={formData.priority.toString()} 
                 onValueChange={(value) => setFormData({...formData, priority: parseFloat(value)})}
+                className="border-2 border-gray-200 rounded-lg focus:border-indigo-500"
               >
                 <SelectItem value="1.0">1.0 (最高)</SelectItem>
                 <SelectItem value="0.9">0.9</SelectItem>
@@ -362,84 +359,78 @@ const SitemapManager = () => {
                 <SelectItem value="0.2">0.2</SelectItem>
                 <SelectItem value="0.1">0.1 (最低)</SelectItem>
               </Select>
-            </div>
-            <div>
-              <Text className="font-medium mb-2">更新频率</Text>
+            </FormField>
+            <FormField label="更新频率">
               <Select 
                 value={formData.changefreq} 
                 onValueChange={(value) => setFormData({...formData, changefreq: value})}
+                className="border-2 border-gray-200 rounded-lg focus:border-indigo-500"
               >
                 {CHANGE_FREQUENCIES.map(freq => (
                   <SelectItem key={freq.value} value={freq.value}>{freq.label}</SelectItem>
                 ))}
               </Select>
-            </div>
-            <div>
-              <Text className="font-medium mb-2">状态</Text>
+            </FormField>
+            <FormField label="状态">
               <Select 
                 value={formData.status} 
                 onValueChange={(value) => setFormData({...formData, status: value})}
+                className="border-2 border-gray-200 rounded-lg focus:border-indigo-500"
               >
                 <SelectItem value="active">激活</SelectItem>
                 <SelectItem value="inactive">禁用</SelectItem>
               </Select>
-            </div>
+            </FormField>
           </Grid>
 
-          <Flex justifyContent="end" className="gap-2">
-            <Button variant="secondary" onClick={onCancel}>
-              取消
-            </Button>
-            <Button 
-              icon={Save} 
-              loading={isSaving}
-              onClick={() => onSave(formData)}
-            >
-              保存
-            </Button>
-          </Flex>
+          <FormActions
+            onCancel={onCancel}
+            onSave={() => onSave(formData)}
+            saving={isSaving}
+            saveLabel="保存"
+            cancelLabel="取消"
+          />
         </div>
       </Card>
     );
   };
 
   return (
-    <div className="space-y-6">
-      {/* 头部控制区 */}
-      <Card>
-        <Flex justifyContent="between" alignItems="center">
-          <div>
-            <Title>网站地图管理</Title>
-            <Text className="text-slate-500">
-              管理多语言URL结构和搜索引擎索引
-            </Text>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button 
-              variant="secondary" 
-              icon={RefreshCcw}
-              loading={isLoading}
-              onClick={loadSitemapEntries}
-            >
-              刷新
-            </Button>
-            <Button 
-              variant="secondary"
-              icon={Download}
-              loading={isGenerating}
-              onClick={generateSitemap}
-            >
-              生成XML
-            </Button>
-            <Button 
-              icon={Plus}
-              onClick={() => setShowAddForm(true)}
-            >
-              新增条目
-            </Button>
-          </div>
-        </Flex>
-      </Card>
+    <PageContent maxWidth="2xl">
+      <div className="space-y-6">
+        <PageHeader
+          title="网站地图管理"
+          description="管理多语言URL结构和搜索引擎索引"
+          actions={
+            <>
+              <Button
+                variant="secondary"
+                icon={RefreshCcw}
+                loading={isLoading}
+                onClick={loadSitemapEntries}
+                className="bg-white border-2 border-gray-300 text-gray-700 hover:border-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
+              >
+                刷新
+              </Button>
+              <Button
+                variant="secondary"
+                icon={Download}
+                loading={isGenerating}
+                onClick={generateSitemap}
+                className="bg-white border-2 border-gray-300 text-gray-700 hover:border-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
+              >
+                生成XML
+              </Button>
+              <Button
+                icon={Plus}
+                onClick={() => setShowAddForm(true)}
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg active:scale-95 transition-all duration-200"
+              >
+                新增条目
+              </Button>
+            </>
+          }
+        />
 
       {/* 新增/编辑表单 */}
       {(showAddForm || editingEntry) && (
@@ -453,108 +444,153 @@ const SitemapManager = () => {
         />
       )}
 
-      {/* 网站地图条目列表 */}
-      <Card>
-        <Title className="mb-4">网站地图条目</Title>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>URL路径</TableHeaderCell>
-              <TableHeaderCell>页面类型</TableHeaderCell>
-              <TableHeaderCell>多语言</TableHeaderCell>
-              <TableHeaderCell>优先级</TableHeaderCell>
-              <TableHeaderCell>更新频率</TableHeaderCell>
-              <TableHeaderCell>状态</TableHeaderCell>
-              <TableHeaderCell>操作</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {sitemapEntries.map((entry) => (
-              <TableRow key={entry.id}>
-                <TableCell>
-                  <div className="space-y-1">
-                    <Text className="font-medium">{entry.url_zh}</Text>
-                    {entry.is_multilingual && (
-                      <div className="text-xs text-slate-500 space-y-1">
-                        <div>🇬🇧 {entry.url_en}</div>
-                        <div>🇷🇺 {entry.url_ru}</div>
+        {/* 网站地图条目列表 */}
+        <Card className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+          <Title className="flex items-center gap-2 text-lg font-bold text-gray-900 mb-6">
+            <Link className="h-5 w-5 text-indigo-600" />
+            网站地图条目
+          </Title>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHead>
+                <TableRow className="bg-gradient-to-r from-indigo-50 to-purple-50">
+                  <TableHeaderCell className="font-semibold text-gray-900">URL路径</TableHeaderCell>
+                  <TableHeaderCell className="font-semibold text-gray-900">页面类型</TableHeaderCell>
+                  <TableHeaderCell className="font-semibold text-gray-900">多语言</TableHeaderCell>
+                  <TableHeaderCell className="font-semibold text-gray-900">优先级</TableHeaderCell>
+                  <TableHeaderCell className="font-semibold text-gray-900">更新频率</TableHeaderCell>
+                  <TableHeaderCell className="font-semibold text-gray-900">状态</TableHeaderCell>
+                  <TableHeaderCell className="font-semibold text-gray-900">操作</TableHeaderCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {sitemapEntries.map((entry) => (
+                  <TableRow key={entry.id} className="hover:bg-gray-50 transition-colors duration-150">
+                    <TableCell>
+                      <div className="space-y-1">
+                        <Text className="font-medium text-gray-900">{entry.url_zh}</Text>
+                        {entry.is_multilingual && (
+                          <div className="text-xs text-gray-500 space-y-1">
+                            <div>🇬🇧 {entry.url_en}</div>
+                            <div>🇷🇺 {entry.url_ru}</div>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Badge>
-                    {PAGE_TYPES.find(t => t.value === entry.page_type)?.label}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge color={entry.is_multilingual ? "green" : "gray"}>
-                    {entry.is_multilingual ? "是" : "否"}
-                  </Badge>
-                </TableCell>
-                <TableCell>{entry.priority}</TableCell>
-                <TableCell>
-                  {CHANGE_FREQUENCIES.find(f => f.value === entry.changefreq)?.label}
-                </TableCell>
-                <TableCell>
-                  <Badge color={entry.status === "active" ? "green" : "red"}>
-                    {entry.status === "active" ? "激活" : "禁用"}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="secondary"
-                      size="xs"
-                      onClick={() => setEditingEntry(entry)}
-                    >
-                      编辑
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      color="red"
-                      size="xs"
-                      icon={Trash2}
-                      onClick={() => entry.id && deleteEntry(entry.id)}
-                    >
-                      删除
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className="bg-indigo-100 text-indigo-700 border-indigo-200">
+                        {PAGE_TYPES.find(t => t.value === entry.page_type)?.label}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={entry.is_multilingual ? "bg-emerald-100 text-emerald-700 border-emerald-200" : "bg-gray-100 text-gray-700 border-gray-200"}>
+                        {entry.is_multilingual ? "是" : "否"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Text className="font-medium text-gray-900">{entry.priority}</Text>
+                    </TableCell>
+                    <TableCell>
+                      <Text className="text-gray-700">
+                        {CHANGE_FREQUENCIES.find(f => f.value === entry.changefreq)?.label}
+                      </Text>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={entry.status === "active" ? "bg-emerald-100 text-emerald-700 border-emerald-200" : "bg-red-100 text-red-700 border-red-200"}>
+                        {entry.status === "active" ? "激活" : "禁用"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="secondary"
+                          size="xs"
+                          onClick={() => setEditingEntry(entry)}
+                          className="bg-indigo-50 text-indigo-600 border-indigo-200 hover:bg-indigo-100 hover:border-indigo-300 transition-all duration-200"
+                        >
+                          编辑
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          size="xs"
+                          icon={Trash2}
+                          onClick={() => entry.id && deleteEntry(entry.id)}
+                          className="bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:border-red-300 transition-all duration-200"
+                        >
+                          删除
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </Card>
 
-      {/* 统计信息 */}
-      <Grid numItemsSm={1} numItemsLg={4} className="gap-4">
-        <Card>
-          <Text>总条目数</Text>
-          <Text className="text-2xl font-bold text-blue-600">
-            {sitemapEntries.length}
-          </Text>
-        </Card>
-        <Card>
-          <Text>激活条目</Text>
-          <Text className="text-2xl font-bold text-green-600">
-            {sitemapEntries.filter(e => e.status === 'active').length}
-          </Text>
-        </Card>
-        <Card>
-          <Text>多语言页面</Text>
-          <Text className="text-2xl font-bold text-purple-600">
-            {sitemapEntries.filter(e => e.is_multilingual).length}
-          </Text>
-        </Card>
-        <Card>
-          <Text>最后更新</Text>
-          <Text className="text-sm text-slate-600">
-            {new Date().toLocaleString()}
-          </Text>
-        </Card>
-      </Grid>
-    </div>
+        {/* 统计信息 */}
+        <Grid numItemsSm={1} numItemsLg={4} className="gap-4">
+          <Card className="bg-gradient-to-br from-white to-blue-50 rounded-xl border-l-4 border-l-blue-500 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <Flex justifyContent="between" alignItems="center">
+              <div>
+                <Text className="text-sm font-medium text-gray-600">总条目数</Text>
+                <Text className="text-2xl font-bold text-gray-900 mt-1">
+                  {sitemapEntries.length}
+                </Text>
+              </div>
+              <div className="p-3 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+                <Link className="h-6 w-6" />
+              </div>
+            </Flex>
+          </Card>
+          <Card className="bg-gradient-to-br from-white to-emerald-50 rounded-xl border-l-4 border-l-emerald-500 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <Flex justifyContent="between" alignItems="center">
+              <div>
+                <Text className="text-sm font-medium text-gray-600">激活条目</Text>
+                <Text className="text-2xl font-bold text-gray-900 mt-1">
+                  {sitemapEntries.filter(e => e.status === 'active').length}
+                </Text>
+              </div>
+              <div className="p-3 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
+                <Globe className="h-6 w-6" />
+              </div>
+            </Flex>
+          </Card>
+          <Card className="bg-gradient-to-br from-white to-purple-50 rounded-xl border-l-4 border-l-purple-500 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <Flex justifyContent="between" alignItems="center">
+              <div>
+                <Text className="text-sm font-medium text-gray-600">多语言页面</Text>
+                <Text className="text-2xl font-bold text-gray-900 mt-1">
+                  {sitemapEntries.filter(e => e.is_multilingual).length}
+                </Text>
+              </div>
+              <div className="p-3 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+                <Globe className="h-6 w-6" />
+              </div>
+            </Flex>
+          </Card>
+          <Card className="bg-gradient-to-br from-white to-amber-50 rounded-xl border-l-4 border-l-amber-500 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <Flex justifyContent="between" alignItems="center">
+              <div>
+                <Text className="text-sm font-medium text-gray-600">最后更新</Text>
+                <Text className="text-sm font-semibold text-gray-900 mt-1">
+                  {new Date().toLocaleString('zh-CN', { 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </Text>
+              </div>
+              <div className="p-3 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 text-white">
+                <RefreshCcw className="h-6 w-6" />
+              </div>
+            </Flex>
+          </Card>
+        </Grid>
+      </div>
+    </PageContent>
   );
 };
 

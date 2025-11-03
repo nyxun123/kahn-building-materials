@@ -2,6 +2,14 @@
 // 支持获取、创建、更新、删除媒体文件记录
 
 import { authenticate, createUnauthorizedResponse } from '../../lib/jwt-auth.js';
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  createServerErrorResponse,
+  createBadRequestResponse,
+  createNotFoundResponse,
+  createPaginationInfo
+} from '../../lib/api-response.js';
 
 // GET - 获取媒体文件列表
 export async function onRequestGet(context) {
@@ -11,7 +19,10 @@ export async function onRequestGet(context) {
     // 验证JWT Token
     const auth = await authenticate(request, env);
     if (!auth.authenticated) {
-      return createUnauthorizedResponse('需要登录');
+      return createUnauthorizedResponse({
+        message: auth.error || '需要登录',
+        request
+      });
     }
 
     // 解析查询参数
@@ -63,26 +74,20 @@ export async function onRequestGet(context) {
       .bind(...params, pageSize, offset)
       .all();
 
-    return new Response(JSON.stringify({
-      success: true,
+    return createSuccessResponse({
       data: result.results || [],
-      pagination: {
-        page,
-        pageSize,
-        total,
-        totalPages: Math.ceil(total / pageSize)
-      }
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+      message: '获取媒体文件列表成功',
+      pagination: createPaginationInfo(page, pageSize, total),
+      request
     });
 
   } catch (error) {
     console.error('❌ 获取媒体文件列表失败:', error);
-    return createErrorResponse(500, error.message);
+    return createServerErrorResponse({
+      message: '获取媒体文件列表失败',
+      error: error.message,
+      request
+    });
   }
 }
 
@@ -94,14 +99,20 @@ export async function onRequestPost(context) {
     // 验证JWT Token
     const auth = await authenticate(request, env);
     if (!auth.authenticated) {
-      return createUnauthorizedResponse('需要登录');
+      return createUnauthorizedResponse({
+        message: auth.error || '需要登录',
+        request
+      });
     }
 
     const data = await request.json();
 
     // 验证必填字段
     if (!data.file_name || !data.file_url || !data.file_type || !data.mime_type) {
-      return createErrorResponse(400, '缺少必填字段');
+      return createBadRequestResponse({
+        message: '缺少必填字段：file_name, file_url, file_type, mime_type',
+        request
+      });
     }
 
     // 插入媒体文件记录
@@ -139,21 +150,20 @@ export async function onRequestPost(context) {
       'SELECT * FROM media_files WHERE id = ?'
     ).bind(result.meta.last_row_id).first();
 
-    return new Response(JSON.stringify({
-      success: true,
+    return createSuccessResponse({
+      data: newRecord,
       message: '媒体文件记录创建成功',
-      data: newRecord
-    }), {
-      status: 201,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+      code: 201,
+      request
     });
 
   } catch (error) {
     console.error('❌ 创建媒体文件记录失败:', error);
-    return createErrorResponse(500, error.message);
+    return createServerErrorResponse({
+      message: '创建媒体文件记录失败',
+      error: error.message,
+      request
+    });
   }
 }
 
@@ -165,14 +175,20 @@ export async function onRequestPut(context) {
     // 验证JWT Token
     const auth = await authenticate(request, env);
     if (!auth.authenticated) {
-      return createUnauthorizedResponse('需要登录');
+      return createUnauthorizedResponse({
+        message: auth.error || '需要登录',
+        request
+      });
     }
 
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
 
     if (!id) {
-      return createErrorResponse(400, '缺少媒体文件ID');
+      return createBadRequestResponse({
+        message: '缺少媒体文件ID',
+        request
+      });
     }
 
     const data = await request.json();
@@ -213,21 +229,19 @@ export async function onRequestPut(context) {
       'SELECT * FROM media_files WHERE id = ?'
     ).bind(id).first();
 
-    return new Response(JSON.stringify({
-      success: true,
+    return createSuccessResponse({
+      data: updatedRecord,
       message: '媒体文件记录更新成功',
-      data: updatedRecord
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+      request
     });
 
   } catch (error) {
     console.error('❌ 更新媒体文件记录失败:', error);
-    return createErrorResponse(500, error.message);
+    return createServerErrorResponse({
+      message: '更新媒体文件记录失败',
+      error: error.message,
+      request
+    });
   }
 }
 
@@ -239,14 +253,20 @@ export async function onRequestDelete(context) {
     // 验证JWT Token
     const auth = await authenticate(request, env);
     if (!auth.authenticated) {
-      return createUnauthorizedResponse('需要登录');
+      return createUnauthorizedResponse({
+        message: auth.error || '需要登录',
+        request
+      });
     }
 
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
 
     if (!id) {
-      return createErrorResponse(400, '缺少媒体文件ID');
+      return createBadRequestResponse({
+        message: '缺少媒体文件ID',
+        request
+      });
     }
 
     // 软删除（设置 is_active = 0）
@@ -254,47 +274,19 @@ export async function onRequestDelete(context) {
       'UPDATE media_files SET is_active = 0, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
     ).bind(id).run();
 
-    return new Response(JSON.stringify({
-      success: true,
-      message: '媒体文件删除成功'
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+    return createSuccessResponse({
+      data: { id },
+      message: '媒体文件删除成功',
+      request
     });
 
   } catch (error) {
     console.error('❌ 删除媒体文件失败:', error);
-    return createErrorResponse(500, error.message);
+    return createServerErrorResponse({
+      message: '删除媒体文件失败',
+      error: error.message,
+      request
+    });
   }
-}
-
-// OPTIONS - CORS 预检
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Max-Age': '86400'
-    }
-  });
-}
-
-// 辅助函数：创建错误响应
-function createErrorResponse(status, message) {
-  return new Response(JSON.stringify({
-    success: false,
-    error: message
-  }), {
-    status,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
-    }
-  });
 }
 

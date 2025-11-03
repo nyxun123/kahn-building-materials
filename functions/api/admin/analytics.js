@@ -1,7 +1,10 @@
 import { authenticate, createUnauthorizedResponse } from '../../lib/jwt-auth.js';
 import { rateLimitMiddleware } from '../../lib/rate-limit.js';
-import { createCorsSuccessResponse, createCorsErrorResponse, handleCorsPreFlight } from '../../lib/cors.js';
-import { createServerErrorResponse } from '../../lib/api-response.js';
+import { handleCorsPreFlight } from '../../lib/cors.js';
+import {
+  createSuccessResponse,
+  createServerErrorResponse,
+} from '../../lib/api-response.js';
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -25,7 +28,7 @@ export async function onRequestGet(context) {
     // 生成模拟分析数据
     const analyticsData = generateAnalyticsData(timeRange);
 
-    return createCorsSuccessResponse({
+    return createSuccessResponse({
       data: analyticsData,
       message: '获取分析数据成功',
       request

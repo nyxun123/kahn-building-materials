@@ -1,5 +1,13 @@
 import { authenticate, createUnauthorizedResponse } from '../../../lib/jwt-auth.js';
 import { validateProduct, sanitizeObject } from '../../../lib/validation.js';
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  createBadRequestResponse,
+  createNotFoundResponse,
+  createServerErrorResponse,
+} from '../../../lib/api-response.js';
+import { handleCorsPreFlight } from '../../../lib/cors.js';
 
 // 单个产品的操作 - GET, PUT, DELETE
 export async function onRequestGet(context) {
@@ -9,7 +17,10 @@ export async function onRequestGet(context) {
     // JWT 认证检查
     const auth = await authenticate(request, env);
     if (!auth.authenticated) {
-      return createUnauthorizedResponse(auth.error);
+      return createUnauthorizedResponse({
+        message: auth.error || '未授权',
+        request
+      });
     }
     
     // 数据库检查
@@ -61,14 +72,9 @@ export async function onRequestGet(context) {
     
     if (!product) {
       console.warn('❌ 产品不存在:', productId);
-      return new Response(JSON.stringify({
-        error: { message: '产品不存在' }
-      }), {
-        status: 404,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createNotFoundResponse({
+        message: '产品不存在',
+        request
       });
     }
     
@@ -123,24 +129,12 @@ export async function onRequestGet(context) {
     
     console.log('✅ 处理后的产品数据:', processedProduct);
     
-    // 返回单个对象格式，不包装成数组 - 这是关键修复
-    const responseData = {
-      success: true,
+    return createSuccessResponse({
       data: processedProduct,
-      meta: {
-        timestamp: new Date().toISOString(),
-        productId: productId
-      }
-    };
-    
-    console.log('📤 返回的响应数据:', responseData);
-    
-    return new Response(JSON.stringify(responseData), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'no-cache, no-store, must-revalidate', // 禁用缓存
+      message: '获取产品详情成功',
+      request,
+      additionalHeaders: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0'
       }
@@ -148,14 +142,10 @@ export async function onRequestGet(context) {
     
   } catch (error) {
     console.error('获取产品详情失败:', error);
-    return new Response(JSON.stringify({
-      error: { message: `获取产品详情失败: ${error.message}` }
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+    return createServerErrorResponse({
+      message: '获取产品详情失败',
+      error: error.message,
+      request
     });
   }
 }
@@ -168,7 +158,10 @@ export async function onRequestPut(context) {
     // JWT 认证检查
     const auth = await authenticate(request, env);
     if (!auth.authenticated) {
-      return createUnauthorizedResponse(auth.error);
+      return createUnauthorizedResponse({
+        message: auth.error || '未授权',
+        request
+      });
     }
     
     // 数据库检查
@@ -204,16 +197,9 @@ export async function onRequestPut(context) {
     // 数据验证
     const validation = validateProduct(productData, true);
     if (!validation.valid) {
-      return new Response(JSON.stringify({
-        success: false,
-        code: 400,
-        message: validation.error
-      }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createBadRequestResponse({
+        message: validation.error,
+        request
       });
     }
 
@@ -226,14 +212,9 @@ export async function onRequestPut(context) {
     ).bind(productId).first();
 
     if (!existingProduct) {
-      return new Response(JSON.stringify({
-        error: { message: '产品不存在' }
-      }), {
-        status: 404,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createNotFoundResponse({
+        message: '产品不存在',
+        request
       });
     }
     
@@ -244,14 +225,9 @@ export async function onRequestPut(context) {
       ).bind(cleanedData.product_code, productId).first();
       
       if (duplicateProduct) {
-        return new Response(JSON.stringify({
-          error: { message: '产品代码已存在' }
-        }), {
-          status: 400,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-          }
+        return createBadRequestResponse({
+          message: '产品代码已存在',
+          request
         });
       }
     }
@@ -432,14 +408,9 @@ export async function onRequestPut(context) {
     updateFields.push('updated_at = CURRENT_TIMESTAMP');
     
     if (updateFields.length === 1) { // 只有时间戳字段
-      return new Response(JSON.stringify({
-        error: { message: '没有要更新的字段' }
-      }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createBadRequestResponse({
+        message: '没有要更新的字段',
+        request
       });
     }
     
@@ -459,27 +430,18 @@ export async function onRequestPut(context) {
       'SELECT * FROM products WHERE id = ?'
     ).bind(productId).first();
     
-    return new Response(JSON.stringify({
-      success: true,
-      data: updatedProduct
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+    return createSuccessResponse({
+      data: updatedProduct,
+      message: '产品更新成功',
+      request
     });
     
   } catch (error) {
     console.error('更新产品失败:', error);
-    return new Response(JSON.stringify({
-      error: { message: `更新产品失败: ${error.message}` }
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+    return createServerErrorResponse({
+      message: '更新产品失败',
+      error: error.message,
+      request
     });
   }
 }
@@ -492,32 +454,25 @@ export async function onRequestDelete(context) {
     // JWT 认证检查
     const auth = await authenticate(request, env);
     if (!auth.authenticated) {
-      return createUnauthorizedResponse(auth.error);
+      return createUnauthorizedResponse({
+        message: auth.error || '未授权',
+        request
+      });
     }
     
     // 数据库检查
     if (!env.DB) {
-      return new Response(JSON.stringify({
-        error: { message: 'D1数据库未配置' }
-      }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createServerErrorResponse({
+        message: 'D1数据库未配置',
+        request
       });
     }
 
     const productId = params.id;
     if (!productId) {
-      return new Response(JSON.stringify({
-        error: { message: '产品ID不能为空' }
-      }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createBadRequestResponse({
+        message: '产品ID不能为空',
+        request
       });
     }
     
@@ -527,14 +482,9 @@ export async function onRequestDelete(context) {
     ).bind(productId).first();
     
     if (!existingProduct) {
-      return new Response(JSON.stringify({
-        error: { message: '产品不存在' }
-      }), {
-        status: 404,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createNotFoundResponse({
+        message: '产品不存在',
+        request
       });
     }
     
@@ -545,40 +495,22 @@ export async function onRequestDelete(context) {
     
     console.log('✅ 产品删除成功:', existingProduct.product_code);
     
-    return new Response(JSON.stringify({
-      success: true,
-      message: '产品删除成功'
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+    return createSuccessResponse({
+      message: '产品删除成功',
+      request
     });
     
   } catch (error) {
     console.error('删除产品失败:', error);
-    return new Response(JSON.stringify({
-      error: { message: `删除产品失败: ${error.message}` }
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+    return createServerErrorResponse({
+      message: '删除产品失败',
+      error: error.message,
+      request
     });
   }
 }
 
 // 处理OPTIONS请求 (CORS预检)
 export async function onRequestOptions(context) {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Max-Age': '86400',
-    },
-  });
+  return handleCorsPreFlight(context.request);
 }

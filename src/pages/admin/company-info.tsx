@@ -7,12 +7,13 @@ import {
   Button,
   Title,
   Badge,
+  TextInput,
+  Textarea,
 } from "@tremor/react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useList, useUpdate } from "@refinedev/core";
 import toast from "react-hot-toast";
-import { Save, XCircle } from "lucide-react";
+import { Save, XCircle, Search, Building2, Image as ImageIcon } from "lucide-react";
+import { PageHeader, PageContent, TabLangInput, FormField, FormSection, StandardUploadButton } from "@/components/admin";
 
 interface CompanyInfoRecord {
   id: number;
@@ -131,206 +132,230 @@ const CompanyInfoPage = () => {
     : undefined;
 
   return (
-    <div className="space-y-4">
-      <Card>
-        <Flex justifyContent="between" alignItems="center" className="gap-4">
-          <div>
-            <Text className="text-lg font-semibold text-slate-900">公司信息</Text>
-            <Text className="text-sm text-slate-500">维护官网展示的企业介绍、地址与多语言文案</Text>
-          </div>
-          <Badge color="indigo">共 {records.length} 条记录</Badge>
-        </Flex>
-        <div className="mt-4 grid gap-3 md:grid-cols-2">
-          <div className="flex flex-wrap gap-2">
-            {sectionOptions.map((section) => (
-              <button
-                key={section}
-                type="button"
-                onClick={() => {
-                  setActiveSection(section);
-                  setEditingId(null);
-                }}
-                className={`rounded-md px-3 py-1 text-sm transition ${
-                  activeSection === section
-                    ? "bg-indigo-600 text-white"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
-              >
-                {section === "all" ? "全部" : section}
-              </button>
-            ))}
-          </div>
-          <Input
-            placeholder="搜索分区或标题"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
-        </div>
-      </Card>
+    <PageContent maxWidth="2xl">
+      <div className="space-y-6">
+        <PageHeader
+          title="公司信息"
+          description={`维护官网展示的企业介绍、地址与多语言文案 · 共 ${records.length} 条记录`}
+        />
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <div className="space-y-3">
-          {filteredRecords.map((record) => (
-            <Card
-              key={record.id}
-              className={`cursor-pointer border transition hover:shadow-sm ${
-                editingId === record.id ? "border-indigo-300 bg-indigo-50" : "border-slate-200"
-              }`}
-              onClick={() => handleSelectRecord(record)}
-            >
-              <Flex justifyContent="between" alignItems="start">
+        <Card className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="flex flex-wrap gap-2">
+              {sectionOptions.map((section) => (
+                <button
+                  key={section}
+                  type="button"
+                  onClick={() => {
+                    setActiveSection(section);
+                    setEditingId(null);
+                  }}
+                  className={`
+                    rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200
+                    ${activeSection === section
+                      ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }
+                  `}
+                >
+                  {section === "all" ? "全部" : section}
+                </button>
+              ))}
+            </div>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <TextInput
+                placeholder="搜索分区或标题"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                className="pl-10 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200"
+              />
+            </div>
+          </div>
+        </Card>
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className="space-y-3">
+            {filteredRecords.map((record) => (
+              <Card
+                key={record.id}
+                className={`
+                  cursor-pointer border-2 transition-all duration-200 rounded-xl
+                  ${editingId === record.id
+                    ? "border-indigo-500 bg-gradient-to-br from-indigo-50 to-purple-50 shadow-md"
+                    : "border-gray-200 hover:border-indigo-300 hover:shadow-md hover:-translate-y-1"
+                  }
+                `}
+                onClick={() => handleSelectRecord(record)}
+              >
+                <Flex justifyContent="between" alignItems="start">
+                  <div className="flex-1 min-w-0">
+                    <Flex alignItems="center" className="gap-2 mb-2">
+                      <div className={`
+                        p-1.5 rounded-lg
+                        ${editingId === record.id
+                          ? "bg-gradient-to-br from-indigo-500 to-purple-600 text-white"
+                          : "bg-gray-100 text-gray-600"
+                        }
+                      `}>
+                        <Building2 className="h-4 w-4" />
+                      </div>
+                      <Text className={`font-semibold ${
+                        editingId === record.id ? "text-indigo-700" : "text-gray-900"
+                      }`}>
+                        {record.section_type.toUpperCase()} · {record.title_zh || record.title_en || "未命名"}
+                      </Text>
+                    </Flex>
+                    <Text className="text-xs text-gray-500 mb-2">
+                      更新于 {new Date(record.updated_at || record.created_at || '').toLocaleString()}
+                    </Text>
+                    <Text className="line-clamp-2 text-sm text-gray-600">
+                      {(record.content_zh || record.content_en || record.content_ru || "暂无内容").slice(0, 120)}
+                    </Text>
+                  </div>
+                  <Badge
+                    color={record.is_active ? "emerald" : "slate"}
+                    className="rounded-full px-2 py-1 ml-2 flex-shrink-0"
+                  >
+                    {record.is_active ? "显示中" : "已隐藏"}
+                  </Badge>
+                </Flex>
+              </Card>
+            ))}
+            {!filteredRecords.length && !isLoading && (
+              <Card className="bg-white rounded-xl border-2 border-gray-200">
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Building2 className="h-16 w-16 text-gray-300 mb-4" />
+                  <Text className="text-gray-500 text-lg">暂无公司信息记录</Text>
+                </div>
+              </Card>
+            )}
+          </div>
+
+          <Card className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+            {editingId && activeRecord ? (
+              <div className="space-y-6 p-4">
                 <div>
-                  <Text className="font-semibold text-slate-900">
-                    {record.section_type.toUpperCase()} · {record.title_zh || record.title_en || "未命名"}
-                  </Text>
-                  <Text className="mt-1 text-xs text-slate-500">
-                    更新于 {new Date(record.updated_at || record.created_at || '').toLocaleString()}
+                  <Title className="text-lg font-bold text-gray-900 mb-1">编辑公司信息</Title>
+                  <Text className="text-sm text-gray-500">
+                    分区：{activeRecord.section_type} · ID #{activeRecord.id}
                   </Text>
                 </div>
-                <Badge color={record.is_active ? "emerald" : "slate"}>
-                  {record.is_active ? "显示中" : "已隐藏"}
-                </Badge>
-              </Flex>
-              <Text className="mt-3 line-clamp-2 text-sm text-slate-600">
-                {(record.content_zh || record.content_en || record.content_ru || "暂无内容").slice(0, 120)}
-              </Text>
-            </Card>
-          ))}
-          {!filteredRecords.length && !isLoading && (
-            <Card>
-              <Text className="text-center text-slate-400">暂无公司信息记录</Text>
-            </Card>
-          )}
-        </div>
 
-        <Card>
-          {editingId && activeRecord ? (
-            <div className="space-y-4">
-              <div>
-                <Title className="text-lg font-semibold text-slate-900">编辑公司信息</Title>
-                <Text className="text-sm text-slate-500">
-                  分区：{activeRecord.section_type} · ID #{activeRecord.id}
+                <FormSection title="基础信息">
+                  <TabLangInput
+                    label="标题"
+                    values={{
+                      zh: formState.title_zh || "",
+                      en: formState.title_en || "",
+                      ru: formState.title_ru || "",
+                    }}
+                    onChange={(lang, value) => {
+                      setFormState((prev) => ({
+                        ...prev,
+                        [`title_${lang}`]: value,
+                      }));
+                    }}
+                    type="text"
+                  />
+
+                  <FormField label="图片地址">
+                    <div className="flex gap-2">
+                      <TextInput
+                        value={formState.image_url || ""}
+                        onChange={(event) =>
+                          setFormState((prev) => ({ ...prev, image_url: event.target.value }))
+                        }
+                        placeholder="输入图片URL"
+                        className="flex-1 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200"
+                      />
+                      <StandardUploadButton
+                        onUpload={(url) => setFormState((prev) => ({ ...prev, image_url: url }))}
+                        folder="company"
+                      />
+                    </div>
+                  </FormField>
+
+                  <Grid numItemsSm={1} numItemsLg={2} className="gap-3">
+                    <FormField label="排序权重">
+                      <TextInput
+                        type="number"
+                        value={String(formState.sort_order ?? 0)}
+                        onChange={(event) =>
+                          setFormState((prev) => ({ ...prev, sort_order: Number(event.target.value) }))
+                        }
+                        className="border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200"
+                      />
+                    </FormField>
+                    <FormField label="状态">
+                      <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={Boolean(formState.is_active)}
+                          onChange={(event) =>
+                            setFormState((prev) => ({ ...prev, is_active: event.target.checked }))
+                          }
+                          className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <span>是否显示</span>
+                      </label>
+                    </FormField>
+                  </Grid>
+                </FormSection>
+
+                <FormSection title="多语言内容">
+                  <TabLangInput
+                    label="内容"
+                    values={{
+                      zh: formState.content_zh || "",
+                      en: formState.content_en || "",
+                      ru: formState.content_ru || "",
+                    }}
+                    onChange={(lang, value) => {
+                      setFormState((prev) => ({
+                        ...prev,
+                        [`content_${lang}`]: value,
+                      }));
+                    }}
+                    type="textarea"
+                  />
+                </FormSection>
+
+                <Flex justifyContent="end" className="gap-3 pt-4 border-t border-gray-200">
+                  <Button
+                    variant="secondary"
+                    icon={XCircle}
+                    onClick={() => {
+                      setEditingId(null);
+                      setFormState({});
+                    }}
+                    className="bg-white border-2 border-gray-300 text-gray-700 hover:border-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
+                  >
+                    取消
+                  </Button>
+                  <Button
+                    icon={Save}
+                    loading={saving}
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    保存修改
+                  </Button>
+                </Flex>
+              </div>
+            ) : (
+              <div className="flex h-full min-h-[400px] flex-col items-center justify-center p-8">
+                <Building2 className="h-16 w-16 text-gray-300 mb-4" />
+                <Text className="text-gray-500 text-lg">
+                  {isLoading ? "正在加载公司信息..." : "请选择左侧记录进行编辑"}
                 </Text>
               </div>
-
-              <Grid numItemsSm={1} numItemsLg={2} className="gap-3">
-                <div>
-                  <Text className="text-sm font-medium text-slate-600">中文标题</Text>
-                  <Input
-                    value={formState.title_zh || ""}
-                    onChange={(event) =>
-                      setFormState((prev) => ({ ...prev, title_zh: event.target.value }))
-                    }
-                  />
-                </div>
-                <div>
-                  <Text className="text-sm font-medium text-slate-600">英文标题</Text>
-                  <Input
-                    value={formState.title_en || ""}
-                    onChange={(event) =>
-                      setFormState((prev) => ({ ...prev, title_en: event.target.value }))
-                    }
-                  />
-                </div>
-                <div>
-                  <Text className="text-sm font-medium text-slate-600">俄文标题</Text>
-                  <Input
-                    value={formState.title_ru || ""}
-                    onChange={(event) =>
-                      setFormState((prev) => ({ ...prev, title_ru: event.target.value }))
-                    }
-                  />
-                </div>
-                <div>
-                  <Text className="text-sm font-medium text-slate-600">图片地址</Text>
-                  <Input
-                    value={formState.image_url || ""}
-                    onChange={(event) =>
-                      setFormState((prev) => ({ ...prev, image_url: event.target.value }))
-                    }
-                  />
-                </div>
-                <div>
-                  <Text className="text-sm font-medium text-slate-600">排序权重</Text>
-                  <Input
-                    type="number"
-                    value={formState.sort_order ?? 0}
-                    onChange={(event) =>
-                      setFormState((prev) => ({ ...prev, sort_order: Number(event.target.value) }))
-                    }
-                  />
-                </div>
-                <div>
-                  <label className="flex items-center gap-2 text-sm text-slate-600">
-                    <input
-                      type="checkbox"
-                      checked={Boolean(formState.is_active)}
-                      onChange={(event) =>
-                        setFormState((prev) => ({ ...prev, is_active: event.target.checked }))
-                      }
-                    />
-                    是否显示
-                  </label>
-                </div>
-              </Grid>
-
-              <div>
-                <Text className="text-sm font-medium text-slate-600">中文内容</Text>
-                <Textarea
-                  className="mt-1 min-h-[150px]"
-                  value={formState.content_zh || ""}
-                  onChange={(event) =>
-                    setFormState((prev) => ({ ...prev, content_zh: event.target.value }))
-                  }
-                />
-              </div>
-
-              <div>
-                <Text className="text-sm font-medium text-slate-600">英文内容</Text>
-                <Textarea
-                  className="mt-1 min-h-[150px]"
-                  value={formState.content_en || ""}
-                  onChange={(event) =>
-                    setFormState((prev) => ({ ...prev, content_en: event.target.value }))
-                  }
-                />
-              </div>
-
-              <div>
-                <Text className="text-sm font-medium text-slate-600">俄文内容</Text>
-                <Textarea
-                  className="mt-1 min-h-[150px]"
-                  value={formState.content_ru || ""}
-                  onChange={(event) =>
-                    setFormState((prev) => ({ ...prev, content_ru: event.target.value }))
-                  }
-                />
-              </div>
-
-              <Flex justifyContent="end" className="gap-2">
-                <Button
-                  variant="secondary"
-                  icon={XCircle}
-                  onClick={() => {
-                    setEditingId(null);
-                    setFormState({});
-                  }}
-                >
-                  取消
-                </Button>
-                <Button icon={Save} loading={saving} onClick={handleSave}>
-                  保存修改
-                </Button>
-              </Flex>
-            </div>
-          ) : (
-            <div className="flex h-full items-center justify-center text-slate-400">
-              {isLoading ? "正在加载公司信息..." : "请选择左侧记录进行编辑"}
-            </div>
-          )}
-        </Card>
+            )}
+          </Card>
+        </div>
       </div>
-    </div>
+    </PageContent>
   );
 };
 

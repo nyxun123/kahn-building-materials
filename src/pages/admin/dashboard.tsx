@@ -13,7 +13,8 @@ import {
   Badge,
 } from "@tremor/react";
 import { useNavigate } from "react-router-dom";
-import { MessageCircle, PackageSearch, Activity } from "lucide-react";
+import { MessageCircle, PackageSearch, Activity, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { PageHeader, PageContent } from "@/components/admin";
 
 interface DashboardResponse {
   success?: boolean;
@@ -123,144 +124,209 @@ const Dashboard = () => {
   }, [data?.categoryStats]);
 
   return (
-    <div className="space-y-6">
-      {error && (
-        <Card decoration="top" decorationColor="rose">
-          <Title>加载仪表盘失败</Title>
-          <Text className="mt-2 text-sm text-rose-600">
-            {error instanceof Error ? error.message : "未知错误"}
-          </Text>
-        </Card>
-      )}
-
-      <Grid numItemsSm={1} numItemsMd={2} numItemsLg={4} className="gap-4">
-        <Card decoration="left" decorationColor="indigo">
+    <PageContent maxWidth="2xl">
+      <div className="space-y-6">
+        {/* 欢迎横幅 */}
+        <Card className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl border-0 shadow-lg">
           <Flex justifyContent="between" alignItems="center">
             <div>
-              <Text>总产品数</Text>
-              <Metric>{isLoading ? "--" : data?.totalProducts ?? 0}</Metric>
-            </div>
-            <PackageSearch className="h-10 w-10 text-indigo-500" />
-          </Flex>
-          <Text className="mt-3 text-xs text-slate-500">活跃产品：{data?.activeProducts ?? 0}</Text>
-        </Card>
-
-        <Card decoration="left" decorationColor="emerald">
-          <Flex justifyContent="between" alignItems="center">
-            <div>
-              <Text>客户留言</Text>
-              <Metric>{isLoading ? "--" : data?.totalContacts ?? 0}</Metric>
-            </div>
-            <MessageCircle className="h-10 w-10 text-emerald-500" />
-          </Flex>
-          <Text className="mt-3 text-xs text-slate-500">未读留言：{data?.unreadContacts ?? 0}</Text>
-        </Card>
-
-        <Card decoration="left" decorationColor="amber">
-          <Flex justifyContent="between" alignItems="center">
-            <div>
-              <Text>近 7 天互动</Text>
-              <Metric>{isLoading ? "--" : data?.recentActivities ?? 0}</Metric>
-            </div>
-            <Activity className="h-10 w-10 text-amber-500" />
-          </Flex>
-          <Text className="mt-3 text-xs text-slate-500">联系表单提交趋势</Text>
-        </Card>
-
-        <Card decoration="left" decorationColor="cyan">
-          <Flex justifyContent="between" alignItems="center">
-            <div>
-              <Text>工作状态</Text>
-              <Metric>{isLoading ? "加载中" : "系统正常"}</Metric>
-            </div>
-            <Badge color="cyan" className="mt-2">
-              自动化部署
-            </Badge>
-          </Flex>
-          <Text className="mt-3 text-xs text-slate-500">Cloudflare Pages 最近发布已同步</Text>
-        </Card>
-      </Grid>
-
-      <Grid numItemsSm={1} numItemsLg={3} className="gap-4">
-        <Card className="lg:col-span-2">
-          <Flex justifyContent="between" alignItems="center">
-            <div>
-              <Title>30 日留言走势</Title>
-              <Text className="text-sm text-slate-500">
-                结合销售漏斗，评估市场推广效果
+              <Title className="text-white text-2xl font-bold mb-1">欢迎回来！</Title>
+              <Text className="text-indigo-100 text-sm">
+                {new Date().toLocaleDateString('zh-CN', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric',
+                  weekday: 'long'
+                })}
               </Text>
             </div>
-            <Button variant="secondary" size="sm" onClick={() => navigate("/admin/messages")}>
-              查看留言
-            </Button>
           </Flex>
-          <AreaChart
-            className="mt-6 h-60"
-            data={lineChartData}
-            index="日期"
-            categories={["留言"]}
-            colors={["indigo"]}
-            noDataText={isLoading ? "正在加载数据..." : "暂无数据"}
-            yAxisWidth={56}
-          />
         </Card>
 
-        <Card>
-          <Title>活跃产品分类占比</Title>
-          <DonutChart
-            className="mt-6"
-            data={donutChartData}
-            index="name"
-            category="count"
-            colors={["indigo", "emerald", "amber", "rose", "cyan", "violet"]}
-            valueFormatter={(value) => `${value} 款`}
-            noDataText={isLoading ? "正在载入" : "暂无分类数据"}
-          />
-        </Card>
-      </Grid>
+        {error && (
+          <Card className="bg-red-50 border-2 border-red-200 rounded-xl">
+            <Title className="text-red-800">加载仪表盘失败</Title>
+            <Text className="mt-2 text-sm text-red-600">
+              {error instanceof Error ? error.message : "未知错误"}
+            </Text>
+          </Card>
+        )}
 
-      <Card>
-        <Flex justifyContent="between" alignItems="center">
-          <div>
-            <Title>常用快捷操作</Title>
-            <Text className="text-sm text-slate-500">高频任务一键直达</Text>
-          </div>
-        </Flex>
-        <Grid numItemsSm={1} numItemsMd={2} numItemsLg={4} className="mt-6 gap-4">
-          <Card decoration="top" decorationColor="indigo">
-            <Title>新增产品</Title>
-            <Text className="mt-2 text-sm text-slate-500">快速发布新品，支持多语言内容</Text>
-            <Button className="mt-4" onClick={() => navigate("/admin/products/new")}>
-              立即创建
-            </Button>
+        <Grid numItemsSm={1} numItemsMd={2} numItemsLg={4} className="gap-4">
+          {/* 总产品数卡片 */}
+          <Card className="bg-gradient-to-br from-white to-gray-50 rounded-xl border-l-4 border-l-indigo-500 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <Flex justifyContent="between" alignItems="center">
+              <div className="flex-1">
+                <Text className="text-sm font-medium text-gray-600">总产品数</Text>
+                <Metric className="mt-2 text-3xl font-bold text-gray-900">
+                  {isLoading ? "--" : data?.totalProducts ?? 0}
+                </Metric>
+                <Flex alignItems="center" className="mt-3 gap-1">
+                  <Text className="text-xs text-gray-500">活跃产品：</Text>
+                  <Text className="text-xs font-semibold text-indigo-600">
+                    {data?.activeProducts ?? 0}
+                  </Text>
+                </Flex>
+              </div>
+              <div className="p-3 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl">
+                <PackageSearch className="h-8 w-8 text-indigo-600" />
+              </div>
+            </Flex>
           </Card>
-          <Card decoration="top" decorationColor="emerald">
-            <Title>管理产品</Title>
-            <Text className="mt-2 text-sm text-slate-500">上下架、排序与规格维护</Text>
-            <Button className="mt-4" variant="secondary" onClick={() => navigate("/admin/products")}
-            >
-              前往列表
-            </Button>
+
+          {/* 客户留言卡片 */}
+          <Card className="bg-gradient-to-br from-white to-gray-50 rounded-xl border-l-4 border-l-emerald-500 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <Flex justifyContent="between" alignItems="center">
+              <div className="flex-1">
+                <Text className="text-sm font-medium text-gray-600">客户留言</Text>
+                <Metric className="mt-2 text-3xl font-bold text-gray-900">
+                  {isLoading ? "--" : data?.totalContacts ?? 0}
+                </Metric>
+                <Flex alignItems="center" className="mt-3 gap-1">
+                  <Text className="text-xs text-gray-500">未读留言：</Text>
+                  <Text className="text-xs font-semibold text-emerald-600">
+                    {data?.unreadContacts ?? 0}
+                  </Text>
+                </Flex>
+              </div>
+              <div className="p-3 bg-gradient-to-br from-emerald-100 to-green-100 rounded-xl">
+                <MessageCircle className="h-8 w-8 text-emerald-600" />
+              </div>
+            </Flex>
           </Card>
-          <Card decoration="top" decorationColor="rose">
-            <Title>回复留言</Title>
-            <Text className="mt-2 text-sm text-slate-500">跟进客户意向，记录处理备注</Text>
-            <Button className="mt-4" variant="secondary" onClick={() => navigate("/admin/messages")}
-            >
-              处理留言
-            </Button>
+
+          {/* 近7天互动卡片 */}
+          <Card className="bg-gradient-to-br from-white to-gray-50 rounded-xl border-l-4 border-l-amber-500 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <Flex justifyContent="between" alignItems="center">
+              <div className="flex-1">
+                <Text className="text-sm font-medium text-gray-600">近 7 天互动</Text>
+                <Metric className="mt-2 text-3xl font-bold text-gray-900">
+                  {isLoading ? "--" : data?.recentActivities ?? 0}
+                </Metric>
+                <Text className="mt-3 text-xs text-gray-500">联系表单提交趋势</Text>
+              </div>
+              <div className="p-3 bg-gradient-to-br from-amber-100 to-yellow-100 rounded-xl">
+                <Activity className="h-8 w-8 text-amber-600" />
+              </div>
+            </Flex>
           </Card>
-          <Card decoration="top" decorationColor="amber">
-            <Title>内容管理</Title>
-            <Text className="mt-2 text-sm text-slate-500">保持中文/英文/俄文内容一致</Text>
-            <Button className="mt-4" variant="secondary" onClick={() => navigate("/admin/content")}
-            >
-              更新文案
-            </Button>
+
+          {/* 工作状态卡片 */}
+          <Card className="bg-gradient-to-br from-white to-gray-50 rounded-xl border-l-4 border-l-cyan-500 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <Flex justifyContent="between" alignItems="center">
+              <div className="flex-1">
+                <Text className="text-sm font-medium text-gray-600">工作状态</Text>
+                <Metric className="mt-2 text-xl font-bold text-gray-900">
+                  {isLoading ? "加载中" : "系统正常"}
+                </Metric>
+                <Badge color="cyan" className="mt-3 rounded-full px-3 py-1">
+                  自动化部署
+                </Badge>
+              </div>
+              <div className="p-3 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-xl">
+                <Activity className="h-8 w-8 text-cyan-600" />
+              </div>
+            </Flex>
+            <Text className="mt-3 text-xs text-gray-500">Cloudflare Pages 最近发布已同步</Text>
           </Card>
         </Grid>
-      </Card>
-    </div>
+
+        <Grid numItemsSm={1} numItemsLg={2} className="gap-6">
+          <Card className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+            <Flex justifyContent="between" alignItems="center" className="mb-4">
+              <div>
+                <Title className="text-lg font-bold text-gray-900">30 日留言走势</Title>
+                <Text className="text-sm text-gray-500 mt-1">
+                  结合销售漏斗，评估市场推广效果
+                </Text>
+              </div>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => navigate("/admin/messages")}
+                className="bg-white border-2 border-gray-300 text-gray-700 hover:border-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
+              >
+                查看留言
+              </Button>
+            </Flex>
+            <AreaChart
+              className="mt-6 h-60"
+              data={lineChartData}
+              index="日期"
+              categories={["留言"]}
+              colors={["indigo"]}
+              showLegend={false}
+            />
+          </Card>
+
+          <Card className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+            <Title className="text-lg font-bold text-gray-900 mb-4">产品分类统计</Title>
+            <DonutChart
+              className="mt-6 h-60"
+              data={donutChartData}
+              category="count"
+              index="name"
+              colors={["indigo", "emerald", "amber", "rose", "cyan"]}
+            />
+          </Card>
+        </Grid>
+
+        {/* 快捷操作 */}
+        <Card className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+          <Flex justifyContent="between" alignItems="center" className="mb-4">
+            <div>
+              <Title className="text-lg font-bold text-gray-900">常用快捷操作</Title>
+              <Text className="text-sm text-gray-500 mt-1">高频任务一键直达</Text>
+            </div>
+          </Flex>
+          <Grid numItemsSm={1} numItemsMd={2} numItemsLg={4} className="gap-4">
+            <Card className="bg-gradient-to-br from-white to-indigo-50 rounded-xl border-l-4 border-l-indigo-500 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+              <Title className="text-base font-bold text-gray-900">新增产品</Title>
+              <Text className="mt-2 text-sm text-gray-600">快速发布新品，支持多语言内容</Text>
+              <Button
+                className="mt-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg active:scale-95 transition-all duration-200"
+                onClick={() => navigate("/admin/products/new")}
+              >
+                立即创建
+              </Button>
+            </Card>
+            <Card className="bg-gradient-to-br from-white to-emerald-50 rounded-xl border-l-4 border-l-emerald-500 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+              <Title className="text-base font-bold text-gray-900">管理产品</Title>
+              <Text className="mt-2 text-sm text-gray-600">上下架、排序与规格维护</Text>
+              <Button
+                className="mt-4 bg-white border-2 border-gray-300 text-gray-700 hover:border-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
+                variant="secondary"
+                onClick={() => navigate("/admin/products")}
+              >
+                前往列表
+              </Button>
+            </Card>
+            <Card className="bg-gradient-to-br from-white to-rose-50 rounded-xl border-l-4 border-l-rose-500 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+              <Title className="text-base font-bold text-gray-900">回复留言</Title>
+              <Text className="mt-2 text-sm text-gray-600">跟进客户意向，记录处理备注</Text>
+              <Button
+                className="mt-4 bg-white border-2 border-gray-300 text-gray-700 hover:border-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
+                variant="secondary"
+                onClick={() => navigate("/admin/messages")}
+              >
+                处理留言
+              </Button>
+            </Card>
+            <Card className="bg-gradient-to-br from-white to-amber-50 rounded-xl border-l-4 border-l-amber-500 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+              <Title className="text-base font-bold text-gray-900">内容管理</Title>
+              <Text className="mt-2 text-sm text-gray-600">保持中文/英文/俄文内容一致</Text>
+              <Button
+                className="mt-4 bg-white border-2 border-gray-300 text-gray-700 hover:border-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
+                variant="secondary"
+                onClick={() => navigate("/admin/content")}
+              >
+                更新文案
+              </Button>
+            </Card>
+          </Grid>
+        </Card>
+      </div>
+    </PageContent>
   );
 };
 

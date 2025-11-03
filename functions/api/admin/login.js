@@ -1,10 +1,11 @@
 import { verifyPassword } from '../../lib/password-hash.js';
 import { generateToken } from '../../lib/jwt-auth.js';
 import { rateLimitMiddleware } from '../../lib/rate-limit.js';
-import { createCorsResponse, createCorsErrorResponse, handleCorsPreFlight } from '../../lib/cors.js';
+import { handleCorsPreFlight } from '../../lib/cors.js';
 import {
   createSuccessResponse,
-  createErrorResponse,
+  createBadRequestResponse,
+  createUnauthorizedResponse,
   createServerErrorResponse
 } from '../../lib/api-response.js';
 import { logAudit, logAuthEvent, getClientIp, getUserAgent } from '../../lib/logger.js';
@@ -36,8 +37,7 @@ export async function onRequestPost(context) {
       body = await request.json();
     } catch (parseError) {
       console.warn('登录请求格式错误:', parseError.message);
-      return createErrorResponse({
-        code: 400,
+      return createBadRequestResponse({
         message: '请求格式错误',
         request
       });
@@ -47,8 +47,7 @@ export async function onRequestPost(context) {
 
     // 2. 输入验证
     if (!email || !password) {
-      return createErrorResponse({
-        code: 400,
+      return createBadRequestResponse({
         message: '请填写邮箱和密码',
         request
       });
@@ -57,8 +56,7 @@ export async function onRequestPost(context) {
     // 3. Email 格式验证
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return createErrorResponse({
-        code: 400,
+      return createBadRequestResponse({
         message: '邮箱格式无效',
         request
       });
@@ -66,8 +64,7 @@ export async function onRequestPost(context) {
 
     // 4. 密码长度验证（防止 DoS）
     if (password.length > 128) {
-      return createErrorResponse({
-        code: 400,
+      return createBadRequestResponse({
         message: '密码长度无效',
         request
       });
@@ -111,8 +108,7 @@ export async function onRequestPost(context) {
         }
 
         // 使用通用错误消息（防止用户枚举）
-        return createErrorResponse({
-          code: 401,
+        return createUnauthorizedResponse({
           message: '邮箱或密码错误',
           request
         });
@@ -153,8 +149,7 @@ export async function onRequestPost(context) {
           console.error('记录审计日志失败:', auditError);
         }
 
-        return createErrorResponse({
-          code: 401,
+        return createUnauthorizedResponse({
           message: '邮箱或密码错误',
           request
         });

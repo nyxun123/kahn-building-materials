@@ -1,30 +1,29 @@
+import { authenticate, createUnauthorizedResponse } from '../../lib/jwt-auth.js';
+import {
+  createSuccessResponse,
+  createServerErrorResponse
+} from '../../lib/api-response.js';
+
 export async function onRequestGet(context) {
   const { request, env } = context;
   
   try {
-    // 认证检查
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({
-        error: { message: '需要登录' }
-      }), {
-        status: 401,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+    // JWT 认证检查
+    const auth = await authenticate(request, env);
+    if (!auth.authenticated) {
+      return createUnauthorizedResponse({
+        message: auth.error || '需要登录',
+        request
       });
     }
     
     if (!env.DB) {
       // 如果没有数据库，返回默认网站地图配置
       const defaultSitemap = getDefaultSitemapEntries();
-      return new Response(JSON.stringify(defaultSitemap), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createSuccessResponse({
+        data: defaultSitemap,
+        message: '获取网站地图配置成功（使用默认配置）',
+        request
       });
     }
 
@@ -34,48 +33,33 @@ export async function onRequestGet(context) {
         SELECT * FROM sitemap_entries ORDER BY priority DESC, created_at ASC
       `).all();
       
-      if (sitemapEntries.results && sitemapEntries.results.length > 0) {
-        return new Response(JSON.stringify(sitemapEntries.results), {
-          status: 200,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-          }
-        });
-      } else {
-        // 返回默认配置
-        const defaultSitemap = getDefaultSitemapEntries();
-        return new Response(JSON.stringify(defaultSitemap), {
-          status: 200,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-          }
-        });
-      }
+      const data = sitemapEntries.results && sitemapEntries.results.length > 0
+        ? sitemapEntries.results
+        : getDefaultSitemapEntries();
+
+      return createSuccessResponse({
+        data,
+        message: '获取网站地图配置成功',
+        request
+      });
+
     } catch (dbError) {
       console.error('网站地图查询失败:', dbError);
       // 返回默认配置
       const defaultSitemap = getDefaultSitemapEntries();
-      return new Response(JSON.stringify(defaultSitemap), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
+      return createSuccessResponse({
+        data: defaultSitemap,
+        message: '获取网站地图配置成功（使用默认配置）',
+        request
       });
     }
     
   } catch (error) {
     console.error('网站地图API错误:', error);
-    return new Response(JSON.stringify({
-      error: { message: '获取网站地图失败' }
-    }), {
-      status: 500,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+    return createServerErrorResponse({
+      message: '获取网站地图失败',
+      error: error.message,
+      request
     });
   }
 }

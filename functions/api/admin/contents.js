@@ -2,7 +2,7 @@ import { authenticate } from '../../lib/jwt-auth.js';
 import { validateContent, sanitizeObject } from '../../lib/validation.js';
 import {
   createSuccessResponse,
-  createErrorResponse,
+  createBadRequestResponse,
   createUnauthorizedResponse,
   createServerErrorResponse,
   createPaginationInfo
@@ -118,8 +118,7 @@ export async function onRequestPut(context) {
     const id = url.pathname.split('/').pop();
 
     if (!id || isNaN(parseInt(id))) {
-      return createErrorResponse({
-        code: 400,
+      return createBadRequestResponse({
         message: '无效的内容ID',
         request
       });
@@ -131,8 +130,7 @@ export async function onRequestPut(context) {
     // 数据验证
     const validation = validateContent(contentData);
     if (!validation.valid) {
-      return createErrorResponse({
-        code: 400,
+      return createBadRequestResponse({
         message: validation.error,
         request
       });
