@@ -507,7 +507,15 @@ function HomeContentManager() {
                       <div className="space-y-3">
                         {field.type === "image" ? (
                           // 多语言图片上传字段 - URL输入框 + 上传按钮
-                          <div className="space-y-4">
+                          (() => {
+                            console.log('🖼️ 渲染图片上传字段 - 使用新UI (CompactImageUploadButton)', {
+                              fieldKey: field.key,
+                              fieldType: field.type,
+                              activeSection,
+                              isEditing
+                            });
+                            return (
+                              <div className="space-y-4">
                             <Text className="text-xs text-slate-500 mb-3">为每个语言上传图片（可独立上传）</Text>
                             
                             {/* 中文图片上传 */}
@@ -639,6 +647,8 @@ function HomeContentManager() {
                               )}
                             </div>
                           </div>
+                            );
+                          })()
                         ) : field.type === "video" ? (
                           // 视频上传字段
                           <div>
