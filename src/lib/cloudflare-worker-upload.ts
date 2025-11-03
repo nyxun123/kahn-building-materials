@@ -203,49 +203,19 @@ async function getAuthToken(): Promise<string> {
       }
     }
 
-    // 回退到直接从 localStorage 读取（即使可能过期，也先尝试）
-    if (adminAccessToken) {
-      console.log('🔍 检查直接读取的 admin_access_token...');
-      if (isTokenValid(adminAccessToken)) {
-        console.log('✅ 使用直接读取的 Access Token');
+    // ⚠️ 重要：不要回退到可能过期的 token
+    // AuthManager 已经检查了过期，如果它返回 null，说明 token 真的不可用
+    // 直接使用可能过期的 token 会导致后端返回 401
+    
+    // 只有在非常特殊的情况下才回退（例如 AuthManager 完全失败）
+    // 即使回退，也应该检查 token 是否过期
+    if (adminAccessToken && isTokenValid(adminAccessToken)) {
+      // 检查 token 是否过期（即使格式正确）
+      if (isTokenFresh(adminAccessToken)) {
+        console.log('⚠️ 使用直接读取的 Access Token（AuthManager 失败的回退）');
         return adminAccessToken;
       } else {
-        console.warn('⚠️ admin_access_token 格式无效');
-      }
-    }
-
-    // 兼容旧的存储方式
-    if (adminAuthRaw) {
-      try {
-        const adminAuth = JSON.parse(adminAuthRaw);
-        console.log('🔍 检查 admin-auth 中的 token...');
-        if (adminAuth?.accessToken && isTokenValid(adminAuth.accessToken)) {
-          console.log('⚠️ 使用兼容模式 accessToken');
-          return adminAuth.accessToken;
-        }
-        if (adminAuth?.token && isTokenValid(adminAuth.token)) {
-          console.log('⚠️ 使用兼容模式 token');
-          return adminAuth.token;
-        }
-      } catch (error) {
-        console.warn('⚠️ 解析 admin-auth 失败', error);
-      }
-    }
-
-    if (tempAuthRaw) {
-      try {
-        const tempAuth = JSON.parse(tempAuthRaw);
-        console.log('🔍 检查 temp-admin-auth 中的 token...');
-        if (tempAuth?.accessToken && isTokenValid(tempAuth.accessToken)) {
-          console.log('⚠️ 使用临时 accessToken');
-          return tempAuth.accessToken;
-        }
-        if (tempAuth?.token && isTokenValid(tempAuth.token)) {
-          console.log('⚠️ 使用临时 token');
-          return tempAuth.token;
-        }
-      } catch (error) {
-        console.warn('⚠️ 解析 temp-admin-auth 失败', error);
+        console.warn('⚠️ admin_access_token 已过期，无法使用');
       }
     }
   } catch (error) {
@@ -254,15 +224,37 @@ async function getAuthToken(): Promise<string> {
 
   // 如果所有方式都失败，输出详细的调试信息
   console.error('❌ 所有认证方式都失败');
-  console.error('📋 调试信息:', {
+  
+  // 检查 token 是否存在但过期
+  const expiryStr = localStorage.getItem('admin_token_expiry');
+  const expiry = expiryStr ? parseInt(expiryStr) : null;
+  const now = Date.now();
+  const isExpired = expiry ? now >= expiry : null;
+  
+  console.error('📋 详细调试信息:', {
     adminAccessToken: adminAccessToken ? `${adminAccessToken.substring(0, 20)}...` : 'null',
     adminAuthRaw: adminAuthRaw ? '存在' : 'null',
     tempAuthRaw: tempAuthRaw ? '存在' : 'null',
-    tokenValid: adminAccessToken ? isTokenValid(adminAccessToken) : false
+    tokenValid: adminAccessToken ? isTokenValid(adminAccessToken) : false,
+    tokenFresh: adminAccessToken ? isTokenFresh(adminAccessToken) : false,
+    hasExpiry: !!expiry,
+    isExpired: isExpired,
+    expiryTime: expiry ? new Date(expiry).toLocaleString() : 'null',
+    currentTime: new Date(now).toLocaleString(),
+    timeDiff: expiry && isExpired ? `${Math.round((now - expiry) / 1000)}秒前过期` : expiry ? `${Math.round((expiry - now) / 1000)}秒后过期` : '未知'
   });
   
-  // 不立即清除 token，而是提示用户重新登录
-  throw new Error('未登录或登录已过期，请重新登录后再试');
+  // 根据情况给出更具体的错误信息
+  let errorMessage = '未登录或登录已过期，请重新登录后再试';
+  if (!adminAccessToken && !adminAuthRaw && !tempAuthRaw) {
+    errorMessage = '未登录，请先登录';
+  } else if (isExpired === true) {
+    errorMessage = '登录已过期，请重新登录';
+  } else if (adminAccessToken && !isTokenValid(adminAccessToken)) {
+    errorMessage = '认证信息格式错误，请重新登录';
+  }
+  
+  throw new Error(errorMessage);
 }
 
 export const workerUpload = CloudflareWorkerUpload.getInstance();
