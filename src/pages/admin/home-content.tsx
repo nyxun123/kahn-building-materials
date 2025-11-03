@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Card,
   Flex,
@@ -13,7 +13,9 @@ import {
 } from "@tremor/react";
 import { useList, useUpdate, useCreate } from "@refinedev/core";
 import { Save, XCircle, Plus, Video, Package, Factory } from "lucide-react";
-import ImageUpload from "@/components/ImageUpload";
+import { toast } from "react-hot-toast";
+import { RiUpload2Line, RiLoader4Line } from "react-icons/ri";
+import { uploadService } from "@/lib/upload-service";
 
 const HOME_SECTIONS = [
   { key: "video", label: "演示视频", icon: <Video className="h-4 w-4" /> },
@@ -29,6 +31,87 @@ const CONTENT_FIELDS = [
   { key: "image", label: "图片", type: "image" },
   { key: "video", label: "视频", type: "video" }, // 添加视频字段
 ];
+
+// 紧凑的上传按钮组件
+function CompactImageUploadButton({ 
+  onUpload, 
+  folder, 
+  className = "" 
+}: { 
+  onUpload: (url: string) => void; 
+  folder: string;
+  className?: string;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = async (file: File) => {
+    if (!file) return;
+
+    try {
+      setUploading(true);
+      
+      const result = await uploadService.uploadWithRetry(file, {
+        folder,
+        maxSize: 5,
+        allowedTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
+      });
+
+      onUpload(result.url);
+      toast.success('图片上传成功！');
+      
+    } catch (error) {
+      console.error('❌ 图片上传失败:', error);
+      toast.error(error instanceof Error ? error.message : '图片上传失败');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileSelect(file);
+    }
+    e.target.value = '';
+  };
+
+  return (
+    <div className={className}>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="hidden"
+      />
+      <Button
+        type="button"
+        onClick={handleClick}
+        disabled={uploading}
+        size="sm"
+        variant="light"
+        className="min-w-[100px]"
+      >
+        {uploading ? (
+          <>
+            <RiLoader4Line className="mr-1 animate-spin" />
+            上传中...
+          </>
+        ) : (
+          <>
+            <RiUpload2Line className="mr-1" />
+            上传图片
+          </>
+        )}
+      </Button>
+    </div>
+  );
+}
 
 function HomeContentManager() {
   const [activeSection, setActiveSection] = useState("video");
@@ -423,86 +506,137 @@ function HomeContentManager() {
                     {isEditing ? (
                       <div className="space-y-3">
                         {field.type === "image" ? (
-                          // 多语言图片上传字段 - 每个语言独立上传
+                          // 多语言图片上传字段 - URL输入框 + 上传按钮
                           <div className="space-y-4">
                             <Text className="text-xs text-slate-500 mb-3">为每个语言上传图片（可独立上传）</Text>
                             
                             {/* 中文图片上传 */}
                             <div className="border border-slate-200 rounded-lg p-4 bg-slate-50">
-                              <Text className="text-sm font-medium text-slate-900 mb-2">🇨🇳 中文图片</Text>
-                              <ImageUpload
-                                value={formState.content_zh}
-                                onChange={(url) => {
-                                  console.log('🖼️ 中文图片上传回调:', url);
-                                  setFormState(prev => ({ ...prev, content_zh: url }));
-                                }}
-                                folder={`home/${activeSection}/zh`}
-                                preview={true}
-                                className="w-full"
-                              />
-                              <div className="mt-2">
-                                <Text className="text-xs text-slate-500 mb-1">或输入图片URL</Text>
-                                <TextInput
-                                  placeholder="https://..."
-                                  value={formState.content_zh}
-                                  onChange={(e) => {
-                                    console.log('📝 中文URL输入:', e.target.value);
-                                    setFormState(prev => ({ ...prev, content_zh: e.target.value }));
-                                  }}
-                                />
+                              <Text className="text-sm font-medium text-slate-900 mb-3">🇨🇳 中文图片</Text>
+                              
+                              {/* URL输入框 + 上传按钮 */}
+                              <div className="flex gap-2 mb-3">
+                                <div className="flex-1">
+                                  <Text className="text-xs text-slate-500 mb-1">图片URL</Text>
+                                  <TextInput
+                                    placeholder="https://... 或点击右侧按钮上传本地图片"
+                                    value={formState.content_zh}
+                                    onChange={(e) => {
+                                      console.log('📝 中文URL输入:', e.target.value);
+                                      setFormState(prev => ({ ...prev, content_zh: e.target.value }));
+                                    }}
+                                  />
+                                </div>
+                                <div className="flex items-end">
+                                  <CompactImageUploadButton
+                                    onUpload={(url) => {
+                                      console.log('🖼️ 中文图片上传回调:', url);
+                                      setFormState(prev => ({ ...prev, content_zh: url }));
+                                    }}
+                                    folder={`home/${activeSection}/zh`}
+                                  />
+                                </div>
                               </div>
+                              
+                              {/* 图片预览 */}
+                              {formState.content_zh && (
+                                <div className="mt-2">
+                                  <img
+                                    src={formState.content_zh}
+                                    alt="中文图片预览"
+                                    className="w-full h-32 object-cover rounded border border-slate-200"
+                                    onError={(e) => {
+                                      e.currentTarget.style.display = 'none';
+                                    }}
+                                  />
+                                </div>
+                              )}
                             </div>
 
                             {/* 英文图片上传 */}
                             <div className="border border-slate-200 rounded-lg p-4 bg-slate-50">
-                              <Text className="text-sm font-medium text-slate-900 mb-2">🇬🇧 英文图片</Text>
-                              <ImageUpload
-                                value={formState.content_en}
-                                onChange={(url) => {
-                                  console.log('🖼️ 英文图片上传回调:', url);
-                                  setFormState(prev => ({ ...prev, content_en: url }));
-                                }}
-                                folder={`home/${activeSection}/en`}
-                                preview={true}
-                                className="w-full"
-                              />
-                              <div className="mt-2">
-                                <Text className="text-xs text-slate-500 mb-1">或输入图片URL</Text>
-                                <TextInput
-                                  placeholder="https://..."
-                                  value={formState.content_en}
-                                  onChange={(e) => {
-                                    console.log('📝 英文URL输入:', e.target.value);
-                                    setFormState(prev => ({ ...prev, content_en: e.target.value }));
-                                  }}
-                                />
+                              <Text className="text-sm font-medium text-slate-900 mb-3">🇬🇧 英文图片</Text>
+                              
+                              {/* URL输入框 + 上传按钮 */}
+                              <div className="flex gap-2 mb-3">
+                                <div className="flex-1">
+                                  <Text className="text-xs text-slate-500 mb-1">图片URL</Text>
+                                  <TextInput
+                                    placeholder="https://... 或点击右侧按钮上传本地图片"
+                                    value={formState.content_en}
+                                    onChange={(e) => {
+                                      console.log('📝 英文URL输入:', e.target.value);
+                                      setFormState(prev => ({ ...prev, content_en: e.target.value }));
+                                    }}
+                                  />
+                                </div>
+                                <div className="flex items-end">
+                                  <CompactImageUploadButton
+                                    onUpload={(url) => {
+                                      console.log('🖼️ 英文图片上传回调:', url);
+                                      setFormState(prev => ({ ...prev, content_en: url }));
+                                    }}
+                                    folder={`home/${activeSection}/en`}
+                                  />
+                                </div>
                               </div>
+                              
+                              {/* 图片预览 */}
+                              {formState.content_en && (
+                                <div className="mt-2">
+                                  <img
+                                    src={formState.content_en}
+                                    alt="英文图片预览"
+                                    className="w-full h-32 object-cover rounded border border-slate-200"
+                                    onError={(e) => {
+                                      e.currentTarget.style.display = 'none';
+                                    }}
+                                  />
+                                </div>
+                              )}
                             </div>
 
                             {/* 俄文图片上传 */}
                             <div className="border border-slate-200 rounded-lg p-4 bg-slate-50">
-                              <Text className="text-sm font-medium text-slate-900 mb-2">🇷🇺 俄文图片</Text>
-                              <ImageUpload
-                                value={formState.content_ru}
-                                onChange={(url) => {
-                                  console.log('🖼️ 俄文图片上传回调:', url);
-                                  setFormState(prev => ({ ...prev, content_ru: url }));
-                                }}
-                                folder={`home/${activeSection}/ru`}
-                                preview={true}
-                                className="w-full"
-                              />
-                              <div className="mt-2">
-                                <Text className="text-xs text-slate-500 mb-1">或输入图片URL</Text>
-                                <TextInput
-                                  placeholder="https://..."
-                                  value={formState.content_ru}
-                                  onChange={(e) => {
-                                    console.log('📝 俄文URL输入:', e.target.value);
-                                    setFormState(prev => ({ ...prev, content_ru: e.target.value }));
-                                  }}
-                                />
+                              <Text className="text-sm font-medium text-slate-900 mb-3">🇷🇺 俄文图片</Text>
+                              
+                              {/* URL输入框 + 上传按钮 */}
+                              <div className="flex gap-2 mb-3">
+                                <div className="flex-1">
+                                  <Text className="text-xs text-slate-500 mb-1">图片URL</Text>
+                                  <TextInput
+                                    placeholder="https://... 或点击右侧按钮上传本地图片"
+                                    value={formState.content_ru}
+                                    onChange={(e) => {
+                                      console.log('📝 俄文URL输入:', e.target.value);
+                                      setFormState(prev => ({ ...prev, content_ru: e.target.value }));
+                                    }}
+                                  />
+                                </div>
+                                <div className="flex items-end">
+                                  <CompactImageUploadButton
+                                    onUpload={(url) => {
+                                      console.log('🖼️ 俄文图片上传回调:', url);
+                                      setFormState(prev => ({ ...prev, content_ru: url }));
+                                    }}
+                                    folder={`home/${activeSection}/ru`}
+                                  />
+                                </div>
                               </div>
+                              
+                              {/* 图片预览 */}
+                              {formState.content_ru && (
+                                <div className="mt-2">
+                                  <img
+                                    src={formState.content_ru}
+                                    alt="俄文图片预览"
+                                    className="w-full h-32 object-cover rounded border border-slate-200"
+                                    onError={(e) => {
+                                      e.currentTarget.style.display = 'none';
+                                    }}
+                                  />
+                                </div>
+                              )}
                             </div>
                           </div>
                         ) : field.type === "video" ? (
