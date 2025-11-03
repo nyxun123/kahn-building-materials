@@ -133,25 +133,50 @@ function HomeContentManager() {
 
     console.log('📦 准备保存的数据:', contentData);
 
-    // 使用直接API调用替代Refine框架
-    const getAuthToken = () => {
+    // 使用 AuthManager 获取有效的 JWT Token
+    const getAuthToken = async () => {
       try {
+        const { AuthManager } = await import('@/lib/auth-manager');
+        const token = await AuthManager.getValidAccessToken();
+        
+        if (token) {
+          console.log('✅ 使用 AuthManager 获取的 JWT Token');
+          return token;
+        }
+        
+        // 回退到直接从 localStorage 读取
+        const directToken = localStorage.getItem('admin_access_token');
+        if (directToken) {
+          console.log('⚠️ 使用直接读取的 Token');
+          return directToken;
+        }
+        
+        // 兼容旧的存储方式
         const adminAuth = localStorage.getItem("admin-auth");
         if (adminAuth) {
-          const parsed = JSON.parse(adminAuth);
-          return parsed?.token || 'admin-session';
+          try {
+            const parsed = JSON.parse(adminAuth);
+            if (parsed?.accessToken) {
+              console.log('⚠️ 使用兼容模式 accessToken');
+              return parsed.accessToken;
+            }
+            if (parsed?.token) {
+              console.log('⚠️ 使用兼容模式 token');
+              return parsed.token;
+            }
+          } catch (error) {
+            console.warn("解析 admin-auth 失败", error);
+          }
         }
-        const tempAuth = localStorage.getItem("temp-admin-auth");
-        if (tempAuth) {
-          return 'temp-admin';
-        }
+        
+        throw new Error('未找到有效的认证Token');
       } catch (error) {
-        console.warn("读取认证信息失败", error);
+        console.error('❌ 获取认证Token失败:', error);
+        throw new Error('未登录或登录已过期，请重新登录后再试');
       }
-      return 'admin-token'; // 默认token
     };
 
-    const authToken = getAuthToken();
+    const authToken = await getAuthToken();
     const apiUrl = sectionContent
       ? `/api/admin/home-content/${sectionContent.id}`
       : `/api/admin/home-content`;

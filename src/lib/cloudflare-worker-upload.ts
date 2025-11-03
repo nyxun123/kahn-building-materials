@@ -134,29 +134,44 @@ async function getAuthToken(): Promise<string> {
   }
 
   try {
+    // 优先使用 AuthManager 获取有效的 JWT Token
     let accessToken = await AuthManager.getValidAccessToken();
 
-    if (!isValidToken(accessToken)) {
+    if (accessToken && isTokenValid(accessToken)) {
+      console.log('✅ 使用 JWT Access Token (AuthManager)');
+      return accessToken;
+    }
+
+    // 如果 AuthManager 返回 null，尝试刷新 token
+    if (!accessToken) {
+      console.log('🔄 AuthManager 未返回 token，尝试刷新...');
       const refreshed = await AuthManager.refreshToken();
       if (refreshed) {
         accessToken = await AuthManager.getValidAccessToken();
+        if (accessToken && isTokenValid(accessToken)) {
+          console.log('✅ Token 刷新成功');
+          return accessToken;
+        }
       }
     }
 
-    if (isValidToken(accessToken)) {
-      console.log('✅ 使用 JWT Access Token');
-      return accessToken as string;
+    // 回退到直接从 localStorage 读取（不检查过期，因为 AuthManager 已经检查过了）
+    const directToken = localStorage.getItem('admin_access_token');
+    if (directToken && isTokenValid(directToken)) {
+      console.log('✅ 使用直接读取的 Access Token');
+      return directToken;
     }
 
+    // 兼容旧的存储方式
     const adminAuthRaw = localStorage.getItem('admin-auth');
     if (adminAuthRaw) {
       try {
         const adminAuth = JSON.parse(adminAuthRaw);
-        if (isValidToken(adminAuth?.accessToken)) {
+        if (adminAuth?.accessToken && isTokenValid(adminAuth.accessToken)) {
           console.log('⚠️ 使用兼容模式 accessToken');
           return adminAuth.accessToken;
         }
-        if (isValidToken(adminAuth?.token)) {
+        if (adminAuth?.token && isTokenValid(adminAuth.token)) {
           console.log('⚠️ 使用兼容模式 token');
           return adminAuth.token;
         }
@@ -169,11 +184,11 @@ async function getAuthToken(): Promise<string> {
     if (tempAuthRaw) {
       try {
         const tempAuth = JSON.parse(tempAuthRaw);
-        if (isValidToken(tempAuth?.accessToken)) {
+        if (tempAuth?.accessToken && isTokenValid(tempAuth.accessToken)) {
           console.log('⚠️ 使用临时 accessToken');
           return tempAuth.accessToken;
         }
-        if (isValidToken(tempAuth?.token)) {
+        if (tempAuth?.token && isTokenValid(tempAuth.token)) {
           console.log('⚠️ 使用临时 token');
           return tempAuth.token;
         }
@@ -182,9 +197,11 @@ async function getAuthToken(): Promise<string> {
       }
     }
   } catch (error) {
-    console.warn('读取认证信息失败', error);
+    console.error('❌ 获取认证Token失败:', error);
   }
 
+  // 最后尝试：如果所有方式都失败，清除token并抛出错误
+  console.error('❌ 所有认证方式都失败，清除token');
   AuthManager.clearTokens();
   throw new Error('未登录或登录已过期，请重新登录后再试');
 }
@@ -230,18 +247,35 @@ async function fetchWithAuthRetry(url: string, body: FormData, fileName: string)
 }
 
 const PLACEHOLDER_TOKENS = new Set(['admin-session', 'temp-admin', 'admin-token', '']);
-const TOKEN_EXPIRY_BUFFER_MS = 60 * 1000; // 1分钟缓冲
 
-function isValidToken(token: string | null | undefined): token is string {
+/**
+ * 检查 token 是否有效（格式和占位符检查）
+ * 不检查过期时间，因为 AuthManager 已经处理了过期检查
+ */
+function isTokenValid(token: string | null | undefined): token is string {
   if (!token || typeof token !== 'string') {
     return false;
   }
+  
+  // 检查是否是占位符 token
   if (PLACEHOLDER_TOKENS.has(token.trim())) {
     return false;
   }
-  return isTokenFresh(token);
+  
+  // 检查是否是有效的 JWT 格式（至少3部分，用.分隔）
+  const parts = token.split('.');
+  if (parts.length < 3) {
+    console.warn('⚠️ Token 格式无效（不是有效的JWT）');
+    return false;
+  }
+  
+  // 基本格式检查通过
+  return true;
 }
 
+/**
+ * 检查 token 是否即将过期（用于警告，但不阻止使用）
+ */
 function isTokenFresh(token: string): boolean {
   try {
     const parts = token.split('.');
@@ -249,18 +283,36 @@ function isTokenFresh(token: string): boolean {
       return false;
     }
 
-    const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    let payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    // 补全 base64 padding
+    while (payload.length % 4) {
+      payload += '=';
+    }
     const decoded = atob(payload);
     const data = JSON.parse(decoded);
 
     if (!data?.exp) {
+      // 没有过期时间，认为有效
       return true;
     }
 
+    // 检查是否已过期（而不是即将过期）
     const expiryMs = data.exp * 1000;
-    return expiryMs - TOKEN_EXPIRY_BUFFER_MS > Date.now();
+    const now = Date.now();
+    
+    if (expiryMs <= now) {
+      console.warn('⚠️ Token 已过期', {
+        expiry: new Date(expiryMs).toLocaleString(),
+        now: new Date(now).toLocaleString()
+      });
+      return false;
+    }
+    
+    // Token 还未过期
+    return true;
   } catch (error) {
-    console.warn('解析Token有效期失败:', error);
-    return false;
+    console.warn('⚠️ 解析Token有效期失败:', error);
+    // 解析失败时，认为格式可能有问题，但不阻止使用（可能格式不同）
+    return true;
   }
 }
