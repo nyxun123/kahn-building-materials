@@ -23,11 +23,26 @@ export async function onRequestPost(context) {
     }
 
     // JWT 认证检查
+    const authHeader = request.headers.get('Authorization');
+    console.log('🔍 上传请求认证信息:', {
+      hasAuthHeader: !!authHeader,
+      authHeaderPreview: authHeader ? `${authHeader.substring(0, 30)}...` : 'null'
+    });
+    
     const auth = await authenticate(request, env);
+    console.log('🔍 认证结果:', {
+      authenticated: auth.authenticated,
+      error: auth.error,
+      hasUser: !!auth.user
+    });
+    
     if (!auth.authenticated) {
-      console.error('❌ 图片上传失败: 认证失败');
+      console.error('❌ 图片上传失败: 认证失败', {
+        error: auth.error,
+        authHeader: authHeader ? `${authHeader.substring(0, 30)}...` : 'null'
+      });
       return createUnauthorizedResponse({
-        message: auth.error || '未授权',
+        message: auth.error || '未登录或登录已过期，请重新登录后再试',
         request
       });
     }
