@@ -164,7 +164,7 @@ async function getAuthToken(): Promise<string> {
 
   console.log('🔍 开始获取认证Token...');
   
-  // 首先检查 localStorage 中的所有可能的 token 位置
+  // 🔧 修复: 首先检查 localStorage 中的所有可能的 token 位置
   const adminAccessToken = localStorage.getItem('admin_access_token');
   const adminAuthRaw = localStorage.getItem('admin-auth');
   const tempAuthRaw = localStorage.getItem('temp-admin-auth');
@@ -175,36 +175,66 @@ async function getAuthToken(): Promise<string> {
     hasAdminAuth: !!adminAuthRaw,
     hasTempAuth: !!tempAuthRaw,
     adminTokenExpiry: localStorage.getItem('admin_token_expiry'),
-    adminUserInfo: !!localStorage.getItem('admin_user_info')
+    adminUserInfo: !!localStorage.getItem('admin_user_info'),
+    allKeys: Object.keys(localStorage).filter(k => k.includes('admin') || k.includes('token') || k.includes('auth'))
   });
 
-  try {
-    // 🔧 修复: 优先直接从localStorage读取token（如果存在）
-    // 这样可以避免AuthManager的过期检查导致问题
-    if (adminAccessToken && isTokenValid(adminAccessToken)) {
-      console.log('✅ 直接从localStorage读取token');
-      // 简单检查token是否过期（基于过期时间，而不是JWT payload）
-      const expiryStr = localStorage.getItem('admin_token_expiry');
-      if (expiryStr) {
-        const expiry = parseInt(expiryStr);
-        const now = Date.now();
-        if (now < expiry) {
-          console.log('✅ Token未过期，直接使用');
-          return adminAccessToken;
-        } else {
-          console.warn('⚠️ Token已过期，尝试刷新...');
-          // 继续执行后续逻辑，尝试刷新
-        }
-      } else {
-        // 没有过期时间，直接使用
-        console.log('✅ Token无过期时间，直接使用');
+  // 🔧 修复: 方式1 - 优先直接从localStorage读取token（如果存在）
+  if (adminAccessToken && isTokenValid(adminAccessToken)) {
+    console.log('✅ 方式1: 直接从localStorage读取token');
+    // 检查token是否过期
+    const expiryStr = localStorage.getItem('admin_token_expiry');
+    if (expiryStr) {
+      const expiry = parseInt(expiryStr);
+      const now = Date.now();
+      if (now < expiry) {
+        console.log('✅ Token未过期，直接使用');
         return adminAccessToken;
+      } else {
+        console.warn('⚠️ Token已过期，尝试刷新...');
+        // 继续执行后续逻辑，尝试刷新
       }
+    } else {
+      // 没有过期时间，直接使用
+      console.log('✅ Token无过期时间，直接使用');
+      return adminAccessToken;
     }
+  }
 
-    // 方式2: 使用 AuthManager 获取有效的 JWT Token
+  // 🔧 修复: 方式2 - 尝试从admin-auth读取token（旧格式）
+  if (adminAuthRaw) {
+    try {
+      const parsed = JSON.parse(adminAuthRaw);
+      const oldToken = parsed?.accessToken;
+      if (oldToken && isTokenValid(oldToken)) {
+        console.log('✅ 方式2: 从admin-auth读取token');
+        // 检查过期时间
+        const loginTime = parsed?.loginTime ? new Date(parsed.loginTime).getTime() : null;
+        const expiresIn = parsed?.expiresIn || 900; // 默认15分钟
+        if (loginTime) {
+          const expiry = loginTime + (expiresIn * 1000);
+          const now = Date.now();
+          if (now < expiry) {
+            console.log('✅ 旧格式Token未过期，直接使用');
+            return oldToken;
+          } else {
+            console.warn('⚠️ 旧格式Token已过期');
+          }
+        } else {
+          // 没有过期时间，直接使用
+          console.log('✅ 旧格式Token无过期时间，直接使用');
+          return oldToken;
+        }
+      }
+    } catch (e) {
+      console.error('解析 admin-auth 失败:', e);
+    }
+  }
+
+  // 方式3: 使用 AuthManager 获取有效的 JWT Token
+  try {
     let accessToken = await AuthManager.getValidAccessToken();
-    console.log('🔑 AuthManager.getValidAccessToken() 结果:', {
+    console.log('🔑 方式3: AuthManager.getValidAccessToken() 结果:', {
       hasToken: !!accessToken,
       tokenLength: accessToken?.length || 0
     });
@@ -231,32 +261,18 @@ async function getAuthToken(): Promise<string> {
         console.warn('⚠️ Token 刷新异常:', refreshError);
       }
     }
-
-    // 方式3: 回退到直接读取（如果token格式正确且未过期）
-    if (adminAccessToken && isTokenValid(adminAccessToken)) {
-      if (isTokenFresh(adminAccessToken)) {
-        console.log('⚠️ 使用直接读取的 Access Token（AuthManager 失败的回退）');
-        return adminAccessToken;
-      } else {
-        console.warn('⚠️ admin_access_token 已过期，无法使用');
-      }
-    }
-
-    // 方式4: 尝试从旧的存储位置读取
-    if (adminAuthRaw) {
-      try {
-        const parsed = JSON.parse(adminAuthRaw);
-        const oldToken = parsed?.accessToken;
-        if (oldToken && isTokenValid(oldToken)) {
-          console.log('⚠️ 使用旧格式的 Access Token');
-          return oldToken;
-        }
-      } catch (e) {
-        console.error('解析 admin-auth 失败:', e);
-      }
-    }
   } catch (error) {
-    console.error('❌ 获取认证Token过程中发生异常:', error);
+    console.error('❌ AuthManager 获取token异常:', error);
+  }
+
+  // 方式4: 回退到直接读取（如果token格式正确且未过期）
+  if (adminAccessToken && isTokenValid(adminAccessToken)) {
+    if (isTokenFresh(adminAccessToken)) {
+      console.log('⚠️ 方式4: 使用直接读取的 Access Token（AuthManager 失败的回退）');
+      return adminAccessToken;
+    } else {
+      console.warn('⚠️ admin_access_token 已过期，无法使用');
+    }
   }
 
   // 如果所有方式都失败，输出详细的调试信息
