@@ -192,7 +192,7 @@ export async function verifyToken(token, env) {
     // 分割 Token
     const parts = token.split('.');
     if (parts.length !== 3) {
-      console.error('JWT 格式无效');
+      console.error('❌ JWT 格式无效: 不是3部分', { parts: parts.length });
       return null;
     }
     
@@ -203,31 +203,56 @@ export async function verifyToken(token, env) {
     const isValid = await verifySignature(dataToVerify, signature, JWT_CONFIG.secret);
     
     if (!isValid) {
-      console.error('JWT 签名无效');
+      console.error('❌ JWT 签名无效', {
+        hasSecret: !!JWT_CONFIG.secret,
+        secretLength: JWT_CONFIG.secret?.length || 0,
+        signatureLength: signature?.length || 0
+      });
       return null;
     }
+    
+    console.log('✅ JWT 签名验证通过');
     
     // 解码 Payload
     const payloadJson = base64UrlDecode(payloadEncoded);
     const payload = JSON.parse(payloadJson);
     
+    console.log('📦 JWT Payload:', {
+      sub: payload.sub,
+      id: payload.id,
+      email: payload.email,
+      type: payload.type,
+      iss: payload.iss,
+      exp: payload.exp,
+      iat: payload.iat
+    });
+    
     // 验证过期时间
     const now = Math.floor(Date.now() / 1000);
     if (payload.exp && payload.exp < now) {
-      console.error('JWT 已过期');
+      console.error('❌ JWT 已过期', {
+        exp: payload.exp,
+        now: now,
+        diff: now - payload.exp,
+        expiredBy: (now - payload.exp) + '秒'
+      });
       return null;
     }
     
     // 验证签发者
     if (payload.iss !== JWT_CONFIG.issuer) {
-      console.error('JWT 签发者无效');
+      console.error('❌ JWT 签发者无效', {
+        expected: JWT_CONFIG.issuer,
+        actual: payload.iss
+      });
       return null;
     }
     
+    console.log('✅ JWT 所有验证通过');
     return payload;
     
   } catch (error) {
-    console.error('JWT 验证失败:', error);
+    console.error('❌ JWT 验证失败:', error);
     return null;
   }
 }
@@ -264,6 +289,7 @@ export async function authenticate(request, env) {
   const token = extractToken(request);
   
   if (!token) {
+    console.error('❌ 认证失败: 缺少Token');
     return {
       authenticated: false,
       user: null,
@@ -271,9 +297,16 @@ export async function authenticate(request, env) {
     };
   }
   
+  console.log('🔍 开始验证Token:', {
+    tokenLength: token.length,
+    tokenPrefix: token.substring(0, 30) + '...',
+    hasSecret: !!env.JWT_SECRET
+  });
+  
   const payload = await verifyToken(token, env);
   
   if (!payload) {
+    console.error('❌ 认证失败: Token验证失败');
     return {
       authenticated: false,
       user: null,
@@ -281,8 +314,17 @@ export async function authenticate(request, env) {
     };
   }
   
+  console.log('✅ Token验证成功:', {
+    userId: payload.sub || payload.id,
+    email: payload.email,
+    type: payload.type,
+    exp: payload.exp,
+    now: Math.floor(Date.now() / 1000)
+  });
+  
   // 验证 Token 类型（必须是 access token）
   if (payload.type !== 'access') {
+    console.error('❌ 认证失败: Token类型错误', { type: payload.type });
     return {
       authenticated: false,
       user: null,
