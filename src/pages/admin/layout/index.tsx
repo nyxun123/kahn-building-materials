@@ -28,7 +28,9 @@ export default function AdminLayout() {
       try {
         const { AuthManager } = await import('@/lib/auth-manager');
         const userInfo = AuthManager.getUserInfo();
-        const token = AuthManager.getValidAccessToken();
+        // 🔧 修复: 使用同步的 getAccessToken() 而不是异步的 getValidAccessToken()
+        // 因为刚登录时token肯定是有效的，不需要刷新
+        const token = AuthManager.getAccessToken();
         
         if (userInfo && token) {
           console.log('✅ 从 AuthManager 读取用户信息');
@@ -50,7 +52,12 @@ export default function AdminLayout() {
         try {
           const cloudAuth = JSON.parse(cloudAuthRaw);
           const cloudUser = cloudAuth.user || {};
-          if (cloudUser.email && (cloudAuth.accessToken || localStorage.getItem('admin_access_token'))) {
+          // 🔧 修复: 检查多种token存储方式
+          const hasToken = cloudAuth.accessToken || 
+                          localStorage.getItem('admin_access_token') ||
+                          localStorage.getItem('admin_refresh_token');
+          
+          if (cloudUser.email && hasToken) {
             console.log('✅ 从 admin-auth 读取用户信息');
             setUser({
               id: String(cloudUser.id || 'admin-user'),

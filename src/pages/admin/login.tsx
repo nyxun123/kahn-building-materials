@@ -85,10 +85,12 @@ const Login = () => {
         console.log('✅ JWT Tokens 已保存');
         toast.success('登录成功！');
         
-        // 等待一下确保认证信息已保存，然后跳转
+        // 🔧 修复: 确保所有同步操作完成后再跳转
+        // 使用 window.location.href 而不是 navigate，避免路由冲突
+        // 这样可以确保页面完全重新加载，AdminLayout 会重新检查认证信息
         setTimeout(() => {
-          navigate('/admin/dashboard', { replace: true });
-        }, 100);
+          window.location.href = '/admin/dashboard';
+        }, 200);
       } else {
         throw new Error(result.message || '认证失败');
       }
