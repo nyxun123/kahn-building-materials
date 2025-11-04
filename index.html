@@ -24,8 +24,24 @@
   <body>
     <div id="root"></div>
     <script>
-      // Force clear old language cache
-      localStorage.clear();
+      // 🔧 修复: 只清除语言相关的缓存，保留认证信息
+      // 之前使用 localStorage.clear() 会清除所有数据，包括token，导致登录后立即失效
+      try {
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          // 只清除语言相关的key，保留认证相关的key
+          if (key && (key.startsWith('i18next') || key === 'userLanguage')) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach(key => localStorage.removeItem(key));
+        if (keysToRemove.length > 0) {
+          console.log('🗑️ 已清除语言缓存:', keysToRemove);
+        }
+      } catch (error) {
+        console.error('清除语言缓存失败:', error);
+      }
     </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
