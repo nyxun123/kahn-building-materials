@@ -32,11 +32,20 @@ interface DashboardResponse {
 }
 
 const fetchDashboard = async (): Promise<DashboardResponse["data"]> => {
-  // 获取 JWT token - 优先使用 AuthManager，失败则直接从 localStorage 读取
+  // 🔧 修复: 优先使用同步的 getAccessToken()，因为刚登录时token肯定是有效的
+  // 只在真正需要时才使用异步的 getValidAccessToken() 来刷新token
   const { AuthManager } = await import("@/lib/auth-manager");
-  let token = await AuthManager.getValidAccessToken();
+  
+  // 方式1: 先尝试同步获取token（刚登录时token肯定是有效的）
+  let token = AuthManager.getAccessToken();
+  
+  // 方式2: 如果同步获取失败，尝试异步刷新（可能是token过期了）
+  if (!token) {
+    console.log('🔄 同步token不存在，尝试异步刷新...');
+    token = await AuthManager.getValidAccessToken();
+  }
 
-  // 如果 AuthManager 返回 null，直接从 localStorage 读取（不检查过期）
+  // 方式3: 如果 AuthManager 都失败，直接从 localStorage 读取（不检查过期）
   if (!token) {
     console.warn('⚠️ AuthManager 未返回 token，尝试直接从 localStorage 读取');
     token = localStorage.getItem('admin_access_token');
@@ -61,7 +70,10 @@ const fetchDashboard = async (): Promise<DashboardResponse["data"]> => {
     throw new Error("未登录或登录已过期，请重新登录");
   }
 
-  console.log('🔑 使用 JWT Token 请求仪表盘数据');
+  console.log('🔑 使用 JWT Token 请求仪表盘数据', {
+    tokenLength: token.length,
+    tokenPrefix: token.substring(0, 20) + '...'
+  });
 
   const headers = {
     "Content-Type": "application/json",
@@ -74,6 +86,8 @@ const fetchDashboard = async (): Promise<DashboardResponse["data"]> => {
     // 如果是 401 错误，清除本地存储并提示重新登录
     if (response.status === 401) {
       console.error('❌ Token已过期，清除认证信息');
+      const responseText = await response.text();
+      console.error('API响应:', responseText);
       AuthManager.clearTokens();
       throw new Error("登录已过期，请重新登录");
     }
