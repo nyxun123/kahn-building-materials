@@ -173,35 +173,11 @@ async function getAuthToken(): Promise<string> {
     hasAdminAccessToken: !!adminAccessToken,
     adminAccessTokenLength: adminAccessToken?.length || 0,
     hasAdminAuth: !!adminAuthRaw,
-    hasTempAuth: !!tempAuthRaw,
-    adminTokenExpiry: localStorage.getItem('admin_token_expiry'),
-    adminUserInfo: !!localStorage.getItem('admin_user_info')
+    hasTempAuth: !!tempAuthRaw
   });
 
   try {
-    // 🔧 修复: 优先直接从localStorage读取token，避免AuthManager的过期检查导致问题
-    // 因为刚登录时token肯定是有效的
-    if (adminAccessToken && isTokenValid(adminAccessToken)) {
-      console.log('✅ 直接从localStorage读取token');
-      // 检查token是否过期
-      const expiryStr = localStorage.getItem('admin_token_expiry');
-      if (expiryStr) {
-        const expiry = parseInt(expiryStr);
-        const now = Date.now();
-        if (now < expiry) {
-          console.log('✅ Token未过期，直接使用');
-          return adminAccessToken;
-        } else {
-          console.warn('⚠️ Token已过期，尝试刷新...');
-        }
-      } else {
-        // 没有过期时间，直接使用
-        console.log('✅ Token无过期时间，直接使用');
-        return adminAccessToken;
-      }
-    }
-
-    // 方式2: 使用 AuthManager 获取有效的 JWT Token
+    // 优先使用 AuthManager 获取有效的 JWT Token
     let accessToken = await AuthManager.getValidAccessToken();
     console.log('🔑 AuthManager.getValidAccessToken() 结果:', {
       hasToken: !!accessToken,
@@ -231,7 +207,7 @@ async function getAuthToken(): Promise<string> {
       }
     }
 
-    // 方式3: 回退到直接读取（如果token格式正确且未过期）
+    // 回退到直接读取（如果token格式正确且未过期）
     if (adminAccessToken && isTokenValid(adminAccessToken)) {
       if (isTokenFresh(adminAccessToken)) {
         console.log('⚠️ 使用直接读取的 Access Token（AuthManager 失败的回退）');
