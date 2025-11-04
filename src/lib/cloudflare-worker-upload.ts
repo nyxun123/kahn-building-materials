@@ -173,11 +173,36 @@ async function getAuthToken(): Promise<string> {
     hasAdminAccessToken: !!adminAccessToken,
     adminAccessTokenLength: adminAccessToken?.length || 0,
     hasAdminAuth: !!adminAuthRaw,
-    hasTempAuth: !!tempAuthRaw
+    hasTempAuth: !!tempAuthRaw,
+    adminTokenExpiry: localStorage.getItem('admin_token_expiry'),
+    adminUserInfo: !!localStorage.getItem('admin_user_info')
   });
 
   try {
-    // 优先使用 AuthManager 获取有效的 JWT Token
+    // 🔧 修复: 优先直接从localStorage读取token（如果存在）
+    // 这样可以避免AuthManager的过期检查导致问题
+    if (adminAccessToken && isTokenValid(adminAccessToken)) {
+      console.log('✅ 直接从localStorage读取token');
+      // 简单检查token是否过期（基于过期时间，而不是JWT payload）
+      const expiryStr = localStorage.getItem('admin_token_expiry');
+      if (expiryStr) {
+        const expiry = parseInt(expiryStr);
+        const now = Date.now();
+        if (now < expiry) {
+          console.log('✅ Token未过期，直接使用');
+          return adminAccessToken;
+        } else {
+          console.warn('⚠️ Token已过期，尝试刷新...');
+          // 继续执行后续逻辑，尝试刷新
+        }
+      } else {
+        // 没有过期时间，直接使用
+        console.log('✅ Token无过期时间，直接使用');
+        return adminAccessToken;
+      }
+    }
+
+    // 方式2: 使用 AuthManager 获取有效的 JWT Token
     let accessToken = await AuthManager.getValidAccessToken();
     console.log('🔑 AuthManager.getValidAccessToken() 结果:', {
       hasToken: !!accessToken,
@@ -207,13 +232,27 @@ async function getAuthToken(): Promise<string> {
       }
     }
 
-    // 回退到直接读取（如果token格式正确且未过期）
+    // 方式3: 回退到直接读取（如果token格式正确且未过期）
     if (adminAccessToken && isTokenValid(adminAccessToken)) {
       if (isTokenFresh(adminAccessToken)) {
         console.log('⚠️ 使用直接读取的 Access Token（AuthManager 失败的回退）');
         return adminAccessToken;
       } else {
         console.warn('⚠️ admin_access_token 已过期，无法使用');
+      }
+    }
+
+    // 方式4: 尝试从旧的存储位置读取
+    if (adminAuthRaw) {
+      try {
+        const parsed = JSON.parse(adminAuthRaw);
+        const oldToken = parsed?.accessToken;
+        if (oldToken && isTokenValid(oldToken)) {
+          console.log('⚠️ 使用旧格式的 Access Token');
+          return oldToken;
+        }
+      } catch (e) {
+        console.error('解析 admin-auth 失败:', e);
       }
     }
   } catch (error) {
@@ -239,7 +278,8 @@ async function getAuthToken(): Promise<string> {
     isExpired: isExpired,
     expiryTime: expiry ? new Date(expiry).toLocaleString() : 'null',
     currentTime: new Date(now).toLocaleString(),
-    timeDiff: expiry && isExpired ? `${Math.round((now - expiry) / 1000)}秒前过期` : expiry ? `${Math.round((expiry - now) / 1000)}秒后过期` : '未知'
+    timeDiff: expiry && isExpired ? `${Math.round((now - expiry) / 1000)}秒前过期` : expiry ? `${Math.round((expiry - now) / 1000)}秒后过期` : '未知',
+    allLocalStorageKeys: Object.keys(localStorage).filter(k => k.includes('admin') || k.includes('token') || k.includes('auth'))
   });
   
   // 根据情况给出更具体的错误信息
