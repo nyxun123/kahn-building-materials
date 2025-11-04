@@ -30,6 +30,11 @@ export class AuthManager {
   
   // Token 刷新缓冲时间（提前 1 分钟刷新）
   private static REFRESH_BUFFER_MS = 60 * 1000;
+  
+  // 🔧 公开ACCESS_TOKEN_KEY用于外部检查
+  static get ACCESS_TOKEN_KEY_PUBLIC() {
+    return AuthManager.ACCESS_TOKEN_KEY;
+  }
 
   /**
    * 保存登录响应的 tokens
@@ -37,21 +42,50 @@ export class AuthManager {
   static saveTokens(accessToken: string, refreshToken: string, expiresIn: number): void {
     const expiresAt = Date.now() + (expiresIn * 1000);
     
-    localStorage.setItem(this.ACCESS_TOKEN_KEY, accessToken);
-    localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
-    localStorage.setItem(this.TOKEN_EXPIRY_KEY, expiresAt.toString());
-    
-    console.log('✅ Tokens 已保存', {
-      expiresIn: `${expiresIn}秒`,
-      expiresAt: new Date(expiresAt).toLocaleString()
-    });
+    // 🔧 修复: 使用同步方式保存，确保立即生效
+    try {
+      localStorage.setItem(this.ACCESS_TOKEN_KEY, accessToken);
+      localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
+      localStorage.setItem(this.TOKEN_EXPIRY_KEY, expiresAt.toString());
+      
+      // 立即验证保存是否成功
+      const savedToken = localStorage.getItem(this.ACCESS_TOKEN_KEY);
+      if (!savedToken || savedToken !== accessToken) {
+        console.error('❌ Token保存失败！localStorage可能被禁用');
+        throw new Error('Token保存失败，localStorage可能被禁用');
+      }
+      
+      console.log('✅ Tokens 已保存', {
+        expiresIn: `${expiresIn}秒`,
+        expiresAt: new Date(expiresAt).toLocaleString(),
+        tokenLength: accessToken.length
+      });
+    } catch (error) {
+      console.error('❌ Token保存异常:', error);
+      throw error;
+    }
   }
 
   /**
    * 保存用户信息
    */
   static saveUserInfo(user: UserInfo): void {
-    localStorage.setItem(this.USER_INFO_KEY, JSON.stringify(user));
+    try {
+      const userJson = JSON.stringify(user);
+      localStorage.setItem(this.USER_INFO_KEY, userJson);
+      
+      // 立即验证保存是否成功
+      const savedUser = localStorage.getItem(this.USER_INFO_KEY);
+      if (!savedUser || savedUser !== userJson) {
+        console.error('❌ 用户信息保存失败！');
+        throw new Error('用户信息保存失败');
+      }
+      
+      console.log('✅ 用户信息已保存', { userId: user.id, email: user.email });
+    } catch (error) {
+      console.error('❌ 用户信息保存异常:', error);
+      throw error;
+    }
   }
 
   /**
@@ -356,13 +390,23 @@ export class AuthManager {
 // 🔧 修复: 页面加载时检查并迁移旧的认证方式
 // 但只在确实需要时才执行，避免清除已有token
 if (typeof window !== 'undefined') {
-  // 延迟执行，确保其他代码先运行
+  // 🔧 重要：延迟执行，确保其他代码先运行
+  // 并且只在没有新token的情况下才执行迁移
   setTimeout(() => {
     try {
+      // 再次检查是否有新token，避免在页面加载时清除已有的token
+      const ACCESS_TOKEN_KEY = 'admin_access_token'; // 直接使用字符串常量
+      const hasNewToken = localStorage.getItem(ACCESS_TOKEN_KEY);
+      if (hasNewToken) {
+        console.log('✅ 已有新token，跳过迁移');
+        return;
+      }
+      
+      console.log('🔄 检查是否需要迁移旧格式token...');
       AuthManager.migrateFromLegacyAuth();
     } catch (error) {
       console.error('迁移认证信息失败:', error);
     }
-  }, 100);
+  }, 500); // 增加延迟到500ms，确保登录页面的token保存完成
 }
 
