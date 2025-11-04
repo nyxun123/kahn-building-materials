@@ -32,36 +32,56 @@ interface DashboardResponse {
 }
 
 const fetchDashboard = async (): Promise<DashboardResponse["data"]> => {
-  // 🔧 修复: 优先使用同步的 getAccessToken()，因为刚登录时token肯定是有效的
-  // 只在真正需要时才使用异步的 getValidAccessToken() 来刷新token
+  // 🔧 修复: 优先从localStorage直接读取token，避免过期检查导致的问题
+  // 因为刚登录时token肯定是有效的，不应该被过期检查拦截
   const { AuthManager } = await import("@/lib/auth-manager");
   
-  // 方式1: 先尝试同步获取token（刚登录时token肯定是有效的）
-  let token = AuthManager.getAccessToken();
+  // 方式1: 直接从localStorage读取token（不检查过期）
+  // 这样可以避免migrateFromLegacyAuth或其他逻辑导致的问题
+  let token = localStorage.getItem('admin_access_token');
   
-  // 方式2: 如果同步获取失败，尝试异步刷新（可能是token过期了）
+  // 方式2: 如果直接读取失败，尝试使用AuthManager（会检查过期）
   if (!token) {
-    console.log('🔄 同步token不存在，尝试异步刷新...');
-    token = await AuthManager.getValidAccessToken();
+    console.log('🔄 localStorage中没有token，尝试使用AuthManager获取...');
+    token = AuthManager.getAccessToken();
+    
+    // 如果同步获取失败，尝试异步刷新
+    if (!token) {
+      console.log('🔄 Token不存在或过期，尝试刷新...');
+      token = await AuthManager.getValidAccessToken();
+    }
   }
 
-  // 方式3: 如果 AuthManager 都失败，直接从 localStorage 读取（不检查过期）
+  // 方式3: 如果 AuthManager 都失败，尝试从旧的存储位置读取
   if (!token) {
-    console.warn('⚠️ AuthManager 未返回 token，尝试直接从 localStorage 读取');
-    token = localStorage.getItem('admin_access_token');
-
-    // 如果还是没有，尝试从旧的存储位置读取
-    if (!token) {
-      const adminAuth = localStorage.getItem('admin-auth');
-      if (adminAuth) {
-        try {
-          const parsed = JSON.parse(adminAuth);
-          token = parsed?.accessToken || null;
-        } catch (e) {
-          console.error('解析 admin-auth 失败:', e);
+    console.warn('⚠️ AuthManager 未返回 token，尝试从旧格式读取');
+    const adminAuth = localStorage.getItem('admin-auth');
+    if (adminAuth) {
+      try {
+        const parsed = JSON.parse(adminAuth);
+        token = parsed?.accessToken || null;
+        if (token) {
+          console.log('✅ 从旧格式读取到token');
         }
+      } catch (e) {
+        console.error('解析 admin-auth 失败:', e);
       }
     }
+  }
+  
+  // 添加详细的调试信息
+  if (token) {
+    console.log('🔑 找到token，准备请求dashboard数据', {
+      tokenLength: token.length,
+      tokenPrefix: token.substring(0, 20) + '...',
+      hasAccessToken: !!localStorage.getItem('admin_access_token'),
+      hasRefreshToken: !!localStorage.getItem('admin_refresh_token'),
+      hasExpiry: !!localStorage.getItem('admin_token_expiry')
+    });
+  } else {
+    console.error('❌ 未找到任何token', {
+      localStorageKeys: Object.keys(localStorage).filter(k => k.includes('admin') || k.includes('token'))
+    });
   }
 
   // 如果还是没有有效的 token，抛出错误

@@ -304,12 +304,51 @@ export class AuthManager {
    * 从旧的 localStorage 迁移到新的 JWT 认证
    */
   static migrateFromLegacyAuth(): void {
-    const oldAuth = localStorage.getItem('admin-auth');
-    const tempAuth = localStorage.getItem('temp-admin-auth');
+    // 🔧 修复: 不应该清除token，应该迁移数据
+    // 如果已经有新的JWT token，就不需要迁移
+    const hasNewToken = localStorage.getItem(this.ACCESS_TOKEN_KEY);
+    if (hasNewToken) {
+      // 已经有新的token，不需要迁移
+      return;
+    }
     
-    if (oldAuth || tempAuth) {
-      console.warn('⚠️ 检测到旧的认证方式，请重新登录以使用新的 JWT 认证');
-      this.clearTokens();
+    // 只有在没有新token的情况下，才尝试从旧格式迁移
+    const oldAuth = localStorage.getItem('admin-auth');
+    if (oldAuth) {
+      try {
+        const parsed = JSON.parse(oldAuth);
+        if (parsed.accessToken && parsed.refreshToken) {
+          console.log('🔄 从旧格式迁移token到新格式');
+          // 迁移token到新格式
+          this.saveTokens(
+            parsed.accessToken,
+            parsed.refreshToken,
+            parsed.expiresIn || 900
+          );
+          
+          // 如果有用户信息，也迁移
+          if (parsed.user) {
+            this.saveUserInfo({
+              id: parsed.user.id,
+              email: parsed.user.email,
+              name: parsed.user.name || '',
+              role: parsed.user.role || 'admin'
+            });
+          }
+          
+          console.log('✅ Token迁移成功');
+          return;
+        }
+      } catch (e) {
+        console.error('解析旧格式token失败:', e);
+      }
+    }
+    
+    // 检查临时认证
+    const tempAuth = localStorage.getItem('temp-admin-auth');
+    if (tempAuth) {
+      console.warn('⚠️ 检测到临时认证方式，建议重新登录以使用新的 JWT 认证');
+      // 不清除，保留临时认证以便用户继续使用
     }
   }
 }
