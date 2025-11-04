@@ -171,14 +171,42 @@ async function getAuthToken(): Promise<string> {
   
   console.log('📦 localStorage 状态:', {
     hasAdminAccessToken: !!adminAccessToken,
+    adminAccessTokenLength: adminAccessToken?.length || 0,
     hasAdminAuth: !!adminAuthRaw,
-    hasTempAuth: !!tempAuthRaw
+    hasTempAuth: !!tempAuthRaw,
+    adminTokenExpiry: localStorage.getItem('admin_token_expiry'),
+    adminUserInfo: !!localStorage.getItem('admin_user_info')
   });
 
   try {
-    // 优先使用 AuthManager 获取有效的 JWT Token
+    // 🔧 修复: 优先直接从localStorage读取token，避免AuthManager的过期检查导致问题
+    // 因为刚登录时token肯定是有效的
+    if (adminAccessToken && isTokenValid(adminAccessToken)) {
+      console.log('✅ 直接从localStorage读取token');
+      // 检查token是否过期
+      const expiryStr = localStorage.getItem('admin_token_expiry');
+      if (expiryStr) {
+        const expiry = parseInt(expiryStr);
+        const now = Date.now();
+        if (now < expiry) {
+          console.log('✅ Token未过期，直接使用');
+          return adminAccessToken;
+        } else {
+          console.warn('⚠️ Token已过期，尝试刷新...');
+        }
+      } else {
+        // 没有过期时间，直接使用
+        console.log('✅ Token无过期时间，直接使用');
+        return adminAccessToken;
+      }
+    }
+
+    // 方式2: 使用 AuthManager 获取有效的 JWT Token
     let accessToken = await AuthManager.getValidAccessToken();
-    console.log('🔑 AuthManager.getValidAccessToken() 结果:', accessToken ? '有token' : 'null');
+    console.log('🔑 AuthManager.getValidAccessToken() 结果:', {
+      hasToken: !!accessToken,
+      tokenLength: accessToken?.length || 0
+    });
 
     if (accessToken && isTokenValid(accessToken)) {
       console.log('✅ 使用 JWT Access Token (AuthManager)');
@@ -203,14 +231,8 @@ async function getAuthToken(): Promise<string> {
       }
     }
 
-    // ⚠️ 重要：不要回退到可能过期的 token
-    // AuthManager 已经检查了过期，如果它返回 null，说明 token 真的不可用
-    // 直接使用可能过期的 token 会导致后端返回 401
-    
-    // 只有在非常特殊的情况下才回退（例如 AuthManager 完全失败）
-    // 即使回退，也应该检查 token 是否过期
+    // 方式3: 回退到直接读取（如果token格式正确且未过期）
     if (adminAccessToken && isTokenValid(adminAccessToken)) {
-      // 检查 token 是否过期（即使格式正确）
       if (isTokenFresh(adminAccessToken)) {
         console.log('⚠️ 使用直接读取的 Access Token（AuthManager 失败的回退）');
         return adminAccessToken;
@@ -260,37 +282,89 @@ async function getAuthToken(): Promise<string> {
 export const workerUpload = CloudflareWorkerUpload.getInstance();
 
 async function fetchWithAuthRetry(url: string, body: FormData, fileName: string): Promise<Response> {
-  let authToken = await getAuthToken();
+  console.log('🔍 开始准备上传请求:', {
+    url,
+    fileName,
+    bodyType: body instanceof FormData ? 'FormData' : typeof body
+  });
+
+  let authToken: string;
+  try {
+    authToken = await getAuthToken();
+    console.log('✅ 获取Token成功:', {
+      tokenLength: authToken?.length || 0,
+      tokenPreview: authToken?.substring(0, 20) + '...'
+    });
+  } catch (error) {
+    console.error('❌ 获取Token失败:', error);
+    throw new Error(`获取认证Token失败: ${error instanceof Error ? error.message : '未知错误'}`);
+  }
+
+  if (!authToken) {
+    console.error('❌ Token为空，无法上传');
+    throw new Error('未登录，请先登录');
+  }
 
   const doFetch = async (token: string) => {
     console.log('🔑 使用Token上传文件:', {
       fileName,
-      tokenPreview: token.substring(0, 16) + '...'
+      url,
+      tokenLength: token?.length || 0,
+      tokenPreview: token.substring(0, 20) + '...',
+      headers: {
+        Authorization: `Bearer ${token.substring(0, 20)}...`,
+        'Content-Type': 'multipart/form-data' // 浏览器会自动设置，这里只是日志
+      }
     });
 
+    // 🔧 修复: 使用FormData时，不要手动设置Content-Type
+    // 浏览器会自动设置 Content-Type: multipart/form-data; boundary=...
+    // 手动设置会覆盖boundary，导致后端无法解析
     return fetch(url, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`
+        // 注意：不设置 Content-Type，让浏览器自动设置
       },
       body
     });
   };
 
   let response = await doFetch(authToken);
+  
+  console.log('📝 上传响应状态:', {
+    status: response.status,
+    statusText: response.statusText,
+    headers: Object.fromEntries(response.headers.entries())
+  });
 
   if (response.status === 401) {
     console.warn('⚠️ Token 可能过期，尝试刷新...');
-    const refreshed = await AuthManager.refreshToken();
-    if (refreshed) {
-      authToken = await getAuthToken();
-      response = await doFetch(authToken);
-    } else {
+    try {
+      const refreshed = await AuthManager.refreshToken();
+      if (refreshed) {
+        authToken = await getAuthToken();
+        console.log('✅ Token刷新成功，重新上传');
+        response = await doFetch(authToken);
+        
+        if (response.status === 401) {
+          console.error('❌ Token刷新后仍然401，认证失败');
+          throw new Error('登录已过期，请重新登录后重试');
+        }
+      } else {
+        console.error('❌ Token刷新失败');
+        AuthManager.clearTokens();
+        throw new Error('登录已过期，请重新登录后重试');
+      }
+    } catch (refreshError) {
+      console.error('❌ Token刷新异常:', refreshError);
       AuthManager.clearTokens();
+      throw new Error('登录已过期，请重新登录后重试');
     }
   }
 
   if (response.status === 401) {
+    console.error('❌ 最终认证失败，返回401');
     throw new Error('登录已过期，请重新登录后重试');
   }
 
