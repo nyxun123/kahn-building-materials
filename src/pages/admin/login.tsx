@@ -84,7 +84,11 @@ const Login = () => {
 
         console.log('✅ JWT Tokens 已保存');
         toast.success('登录成功！');
-        navigate('/admin/dashboard');
+        
+        // 等待一下确保认证信息已保存，然后跳转
+        setTimeout(() => {
+          navigate('/admin/dashboard', { replace: true });
+        }, 100);
       } else {
         throw new Error(result.message || '认证失败');
       }

@@ -22,39 +22,69 @@ export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    // 优先读取正式后台登录信息
-    const cloudAuthRaw = localStorage.getItem('admin-auth');
-    if (cloudAuthRaw) {
+    // 优先读取正式后台登录信息 - 支持多种存储方式
+    const checkAuth = async () => {
+      // 方式1: 从 AuthManager 读取（推荐）
       try {
-        const cloudAuth = JSON.parse(cloudAuthRaw);
-        const cloudUser = cloudAuth.user || {};
+        const { AuthManager } = await import('@/lib/auth-manager');
+        const userInfo = AuthManager.getUserInfo();
+        const token = AuthManager.getValidAccessToken();
+        
+        if (userInfo && token) {
+          console.log('✅ 从 AuthManager 读取用户信息');
+          setUser({
+            id: String(userInfo.id || 'admin-user'),
+            name: userInfo.name || userInfo.email?.split('@')[0] || 'Admin',
+            email: userInfo.email || '',
+            role: userInfo.role || 'admin'
+          });
+          return;
+        }
+      } catch (error) {
+        console.warn('⚠️ AuthManager 读取失败，尝试其他方式:', error);
+      }
+
+      // 方式2: 从 localStorage 的 admin-auth 读取
+      const cloudAuthRaw = localStorage.getItem('admin-auth');
+      if (cloudAuthRaw) {
+        try {
+          const cloudAuth = JSON.parse(cloudAuthRaw);
+          const cloudUser = cloudAuth.user || {};
+          if (cloudUser.email && (cloudAuth.accessToken || localStorage.getItem('admin_access_token'))) {
+            console.log('✅ 从 admin-auth 读取用户信息');
+            setUser({
+              id: String(cloudUser.id || 'admin-user'),
+              name: cloudUser.name || cloudUser.email?.split('@')[0] || 'Admin',
+              email: cloudUser.email,
+              role: cloudUser.role || 'admin'
+            });
+            return;
+          }
+        } catch (error) {
+          console.error('解析 admin-auth 失败:', error);
+          localStorage.removeItem('admin-auth');
+        }
+      }
+
+      // 方式3: 兼容临时认证模式
+      const tempUser = TempAuth.getCurrentUser();
+      if (tempUser) {
+        console.log('✅ 从临时认证读取用户信息');
         setUser({
-          id: cloudUser.id || 'admin-user',
-          name: cloudUser.name || cloudUser.email?.split('@')[0] || 'Admin',
-          email: cloudUser.email,
-          role: cloudUser.role || 'admin'
+          id: tempUser.id,
+          name: tempUser.name || tempUser.email?.split('@')[0] || 'Admin',
+          email: tempUser.email,
+          role: tempUser.role || 'admin'
         });
         return;
-      } catch (error) {
-        console.error('解析 admin-auth 失败:', error);
-        localStorage.removeItem('admin-auth');
       }
-    }
 
-    // 兼容临时认证模式
-    const tempUser = TempAuth.getCurrentUser();
-
-    if (!tempUser) {
+      // 如果都没有找到认证信息，跳转到登录页
+      console.warn('⚠️ 未找到任何认证信息，跳转到登录页');
       navigate('/admin/login');
-      return;
-    }
+    };
 
-    setUser({
-      id: tempUser.id,
-      name: tempUser.name || tempUser.email?.split('@')[0] || 'Admin',
-      email: tempUser.email,
-      role: tempUser.role || 'admin'
-    });
+    checkAuth();
   }, [navigate]);
 
   const handleLogout = () => {
