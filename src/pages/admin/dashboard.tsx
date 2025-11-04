@@ -32,23 +32,43 @@ interface DashboardResponse {
 }
 
 const fetchDashboard = async (): Promise<DashboardResponse["data"]> => {
-  // 🔧 修复: 优先从localStorage直接读取token，避免过期检查导致的问题
-  // 因为刚登录时token肯定是有效的，不应该被过期检查拦截
+  // 🔧 修复: 详细检查localStorage中的所有认证相关数据
+  console.log('🔍 Dashboard开始加载，检查认证状态...');
+  console.log('📦 localStorage中的所有认证相关key:', {
+    allKeys: Object.keys(localStorage).filter(k => k.includes('admin') || k.includes('token') || k.includes('auth')),
+    adminAccessToken: !!localStorage.getItem('admin_access_token'),
+    adminRefreshToken: !!localStorage.getItem('admin_refresh_token'),
+    adminTokenExpiry: localStorage.getItem('admin_token_expiry'),
+    adminAuth: !!localStorage.getItem('admin-auth'),
+    adminUserInfo: !!localStorage.getItem('admin_user_info')
+  });
+
   const { AuthManager } = await import("@/lib/auth-manager");
   
   // 方式1: 直接从localStorage读取token（不检查过期）
-  // 这样可以避免migrateFromLegacyAuth或其他逻辑导致的问题
   let token = localStorage.getItem('admin_access_token');
+  console.log('方式1 - 直接从localStorage读取:', {
+    hasToken: !!token,
+    tokenLength: token?.length || 0
+  });
   
   // 方式2: 如果直接读取失败，尝试使用AuthManager（会检查过期）
   if (!token) {
     console.log('🔄 localStorage中没有token，尝试使用AuthManager获取...');
     token = AuthManager.getAccessToken();
+    console.log('方式2 - AuthManager.getAccessToken:', {
+      hasToken: !!token,
+      tokenLength: token?.length || 0
+    });
     
     // 如果同步获取失败，尝试异步刷新
     if (!token) {
       console.log('🔄 Token不存在或过期，尝试刷新...');
       token = await AuthManager.getValidAccessToken();
+      console.log('方式2b - AuthManager.getValidAccessToken:', {
+        hasToken: !!token,
+        tokenLength: token?.length || 0
+      });
     }
   }
 
@@ -80,7 +100,11 @@ const fetchDashboard = async (): Promise<DashboardResponse["data"]> => {
     });
   } else {
     console.error('❌ 未找到任何token', {
-      localStorageKeys: Object.keys(localStorage).filter(k => k.includes('admin') || k.includes('token'))
+      localStorageKeys: Object.keys(localStorage).filter(k => k.includes('admin') || k.includes('token')),
+      localStorageContents: {
+        adminAccessToken: localStorage.getItem('admin_access_token')?.substring(0, 50),
+        adminAuth: localStorage.getItem('admin-auth')?.substring(0, 100)
+      }
     });
   }
 

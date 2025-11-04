@@ -72,6 +72,7 @@ const Login = () => {
 
         // 保存 JWT tokens
         AuthManager.saveTokens(accessToken, refreshToken, expiresIn);
+        console.log('✅ Step 1: AuthManager.saveTokens 完成');
 
         // 保存用户信息
         AuthManager.saveUserInfo({
@@ -80,6 +81,7 @@ const Login = () => {
           name: user.name || '',
           role: user.role || 'admin'
         });
+        console.log('✅ Step 2: AuthManager.saveUserInfo 完成');
 
         // 同时保存到旧的存储位置以保持兼容性
         localStorage.setItem('admin-auth', JSON.stringify({
@@ -90,16 +92,33 @@ const Login = () => {
           loginTime: new Date().toISOString(),
           authType: authType
         }));
+        console.log('✅ Step 3: localStorage.setItem(admin-auth) 完成');
 
-        console.log('✅ JWT Tokens 已保存');
+        // 🔧 验证token是否已保存
+        const savedToken = localStorage.getItem('admin_access_token');
+        const savedExpiry = localStorage.getItem('admin_token_expiry');
+        console.log('🔍 验证token保存状态:', {
+          hasToken: !!savedToken,
+          tokenLength: savedToken?.length || 0,
+          hasExpiry: !!savedExpiry,
+          expiry: savedExpiry ? new Date(parseInt(savedExpiry)).toLocaleString() : 'null'
+        });
+
+        if (!savedToken) {
+          console.error('❌ Token保存失败！无法跳转');
+          throw new Error('Token保存失败，请重试');
+        }
+
+        console.log('✅ 所有Token保存完成，准备跳转');
         toast.success('登录成功！');
         
         // 🔧 修复: 确保所有同步操作完成后再跳转
         // 使用 window.location.href 而不是 navigate，避免路由冲突
         // 这样可以确保页面完全重新加载，AdminLayout 会重新检查认证信息
         setTimeout(() => {
+          console.log('🚀 开始跳转到dashboard');
           window.location.href = '/admin/dashboard';
-        }, 200);
+        }, 500); // 增加延迟到500ms，确保保存完成
       } else {
         console.error('❌ 登录响应格式错误:', {
           success: result.success,
