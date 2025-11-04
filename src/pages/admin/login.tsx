@@ -57,29 +57,38 @@ const Login = () => {
       const result = await response.json();
       console.log('📦 登录响应:', result);
 
-      if (result.success && result.user && result.accessToken && result.refreshToken) {
+      // 🔧 修复: API返回格式是 { success: true, data: { user, accessToken, refreshToken, ... } }
+      // 需要从 result.data 中读取数据，而不是直接从 result 读取
+      const data = result.data || result; // 兼容旧格式
+      const user = data.user || result.user;
+      const accessToken = data.accessToken || result.accessToken;
+      const refreshToken = data.refreshToken || result.refreshToken;
+      const expiresIn = data.expiresIn || result.expiresIn || 900;
+      const authType = data.authType || result.authType || 'JWT';
+
+      if (result.success && user && accessToken && refreshToken) {
         // 使用 AuthManager 保存 JWT tokens
         const { AuthManager } = await import('@/lib/auth-manager');
 
         // 保存 JWT tokens
-        AuthManager.saveTokens(result.accessToken, result.refreshToken, result.expiresIn || 900);
+        AuthManager.saveTokens(accessToken, refreshToken, expiresIn);
 
         // 保存用户信息
         AuthManager.saveUserInfo({
-          id: result.user.id,
-          email: result.user.email,
-          name: result.user.name || '',
-          role: result.user.role || 'admin'
+          id: user.id,
+          email: user.email,
+          name: user.name || '',
+          role: user.role || 'admin'
         });
 
         // 同时保存到旧的存储位置以保持兼容性
         localStorage.setItem('admin-auth', JSON.stringify({
-          user: result.user,
-          accessToken: result.accessToken,
-          refreshToken: result.refreshToken,
-          expiresIn: result.expiresIn,
+          user: user,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          expiresIn: expiresIn,
           loginTime: new Date().toISOString(),
-          authType: result.authType || 'JWT'
+          authType: authType
         }));
 
         console.log('✅ JWT Tokens 已保存');
@@ -92,7 +101,14 @@ const Login = () => {
           window.location.href = '/admin/dashboard';
         }, 200);
       } else {
-        throw new Error(result.message || '认证失败');
+        console.error('❌ 登录响应格式错误:', {
+          success: result.success,
+          hasUser: !!user,
+          hasAccessToken: !!accessToken,
+          hasRefreshToken: !!refreshToken,
+          result: result
+        });
+        throw new Error(result.message || '认证失败：响应格式错误');
       }
     } catch (error: any) {
       console.error('Login error:', error);
