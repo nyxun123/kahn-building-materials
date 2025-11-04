@@ -353,8 +353,16 @@ export class AuthManager {
   }
 }
 
-// 页面加载时检查并迁移旧的认证方式
+// 🔧 修复: 页面加载时检查并迁移旧的认证方式
+// 但只在确实需要时才执行，避免清除已有token
 if (typeof window !== 'undefined') {
-  AuthManager.migrateFromLegacyAuth();
+  // 延迟执行，确保其他代码先运行
+  setTimeout(() => {
+    try {
+      AuthManager.migrateFromLegacyAuth();
+    } catch (error) {
+      console.error('迁移认证信息失败:', error);
+    }
+  }, 100);
 }
 

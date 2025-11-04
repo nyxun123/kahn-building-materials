@@ -94,31 +94,80 @@ const Login = () => {
         }));
         console.log('✅ Step 3: localStorage.setItem(admin-auth) 完成');
 
-        // 🔧 验证token是否已保存
-        const savedToken = localStorage.getItem('admin_access_token');
-        const savedExpiry = localStorage.getItem('admin_token_expiry');
-        console.log('🔍 验证token保存状态:', {
+        // 🔧 验证token是否已保存 - 多次验证确保保存成功
+        let savedToken = localStorage.getItem('admin_access_token');
+        let savedExpiry = localStorage.getItem('admin_token_expiry');
+        let savedRefreshToken = localStorage.getItem('admin_refresh_token');
+        let savedUserInfo = localStorage.getItem('admin_user_info');
+        
+        console.log('🔍 第一次验证token保存状态:', {
           hasToken: !!savedToken,
           tokenLength: savedToken?.length || 0,
           hasExpiry: !!savedExpiry,
-          expiry: savedExpiry ? new Date(parseInt(savedExpiry)).toLocaleString() : 'null'
+          hasRefreshToken: !!savedRefreshToken,
+          hasUserInfo: !!savedUserInfo
         });
 
+        // 如果第一次验证失败，重新保存
+        if (!savedToken || !savedRefreshToken || !savedExpiry) {
+          console.warn('⚠️ 第一次验证失败，重新保存token...');
+          AuthManager.saveTokens(accessToken, refreshToken, expiresIn);
+          AuthManager.saveUserInfo({
+            id: user.id,
+            email: user.email,
+            name: user.name || '',
+            role: user.role || 'admin'
+          });
+          
+          // 再次验证
+          savedToken = localStorage.getItem('admin_access_token');
+          savedExpiry = localStorage.getItem('admin_token_expiry');
+          savedRefreshToken = localStorage.getItem('admin_refresh_token');
+          
+          console.log('🔍 第二次验证token保存状态:', {
+            hasToken: !!savedToken,
+            tokenLength: savedToken?.length || 0,
+            hasExpiry: !!savedExpiry,
+            hasRefreshToken: !!savedRefreshToken
+          });
+        }
+
         if (!savedToken) {
-          console.error('❌ Token保存失败！无法跳转');
+          console.error('❌ Token保存失败！无法跳转', {
+            accessToken: accessToken?.substring(0, 50),
+            refreshToken: refreshToken?.substring(0, 50),
+            expiresIn: expiresIn
+          });
           throw new Error('Token保存失败，请重试');
         }
 
-        console.log('✅ 所有Token保存完成，准备跳转');
+        // 🔧 最终验证：确保所有关键数据都已保存
+        const finalCheck = {
+          accessToken: !!localStorage.getItem('admin_access_token'),
+          refreshToken: !!localStorage.getItem('admin_refresh_token'),
+          expiry: !!localStorage.getItem('admin_token_expiry'),
+          userInfo: !!localStorage.getItem('admin_user_info'),
+          adminAuth: !!localStorage.getItem('admin-auth')
+        };
+        
+        console.log('✅ 所有Token保存完成，最终验证:', finalCheck);
+        
+        if (!finalCheck.accessToken || !finalCheck.refreshToken || !finalCheck.expiry) {
+          console.error('❌ 最终验证失败！', finalCheck);
+          throw new Error('Token保存验证失败，请重试');
+        }
+
         toast.success('登录成功！');
         
         // 🔧 修复: 确保所有同步操作完成后再跳转
         // 使用 window.location.href 而不是 navigate，避免路由冲突
         // 这样可以确保页面完全重新加载，AdminLayout 会重新检查认证信息
         setTimeout(() => {
-          console.log('🚀 开始跳转到dashboard');
+          console.log('🚀 开始跳转到dashboard', {
+            tokenBeforeJump: !!localStorage.getItem('admin_access_token')
+          });
           window.location.href = '/admin/dashboard';
-        }, 500); // 增加延迟到500ms，确保保存完成
+        }, 800); // 增加延迟到800ms，确保保存完成
       } else {
         console.error('❌ 登录响应格式错误:', {
           success: result.success,
