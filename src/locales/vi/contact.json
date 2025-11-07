@@ -1,0 +1,46 @@
+{
+  "meta_description": "Liên hệ với Công ty TNHH Vật liệu Xây dựng Mới Karn Hàng Châu để tìm hiểu về sản phẩm keo dán giấy dán tường và dịch vụ OEM của chúng tôi, hoặc để nhận hỗ trợ kỹ thuật và dịch vụ khách hàng.",
+  "hero": {
+    "title": "Liên hệ Chúng tôi",
+    "subtitle": "Cho dù bạn có câu hỏi, yêu cầu về sản phẩm hay cơ hội hợp tác, đội ngũ của chúng tôi sẵn sàng hỗ trợ bạn"
+  },
+  "info": {
+    "title": "Thông tin Liên hệ",
+    "description": "Vui lòng liên hệ với chúng tôi thông qua bất kỳ phương tiện nào sau đây, và chúng tôi sẽ phản hồi bạn sớm nhất có thể.",
+    "address": {
+      "title": "Địa chỉ"
+    },
+    "phone": {
+      "title": "Số Điện thoại"
+    },
+    "email": {
+      "title": "Email"
+    },
+    "hours": {
+      "title": "Giờ Làm việc",
+      "weekdays": "Thứ Hai đến Thứ Sáu",
+      "saturday": "Thứ Bảy",
+      "sunday": "Chủ Nhật",
+      "closed": "Đóng cửa"
+    }
+  },
+  "form": {
+    "title": "Gửi Tin nhắn cho Chúng tôi",
+    "name": "Tên",
+    "company": "Công ty",
+    "email": "Email",
+    "phone": "Điện thoại",
+    "country": "Quốc gia",
+    "subject": "Chủ đề",
+    "message": "Tin nhắn",
+    "required": "Trường này là bắt buộc",
+    "email_invalid": "Vui lòng nhập địa chỉ email hợp lệ",
+    "submitting": "Đang gửi...",
+    "success": "Tin nhắn của bạn đã được gửi thành công! Chúng tôi sẽ liên hệ với bạn sớm.",
+    "error": "Gửi thất bại, vui lòng thử lại sau hoặc liên hệ trực tiếp với chúng tôi."
+  },
+  "map": {
+    "title": "Vị trí của Chúng tôi"
+  }
+}
+

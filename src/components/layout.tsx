@@ -3,36 +3,59 @@ import { Outlet, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Navbar } from './navbar';
 import { Footer } from './footer';
-import { enforceMainDomainLanguage } from '@/lib/i18n';
 
 export function Layout() {
   const { lang } = useParams<{ lang: string }>();
   const { i18n } = useTranslation();
   const [forceUpdate, setForceUpdate] = useState(0);
 
-  // 当URL中的语言参数变化时切换语言
+  // 当URL中的语言参数变化时切换语言（URL是唯一来源）
   useEffect(() => {
-    // 首先检查是否为主域名并强制英文
-    const isMainDomainEnforced = enforceMainDomainLanguage();
-    
-    // 确定目标语言
-    let targetLang = lang || 'en';
-    
-    // 如果主域名强制英文，则忽略URL参数
-    if (isMainDomainEnforced) {
-      targetLang = 'en';
+    if (!lang) {
+      return; // 如果没有语言参数，LanguageDetection会处理重定向
     }
     
-    if (['zh', 'en', 'ru'].includes(targetLang)) {
-      // 强制切换语言，不管 localStorage 中是什么
-      if (i18n.language !== targetLang) {
-        i18n.changeLanguage(targetLang);
+    // 验证语言代码是否有效
+    if (!['zh', 'en', 'ru', 'vi', 'th', 'id'].includes(lang)) {
+      console.warn(`无效的语言代码: ${lang}，使用默认语言 en`);
+      // 无效语言代码，重定向到英文
+      const currentPath = window.location.pathname;
+      const pathParts = currentPath.split('/').filter(part => part !== '');
+      pathParts[0] = 'en';
+      window.location.href = '/' + pathParts.join('/');
+      return;
+    }
+    
+    // 确定目标语言（直接使用 URL 中的语言）
+    const targetLang = lang;
+    
+    // 获取当前i18n语言（去掉可能的区域代码，如 'en-US' -> 'en'）
+    const currentLang = (i18n.language || 'en').split('-')[0];
+    
+    // 统一更新 i18n（每次 URL 变化都强制更新，确保同步）
+    console.log(`🔄 Layout处理语言: 当前=${currentLang}, 目标=${targetLang}, URL=${lang}`);
+    
+    // 如果语言不同，立即切换
+    if (currentLang !== targetLang) {
+      console.log(`🔄 语言变化，开始切换: ${currentLang} -> ${targetLang}`);
+      i18n.changeLanguage(targetLang).then(() => {
+        console.log(`✅ 语言切换成功: ${targetLang}`);
+        try {
         localStorage.setItem('userLanguage', targetLang);
+        } catch (e) {
+          console.warn('无法保存语言偏好:', e);
+        }
         // 强制重新渲染所有组件
         setForceUpdate(prev => prev + 1);
-      }
+      }).catch((err) => {
+        console.error('❌ 语言切换失败:', err);
+      });
+    } else {
+      // 即使语言相同，也强制更新一次（确保组件使用最新语言）
+      console.log(`✓ 语言已同步，强制更新组件: ${targetLang}`);
+      setForceUpdate(prev => prev + 1);
     }
-  }, [lang, i18n]);
+  }, [lang]); // 只依赖 lang，URL 变化时触发
 
   return (
     <div key={forceUpdate} className="flex flex-col min-h-screen">

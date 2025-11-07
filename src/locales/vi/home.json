@@ -1,0 +1,203 @@
+{
+  "meta_description": "Công ty TNHH Vật liệu Xây dựng Mới Karn Hàng Châu - Nhà sản xuất Tinh bột Carboxymethyl (CMS) chuyên nghiệp, sản phẩm được sử dụng rộng rãi trong in dệt, vật liệu xây dựng, ngành sơn phủ, chế biến giấy và nhiều hơn nữa, với dịch vụ OEM.",
+  "hero": {
+    "badge": "Sản xuất Chuyên nghiệp KARN",
+    "title": "Nhà sản xuất Tinh bột Carboxymethyl (CMS) Chuyên nghiệp",
+    "subtitle": "Karn Hàng Châu chuyên về R&D và sản xuất Tinh bột Carboxymethyl chất lượng cao, phục vụ các ngành dệt may, xây dựng, sơn phủ và giấy",
+    "subtitle_highlight": "Giải pháp Công nghiệp Đa ngành",
+    "company_alt": "Công ty TNHH Vật liệu Xây dựng Mới Karn Hàng Châu"
+  },
+  "applications": {
+    "badge": "Lĩnh vực Ứng dụng",
+    "title": "Lĩnh vực Ứng dụng CMS",
+    "subtitle": "Sản phẩm Tinh bột Carboxymethyl chuyên nghiệp phục vụ 6 ứng dụng ngành chính",
+    "textile": {
+      "title": "In Dệt",
+      "description": "Sử dụng làm bột in và chất làm đặc nhuộm cho hiệu quả nhuộm xuất sắc"
+    },
+    "construction": {
+      "title": "Vật liệu Xây dựng",
+      "description": "Phụ gia cho bột trét, thạch cao và keo dán giấy dán tường để tăng cường hiệu suất kết dính"
+    },
+    "coating": {
+      "title": "Ngành Sơn phủ",
+      "description": "Chất làm đặc cho sơn có thể giặt bằng nước, cải thiện tính lưu biến và ổn định"
+    },
+    "dyeing": {
+      "title": "Quy trình Nhuộm",
+      "description": "Chất làm đặc nhuộm dệt với khả năng giữ màu xuất sắc"
+    },
+    "chemical": {
+      "title": "Sản phẩm Hóa chất",
+      "description": "Vật liệu giữ nước gel chất hút ẩm với khả năng hấp thụ ẩm cao"
+    },
+    "paper": {
+      "title": "Ngành Giấy",
+      "description": "Chất kết dính và phụ trợ chế biến cho sản phẩm giấy đặc biệt"
+    },
+    "wallpaper": {
+      "title": "Keo dán Giấy dán tường",
+      "description": "Bột keo dán giấy dán tường chuyên nghiệp, kết dính mạnh, thi công dễ dàng"
+    },
+    "desiccant": {
+      "title": "Chất hút ẩm",
+      "description": "Vật liệu giữ nước gel chất hút ẩm, hấp thụ ẩm hiệu quả"
+    },
+    "oem": {
+      "title": "Tùy chỉnh OEM",
+      "description": "Tùy chỉnh công thức và bao bì theo nhu cầu khách hàng"
+    },
+    "view_all": "Xem tất cả Ứng dụng",
+    "learn_more": "Tìm hiểu thêm"
+  },
+  "products": {
+    "series": "Dòng Sản phẩm",
+    "title": "Sản phẩm của Chúng tôi",
+    "subtitle": "Khám phá dòng sản phẩm Tinh bột Carboxymethyl chất lượng cao của chúng tôi",
+    "no_image": "Không có Hình ảnh",
+    "view_all": "Xem tất cả Sản phẩm"
+  },
+  "stats": {
+    "badge": "Sức mạnh của Chúng tôi",
+    "title": "Tập trung vào Sản xuất CMS",
+    "subtitle": "Dòng sản phẩm chuyên nghiệp phục vụ nhiều ứng dụng công nghiệp",
+    "years": {
+      "value": "15",
+      "label": "Năm Sản xuất",
+      "description": "Từ năm 2010"
+    },
+    "products": {
+      "value": "6",
+      "label": "Mẫu Sản phẩm Chính",
+      "description": "Dòng 8810/8840/K5/K6/999"
+    },
+    "applications": {
+      "value": "6",
+      "label": "Lĩnh vực Ứng dụng",
+      "description": "Nhiều kịch bản công nghiệp"
+    },
+    "quality": {
+      "value": "100%",
+      "label": "Kiểm soát Chất lượng",
+      "description": "Giám sát toàn quy trình"
+    }
+  },
+  "advantages": {
+    "badge": "Lợi thế Sản phẩm",
+    "title": "Lợi thế Cốt lõi của CMS",
+    "subtitle": "Vật liệu từ thực vật tự nhiên, thân thiện với môi trường và an toàn, ứng dụng công nghiệp đa chức năng, nâng cao chất lượng sản phẩm của bạn",
+    "eco_friendly": {
+      "title": "Thân thiện Môi trường & An toàn",
+      "badge": "100% Từ Thực vật Tự nhiên",
+      "description": "Được làm từ tinh bột ngô cao cấp thông qua biến đổi carboxymethyl hóa tiên tiến, hoàn toàn tuân thủ các tiêu chuẩn môi trường quốc tế",
+      "features": [
+        "Chiết xuất thực vật tự nhiên, không độc hại và vô hại",
+        "Có thể phân hủy sinh học hoàn toàn",
+        "Đáp ứng tiêu chuẩn bao bì cấp thực phẩm",
+        "Chứng nhận môi trường ISO"
+      ]
+    },
+    "high_performance": {
+      "title": "Hiệu suất Xuất sắc",
+      "badge": "Độ nhớt lên đến 65.000 mPa·s",
+      "description": "Với 23 năm chuyên môn kỹ thuật và tối ưu hóa quy trình, hiệu suất sản phẩm của chúng tôi vượt xa tiêu chuẩn ngành",
+      "features": [
+        "Độ bám dính vượt trội, ổn định lâu dài",
+        "Khả năng chống nước và nhiệt xuất sắc",
+        "Phạm vi nhiệt độ rộng -20°C ~ 80°C",
+        "Tính nhất quán theo lô >98%"
+      ]
+    },
+    "multi_functional": {
+      "title": "Đa Chức năng",
+      "badge": "6 Ngành Chính",
+      "description": "Một vật liệu, nhiều công dụng, được ứng dụng rộng rãi trong dệt may, xây dựng, sơn phủ, giấy và các lĩnh vực công nghiệp khác",
+      "features": [
+        "Chất làm đặc - Cải thiện tính lưu biến",
+        "Chất kết dính - Tăng cường độ bền kết dính",
+        "Giữ nước - Ngăn ngừa nứt",
+        "Chất nhũ hóa - Ổn định phân tán"
+      ]
+    },
+    "easy_to_use": {
+      "title": "Thuận tiện Sử dụng",
+      "badge": "Tan trong Nước lạnh",
+      "description": "Công thức tối ưu và thiết kế hạt để sử dụng đơn giản, hiệu quả, tiết kiệm đáng kể thời gian và chi phí năng lượng",
+      "features": [
+        "Hòa tan nhanh ở nhiệt độ phòng, 3-5 phút",
+        "Không cần thiết bị đun nóng, tiết kiệm năng lượng",
+        "Vận hành đơn giản, dễ làm chủ",
+        "Nồng độ có thể điều chỉnh theo nhu cầu"
+      ]
+    }
+  },
+  "video": {
+    "badge": "Giới thiệu Sản phẩm",
+    "title": "Video Giới thiệu Sản phẩm",
+    "subtitle": "Tìm hiểu về tính năng và phương pháp sử dụng sản phẩm của chúng tôi qua video",
+    "no_video": "Không có nội dung video",
+    "features": {
+      "mixing": {
+        "title": "Các Bước Trộn Đơn giản",
+        "description": "Xem cách sản phẩm của chúng tôi trộn dễ dàng và hiệu quả với nước sạch"
+      },
+      "application": {
+        "title": "Kỹ thuật Ứng dụng Chuyên nghiệp",
+        "description": "Học cách áp dụng đúng sản phẩm của chúng tôi để có kết quả tối ưu"
+      }
+    },
+    "explore_products": "Khám phá Tất cả Sản phẩm"
+  },
+  "why_us": {
+    "badge": "Lợi thế Công ty",
+    "title": "Tại sao Chọn Chúng tôi",
+    "subtitle": "23 năm chuyên môn cung cấp sản phẩm Tinh bột Carboxymethyl chất lượng cao cho 6 ngành chính trên toàn thế giới",
+    "quality": {
+      "title": "Đảm bảo Chất lượng",
+      "description": "Kiểm soát chất lượng toàn quy trình từ kiểm tra nguyên liệu thô đến thành phẩm, với 23 năm kinh nghiệm sản xuất đảm bảo chất lượng ổn định và đáng tin cậy"
+    },
+    "experience": {
+      "title": "Kinh nghiệm Chuyên nghiệp",
+      "description": "20 năm kinh nghiệm trong ngành, hiểu sâu nhu cầu khách hàng, cung cấp giải pháp chuyên nghiệp"
+    },
+    "service": {
+      "title": "Dịch vụ Chất lượng",
+      "description": "Đội ngũ dịch vụ trước và sau bán hàng chuyên nghiệp cung cấp hỗ trợ khách hàng toàn diện"
+    }
+  },
+  "oem": {
+    "badge": "Dịch vụ Tùy chỉnh",
+    "title": "Dịch vụ Tùy chỉnh Tinh bột Carboxymethyl",
+    "subtitle": "Karn có hơn 23 năm kinh nghiệm sản xuất Tinh bột Carboxymethyl, cung cấp dịch vụ OEM/ODM chuyên nghiệp cho khách hàng toàn cầu. Chúng tôi có thể tùy chỉnh công thức sản phẩm, bao bì và thương hiệu theo yêu cầu ngành của bạn.",
+    "description": "Karn có hơn 23 năm kinh nghiệm sản xuất Tinh bột Carboxymethyl, cung cấp dịch vụ OEM/ODM chuyên nghiệp cho khách hàng toàn cầu. Chúng tôi có thể tùy chỉnh công thức sản phẩm, bao bì và thương hiệu theo yêu cầu ngành của bạn.",
+    "image_alt": "Dịch vụ Tùy chỉnh OEM",
+    "features": {
+      "brand": "Tùy chỉnh Thương hiệu: Sản xuất theo yêu cầu thương hiệu của bạn",
+      "packaging": "Tùy chỉnh Bao bì: Nhiều tùy chọn bao bì từ nhỏ đến lớn",
+      "formula": "Tùy chỉnh Công thức: Điều chỉnh hiệu suất sản phẩm theo nhu cầu thị trường",
+      "export": "Xuất khẩu đến 45 quốc gia và khu vực"
+    },
+    "learn_more": "Tìm hiểu thêm về Dịch vụ OEM"
+  },
+  "semi": {
+    "badge": "Giải pháp Thuận tiện",
+    "title": "Bao bì Nhỏ Bán thành phẩm Tinh bột Carboxymethyl",
+    "subtitle": "Chúng tôi cung cấp bao bì nhỏ túi giấy nhôm 200g đến 500g sản phẩm bán thành phẩm Tinh bột Carboxymethyl, phù hợp cho nhiều ngành và thị trường bán lẻ. Dễ bảo quản và vận chuyển, chỉ cần thêm nước khi sử dụng.",
+    "description": "Chúng tôi cung cấp bao bì nhỏ túi giấy nhôm 200g đến 500g sản phẩm bán thành phẩm Tinh bột Carboxymethyl, phù hợp cho nhiều ngành và thị trường bán lẻ. Dễ bảo quản và vận chuyển, chỉ cần thêm nước khi sử dụng.",
+    "image_alt": "Keo dán Giấy dán tường Bao bì Nhỏ Bán thành phẩm",
+    "features": {
+      "specs": "Quy cách Hoàn chỉnh: Có sẵn 200g, 300g, 400g, 500g",
+      "packaging": "Bao bì Túi Giấy Nhôm: Chống ẩm tốt",
+      "market": "Phù hợp cho thị trường trang trí nhà và bán lẻ vật liệu xây dựng",
+      "custom_brand": "Tùy chỉnh Thương hiệu: Có thể tùy chỉnh bao bì và nhãn mác"
+    },
+    "view_products": "Xem Sản phẩm Bao bì Nhỏ"
+  },
+  "cta": {
+    "title": "Liên hệ Chúng tôi để Nhận Giải pháp Chuyên nghiệp",
+    "description": "Liên hệ ngay với đội ngũ chuyên nghiệp của chúng tôi để nhận sản phẩm Tinh bột Carboxymethyl chất lượng cao và dịch vụ tùy chỉnh phù hợp với nhu cầu ngành của bạn",
+    "image_alt": "Nhà máy Tự động hóa Robot Công nghiệp",
+    "browse_products": "Duyệt Sản phẩm"
+  }
+}
+

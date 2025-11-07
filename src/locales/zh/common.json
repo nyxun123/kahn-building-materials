@@ -1,8 +1,9 @@
 {
-  "title": "杭州卡恩新型建材有限公司",
+  "title": "杭州卡恩新型建材有限公司 - 专业羧甲基淀粉（CMS）生产商",
   "nav": {
     "home": "首页",
-    "products": "产品",
+    "products": "产品中心",
+    "applications": "应用领域",
     "oem": "OEM服务",
     "about": "关于我们",
     "contact": "联系我们",
@@ -10,12 +11,17 @@
     "toggle_menu": "切换菜单",
     "wallpaper_glue": "墙纸胶粉",
     "plant_starch": "植物淀粉",
-    "oem_custom": "OEM定制"
+    "oem_custom": "OEM定制",
+    "view_applications": "查看应用领域",
+    "all_products": "全部产品"
   },
   "language": {
     "zh": "中文",
     "en": "English",
-    "ru": "Русский"
+    "ru": "Русский",
+    "vi": "Tiếng Việt",
+    "th": "ไทย",
+    "id": "Indonesia"
   },
   "theme": {
     "light": "浅色模式",
@@ -24,15 +30,15 @@
   },
   "header": {
     "company_name": "杭州卡恩新型建材有限公司",
-    "phone": "+86 571-88888888",
-    "email": "info@karn-materials.com",
-    "address": "浙江省杭州市余杭区东湖街道星桥路18号星尚国际广场",
+    "phone": "13395711877",
+    "email": "karnstarch@gmail.com",
+    "address": "浙江省杭州市临平区崇贤街道沪瑞线 1 号",
     "brand_name": "杭州卡恩新型建材有限公司",
     "consult_now": "立即咨询"
   },
   "footer": {
-    "company_brief": "杭州卡恩新型建材有限公司专业从事新型建材的研发、生产和销售，为客户提供高品质的建筑材料解决方案。",
-    "iso_certified": "ISO 9001 质量认证",
+    "company_brief": "浙江卡恩新型建材有限公司成立于2010年，专业从事羧甲基淀粉（CMS）的研发、生产和销售，为纺织、建材、涂料、造纸等行业提供高品质的羧甲基淀粉产品和解决方案。",
+    "iso_certified": "严格质量检测认证",
     "sections": {
       "about": "公司简介",
       "contact": "联系我们",
@@ -46,9 +52,9 @@
       "contact": "联系我们"
     },
     "contact_info": {
-      "address": "浙江省杭州市余杭区<br />东湖街道星光街15号星光大厦A座",
-      "phone": "+86 571-8888-8888",
-      "email": "info@karn-materials.com"
+      "address": "浙江省杭州市临平区<br />崇贤街道沪瑞线 1 号",
+      "phone": "13395711877",
+      "email": "2026233975@qq.com"
     },
     "quality_features": {
       "quality_system": "质量体系认证",

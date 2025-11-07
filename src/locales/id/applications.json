@@ -1,0 +1,67 @@
+{
+  "meta_description": "Aplikasi Carboxymethyl Starch (CMS) Hangzhou Kahn dalam pencetakan tekstil, pelapis berbasis air, perekat wallpaper, pewarnaan kertas, bahan bangunan, dan gel desikan",
+  "hero": {
+    "title": "Bidang Aplikasi CMS",
+    "subtitle": "Produk carboxymethyl starch profesional digunakan secara luas dalam tekstil, pelapis, konstruksi, pembuatan kertas, dan bidang industri lainnya"
+  },
+  "textile": {
+    "title": "Pencetakan & Pewarnaan Tekstil",
+    "description": "Digunakan sebagai pasta cetak dan pengental pewarnaan untuk efek pencetakan yang sangat baik",
+    "applications": ["Pasta cetak tekstil", "Penebalan proses pewarnaan", "Pencetakan pewarna reaktif", "Proses pencetakan resist"],
+    "features": ["Kinerja penebalan yang sangat baik", "Penetrasi yang baik", "Kejernihan pencetakan tinggi", "Mudah dicuci"],
+    "detail_title": "Aplikasi Carboxymethyl Starch dalam Tekstil",
+    "detail_content": ["CMS memainkan peran penting dalam pencetakan dan pewarnaan tekstil.", "Dalam proses pencetakan, ia menyediakan viskositas yang sesuai.", "Dalam proses pewarnaan, ia mengontrol fluiditas larutan pewarna."]
+  },
+  "construction": {
+    "title": "Bahan Bangunan",
+    "description": "Aditif bubuk dempul dan gipsum",
+    "applications": ["Bubuk dempul dinding interior", "Bahan berbasis gipsum", "Bahan perata dinding", "Produk gipsum dekoratif"],
+    "features": ["Meningkatkan kekuatan ikatan", "Meningkatkan kemampuan kerja", "Pencegahan retak", "Meningkatkan ketahanan air"],
+    "detail_title": "CMS dalam Bahan Bangunan",
+    "detail_content": ["CMS digunakan dalam bahan bangunan sebagai agen retensi air.", "Dalam bubuk dempul, ia menunda penguapan air.", "Dalam bahan gipsum, ia meningkatkan fluiditas."]
+  },
+  "coating": {
+    "title": "Pelapis Berbasis Air",
+    "description": "Pengental untuk meningkatkan reologi dan stabilitas pelapis",
+    "applications": ["Cat emulsi berbasis air", "Pelapis arsitektural", "Pelapis interior/eksterior", "Pelapis kayu berbasis air"],
+    "features": ["Penebalan yang sangat baik", "Meningkatkan reologi", "Meningkatkan stabilitas", "Ramah lingkungan"],
+    "detail_title": "CMS dalam Pelapis Berbasis Air",
+    "detail_content": ["CMS berfungsi sebagai pengental dan pengubah reologi.", "Ia memberikan efek penebalan yang sangat baik.", "Ia meningkatkan stabilitas pelapis."]
+  },
+  "wallpaper": {
+    "title": "Perekat Wallpaper",
+    "description": "Aditif bubuk perekat wallpaper profesional",
+    "applications": ["Bubuk perekat wallpaper", "Pasta penutup dinding", "Perekat wallpaper premium", "Lem wallpaper anti jamur"],
+    "features": ["Kekuatan perekat tinggi", "Aplikasi mudah", "Sifat anti jamur", "Formula ramah lingkungan"],
+    "detail_title": "CMS dalam Perekat Wallpaper",
+    "detail_content": ["CMS adalah komponen inti bubuk perekat wallpaper.", "Ia membentuk larutan perekat yang seragam.", "Kami menyediakan layanan OEM profesional."]
+  },
+  "paper": {
+    "title": "Pewarnaan Kertas",
+    "description": "Pengental pewarnaan untuk pewarnaan seragam",
+    "applications": ["Pewarnaan kertas berwarna", "Pewarnaan pulp", "Kertas khusus", "Pewarnaan karton"],
+    "features": ["Keseragaman yang sangat baik", "Warna cerah", "Meningkatkan kekuatan", "Meningkatkan tekstur"],
+    "detail_title": "CMS dalam Industri Kertas",
+    "detail_content": ["CMS digunakan sebagai agen sizing permukaan.", "Ia meningkatkan penyerapan pewarna dan keseragaman.", "Ia meningkatkan sifat kertas."]
+  },
+  "desiccant": {
+    "title": "Gel Desikan",
+    "description": "Aditif desikan kalsium klorida",
+    "applications": ["Desikan kalsium klorida", "Gel penyerap kelembaban", "Desikan tahan kelembaban", "Dehumidifikasi industri"],
+    "features": ["Penyerapan kelembaban yang sangat baik", "Retensi gel yang stabil", "Aman dan andal", "Efek tahan lama"],
+    "detail_title": "CMS dalam Desikan",
+    "detail_content": ["CMS mengunci kelembaban yang diserap menjadi gel yang stabil.", "Ia mencegah kebocoran cairan.", "Produk aman digunakan."]
+  },
+  "applications_title": "Aplikasi",
+  "features_title": "Fitur",
+  "learn_more": "Pelajari Lebih Lanjut",
+  "collapse": "Ciutkan",
+  "view_product": "Lihat Produk yang Direkomendasikan",
+  "cta": {
+    "title": "Butuh Solusi Aplikasi Lebih Lanjut?",
+    "description": "Tim profesional kami siap memberikan solusi aplikasi CMS",
+    "contact": "Hubungi Kami",
+    "products": "Lihat Produk"
+  }
+}
+

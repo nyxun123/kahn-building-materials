@@ -11,7 +11,7 @@ const LanguageDetection = () => {
     const pathParts = location.pathname.split('/').filter(part => part !== '');
     const firstPart = pathParts[0];
     
-    const supportedLanguages = ['zh', 'en', 'ru'];
+    const supportedLanguages = ['zh', 'en', 'ru', 'vi', 'th', 'id'];
 
     // 如果主域名，强制跳转英文
     const host = window.location.hostname.toLowerCase();

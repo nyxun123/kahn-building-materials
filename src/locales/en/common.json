@@ -1,8 +1,9 @@
 {
-  "title": "Hangzhou Karn New Building Materials Co., Ltd.",
+  "title": "Hangzhou Karn New Building Materials Co., Ltd. - Professional Carboxymethyl Starch (CMS) Manufacturer",
   "nav": {
     "home": "Home",
     "products": "Products",
+    "applications": "Applications",
     "oem": "OEM Services",
     "about": "About Us",
     "contact": "Contact",
@@ -10,12 +11,17 @@
     "toggle_menu": "Toggle Menu",
     "wallpaper_glue": "Wallpaper Glue",
     "plant_starch": "Plant Starch",
-    "oem_custom": "OEM Customization"
+    "oem_custom": "OEM Customization",
+    "view_applications": "View Applications",
+    "all_products": "All Products"
   },
   "language": {
     "zh": "中文",
     "en": "English",
-    "ru": "Русский"
+    "ru": "Русский",
+    "vi": "Tiếng Việt",
+    "th": "ไทย",
+    "id": "Indonesia"
   },
   "theme": {
     "light": "Light Mode",
@@ -24,15 +30,15 @@
   },
   "header": {
     "company_name": "Hangzhou Karn New Building Materials Co., Ltd.",
-    "phone": "+86 571-88888888",
-    "email": "info@karn-materials.com",
-    "address": "No. 18, Xingqiao Road, Donghu Street, Yuhang District, Hangzhou, China",
+    "phone": "13395711877",
+    "email": "karnstarch@gmail.com",
+    "address": "No. 1, Huruixian Road, Chongxian Street, Linping District, Hangzhou, Zhejiang, China",
     "brand_name": "Hangzhou Karn New Building Materials Co., Ltd.",
     "consult_now": "Contact Now"
   },
   "footer": {
-    "company_brief": "Hangzhou Karn New Building Materials Co., Ltd. specializes in the research, development, production, and sales of new building materials, providing customers with high-quality building material solutions.",
-    "iso_certified": "ISO 9001 Quality Certified",
+    "company_brief": "Established in 2010, Hangzhou Karn New Building Materials Co., Ltd. specializes in the research, development, production, and sales of Carboxymethyl Starch (CMS), providing high-quality CMS products and solutions for textile, construction, coating, paper and other industries.",
+    "iso_certified": "Strict Quality Testing",
     "sections": {
       "about": "Company Profile",
       "contact": "Contact Us",
@@ -46,9 +52,9 @@
       "contact": "Contact Us"
     },
     "contact_info": {
-      "address": "Starlight Building A, 15 Starlight Street,<br />Donghu Street, Yuhang District,<br />Hangzhou, Zhejiang, China",
-      "phone": "+86 571-8888-8888",
-      "email": "info@karn-materials.com"
+      "address": "No. 1, Huruixian Road,<br />Chongxian Street, Linping District,<br />Hangzhou, Zhejiang, China",
+      "phone": "13395711877",
+      "email": "2026233975@qq.com"
     },
     "quality_features": {
       "quality_system": "Quality System Certification",

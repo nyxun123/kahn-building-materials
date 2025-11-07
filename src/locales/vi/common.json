@@ -1,0 +1,100 @@
+{
+  "title": "Công ty TNHH Vật liệu Xây dựng Mới Karn Hàng Châu - Nhà sản xuất Tinh bột Carboxymethyl (CMS) chuyên nghiệp",
+  "nav": {
+    "home": "Trang chủ",
+    "products": "Sản phẩm",
+    "applications": "Ứng dụng",
+    "oem": "Dịch vụ OEM",
+    "about": "Về chúng tôi",
+    "contact": "Liên hệ",
+    "main_navigation": "Điều hướng chính",
+    "toggle_menu": "Chuyển đổi Menu",
+    "wallpaper_glue": "Keo dán giấy dán tường",
+    "plant_starch": "Tinh bột thực vật",
+    "oem_custom": "Tùy chỉnh OEM",
+    "view_applications": "Xem ứng dụng",
+    "all_products": "Tất cả sản phẩm"
+  },
+  "language": {
+    "zh": "中文",
+    "en": "English",
+    "ru": "Русский",
+    "vi": "Tiếng Việt",
+    "th": "ไทย",
+    "id": "Indonesia"
+  },
+  "theme": {
+    "light": "Chế độ sáng",
+    "dark": "Chế độ tối",
+    "system": "Chế độ hệ thống"
+  },
+  "header": {
+    "company_name": "Công ty TNHH Vật liệu Xây dựng Mới Karn Hàng Châu",
+    "phone": "13395711877",
+    "email": "karnstarch@gmail.com",
+    "address": "Số 1, Đường Huruixian, Phố Chongxian, Quận Linping, Hàng Châu, Chiết Giang, Trung Quốc",
+    "brand_name": "Công ty TNHH Vật liệu Xây dựng Mới Karn Hàng Châu",
+    "consult_now": "Liên hệ ngay"
+  },
+  "footer": {
+    "company_brief": "Được thành lập vào năm 2010, Công ty TNHH Vật liệu Xây dựng Mới Karn Hàng Châu chuyên về nghiên cứu, phát triển, sản xuất và bán hàng Tinh bột Carboxymethyl (CMS), cung cấp sản phẩm và giải pháp CMS chất lượng cao cho các ngành dệt may, xây dựng, sơn phủ, giấy và các ngành khác.",
+    "iso_certified": "Kiểm tra chất lượng nghiêm ngặt",
+    "sections": {
+      "about": "Hồ sơ công ty",
+      "contact": "Liên hệ chúng tôi",
+      "quick_links": "Liên kết nhanh",
+      "quality": "Đảm bảo chất lượng"
+    },
+    "quick_links": {
+      "home": "Trang chủ",
+      "products": "Sản phẩm",
+      "about": "Về chúng tôi",
+      "contact": "Liên hệ chúng tôi"
+    },
+    "contact_info": {
+      "address": "Số 1, Đường Huruixian,<br />Phố Chongxian, Quận Linping,<br />Hàng Châu, Chiết Giang, Trung Quốc",
+      "phone": "13395711877",
+      "email": "2026233975@qq.com"
+    },
+    "quality_features": {
+      "quality_system": "Chứng nhận Hệ thống Chất lượng",
+      "environmental": "Chứng nhận Tiêu chuẩn Môi trường",
+      "industry_certification": "Chứng nhận Năng lực Ngành"
+    },
+    "copyright": "© 2024 Công ty TNHH Vật liệu Xây dựng Mới Karn Hàng Châu. Bảo lưu mọi quyền.",
+    "bottom_links": {
+      "privacy": "Chính sách Bảo mật",
+      "terms": "Điều khoản Dịch vụ"
+    }
+  },
+  "cta": {
+    "contact": "Liên hệ chúng tôi",
+    "learn_more": "Tìm hiểu thêm",
+    "view_products": "Xem sản phẩm",
+    "submit": "Gửi",
+    "send_message": "Gửi tin nhắn",
+    "download": "Tải xuống"
+  },
+  "admin": {
+    "login": "Đăng nhập Quản trị",
+    "logout": "Đăng xuất"
+  },
+  "admin_panel": "Bảng điều khiển Quản trị",
+  "back_to_list": "Quay lại danh sách",
+  "no_data": "Không có dữ liệu",
+  "search": "Tìm kiếm",
+  "save": "Lưu",
+  "cancel": "Hủy",
+  "confirm": "Xác nhận",
+  "delete": "Xóa",
+  "edit": "Chỉnh sửa",
+  "add": "Thêm",
+  "view": "Xem",
+  "loading": "Đang tải...",
+  "success": "Thành công",
+  "error": "Lỗi",
+  "required": "Trường này là bắt buộc",
+  "switch_language": "Chuyển đổi Ngôn ngữ",
+  "switch_theme": "Chuyển đổi Chủ đề"
+}
+

@@ -1,0 +1,100 @@
+{
+  "title": "บริษัท Hangzhou Karn New Building Materials จำกัด - ผู้ผลิต Carboxymethyl Starch (CMS) มืออาชีพ",
+  "nav": {
+    "home": "หน้าแรก",
+    "products": "ผลิตภัณฑ์",
+    "applications": "การใช้งาน",
+    "oem": "บริการ OEM",
+    "about": "เกี่ยวกับเรา",
+    "contact": "ติดต่อ",
+    "main_navigation": "เมนูหลัก",
+    "toggle_menu": "สลับเมนู",
+    "wallpaper_glue": "กาวติดวอลเปเปอร์",
+    "plant_starch": "แป้งพืช",
+    "oem_custom": "การปรับแต่ง OEM",
+    "view_applications": "ดูการใช้งาน",
+    "all_products": "ผลิตภัณฑ์ทั้งหมด"
+  },
+  "language": {
+    "zh": "中文",
+    "en": "English",
+    "ru": "Русский",
+    "vi": "Tiếng Việt",
+    "th": "ไทย",
+    "id": "Indonesia"
+  },
+  "theme": {
+    "light": "โหมดสว่าง",
+    "dark": "โหมดมืด",
+    "system": "โหมดระบบ"
+  },
+  "header": {
+    "company_name": "บริษัท Hangzhou Karn New Building Materials จำกัด",
+    "phone": "13395711877",
+    "email": "karnstarch@gmail.com",
+    "address": "เลขที่ 1 ถนน Huruixian ตำบล Chongxian เขต Linping หางโจว เจ้อเจียง จีน",
+    "brand_name": "บริษัท Hangzhou Karn New Building Materials จำกัด",
+    "consult_now": "ติดต่อเลย"
+  },
+  "footer": {
+    "company_brief": "ก่อตั้งขึ้นในปี 2010 บริษัท Hangzhou Karn New Building Materials จำกัด เชี่ยวชาญในการวิจัย พัฒนา ผลิต และจำหน่าย Carboxymethyl Starch (CMS) มอบผลิตภัณฑ์และโซลูชัน CMS คุณภาพสูงสำหรับอุตสาหกรรมสิ่งทอ ก่อสร้าง สีเคลือบ กระดาษ และอื่นๆ",
+    "iso_certified": "การทดสอบคุณภาพอย่างเข้มงวด",
+    "sections": {
+      "about": "โปรไฟล์บริษัท",
+      "contact": "ติดต่อเรา",
+      "quick_links": "ลิงก์ด่วน",
+      "quality": "การรับประกันคุณภาพ"
+    },
+    "quick_links": {
+      "home": "หน้าแรก",
+      "products": "ผลิตภัณฑ์",
+      "about": "เกี่ยวกับเรา",
+      "contact": "ติดต่อเรา"
+    },
+    "contact_info": {
+      "address": "เลขที่ 1 ถนน Huruixian<br />ตำบล Chongxian เขต Linping<br />หางโจว เจ้อเจียง จีน",
+      "phone": "13395711877",
+      "email": "2026233975@qq.com"
+    },
+    "quality_features": {
+      "quality_system": "การรับรองระบบคุณภาพ",
+      "environmental": "การรับรองมาตรฐานสิ่งแวดล้อม",
+      "industry_certification": "การรับรองคุณสมบัติอุตสาหกรรม"
+    },
+    "copyright": "© 2024 บริษัท Hangzhou Karn New Building Materials จำกัด สงวนลิขสิทธิ์",
+    "bottom_links": {
+      "privacy": "นโยบายความเป็นส่วนตัว",
+      "terms": "เงื่อนไขการให้บริการ"
+    }
+  },
+  "cta": {
+    "contact": "ติดต่อเรา",
+    "learn_more": "เรียนรู้เพิ่มเติม",
+    "view_products": "ดูผลิตภัณฑ์",
+    "submit": "ส่ง",
+    "send_message": "ส่งข้อความ",
+    "download": "ดาวน์โหลด"
+  },
+  "admin": {
+    "login": "เข้าสู่ระบบผู้ดูแล",
+    "logout": "ออกจากระบบ"
+  },
+  "admin_panel": "แผงควบคุมผู้ดูแล",
+  "back_to_list": "กลับไปยังรายการ",
+  "no_data": "ไม่มีข้อมูล",
+  "search": "ค้นหา",
+  "save": "บันทึก",
+  "cancel": "ยกเลิก",
+  "confirm": "ยืนยัน",
+  "delete": "ลบ",
+  "edit": "แก้ไข",
+  "add": "เพิ่ม",
+  "view": "ดู",
+  "loading": "กำลังโหลด...",
+  "success": "สำเร็จ",
+  "error": "ข้อผิดพลาด",
+  "required": "ฟิลด์นี้จำเป็นต้องกรอก",
+  "switch_language": "เปลี่ยนภาษา",
+  "switch_theme": "เปลี่ยนธีม"
+}
+

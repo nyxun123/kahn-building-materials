@@ -1,0 +1,100 @@
+{
+  "title": "Hangzhou Karn New Building Materials Co., Ltd. - Produsen Carboxymethyl Starch (CMS) Profesional",
+  "nav": {
+    "home": "Beranda",
+    "products": "Produk",
+    "applications": "Aplikasi",
+    "oem": "Layanan OEM",
+    "about": "Tentang Kami",
+    "contact": "Kontak",
+    "main_navigation": "Navigasi Utama",
+    "toggle_menu": "Menu Toggle",
+    "wallpaper_glue": "Lem Wallpaper",
+    "plant_starch": "Pati Tanaman",
+    "oem_custom": "Kustomisasi OEM",
+    "view_applications": "Lihat Aplikasi",
+    "all_products": "Semua Produk"
+  },
+  "language": {
+    "zh": "中文",
+    "en": "English",
+    "ru": "Русский",
+    "vi": "Tiếng Việt",
+    "th": "ไทย",
+    "id": "Indonesia"
+  },
+  "theme": {
+    "light": "Mode Terang",
+    "dark": "Mode Gelap",
+    "system": "Mode Sistem"
+  },
+  "header": {
+    "company_name": "Hangzhou Karn New Building Materials Co., Ltd.",
+    "phone": "13395711877",
+    "email": "karnstarch@gmail.com",
+    "address": "No. 1, Jalan Huruixian, Chongxian Street, Distrik Linping, Hangzhou, Zhejiang, Tiongkok",
+    "brand_name": "Hangzhou Karn New Building Materials Co., Ltd.",
+    "consult_now": "Hubungi Sekarang"
+  },
+  "footer": {
+    "company_brief": "Didirikan pada tahun 2010, Hangzhou Karn New Building Materials Co., Ltd. mengkhususkan diri dalam penelitian, pengembangan, produksi, dan penjualan Carboxymethyl Starch (CMS), menyediakan produk dan solusi CMS berkualitas tinggi untuk industri tekstil, konstruksi, pelapis, kertas, dan lainnya.",
+    "iso_certified": "Pengujian Kualitas Ketat",
+    "sections": {
+      "about": "Profil Perusahaan",
+      "contact": "Hubungi Kami",
+      "quick_links": "Tautan Cepat",
+      "quality": "Jaminan Kualitas"
+    },
+    "quick_links": {
+      "home": "Beranda",
+      "products": "Produk",
+      "about": "Tentang Kami",
+      "contact": "Hubungi Kami"
+    },
+    "contact_info": {
+      "address": "No. 1, Jalan Huruixian,<br />Chongxian Street, Distrik Linping,<br />Hangzhou, Zhejiang, Tiongkok",
+      "phone": "13395711877",
+      "email": "2026233975@qq.com"
+    },
+    "quality_features": {
+      "quality_system": "Sertifikasi Sistem Kualitas",
+      "environmental": "Sertifikasi Standar Lingkungan",
+      "industry_certification": "Sertifikasi Kualifikasi Industri"
+    },
+    "copyright": "© 2024 Hangzhou Karn New Building Materials Co., Ltd. Hak cipta dilindungi.",
+    "bottom_links": {
+      "privacy": "Kebijakan Privasi",
+      "terms": "Syarat Layanan"
+    }
+  },
+  "cta": {
+    "contact": "Hubungi Kami",
+    "learn_more": "Pelajari Lebih Lanjut",
+    "view_products": "Lihat Produk",
+    "submit": "Kirim",
+    "send_message": "Kirim Pesan",
+    "download": "Unduh"
+  },
+  "admin": {
+    "login": "Login Admin",
+    "logout": "Keluar"
+  },
+  "admin_panel": "Panel Admin",
+  "back_to_list": "Kembali ke Daftar",
+  "no_data": "Tidak Ada Data",
+  "search": "Cari",
+  "save": "Simpan",
+  "cancel": "Batal",
+  "confirm": "Konfirmasi",
+  "delete": "Hapus",
+  "edit": "Edit",
+  "add": "Tambah",
+  "view": "Lihat",
+  "loading": "Memuat...",
+  "success": "Berhasil",
+  "error": "Kesalahan",
+  "required": "Bidang ini wajib diisi",
+  "switch_language": "Ganti Bahasa",
+  "switch_theme": "Ganti Tema"
+}
+

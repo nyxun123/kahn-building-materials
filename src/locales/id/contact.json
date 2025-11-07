@@ -1,0 +1,46 @@
+{
+  "meta_description": "Hubungi Hangzhou Karn New Building Materials Co., Ltd. untuk mempelajari tentang produk perekat wallpaper dan layanan OEM kami, atau untuk mendapatkan dukungan teknis dan layanan pelanggan.",
+  "hero": {
+    "title": "Hubungi Kami",
+    "subtitle": "Apakah Anda memiliki pertanyaan, pertanyaan produk, atau peluang kemitraan, tim kami siap membantu Anda"
+  },
+  "info": {
+    "title": "Informasi Kontak",
+    "description": "Jangan ragu untuk menghubungi kami melalui salah satu cara berikut, dan kami akan segera menghubungi Anda kembali.",
+    "address": {
+      "title": "Alamat"
+    },
+    "phone": {
+      "title": "Nomor Telepon"
+    },
+    "email": {
+      "title": "Email"
+    },
+    "hours": {
+      "title": "Jam Kerja",
+      "weekdays": "Senin hingga Jumat",
+      "saturday": "Sabtu",
+      "sunday": "Minggu",
+      "closed": "Tutup"
+    }
+  },
+  "form": {
+    "title": "Kirim Pesan kepada Kami",
+    "name": "Nama",
+    "company": "Perusahaan",
+    "email": "Email",
+    "phone": "Telepon",
+    "country": "Negara",
+    "subject": "Subjek",
+    "message": "Pesan",
+    "required": "Bidang ini wajib diisi",
+    "email_invalid": "Silakan masukkan alamat email yang valid",
+    "submitting": "Mengirim...",
+    "success": "Pesan Anda telah berhasil dikirim! Kami akan segera menghubungi Anda.",
+    "error": "Pengiriman gagal, silakan coba lagi nanti atau hubungi kami secara langsung."
+  },
+  "map": {
+    "title": "Lokasi Kami"
+  }
+}
+

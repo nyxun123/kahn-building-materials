@@ -1,0 +1,67 @@
+{
+  "meta_description": "Ứng dụng Tinh bột Carboxymethyl (CMS) của Karn Hàng Châu trong in dệt, sơn gốc nước, keo dán giấy dán tường, nhuộm giấy, vật liệu xây dựng và gel chất hút ẩm",
+  "hero": {
+    "title": "Lĩnh vực Ứng dụng CMS",
+    "subtitle": "Sản phẩm tinh bột carboxymethyl chuyên nghiệp được sử dụng rộng rãi trong dệt may, sơn phủ, xây dựng, sản xuất giấy và các lĩnh vực công nghiệp khác"
+  },
+  "textile": {
+    "title": "In & Nhuộm Dệt",
+    "description": "Sử dụng làm bột in và chất làm đặc nhuộm cho hiệu quả in xuất sắc",
+    "applications": ["Bột in dệt", "Làm đặc quy trình nhuộm", "In thuốc nhuộm hoạt tính", "Quy trình in chống"],
+    "features": ["Hiệu suất làm đặc xuất sắc", "Thâm nhập tốt", "Độ rõ nét in cao", "Dễ giặt sạch"],
+    "detail_title": "Ứng dụng Tinh bột Carboxymethyl trong Dệt",
+    "detail_content": ["CMS đóng vai trò quan trọng trong in và nhuộm dệt.", "Trong quy trình in, nó cung cấp độ nhớt phù hợp.", "Trong quy trình nhuộm, nó kiểm soát tính lưu động của dung dịch thuốc nhuộm."]
+  },
+  "construction": {
+    "title": "Vật liệu Xây dựng",
+    "description": "Phụ gia bột trét và thạch cao",
+    "applications": ["Bột trét tường nội thất", "Vật liệu gốc thạch cao", "Vật liệu san phẳng tường", "Sản phẩm thạch cao trang trí"],
+    "features": ["Cải thiện độ bền kết dính", "Tăng cường khả năng thi công", "Ngăn ngừa nứt", "Tăng khả năng chống nước"],
+    "detail_title": "CMS trong Vật liệu Xây dựng",
+    "detail_content": ["CMS được sử dụng trong vật liệu xây dựng như chất giữ nước.", "Trong bột trét, nó làm chậm sự bay hơi nước.", "Trong vật liệu thạch cao, nó cải thiện tính lưu động."]
+  },
+  "coating": {
+    "title": "Sơn gốc Nước",
+    "description": "Chất làm đặc để cải thiện tính lưu biến và ổn định của sơn",
+    "applications": ["Sơn nhũ tương gốc nước", "Sơn kiến trúc", "Sơn nội/ngoại thất", "Sơn gỗ gốc nước"],
+    "features": ["Làm đặc xuất sắc", "Cải thiện tính lưu biến", "Tăng cường ổn định", "Thân thiện với môi trường"],
+    "detail_title": "CMS trong Sơn gốc Nước",
+    "detail_content": ["CMS phục vụ như chất làm đặc và chất điều chỉnh lưu biến.", "Nó cung cấp hiệu quả làm đặc xuất sắc.", "Nó tăng cường độ ổn định của sơn."]
+  },
+  "wallpaper": {
+    "title": "Keo dán Giấy dán tường",
+    "description": "Phụ gia bột keo dán giấy dán tường chuyên nghiệp",
+    "applications": ["Bột keo dán giấy dán tường", "Bột dán tường", "Keo dán giấy dán tường cao cấp", "Keo dán giấy dán tường chống nấm mốc"],
+    "features": ["Độ bám dính cao", "Ứng dụng dễ dàng", "Tính chất chống nấm mốc", "Công thức thân thiện với môi trường"],
+    "detail_title": "CMS trong Keo dán Giấy dán tường",
+    "detail_content": ["CMS là thành phần cốt lõi của bột keo dán giấy dán tường.", "Nó tạo thành dung dịch kết dính đồng nhất.", "Chúng tôi cung cấp dịch vụ OEM chuyên nghiệp."]
+  },
+  "paper": {
+    "title": "Nhuộm Giấy",
+    "description": "Chất làm đặc nhuộm cho màu sắc đồng đều",
+    "applications": ["Nhuộm giấy màu", "Nhuộm bột giấy", "Giấy đặc biệt", "Nhuộm bìa carton"],
+    "features": ["Độ đồng đều xuất sắc", "Màu sắc tươi sáng", "Cải thiện độ bền", "Tăng cường kết cấu"],
+    "detail_title": "CMS trong Ngành Giấy",
+    "detail_content": ["CMS được sử dụng làm chất định hình bề mặt.", "Nó cải thiện khả năng hấp thụ thuốc nhuộm và độ đồng đều.", "Nó tăng cường tính chất của giấy."]
+  },
+  "desiccant": {
+    "title": "Gel Chất hút ẩm",
+    "description": "Phụ gia chất hút ẩm calcium chloride",
+    "applications": ["Chất hút ẩm calcium chloride", "Gel hấp thụ ẩm", "Chất hút ẩm chống ẩm", "Khử ẩm công nghiệp"],
+    "features": ["Hấp thụ ẩm xuất sắc", "Giữ gel ổn định", "An toàn và đáng tin cậy", "Hiệu quả lâu dài"],
+    "detail_title": "CMS trong Chất hút ẩm",
+    "detail_content": ["CMS khóa ẩm đã hấp thụ thành gel ổn định.", "Nó ngăn ngừa rò rỉ chất lỏng.", "Sản phẩm an toàn khi sử dụng."]
+  },
+  "applications_title": "Ứng dụng",
+  "features_title": "Tính năng",
+  "learn_more": "Tìm hiểu thêm",
+  "collapse": "Thu gọn",
+  "view_product": "Xem Sản phẩm Đề xuất",
+  "cta": {
+    "title": "Cần Thêm Giải pháp Ứng dụng?",
+    "description": "Đội ngũ chuyên nghiệp của chúng tôi sẵn sàng cung cấp giải pháp ứng dụng CMS",
+    "contact": "Liên hệ Chúng tôi",
+    "products": "Xem Sản phẩm"
+  }
+}
+
