@@ -163,3 +163,149 @@ export function sanitizeObject(obj) {
   return sanitized;
 }
 
+/**
+ * 验证联系表单数据
+ * @param {Object} contactData - 联系表单数据
+ * @returns {Object} { valid: boolean, error?: string, sanitizedData?: Object }
+ */
+export function validateContactForm(contactData) {
+  if (!contactData) {
+    return { valid: false, error: '表单数据不能为空' };
+  }
+
+  // 必填字段验证
+  if (!contactData.name || !contactData.name.trim()) {
+    return { valid: false, error: '姓名为必填项' };
+  }
+
+  if (!contactData.email || !contactData.email.trim()) {
+    return { valid: false, error: '邮箱为必填项' };
+  }
+
+  if (!contactData.message || !contactData.message.trim()) {
+    return { valid: false, error: '留言内容为必填项' };
+  }
+
+  // 邮箱格式验证
+  if (!validateEmail(contactData.email.trim())) {
+    return { valid: false, error: '邮箱格式不正确' };
+  }
+
+  // 字段长度验证
+  if (!validateStringLength(contactData.name, 1, 100)) {
+    return { valid: false, error: '姓名长度必须在 1-100 个字符之间' };
+  }
+
+  if (!validateStringLength(contactData.email, 5, 255)) {
+    return { valid: false, error: '邮箱长度必须在 5-255 个字符之间' };
+  }
+
+  if (!validateStringLength(contactData.message, 10, 5000)) {
+    return { valid: false, error: '留言内容长度必须在 10-5000 个字符之间' };
+  }
+
+  // 可选字段长度验证
+  if (contactData.phone && !validateStringLength(contactData.phone, 0, 50)) {
+    return { valid: false, error: '电话号码长度不能超过 50 个字符' };
+  }
+
+  if (contactData.company && !validateStringLength(contactData.company, 0, 200)) {
+    return { valid: false, error: '公司名称长度不能超过 200 个字符' };
+  }
+
+  if (contactData.country && !validateStringLength(contactData.country, 0, 100)) {
+    return { valid: false, error: '国家/地区长度不能超过 100 个字符' };
+  }
+
+  if (contactData.subject && !validateStringLength(contactData.subject, 0, 200)) {
+    return { valid: false, error: '主题长度不能超过 200 个字符' };
+  }
+
+  // 清理数据（防止 XSS）
+  const sanitizedData = {
+    name: sanitizeString(contactData.name),
+    email: sanitizeString(contactData.email).toLowerCase(),
+    message: sanitizeString(contactData.message),
+    phone: contactData.phone ? sanitizeString(contactData.phone) : null,
+    company: contactData.company ? sanitizeString(contactData.company) : null,
+    country: contactData.country ? sanitizeString(contactData.country) : null,
+    subject: contactData.subject ? sanitizeString(contactData.subject) : null,
+    language: contactData.language || 'zh'
+  };
+
+  return { valid: true, sanitizedData };
+}
+
+
+ * 验证联系表单数据
+ * @param {Object} contactData - 联系表单数据
+ * @returns {Object} { valid: boolean, error?: string, sanitizedData?: Object }
+ */
+export function validateContactForm(contactData) {
+  if (!contactData) {
+    return { valid: false, error: '表单数据不能为空' };
+  }
+
+  // 必填字段验证
+  if (!contactData.name || !contactData.name.trim()) {
+    return { valid: false, error: '姓名为必填项' };
+  }
+
+  if (!contactData.email || !contactData.email.trim()) {
+    return { valid: false, error: '邮箱为必填项' };
+  }
+
+  if (!contactData.message || !contactData.message.trim()) {
+    return { valid: false, error: '留言内容为必填项' };
+  }
+
+  // 邮箱格式验证
+  if (!validateEmail(contactData.email.trim())) {
+    return { valid: false, error: '邮箱格式不正确' };
+  }
+
+  // 字段长度验证
+  if (!validateStringLength(contactData.name, 1, 100)) {
+    return { valid: false, error: '姓名长度必须在 1-100 个字符之间' };
+  }
+
+  if (!validateStringLength(contactData.email, 5, 255)) {
+    return { valid: false, error: '邮箱长度必须在 5-255 个字符之间' };
+  }
+
+  if (!validateStringLength(contactData.message, 10, 5000)) {
+    return { valid: false, error: '留言内容长度必须在 10-5000 个字符之间' };
+  }
+
+  // 可选字段长度验证
+  if (contactData.phone && !validateStringLength(contactData.phone, 0, 50)) {
+    return { valid: false, error: '电话号码长度不能超过 50 个字符' };
+  }
+
+  if (contactData.company && !validateStringLength(contactData.company, 0, 200)) {
+    return { valid: false, error: '公司名称长度不能超过 200 个字符' };
+  }
+
+  if (contactData.country && !validateStringLength(contactData.country, 0, 100)) {
+    return { valid: false, error: '国家/地区长度不能超过 100 个字符' };
+  }
+
+  if (contactData.subject && !validateStringLength(contactData.subject, 0, 200)) {
+    return { valid: false, error: '主题长度不能超过 200 个字符' };
+  }
+
+  // 清理数据（防止 XSS）
+  const sanitizedData = {
+    name: sanitizeString(contactData.name),
+    email: sanitizeString(contactData.email).toLowerCase(),
+    message: sanitizeString(contactData.message),
+    phone: contactData.phone ? sanitizeString(contactData.phone) : null,
+    company: contactData.company ? sanitizeString(contactData.company) : null,
+    country: contactData.country ? sanitizeString(contactData.country) : null,
+    subject: contactData.subject ? sanitizeString(contactData.subject) : null,
+    language: contactData.language || 'zh'
+  };
+
+  return { valid: true, sanitizedData };
+}
+

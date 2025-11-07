@@ -43,7 +43,7 @@ export async function onRequestGet(context) {
     try {
       // 获取联系数据
       const contacts = await env.DB.prepare(`
-        SELECT id, name, email, phone, company, message, created_at, status, is_read
+        SELECT id, name, email, phone, company, country, subject, message, language, created_at, status, is_read
         FROM contacts
         ORDER BY created_at DESC
         LIMIT ? OFFSET ?

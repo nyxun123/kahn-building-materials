@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Helmet } from 'react-helmet-async';
 import { Mail, MapPin, Phone, Send, User, Building, Globe } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -9,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { SEOHelmet } from '@/components/SEOHelmet';
+import { StructuredData } from '@/components/StructuredData';
 import { getApiUrl, API_CONFIG } from '@/lib/config';
 
 interface ContactFormData {
@@ -131,13 +132,25 @@ export default function ContactPage() {
 
   return (
     <>
-      <Helmet>
-        <title>{t('title')} - {t('nav.contact')}</title>
-        <meta name="description" content={t('contact:meta_description')} />
-      </Helmet>
+      <SEOHelmet
+        title={t('nav.contact')}
+        description={t('contact:meta_description')}
+        keywords="联系我们,杭州卡恩,浙江省杭州市,羧甲基淀粉供应商,Contact us,Hangzhou Karn,CMS supplier,China manufacturer"
+        type="website"
+        lang={i18n.language as 'zh' | 'en' | 'ru'}
+        image="/images/IMG_1515.JPG"
+      />
+      <StructuredData
+        schema={{
+          type: 'ContactPage',
+          name: t('nav.contact'),
+          description: t('contact:meta_description'),
+          url: `https://kn-wallpaperglue.com/${i18n.language}/contact`,
+        }}
+      />
 
       {/* 页面标题区 */}
-      <section className="bg-gradient-to-r from-green-500 to-green-700 py-16 md:py-24">
+      <section className="bg-gradient-to-r from-[#064E3B] to-[#047857] py-16 md:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             {t('contact:hero.title')}
@@ -154,49 +167,55 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* 联系信息 */}
             <div>
-              <h2 className="text-2xl font-bold mb-6">{t('contact:info.title')}</h2>
-              <p className="text-muted-foreground mb-8">{t('contact:info.description')}</p>
+              <h2 className="text-2xl font-bold text-[#064E3B] mb-6">{t('contact:info.title')}</h2>
+              <p className="text-gray-600 mb-8">{t('contact:info.description')}</p>
               
               <div className="space-y-6">
                 <div className="flex items-start">
                   <div className="flex-shrink-0 mt-1">
-                    <MapPin className="h-6 w-6 text-primary" />
+                    <div className="w-10 h-10 rounded-sm bg-[#047857]/10 flex items-center justify-center">
+                      <MapPin className="h-5 w-5 text-[#047857]" />
+                    </div>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-lg font-semibold">{t('contact:info.address.title')}</h3>
-                    <p className="text-muted-foreground mt-1">
-                      浙江省杭州市余杭区东湖街道星桥路18号星尚国际广场
+                    <h3 className="text-lg font-semibold text-[#064E3B]">{t('contact:info.address.title')}</h3>
+                    <p className="text-gray-600 mt-1">
+                      浙江省杭州市临平区崇贤街道沪瑞线 1 号
                     </p>
-                    <p className="text-muted-foreground">
-                      Xingshang International Plaza, No.18 Xingqiao Road, Donghu Street, Yuhang District, Hangzhou, Zhejiang, China
+                    <p className="text-gray-600">
+                      No. 1, Huruixian Road, Chongxian Street, Linping District, Hangzhou, Zhejiang, China
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start">
                   <div className="flex-shrink-0 mt-1">
-                    <Phone className="h-6 w-6 text-primary" />
+                    <div className="w-10 h-10 rounded-sm bg-[#047857]/10 flex items-center justify-center">
+                      <Phone className="h-5 w-5 text-[#047857]" />
+                    </div>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-lg font-semibold">{t('contact:info.phone.title')}</h3>
-                    <p className="text-muted-foreground mt-1">+86 571-88888888</p>
+                    <h3 className="text-lg font-semibold text-[#064E3B]">{t('contact:info.phone.title')}</h3>
+                    <p className="text-gray-600 mt-1">13395711877</p>
                   </div>
                 </div>
 
                 <div className="flex items-start">
                   <div className="flex-shrink-0 mt-1">
-                    <Mail className="h-6 w-6 text-primary" />
+                    <div className="w-10 h-10 rounded-sm bg-[#047857]/10 flex items-center justify-center">
+                      <Mail className="h-5 w-5 text-[#047857]" />
+                    </div>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-lg font-semibold">{t('contact:info.email.title')}</h3>
-                    <p className="text-muted-foreground mt-1">info@karn-materials.com</p>
+                    <h3 className="text-lg font-semibold text-[#064E3B]">{t('contact:info.email.title')}</h3>
+                    <p className="text-gray-600 mt-1">karnstarch@gmail.com</p>
                   </div>
                 </div>
               </div>
               
               <div className="mt-12">
-                <h3 className="text-lg font-semibold mb-4">{t('contact:info.hours.title')}</h3>
-                <ul className="space-y-2 text-muted-foreground">
+                <h3 className="text-lg font-semibold text-[#064E3B] mb-4">{t('contact:info.hours.title')}</h3>
+                <ul className="space-y-2 text-gray-600">
                   <li><span className="font-medium">{t('contact:info.hours.weekdays')}:</span> 9:00 - 18:00</li>
                   <li><span className="font-medium">{t('contact:info.hours.saturday')}:</span> 9:00 - 16:00</li>
                   <li><span className="font-medium">{t('contact:info.hours.sunday')}:</span> {t('contact:info.hours.closed')}</li>
@@ -206,8 +225,8 @@ export default function ContactPage() {
 
             {/* 联系表单 */}
             <div>
-              <div className="bg-background p-6 rounded-lg shadow-md border border-border">
-                <h2 className="text-2xl font-bold mb-6">{t('contact:form.title')}</h2>
+              <div className="bg-white p-6 rounded-sm shadow-md border-l-4 border-[#047857]">
+                <h2 className="text-2xl font-bold text-[#064E3B] mb-6">{t('contact:form.title')}</h2>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div className="space-y-2">
@@ -308,7 +327,7 @@ export default function ContactPage() {
                     {errors.message && <p className="text-sm text-destructive">{t('contact:form.required')}</p>}
                   </div>
 
-                  <Button type="submit" disabled={isSubmitting} className="w-full">
+                  <Button type="submit" disabled={isSubmitting} className="w-full bg-[#047857] hover:bg-[#064E3B] text-white">
                     {isSubmitting ? (
                       <>
                         <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -335,16 +354,47 @@ export default function ContactPage() {
       <section className="py-16 md:py-24 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold mb-8 text-center">{t('contact:map.title')}</h2>
-          <div className="rounded-lg overflow-hidden shadow-lg h-[400px]">
+          <div className="rounded-lg overflow-hidden shadow-lg h-[400px] md:h-[500px]">
+            {/* Google Maps - 新地址：浙江省杭州市临平区崇贤街道沪瑞线 1 号 */}
             <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3308.1517753806896!2d120.09012961521504!3d30.292169881797836!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x344b61d2e5e4da99%3A0xb0211f7fd6f5a33b!2s18%20Xingqiao%20Rd%2C%20Jianggan%20District%2C%20Hangzhou%2C%20Zhejiang%20Province%2C%20China%2C%20310000!5e0!3m2!1sen!2sus!4v1659449892461!5m2!1sen!2sus" 
+              src="https://www.google.com/maps?q=浙江省杭州市临平区崇贤街道沪瑞线1号&output=embed&hl=zh-CN"
               width="100%" 
               height="100%" 
               style={{ border: 0 }} 
               allowFullScreen 
               loading="lazy"
-              title="Google Maps - Hangzhou Karn New Building Materials Co., Ltd. Location"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Google Maps - Hangzhou Karn New Building Materials Co., Ltd."
             ></iframe>
+          </div>
+          <div className="mt-6 text-center text-sm text-muted-foreground">
+            <p>浙江省杭州市临平区崇贤街道沪瑞线 1 号</p>
+            <p className="mt-1">No. 1, Huruixian Road, Chongxian Street, Linping District, Hangzhou, Zhejiang, China</p>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold mb-8 text-center">{t('contact:map.title')}</h2>
+          <div className="rounded-lg overflow-hidden shadow-lg h-[400px] md:h-[500px]">
+            {/* Google Maps - 新地址：浙江省杭州市临平区崇贤街道沪瑞线 1 号 */}
+            <iframe 
+              src="https://www.google.com/maps?q=浙江省杭州市临平区崇贤街道沪瑞线1号&output=embed&hl=zh-CN"
+              width="100%" 
+              height="100%" 
+              style={{ border: 0 }} 
+              allowFullScreen 
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Google Maps - Hangzhou Karn New Building Materials Co., Ltd."
+            ></iframe>
+          </div>
+          <div className="mt-6 text-center text-sm text-muted-foreground">
+            <p>浙江省杭州市临平区崇贤街道沪瑞线 1 号</p>
+            <p className="mt-1">No. 1, Huruixian Road, Chongxian Street, Linping District, Hangzhou, Zhejiang, China</p>
           </div>
         </div>
       </section>

@@ -55,6 +55,62 @@ export async function onRequestPost(context) {
     
     console.log('✅ Indexes created');
     
+    // Create the contacts table with migration support
+    // First, check if the table exists
+    const tableExists = await env.DB.prepare(`
+      SELECT name FROM sqlite_master WHERE type='table' AND name='contacts'
+    `).first();
+    
+    if (tableExists) {
+      // Check if we need to add missing columns
+      const tableInfo = await env.DB.prepare('PRAGMA table_info(contacts)').all();
+      const columns = tableInfo.results.map(col => col.name);
+      
+      // Add missing columns if needed
+      if (!columns.includes('country')) {
+        await env.DB.prepare('ALTER TABLE contacts ADD COLUMN country TEXT').run();
+        console.log('✅ Added country column to contacts table');
+      }
+      if (!columns.includes('subject')) {
+        await env.DB.prepare('ALTER TABLE contacts ADD COLUMN subject TEXT').run();
+        console.log('✅ Added subject column to contacts table');
+      }
+      if (!columns.includes('language')) {
+        await env.DB.prepare('ALTER TABLE contacts ADD COLUMN language TEXT DEFAULT "zh"').run();
+        console.log('✅ Added language column to contacts table');
+      }
+    } else {
+      // Create the contacts table from scratch
+      const createContactsTableSql = `
+        CREATE TABLE contacts (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          email TEXT NOT NULL,
+          phone TEXT,
+          company TEXT,
+          country TEXT,
+          subject TEXT,
+          message TEXT NOT NULL,
+          language TEXT DEFAULT 'zh',
+          status TEXT DEFAULT 'new' CHECK (status IN ('new', 'replied', 'archived')),
+          is_read INTEGER DEFAULT 0,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `;
+      
+      await env.DB.prepare(createContactsTableSql).run();
+      console.log('✅ contacts table created');
+    }
+    
+    // Create indexes for contacts table (IF NOT EXISTS handles existing indexes)
+    await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_contacts_email ON contacts(email)').run();
+    await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_contacts_status ON contacts(status)').run();
+    await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_contacts_is_read ON contacts(is_read)').run();
+    await env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at)').run();
+    
+    console.log('✅ Contacts indexes created');
+    
     // Insert default OEM content if it doesn't exist
     const defaultOEMContents = [
       {
@@ -132,7 +188,63 @@ export async function onRequestPost(context) {
     return new Response(JSON.stringify({ 
       success: true, 
       message: 'D1 database initialized successfully',
-      tables: ['page_contents']
+      tables: ['page_contents', 'contacts']
+    }), {
+      status: 200,
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+    
+  } catch (error) {
+    console.error('❌ Database initialization failed:', error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+export async function onRequestOptions(context) {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400',
+    },
+  });
+}
+      const existing = await env.DB.prepare(
+        'SELECT id FROM page_contents WHERE page_key = ? AND section_key = ?'
+      ).bind(content.page_key, content.section_key).first();
+      
+      if (!existing) {
+        await env.DB.prepare(`
+          INSERT INTO page_contents 
+          (page_key, section_key, content_zh, content_en, content_ru, content_type, sort_order, is_active)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          content.page_key,
+          content.section_key,
+          content.content_zh,
+          content.content_en,
+          content.content_ru,
+          content.content_type,
+          content.sort_order,
+          1
+        ).run();
+      }
+    }
+    
+    console.log('✅ Default OEM content inserted');
+    
+    return new Response(JSON.stringify({ 
+      success: true, 
+      message: 'D1 database initialized successfully',
+      tables: ['page_contents', 'contacts']
     }), {
       status: 200,
       headers: { 
