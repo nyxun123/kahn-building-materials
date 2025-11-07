@@ -376,28 +376,3 @@ export default function ContactPage() {
     </>
   );
 }
-
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold mb-8 text-center">{t('contact:map.title')}</h2>
-          <div className="rounded-lg overflow-hidden shadow-lg h-[400px] md:h-[500px]">
-            {/* Google Maps - 新地址：浙江省杭州市临平区崇贤街道沪瑞线 1 号 */}
-            <iframe 
-              src="https://www.google.com/maps?q=浙江省杭州市临平区崇贤街道沪瑞线1号&output=embed&hl=zh-CN"
-              width="100%" 
-              height="100%" 
-              style={{ border: 0 }} 
-              allowFullScreen 
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Google Maps - Hangzhou Karn New Building Materials Co., Ltd."
-            ></iframe>
-          </div>
-          <div className="mt-6 text-center text-sm text-muted-foreground">
-            <p>浙江省杭州市临平区崇贤街道沪瑞线 1 号</p>
-            <p className="mt-1">No. 1, Huruixian Road, Chongxian Street, Linping District, Hangzhou, Zhejiang, China</p>
-          </div>
-        </div>
-      </section>
-    </>
-  );
-}

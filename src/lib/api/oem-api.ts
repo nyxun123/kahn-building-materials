@@ -87,8 +87,9 @@ export async function updateOEMService(oemData: Partial<OEMService>): Promise<OE
 
 /**
  * 获取OEM内容用于前端展示
+ * @param lang 当前语言，用于选择对应的图片
  */
-export async function getOEMContentForFrontend(): Promise<any> {
+export async function getOEMContentForFrontend(lang: string = 'en'): Promise<any> {
   try {
     // 尝试从OEM API获取内容
     try {
@@ -112,17 +113,37 @@ export async function getOEMContentForFrontend(): Promise<any> {
         throw new Error('获取OEM内容失败');
       }
       
-      const contentData = await response.json();
+      const responseData = await response.json();
+      // 确保contentData是数组
+      const contentData = Array.isArray(responseData) 
+        ? responseData 
+        : (responseData?.data && Array.isArray(responseData.data) 
+            ? responseData.data 
+            : (responseData?.success && Array.isArray(responseData.data) 
+                ? responseData.data 
+                : []));
+      
       const contentMap: Record<string, any> = {};
+      const langKey = `content_${lang}`;
+      
+      if (!Array.isArray(contentData)) {
+        console.error('OEM API返回的数据不是数组:', responseData);
+        return contentMap;
+      }
       
       contentData.forEach((item: any) => {
-        contentMap[item.section_key] = item.content_zh || item.content_en || item.content_ru || '';
-        // 如果是数组内容，尝试解析
+        // 根据语言选择对应的字段
+        const contentValue = item[langKey] || item.content_en || item.content_zh || item.content_ru || '';
+        contentMap[item.section_key] = contentValue;
+        
+        // 如果是数组内容，尝试解析（根据当前语言）
         if (item.section_key.includes('features') || item.section_key.includes('capabilities') || item.section_key.includes('process') || item.section_key.includes('images')) {
           try {
-            contentMap[item.section_key] = JSON.parse(item.content_zh) || item.content_zh.split('\n');
+            const langContent = item[langKey] || item.content_en || item.content_zh || item.content_ru || '';
+            contentMap[item.section_key] = JSON.parse(langContent) || langContent.split('\n');
           } catch {
-            contentMap[item.section_key] = item.content_zh.split('\n').filter((i: string) => i.trim());
+            const langContent = item[langKey] || item.content_en || item.content_zh || item.content_ru || '';
+            contentMap[item.section_key] = langContent.split('\n').filter((i: string) => i.trim());
           }
         }
       });
@@ -141,7 +162,7 @@ export async function getOEMContentForFrontend(): Promise<any> {
         { step: 2, title: '配方研发', description: '根据需求进行配方设计' }
       ],
       oem_capabilities: ['年产能10000吨', '10条自动化生产线'],
-      oem_images: ['/images/oem1.jpg', '/images/oem2.jpg'],
+      oem_images: ['/images/oem-home.png'],
       seo_title: 'OEM/ODM墙纸胶定制服务',
       seo_description: '提供专业的墙纸胶OEM/ODM定制服务',
       seo_keywords: '墙纸胶OEM,墙纸胶ODM'

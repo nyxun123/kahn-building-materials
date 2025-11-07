@@ -26,7 +26,7 @@ export function LanguageSwitcher() {
     
     // 保存到localStorage（作为偏好设置）
     try {
-      localStorage.setItem('userLanguage', langCode);
+    localStorage.setItem('userLanguage', langCode);
     } catch (e) {
       console.warn('无法保存语言偏好到localStorage:', e);
     }
@@ -63,14 +63,14 @@ export function LanguageSwitcher() {
 
   return (
     <div className="flex items-center gap-1.5 bg-white/90 rounded-lg p-1 border border-green-200 shadow-sm">
-      {LANGUAGE_OPTIONS.map((lang) => (
+          {LANGUAGE_OPTIONS.map((lang) => (
         <button
-          key={lang.value}
-          onClick={() => handleLanguageChange(lang.value)}
-          className={cn(
+              key={lang.value}
+              onClick={() => handleLanguageChange(lang.value)}
+              className={cn(
             "relative text-2xl transition-all duration-200 rounded-md px-1.5 py-1",
             "hover:bg-green-50 hover:scale-110",
-            currentLang === lang.value 
+                currentLang === lang.value 
               ? "bg-green-100 ring-2 ring-green-500 scale-105 shadow-md" 
               : "hover:shadow-sm"
           )}
@@ -79,7 +79,7 @@ export function LanguageSwitcher() {
         >
           {lang.flag}
         </button>
-      ))}
-    </div>
+          ))}
+        </div>
   );
 }

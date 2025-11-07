@@ -1,13 +1,12 @@
 import { Suspense, lazy } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { Layout } from '@/components/layout';
-import LanguageDetection from '@/components/LanguageDetection';
 import { ProductDetailRedirect } from '@/components/ProductDetailRedirect';
 
 // 延迟加载组件
 const HomePage = lazy(() => import('@/pages/home'));
-const ProductsPage = lazy(() => import('@/pages/products'));
 const ProductDetailPage = lazy(() => import('@/pages/product-detail'));
+const ApplicationsPage = lazy(() => import('@/pages/applications'));
 const OemPage = lazy(() => import('@/pages/oem'));
 const AboutPage = lazy(() => import('@/pages/about'));
 const ContactPage = lazy(() => import('@/pages/contact'));
@@ -247,18 +246,18 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'products',
-        element: (
-          <Suspense fallback={<LoadingFallback />}>
-            <ProductsPage />
-          </Suspense>
-        ),
-      },
-      {
         path: 'products/:productCode',
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <ProductDetailPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'applications',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <ApplicationsPage />
           </Suspense>
         ),
       },
@@ -291,15 +290,15 @@ export const router = createBrowserRouter([
   // 重定向路由
   {
     path: '/',
-    element: <LanguageDetection />,
-  },
-  {
-    path: '/products',
-    element: <Navigate to="/en/products" replace />,
+    element: <Navigate to="/zh" replace />,
   },
   {
     path: '/products/:productCode',
     element: <ProductDetailRedirect />,
+  },
+  {
+    path: '/applications',
+    element: <Navigate to="/en/applications" replace />,
   },
   {
     path: '/oem',

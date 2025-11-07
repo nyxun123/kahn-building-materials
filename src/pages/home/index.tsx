@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Helmet } from 'react-helmet-async';
-import { ArrowRight, CheckCircle2, Play } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Play, Leaf, Zap, Layers, Droplets, Check } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { SEOHelmet } from '@/components/SEOHelmet';
+import { StructuredData } from '@/components/StructuredData';
 import { getPageContents } from '@/lib/api/content-api';
 import { getOEMContentForFrontend } from '@/lib/api/oem-api';
 
@@ -29,75 +30,101 @@ interface Product {
 export default function HomePage() {
   const { t, i18n } = useTranslation(['common', 'home']);
   const [products, setProducts] = useState<Product[]>([]);
-  const [pageContent, setPageContent] = useState<Record<string, string>>({});
+  const [rawContentData, setRawContentData] = useState<any[]>([]); // 保存原始数据
+  const [pageContent, setPageContent] = useState<Record<string, any>>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [currentLang, setCurrentLang] = useState(i18n.language || 'en');
+
+  // 监听语言变化，确保组件重新渲染
+  useEffect(() => {
+    const handleLanguageChanged = (lng: string) => {
+      console.log('🎯 首页检测到语言变化:', lng);
+      setCurrentLang(lng || 'en');
+    };
+    
+    i18n.on('languageChanged', handleLanguageChanged);
+    
+    // 初始化时也设置一次
+    setCurrentLang(i18n.language || 'en');
+    
+    return () => {
+      i18n.off('languageChanged', handleLanguageChanged);
+    };
+  }, [i18n]);
+
+  // 根据当前语言从原始数据中提取内容
+  const processedContent = useMemo(() => {
+    if (!rawContentData || rawContentData.length === 0) {
+      return {};
+    }
+    
+    const lang = currentLang || 'en';
+            const langKey = `content_${lang}`;
+    const contentMap: Record<string, any> = {};
+    
+    rawContentData.forEach((item: any) => {
+            const contentValue = item[langKey] || item.content_en || item.content_zh || '';
+            
+      // 特殊处理OEM图片（根据当前语言选择对应字段）
+      if (item.section_key === 'oem_image' || 
+          item.section_key === 'oem_images' ||
+          item.section_key.startsWith('oem_image')) {
+        // 根据当前语言选择对应的图片URL
+        const langContent = item[langKey] || item.content_en || item.content_zh || item.content_ru || '';
+        console.log('🔍 处理OEM图片（语言切换）:', {
+          section_key: item.section_key,
+          lang,
+          langKey,
+          langContent: langContent ? langContent.substring(0, 100) : '',
+          hasContent: !!langContent
+        });
+        
+        if (langContent) {
+          try {
+            // 尝试解析为JSON数组
+            const parsed = JSON.parse(langContent);
+            if (Array.isArray(parsed)) {
+              contentMap['oem_images'] = parsed;
+            } else {
+              contentMap['oem_images'] = [parsed];
+            }
+          } catch {
+            // 如果不是JSON，作为单个图片URL处理
+            contentMap['oem_images'] = [langContent];
+          }
+        }
+            } else {
+              contentMap[item.section_key] = contentValue;
+            }
+            
+      // 如果是数组内容，尝试解析（根据当前语言选择对应字段）
+      if (item.section_key.includes('features') || item.section_key.includes('capabilities') || item.section_key.includes('process')) {
+              try {
+          const langContent = item[langKey] || item.content_en || item.content_zh || item.content_ru || '';
+          contentMap[item.section_key] = JSON.parse(langContent) || langContent.split('\n');
+              } catch {
+          const langContent = item[langKey] || item.content_en || item.content_zh || item.content_ru || '';
+          contentMap[item.section_key] = langContent.split('\n').filter((i: string) => i.trim());
+              }
+            }
+          });
+          
+    return contentMap;
+  }, [rawContentData, currentLang]);
 
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
       
       try {
-        // 获取首页内容
-        try {
-          const contentData = await getPageContents('home');
-          // 整理页面内容数据
-          const contentMap: Record<string, any> = {}
-          contentData?.forEach((item: any) => {
-            const lang = i18n.language || 'en';
-            const langKey = `content_${lang}`;
-            const contentValue = item[langKey] || item.content_en || item.content_zh || '';
-            
-            // 特殊处理OEM图片
-            if (item.section_key === 'oem_image') {
-              contentMap['oem_images'] = [contentValue];
-            } else {
-              contentMap[item.section_key] = contentValue;
-            }
-            
-            // 如果是数组内容，尝试解析
-            if (item.section_key.includes('features') || item.section_key.includes('capabilities') || item.section_key.includes('process') || item.section_key.includes('images')) {
-              try {
-                contentMap[item.section_key] = JSON.parse(item.content_zh) || item.content_zh.split('\n');
-              } catch {
-                contentMap[item.section_key] = item.content_zh.split('\n').filter((i: string) => i.trim());
-              }
-            }
-          });
-          
-          // 获取OEM内容
+        // 获取首页内容（只获取一次，保存原始数据）
           try {
-            const oemContent = await getOEMContentForFrontend();
-            Object.assign(contentMap, oemContent);
-          } catch (oemError) {
-            console.log('OEM内容API不可用，使用默认内容');
-          }
-          
-          setPageContent(contentMap);
+          const contentData = await getPageContents('home');
+          setRawContentData(contentData || []); // 保存原始数据，processedContent会自动更新
         } catch (contentError) {
+          console.error('页面内容API调用失败:', contentError);
           console.log('页面内容API不可用，使用默认内容');
-          
-          // 获取OEM内容作为默认值
-          const oemContent = await getOEMContentForFrontend().catch(() => ({}));
-          
-          setPageContent({
-            hero_title: t('home:hero.title'),
-            hero_subtitle: t('home:hero.subtitle'),
-            products_title: t('home:products.title'),
-            products_subtitle: t('home:products.subtitle'),
-            video_title: t('home:video.title'),
-            video_subtitle: t('home:video.subtitle'),
-            video_url: t('home:video.url'),
-            oem_title: t('home:oem.title'),
-            oem_description: t('home:oem.description'), // Updated from oem_subtitle
-            oem_images: ['/images/oem-home.png'],
-            semi_title: t('home:semi.title'),
-            semi_subtitle: t('home:semi.description'),
-            why_us_title: t('home:why_us.title'),
-            why_us_subtitle: t('home:why_us.subtitle'),
-            cta_title: t('home:cta.title'),
-            cta_description: t('home:cta.description'),
-            ...oemContent
-          });
+          setRawContentData([]); // 清空原始数据
         }
         
         // 获取热门产品 - 修复API调用，添加时间戳绕过缓存
@@ -196,37 +223,39 @@ export default function HomePage() {
             updated_at: new Date().toISOString()
           }
         ];
-        // 获取OEM内容作为默认值
-        const oemContent = await getOEMContentForFrontend().catch(() => ({}));
         setProducts(mockProducts);
-        setPageContent({
-          hero_title: t('home:hero.title'),
-          hero_subtitle: t('home:hero.subtitle'),
-          video_title: t('home:video.title'),
-          video_subtitle: t('home:video.subtitle'),
-          video_url: t('home:video.url'),
-          oem_title: t('home:oem.title'),
-          oem_description: t('home:oem.description'), // Updated from oem_subtitle
-          oem_images: ['/images/oem-home.png'],
-          semi_title: t('home:semi.title'),
-          semi_subtitle: t('home:semi.description'),
-          why_us_title: t('home:why_us.title'),
-          why_us_subtitle: t('home:why_us.subtitle'),
-          cta_title: t('home:cta.title'),
-          cta_description: t('home:cta.description'),
-          ...oemContent
-        });
       } finally {
         setIsLoading(false);
       }
     }
 
     fetchData();
-  }, [i18n.language]);
+  }, []); // 只在组件挂载时获取一次数据
+
+  // 当语言或处理后的内容变化时，更新pageContent
+  useEffect(() => {
+    if (Object.keys(processedContent).length > 0) {
+      // 获取OEM内容并合并
+      getOEMContentForFrontend(currentLang || 'en')
+        .then((oemContent) => {
+          const existingOemImages = processedContent['oem_images'];
+          const mergedContent = { ...processedContent, ...oemContent };
+          // 如果home页面有oem_images，优先使用
+          if (existingOemImages && existingOemImages.length > 0) {
+            mergedContent['oem_images'] = existingOemImages;
+          }
+          setPageContent(mergedContent);
+        })
+        .catch(() => {
+          // OEM API失败，只使用processedContent
+          setPageContent(processedContent);
+        });
+    }
+  }, [processedContent, currentLang]);
 
   // 根据当前语言获取产品名称
   const getProductName = (product: Product) => {
-    const lang = i18n.language || 'en';
+    const lang = currentLang || 'en';
     const nameKey = `name_${lang}` as keyof typeof product;
     return (product[nameKey] as string) || product.name_en || product.name_zh;
   };
@@ -236,17 +265,45 @@ export default function HomePage() {
 
   return (
     <>
-      <Helmet>
-        <title>{t('title')} - {t('nav.home')}</title>
-        <meta name="description" content={pageContent.meta_description || t('home:meta_description')} />
-      </Helmet>
+      <SEOHelmet
+        title={t('nav.home')}
+        description={pageContent.meta_description || t('home:meta_description')}
+        keywords="羧甲基淀粉,CMS,纺织印染,建筑材料,涂料工业,造纸,墙纸胶粉,carboxymethyl starch,textile,coating,wallpaper adhesive"
+        type="website"
+        lang={i18n.language as 'zh' | 'en' | 'ru'}
+        image="/images/IMG_1412.JPG"
+      />
+      <StructuredData
+        schema={{
+          type: 'Organization',
+          name: 'Hangzhou Karn New Building Materials Co., Ltd',
+          alternateName: '浙江卡恩新型建材有限公司',
+          description: pageContent.meta_description || t('home:meta_description'),
+          url: 'https://kn-wallpaperglue.com',
+          logo: '/images/IMG_1412.JPG',
+          image: '/images/IMG_1515.JPG',
+          telephone: '+86-13395711877',
+          email: 'karnstarch@gmail.com',
+          address: {
+            streetAddress: '沪瑞线 1 号',
+            addressLocality: '杭州市临平区崇贤街道',
+            addressRegion: '浙江省',
+            addressCountry: 'CN',
+          },
+          geo: {
+            latitude: 30.2741,
+            longitude: 120.1551,
+          },
+          foundingDate: '2010',
+        }}
+      />
 
       {/* 英雄区域 - 工业化设计 */}
       <section className="relative py-0 h-[90vh] flex items-center overflow-hidden">
-        {/* 背景图片 - 更大更清晰的工厂或生产线图片 */}
+        {/* 背景图片 - 工厂仓库图片 */}
         <div className="absolute inset-0 z-0">
           <img 
-            src="/images/modern_powder_production_line_factory.jpg" 
+            src="/images/5fbd3f1a-5077-4ecb-8f50-008dab912740.png" 
             alt={t('home:hero.company_alt')} 
             className="w-full h-full object-cover"
           />
@@ -291,12 +348,12 @@ export default function HomePage() {
               {/* 按钮区 - 更大更突出 */}
               <div className="flex flex-col sm:flex-row gap-5 mt-4">
                 <Button asChild size="lg" className="bg-[#10B981] text-white hover:bg-[#059669] px-8 py-6 text-lg rounded-sm">
-                  <Link to={`/${i18n.language}/products`}>
+                  <Link to={`/${currentLang}/products`}>
                     {t('cta.view_products')}
                   </Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-8 py-6 text-lg rounded-sm">
-                  <Link to={`/${i18n.language}/contact`}>
+                  <Link to={`/${currentLang}/contact`}>
                     {t('cta.contact')}
                   </Link>
                 </Button>
@@ -306,74 +363,300 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 产品展示区 - 工业风格 */}
+      {/* 应用领域展示区 - 工业风格 */}
       <section className="py-20 md:py-28 bg-white industrial-bg">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* 工业风格标题区 */}
-          <div className="mb-16">
-            <div className="flex items-center space-x-2 mb-3">
+          <div className="mb-16 text-center">
+            <div className="flex items-center justify-center space-x-2 mb-3">
               <div className="w-8 h-1 bg-[#047857]"></div>
-              <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">{t('home:products.series')}</span>
+              <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">{t('home:applications.badge')}</span>
+              <div className="w-8 h-1 bg-[#047857]"></div>
             </div>
 
             <h2 className="industrial-title text-3xl md:text-4xl font-bold text-[#064E3B] mb-6">
-              {pageContent.products_title || t('home:products.title')}
+              {t('home:applications.title')}
             </h2>
 
-            <p className="text-gray-600 max-w-2xl leading-relaxed text-lg">
-              {pageContent.products_subtitle || t('home:products.subtitle')}
+            <p className="text-gray-600 max-w-3xl mx-auto leading-relaxed text-lg">
+              {t('home:applications.subtitle')}
             </p>
           </div>
 
-          {isLoading ? (
-            <div className="flex justify-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#047857]"></div>
+          {/* 6大应用领域卡片 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+            {/* 纺织印染 */}
+            <div className="group relative bg-white overflow-hidden rounded-sm border-t border-l border-gray-200 shadow-sm transition-all hover:shadow-md hover:border-[#10B981]">
+              <div className="absolute top-0 left-0 w-2 h-full bg-[#047857]"></div>
+              <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
+                <img 
+                  src="/images/应用领域/纺织印染.jpg" 
+                  alt="纺织印染应用" 
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover transition-all group-hover:scale-105"
+                />
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-              {products.map((product) => (
-                <div key={product.id} className="group relative bg-white overflow-hidden rounded-sm border-t border-l border-gray-200 p-6 shadow-sm transition-all hover:shadow-md hover:border-[#10B981]">
+              <div className="p-6">
+                <h3 className="text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-3">
+                  {t('home:applications.textile.title')}
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                  {t('home:applications.textile.description')}
+                </p>
+                <Link 
+                  to={`/${currentLang}/applications#textile`}
+                  className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
+                >
+                  {t('common:nav.view_applications')}
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+
+            {/* 建筑材料 */}
+            <div className="group relative bg-white overflow-hidden rounded-sm border-t border-l border-gray-200 shadow-sm transition-all hover:shadow-md hover:border-[#10B981]">
                   <div className="absolute top-0 left-0 w-2 h-full bg-[#047857]"></div>
-                  {product.image_url ? (
-                    <div className="aspect-[4/3] mb-5 overflow-hidden rounded-sm bg-gray-100">
+              <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
                       <img
-                        src={product.image_url}
-                        alt={getProductName(product)}
-                        className="h-full w-full object-cover object-center transition-all group-hover:scale-105"
+                  src="/images/应用领域/腻子粉.jpg" 
+                  alt="建筑材料应用" 
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover transition-all group-hover:scale-105"
                       />
                     </div>
-                  ) : (
-                    <div className="aspect-[4/3] mb-5 overflow-hidden rounded-sm bg-gray-100 flex items-center justify-center text-gray-400">
-                      {t('home:products.no_image')}
+              <div className="p-6">
+                <h3 className="text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-3">
+                  {t('home:applications.construction.title')}
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                  {t('home:applications.construction.description')}
+                </p>
+                <Link 
+                  to={`/${currentLang}/applications#construction`}
+                  className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
+                >
+                  {t('common:nav.view_applications')}
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
                     </div>
-                  )}
-                  <h3 className="text-lg font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors">{getProductName(product)}</h3>
-                  <p className="mt-3 line-clamp-3 text-gray-600">
-                    {(() => {
-                      const lang = i18n.language || 'zh';
-                      const descKey = `description_${lang}` as keyof typeof product;
-                      return (product[descKey] as string) || product.description_zh || '';
-                    })()}
+            </div>
+
+            {/* 涂料工业 */}
+            <div className="group relative bg-white overflow-hidden rounded-sm border-t border-l border-gray-200 shadow-sm transition-all hover:shadow-md hover:border-[#10B981]">
+              <div className="absolute top-0 left-0 w-2 h-full bg-[#047857]"></div>
+              <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
+                <img 
+                  src="/images/应用领域/水性涂料.png" 
+                  alt="涂料工业应用" 
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover transition-all group-hover:scale-105"
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-3">
+                  {t('home:applications.coating.title')}
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                  {t('home:applications.coating.description')}
                   </p>
                   <Link 
-                    to={`/${i18n.language}/products/${product.product_code}`}
-                    className="mt-4 inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
+                  to={`/${currentLang}/applications#coating`}
+                  className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
                   >
-                    {t('cta.learn_more')}
+                  {t('common:nav.view_applications')}
                     <ArrowRight className="ml-1 h-4 w-4" />
                   </Link>
                 </div>
-              ))}
             </div>
-          )}
 
+            {/* 造纸工业 */}
+            <div className="group relative bg-white overflow-hidden rounded-sm border-t border-l border-gray-200 shadow-sm transition-all hover:shadow-md hover:border-[#10B981]">
+              <div className="absolute top-0 left-0 w-2 h-full bg-[#047857]"></div>
+              <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
+                <img 
+                  src="/images/应用领域/造纸.JPG" 
+                  alt="造纸工业应用" 
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover transition-all group-hover:scale-105"
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-3">
+                  {t('home:applications.paper.title')}
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                  {t('home:applications.paper.description')}
+                </p>
+                <Link 
+                  to={`/${currentLang}/applications#paper`}
+                  className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
+                >
+                  {t('common:nav.view_applications')}
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+
+            {/* 墙纸胶 */}
+            <div className="group relative bg-white overflow-hidden rounded-sm border-t border-l border-gray-200 shadow-sm transition-all hover:shadow-md hover:border-[#10B981]">
+              <div className="absolute top-0 left-0 w-2 h-full bg-[#047857]"></div>
+              <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
+                <img 
+                  src="/images/应用领域/墙纸胶.jpeg" 
+                  alt="墙纸胶应用" 
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover transition-all group-hover:scale-105"
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-3">
+                  {t('home:applications.wallpaper.title')}
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                  {t('home:applications.wallpaper.description')}
+                </p>
+                <Link 
+                  to={`/${currentLang}/applications#wallpaper`}
+                  className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
+                >
+                  {t('common:nav.view_applications')}
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+
+            {/* 干燥剂 */}
+            <div className="group relative bg-white overflow-hidden rounded-sm border-t border-l border-gray-200 shadow-sm transition-all hover:shadow-md hover:border-[#10B981]">
+              <div className="absolute top-0 left-0 w-2 h-full bg-[#047857]"></div>
+              <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
+                <img 
+                  src="/images/应用领域/2ffad18a87f3f3af2a1773cf9ebc892b.JPG" 
+                  alt="干燥剂应用" 
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover transition-all group-hover:scale-105"
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-3">
+                  {t('home:applications.desiccant.title')}
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                  {t('home:applications.desiccant.description')}
+                </p>
+                <Link 
+                  to={`/${currentLang}/applications#desiccant`}
+                  className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
+                >
+                  {t('common:nav.view_applications')}
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* 查看全部按钮 */}
           <div className="mt-16 text-center">
-            <Button asChild variant="outline" className="border-[#047857] text-[#047857] hover:bg-[#047857] hover:text-white transition-colors rounded-sm px-8 py-6">
-              <Link to={`/${i18n.language}/products`}>
-                {t('home:products.view_all')}
-                <ArrowRight className="ml-2 h-4 w-4" />
+            <Button asChild size="lg" className="bg-[#047857] text-white hover:bg-[#059669] px-10 py-7 text-lg rounded-sm group">
+              <Link to={`/${currentLang}/applications`}>
+                {t('common:nav.view_applications')}
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* 数据统计区 - 工业风格 */}
+      <section className="py-20 md:py-28 bg-gradient-to-br from-[#064E3B] to-[#047857] relative overflow-hidden">
+        {/* 装饰性工业网格 */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="h-full w-full" style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+        </div>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          {/* 标题区 */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center space-x-2 bg-[#064E3B] px-4 py-1.5 rounded-sm mb-4">
+              <div className="w-2 h-2 bg-[#10B981] rotate-45"></div>
+              <span className="text-white text-sm font-medium tracking-wider uppercase">{t('home:stats.badge')}</span>
+            </div>
+            
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              {t('home:stats.title')}
+            </h2>
+            
+            <p className="text-green-100 text-lg max-w-3xl mx-auto">
+              {t('home:stats.subtitle')}
+            </p>
+          </div>
+
+          {/* 数据网格 */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* 生产经验 */}
+            <div className="text-center group">
+              <div className="bg-white/10 backdrop-blur-sm rounded-sm p-8 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105">
+                <div className="text-5xl md:text-6xl font-bold text-[#10B981] mb-3">
+                  {t('home:stats.years.value')}
+                </div>
+                <div className="text-xl font-semibold text-white mb-2">
+                  {t('home:stats.years.label')}
+                </div>
+                <div className="text-sm text-green-100">
+                  {t('home:stats.years.description')}
+                </div>
+              </div>
+            </div>
+
+            {/* 产品型号 */}
+            <div className="text-center group">
+              <div className="bg-white/10 backdrop-blur-sm rounded-sm p-8 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105">
+                <div className="text-5xl md:text-6xl font-bold text-[#10B981] mb-3">
+                  {t('home:stats.products.value')}
+                </div>
+                <div className="text-xl font-semibold text-white mb-2">
+                  {t('home:stats.products.label')}
+                </div>
+                <div className="text-sm text-green-100">
+                  {t('home:stats.products.description')}
+                </div>
+              </div>
+            </div>
+
+            {/* 应用领域 */}
+            <div className="text-center group">
+              <div className="bg-white/10 backdrop-blur-sm rounded-sm p-8 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105">
+                <div className="text-5xl md:text-6xl font-bold text-[#10B981] mb-3">
+                  {t('home:stats.applications.value')}
+                </div>
+                <div className="text-xl font-semibold text-white mb-2">
+                  {t('home:stats.applications.label')}
+                </div>
+                <div className="text-sm text-green-100">
+                  {t('home:stats.applications.description')}
+                </div>
+              </div>
+            </div>
+
+            {/* 质量检测 */}
+            <div className="text-center group">
+              <div className="bg-white/10 backdrop-blur-sm rounded-sm p-8 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105">
+                <div className="text-5xl md:text-6xl font-bold text-[#10B981] mb-3">
+                  {t('home:stats.quality.value')}
+                </div>
+                <div className="text-xl font-semibold text-white mb-2">
+                  {t('home:stats.quality.label')}
+                </div>
+                <div className="text-sm text-green-100">
+                  {t('home:stats.quality.description')}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -391,23 +674,14 @@ export default function HomePage() {
                 
                 {/* 视频播放器 */}
                 <div className="aspect-video w-full bg-black relative z-0">
-                  {pageContent.video_url ? (
                     <iframe 
                       className="w-full h-full"
-                      src={pageContent.video_url}
+                    src="https://www.youtube.com/embed/JJ8y8gjfpHY"
                       title={pageContent.video_title || t('home:video.title')}
                       frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowFullScreen
                     ></iframe>
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-900">
-                      <div className="text-center">
-                        <Play className="h-16 w-16 text-white mx-auto mb-4" />
-                        <p className="text-white text-lg">{t('home:video.no_video')}</p>
-                      </div>
-                    </div>
-                  )}
                 </div>
                 
                 {/* 工业化粒子效果底部条 */}
@@ -454,7 +728,7 @@ export default function HomePage() {
               </div>
               
               <Button asChild className="bg-[#047857] hover:bg-[#064E3B] text-white rounded-sm px-8 py-6 text-lg transition-colors">
-                <Link to={`/${i18n.language}/products`}>
+                <Link to={`/${currentLang}/products`}>
                   {t('home:video.explore_products')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
@@ -464,175 +738,192 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* OEM定制区 - 工业风格 */}
-      <section className="py-20 md:py-28 bg-white industrial-bg">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="order-2 lg:order-1">
-              {/* 工业风格标题区 */}
-              <div className="flex items-center space-x-2 mb-3">
-                <div className="w-8 h-1 bg-[#047857]"></div>
-                <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">{t('home:oem.badge')}</span>
-              </div>
-              
-              <h2 className="industrial-title text-3xl md:text-4xl font-bold text-[#064E3B] mb-6">
-                {pageContent.oem_title || t('home:oem.title')}
-              </h2>
-              
-              <p className="text-gray-600 leading-relaxed text-lg mb-8">
-                {pageContent.oem_description || pageContent.oem_subtitle || t('home:oem.description')}
-              </p>
-              
-              {/* 工业风格特点列表 */}
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-start">
-                  <div className="w-6 h-6 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="ml-3 text-gray-700">{t('home:oem.features.brand')}</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-6 h-6 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="ml-3 text-gray-700">{t('home:oem.features.packaging')}</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-6 h-6 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="ml-3 text-gray-700">{t('home:oem.features.formula')}</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-6 h-6 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="ml-3 text-gray-700">{t('home:oem.features.export')}</span>
-                </li>
-              </ul>
-              
-              <Button asChild className="bg-[#047857] hover:bg-[#064E3B] text-white rounded-sm px-8 py-6 text-lg transition-colors">
-                <Link to={`/${i18n.language}/oem`}>
-                  {t('home:oem.learn_more')}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-            </div>
-            
-            <div className="order-1 lg:order-2">
-              {/* 工业风格图片展示 */}
-              <div className="relative">
-                {/* 装饰性角块 */}
-                <div className="absolute -top-6 -left-6 w-12 h-12 border-t-4 border-l-4 border-[#047857] z-10"></div>
-                <div className="absolute -bottom-6 -right-6 w-12 h-12 border-b-4 border-r-4 border-[#047857] z-10"></div>
-                
-                {/* 主图片 */}
-                <div className="rounded-sm overflow-hidden shadow-xl relative">
-                  <img 
-                    src={pageContent.oem_images && pageContent.oem_images.length > 0 ? pageContent.oem_images[0] : '/images/oem-home.png'} 
-                    alt={t('home:oem.image_alt')} 
-                    className="w-full h-auto object-cover rounded-sm"
-                  />
-                  
-                  {/* 装饰性覆盖层 */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#047857]/20 to-transparent pointer-events-none"></div>
-                  
-                  {/* 工业风格标记 */}
-                  <div className="absolute top-4 right-4 bg-[#047857] text-white px-4 py-1.5 text-sm font-medium tracking-wider">
-                    {t('home:oem.badge')}
-                  </div>
-                </div>
-                
-                {/* 工业风格装饰元素 */}
-                <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-2/3 h-1.5 bg-[#10B981]/80"></div>
-              </div>
-            </div>
-          </div>
+      {/* 产品核心优势区 - 工业风格 */}
+      <section className="py-20 md:py-28 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+        {/* 背景装饰 */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-[#047857] rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#064E3B] rounded-full blur-3xl"></div>
         </div>
-      </section>
-
-      {/* 半成品小袋区 - 工业风格 */}
-      <section className="py-20 md:py-28 bg-[#F9FAFB]">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="order-1 lg:order-1">
-              {/* 工业风格图片展示 */}
-              <div className="relative">
-                {/* 装饰性角块 */}
-                <div className="absolute -top-6 -right-6 w-12 h-12 border-t-4 border-r-4 border-[#047857] z-10"></div>
-                <div className="absolute -bottom-6 -left-6 w-12 h-12 border-b-4 border-l-4 border-[#047857] z-10"></div>
-                
-                {/* 主图片 */}
-                <div className="rounded-sm overflow-hidden shadow-xl relative">
-                  <img 
-                    src="/images/silver_aluminum_foil_small_packaging_pouches.jpg" 
-                    alt={t('home:semi.image_alt')} 
-                    className="w-full h-auto object-cover rounded-sm"
-                  />
-                  
-                  {/* 装饰性覆盖层 */}
-                  <div className="absolute inset-0 bg-gradient-to-tl from-[#047857]/20 to-transparent pointer-events-none"></div>
-                  
-                  {/* 工业风格标记 */}
-                  <div className="absolute top-4 left-4 bg-[#047857] text-white px-4 py-1.5 text-sm font-medium tracking-wider">
-                    {t('home:semi.badge')}
-                  </div>
-                </div>
-                
-                {/* 工业风格装饰元素 */}
-                <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-2/3 h-1.5 bg-[#10B981]/80"></div>
-              </div>
-            </div>
-            
-            <div className="order-2 lg:order-2">
-              {/* 工业风格标题区 */}
-              <div className="flex items-center space-x-2 mb-3">
+        
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          {/* 标题区 */}
+          <div className="text-center mb-16">
+            <div className="flex items-center justify-center space-x-2 mb-3">
                 <div className="w-8 h-1 bg-[#047857]"></div>
-                <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">{t('home:semi.badge')}</span>
+              <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">{t('home:advantages.badge')}</span>
+              <div className="w-8 h-1 bg-[#047857]"></div>
               </div>
               
               <h2 className="industrial-title text-3xl md:text-4xl font-bold text-[#064E3B] mb-6">
-                {pageContent.semi_title || t('home:semi.title')}
+              {t('home:advantages.title')}
               </h2>
               
-              <p className="text-gray-600 leading-relaxed text-lg mb-8">
-                {pageContent.semi_subtitle || t('home:semi.description')}
+            <p className="text-gray-600 max-w-4xl mx-auto leading-relaxed text-lg">
+              {t('home:advantages.subtitle')}
               </p>
+          </div>
               
-              {/* 工业风格特点列表 */}
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-start">
-                  <div className="w-6 h-6 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="ml-3 text-gray-700">{t('home:semi.features.specs')}</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-6 h-6 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="ml-3 text-gray-700">{t('home:semi.features.packaging')}</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-6 h-6 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="ml-3 text-gray-700">{t('home:semi.features.market')}</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-6 h-6 rounded-sm bg-[#047857] flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <CheckCircle2 className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="ml-3 text-gray-700">{t('home:semi.features.custom_brand')}</span>
-                </li>
-              </ul>
+          {/* 优势卡片网格 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* 环保安全 */}
+            <div className="group relative bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100">
+              {/* 装饰性数字 */}
+              <div className="absolute top-4 right-4 text-7xl font-bold text-[#047857]/5 group-hover:text-[#047857]/10 transition-colors">
+                01
+              </div>
               
-              <Button asChild className="bg-[#047857] hover:bg-[#064E3B] text-white rounded-sm px-8 py-6 text-lg transition-colors">
-                <Link to={`/${i18n.language}/products/KARN-SEMI`}>
-                  {t('home:semi.view_products')}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
+              <div className="relative z-10">
+                {/* 图标和徽章 */}
+                <div className="flex items-start justify-between mb-6">
+                  <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-[#047857] to-[#064E3B] flex items-center justify-center shadow-lg">
+                    <Leaf className="h-8 w-8 text-white" />
+                  </div>
+                  <span className="inline-block px-3 py-1 bg-green-50 text-green-700 text-xs font-semibold rounded-full border border-green-200">
+                    {t('home:advantages.eco_friendly.badge')}
+                  </span>
+                </div>
+                
+                {/* 标题 */}
+                <h3 className="text-2xl font-bold text-[#064E3B] mb-3 group-hover:text-[#047857] transition-colors">
+                  {t('home:advantages.eco_friendly.title')}
+                </h3>
+                
+                {/* 描述 */}
+                <p className="text-gray-600 leading-relaxed mb-6 text-sm">
+                  {t('home:advantages.eco_friendly.description')}
+                </p>
+                
+                {/* 特点列表 */}
+                <ul className="space-y-3">
+                  {(t('home:advantages.eco_friendly.features', { returnObjects: true }) as string[]).map((feature: string, index: number) => (
+                    <li key={index} className="flex items-start gap-2 text-sm">
+                      <Check className="h-5 w-5 text-[#047857] flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-700">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                  
+                {/* 装饰性底部线条 */}
+                <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#047857] to-[#10B981] group-hover:w-full transition-all duration-500"></div>
+              </div>
+            </div>
+                
+            {/* 高性能 */}
+            <div className="group relative bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100">
+              <div className="absolute top-4 right-4 text-7xl font-bold text-[#047857]/5 group-hover:text-[#047857]/10 transition-colors">
+                02
+              </div>
+              
+              <div className="relative z-10">
+                {/* 图标和徽章 */}
+                <div className="flex items-start justify-between mb-6">
+                  <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-[#047857] to-[#064E3B] flex items-center justify-center shadow-lg">
+                    <Zap className="h-8 w-8 text-white" />
+                  </div>
+                  <span className="inline-block px-3 py-1 bg-green-50 text-[#047857] text-xs font-semibold rounded-full border border-green-200">
+                    {t('home:advantages.high_performance.badge')}
+                  </span>
+                </div>
+                
+                <h3 className="text-2xl font-bold text-[#064E3B] mb-3 group-hover:text-[#047857] transition-colors">
+                  {t('home:advantages.high_performance.title')}
+                </h3>
+                
+                <p className="text-gray-600 leading-relaxed mb-6 text-sm">
+                  {t('home:advantages.high_performance.description')}
+                </p>
+                
+                {/* 特点列表 */}
+                <ul className="space-y-3">
+                  {(t('home:advantages.high_performance.features', { returnObjects: true }) as string[]).map((feature: string, index: number) => (
+                    <li key={index} className="flex items-start gap-2 text-sm">
+                      <Check className="h-5 w-5 text-[#047857] flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-700">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#047857] to-[#10B981] group-hover:w-full transition-all duration-500"></div>
+              </div>
+            </div>
+                
+            {/* 多功能性 */}
+            <div className="group relative bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100">
+              <div className="absolute top-4 right-4 text-7xl font-bold text-[#047857]/5 group-hover:text-[#047857]/10 transition-colors">
+                03
+              </div>
+            
+              <div className="relative z-10">
+                {/* 图标和徽章 */}
+                <div className="flex items-start justify-between mb-6">
+                  <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-[#047857] to-[#064E3B] flex items-center justify-center shadow-lg">
+                    <Layers className="h-8 w-8 text-white" />
+                  </div>
+                  <span className="inline-block px-3 py-1 bg-green-50 text-[#047857] text-xs font-semibold rounded-full border border-green-200">
+                    {t('home:advantages.multi_functional.badge')}
+                  </span>
+                </div>
+              
+                <h3 className="text-2xl font-bold text-[#064E3B] mb-3 group-hover:text-[#047857] transition-colors">
+                  {t('home:advantages.multi_functional.title')}
+                </h3>
+              
+                <p className="text-gray-600 leading-relaxed mb-6 text-sm">
+                  {t('home:advantages.multi_functional.description')}
+                </p>
+                
+                {/* 特点列表 */}
+                <ul className="space-y-3">
+                  {(t('home:advantages.multi_functional.features', { returnObjects: true }) as string[]).map((feature: string, index: number) => (
+                    <li key={index} className="flex items-start gap-2 text-sm">
+                      <Check className="h-5 w-5 text-[#047857] flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-700">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              
+                <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#047857] to-[#10B981] group-hover:w-full transition-all duration-500"></div>
+              </div>
+            </div>
+
+            {/* 易溶解 */}
+            <div className="group relative bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100">
+              <div className="absolute top-4 right-4 text-7xl font-bold text-[#047857]/5 group-hover:text-[#047857]/10 transition-colors">
+                04
+              </div>
+              
+              <div className="relative z-10">
+                {/* 图标和徽章 */}
+                <div className="flex items-start justify-between mb-6">
+                  <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-[#047857] to-[#064E3B] flex items-center justify-center shadow-lg">
+                    <Droplets className="h-8 w-8 text-white" />
+                  </div>
+                  <span className="inline-block px-3 py-1 bg-green-50 text-[#047857] text-xs font-semibold rounded-full border border-green-200">
+                    {t('home:advantages.easy_to_use.badge')}
+                  </span>
+                </div>
+                
+                <h3 className="text-2xl font-bold text-[#064E3B] mb-3 group-hover:text-[#047857] transition-colors">
+                  {t('home:advantages.easy_to_use.title')}
+                </h3>
+              
+                <p className="text-gray-600 leading-relaxed mb-6 text-sm">
+                  {t('home:advantages.easy_to_use.description')}
+                </p>
+                
+                {/* 特点列表 */}
+                <ul className="space-y-3">
+                  {(t('home:advantages.easy_to_use.features', { returnObjects: true }) as string[]).map((feature: string, index: number) => (
+                    <li key={index} className="flex items-start gap-2 text-sm">
+                      <Check className="h-5 w-5 text-[#047857] flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-700">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#047857] to-[#10B981] group-hover:w-full transition-all duration-500"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -723,7 +1014,7 @@ export default function HomePage() {
         {/* 背景图片 */}
         <div className="absolute inset-0 z-0">
           <img 
-            src="/images/modern_industrial_robotics_factory_china.jpg" 
+            src="/images/IMG_3247.JPG" 
             alt={t('home:cta.image_alt')} 
             className="w-full h-full object-cover"
           />
@@ -756,13 +1047,13 @@ export default function HomePage() {
             
             <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
               <Button asChild size="lg" className="bg-white text-[#047857] hover:bg-green-50 px-10 py-7 text-lg rounded-sm">
-                <Link to={`/${i18n.language}/contact`}>
+                <Link to={`/${currentLang}/contact`}>
                   {t('cta.contact')}
                 </Link>
               </Button>
               
               <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-10 py-7 text-lg rounded-sm">
-                <Link to={`/${i18n.language}/products`}>
+                <Link to={`/${currentLang}/products`}>
                   {t('home:cta.browse_products')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>

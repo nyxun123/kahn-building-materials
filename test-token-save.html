@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Token保存测试</title>
+</head>
+<body>
+    <h1>Token保存测试</h1>
+    <button onclick="testSave()">测试保存</button>
+    <button onclick="testRead()">测试读取</button>
+    <button onclick="testClear()">清除</button>
+    <div id="result"></div>
+    
+    <script>
+        function testSave() {
+            const token = 'test-token-' + Date.now();
+            localStorage.setItem('admin_access_token', token);
+            localStorage.setItem('admin_refresh_token', 'refresh-' + Date.now());
+            localStorage.setItem('admin_token_expiry', (Date.now() + 900000).toString());
+            localStorage.setItem('admin-auth', JSON.stringify({test: true}));
+            
+            document.getElementById('result').innerHTML = `
+                <p>✅ Token已保存</p>
+                <p>admin_access_token: ${localStorage.getItem('admin_access_token')}</p>
+                <p>admin_refresh_token: ${localStorage.getItem('admin_refresh_token')}</p>
+                <p>admin_token_expiry: ${localStorage.getItem('admin_token_expiry')}</p>
+                <p>admin-auth: ${localStorage.getItem('admin-auth')}</p>
+            `;
+        }
+        
+        function testRead() {
+            const keys = ['admin_access_token', 'admin_refresh_token', 'admin_token_expiry', 'admin-auth'];
+            const values = {};
+            keys.forEach(key => {
+                values[key] = localStorage.getItem(key);
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <p>📦 读取结果:</p>
+                <pre>${JSON.stringify(values, null, 2)}</pre>
+            `;
+        }
+        
+        function testClear() {
+            localStorage.clear();
+            document.getElementById('result').innerHTML = '<p>🗑️ 已清除</p>';
+        }
+        
+        // 页面加载时自动读取
+        window.onload = function() {
+            testRead();
+        };
+    </script>
+</body>
+</html>

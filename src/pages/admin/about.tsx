@@ -114,7 +114,7 @@ const mockAboutContent: AboutContent = {
     {
       year: "2020",
       title: "国际认证",
-      description: "通过ISO9001和SGS认证，产品出口欧美"
+      description: "通过多项国内质量检测认证，产品出口欧美"
     },
     {
       year: "2024",
@@ -123,8 +123,8 @@ const mockAboutContent: AboutContent = {
     }
   ],
   certifications: [
-    "ISO9001质量管理体系认证",
-    "ISO14001环境管理体系认证",
+    "全程质量控制体系",
+    "国家环保标准认证",
     "SGS环保认证",
     "CE认证",
     "RoHS认证"

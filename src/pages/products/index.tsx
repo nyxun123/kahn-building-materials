@@ -212,33 +212,19 @@ const ProductsPage = memo(function ProductsPage() {
         </div>
       </section>
 
-      {/* 搜索和刷新区 */}
+      {/* 搜索区 */}
       <section className="py-8 bg-background border-b">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-            <div className="max-w-md mx-auto flex-1">
+          <div className="flex justify-center">
+            <div className="max-w-md w-full">
               <input
-              type="text"
-              placeholder={t('products:search_placeholder')}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+                type="text"
+                placeholder={t('products:search_placeholder')}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#047857] focus:border-transparent"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
-            <button
-              onClick={forceRefreshProducts}
-              disabled={isLoading}
-              className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
-            >
-              {isLoading ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              ) : (
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-              )}
-              刷新产品
-            </button>
           </div>
         </div>
       </section>
@@ -267,17 +253,17 @@ const ProductsPage = memo(function ProductsPage() {
       </section>
 
       {/* 联系信息区 */}
-      <section className="py-16 md:py-24 bg-muted/30">
+      <section className="py-16 md:py-24 bg-gradient-to-r from-[#064E3B] via-[#047857] to-[#059669]">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
             {t('products:contact_title')}
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
+          <p className="text-white/90 max-w-2xl mx-auto mb-8">
             {t('products:contact_description')}
           </p>
           <Link 
             to="/contact"
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white text-[#047857] shadow hover:bg-white/90 h-9 px-4 py-2"
           >
             {t('cta.contact')}
             <ArrowRight className="ml-2 h-4 w-4" />

@@ -6,7 +6,6 @@ import { Menu, X, Phone, Mail, MapPin, ChevronDown, Building2 } from 'lucide-rea
 import { cn } from '@/lib/utils';
 import { LanguageSwitcher } from './language-switcher';
 import { Button } from './ui/button';
-import { enforceMainDomainLanguage } from '@/lib/i18n';
 
 interface NavbarProps {
   forceUpdate?: number;
@@ -20,37 +19,19 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showDropdown, setShowDropdown] = useState<string | null>(null);
 
-  // 确保i18n语言与URL参数同步，并处理主域名特殊情况
-  useEffect(() => {
-    // 检查是否为主域名并强制英文
-    const isMainDomainEnforced = enforceMainDomainLanguage();
-    
-    // 确定应该使用的语言
-    let currentLang = lang;
-    if (isMainDomainEnforced) {
-      currentLang = 'en';
-    }
-    
-    if (currentLang && ['zh', 'en', 'ru'].includes(currentLang) && i18n.language !== currentLang) {
-      i18n.changeLanguage(currentLang);
-    }
-  }, [lang, i18n]);
+  // Navbar只负责显示，语言同步由Layout组件处理
+  // 使用URL中的语言代码（如果存在），否则使用i18n当前语言
+  const currentLang = lang || i18n.language || 'en';
 
   const navigation = [
-    { name: t('nav.home'), href: `/${lang}` },
+    { name: t('nav.home'), href: `/${currentLang}` },
     { 
-      name: t('nav.products'), 
-      href: `/${lang}/products`,
-      hasDropdown: true,
-      children: [
-        { name: t('nav.wallpaper_glue'), href: `/${lang}/products/wallpaper-glue` },
-        { name: t('nav.plant_starch'), href: `/${lang}/products/plant-starch` },
-        { name: t('nav.oem_custom'), href: `/${lang}/oem` }
-      ]
+      name: t('nav.applications'), 
+      href: `/${currentLang}/applications`,
     },
-    { name: t('nav.oem'), href: `/${lang}/oem` },
-    { name: t('nav.about'), href: `/${lang}/about` },
-    { name: t('nav.contact'), href: `/${lang}/contact` },
+    { name: t('nav.oem'), href: `/${currentLang}/oem` },
+    { name: t('nav.about'), href: `/${currentLang}/about` },
+    { name: t('nav.contact'), href: `/${currentLang}/contact` },
   ];
 
   useEffect(() => {
@@ -63,7 +44,7 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
   }, []);
 
   return (
-    <header key={`navbar-${lang}-${forceUpdate}`} className="fixed top-0 left-0 right-0 z-50 bg-white w-full">
+    <header key={`navbar-${currentLang}-${forceUpdate}`} className="fixed top-0 left-0 right-0 z-50 bg-white w-full">
       {/* 顶部信息条 - 深绿色工业风格 */}
       <div className="bg-[#064E3B] text-white py-2 px-4">
         <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center text-sm">
@@ -93,7 +74,7 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
         <div className="flex items-center justify-between">
           {/* 品牌标识 - 工业级专业感 */}
           <div className="flex items-center">
-            <Link to={`/${lang}`} className="flex items-center group">
+            <Link to={`/${currentLang}`} className="flex items-center group">
               <div className="text-[#047857] font-bold text-xl group-hover:text-[#064E3B] transition-colors">
                 KARN
               </div>
@@ -106,27 +87,33 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
           </div>
 
           {/* 桌面端导航菜单 - 统一绿色色调 */}
-          <div className="hidden lg:flex items-center space-x-10">
+          <div className="hidden lg:flex items-center space-x-8">
             <Link
-              to={`/${lang}`}
+              to={`/${currentLang}`}
               className="text-gray-700 hover:text-[#047857] transition-colors duration-200 font-medium relative pb-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#047857] after:transition-all after:duration-300 hover:after:w-full"
             >
               {t('nav.home')}
             </Link>
             <Link
-              to={`/${lang}/products`}
+              to={`/${currentLang}/applications`}
               className="text-gray-700 hover:text-[#047857] transition-colors duration-200 font-medium relative pb-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#047857] after:transition-all after:duration-300 hover:after:w-full"
             >
-              {t('nav.products')}
+              {t('nav.applications')}
             </Link>
             <Link
-              to={`/${lang}/about`}
+              to={`/${currentLang}/oem`}
+              className="text-gray-700 hover:text-[#047857] transition-colors duration-200 font-medium relative pb-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#047857] after:transition-all after:duration-300 hover:after:w-full"
+            >
+              {t('nav.oem')}
+            </Link>
+            <Link
+              to={`/${currentLang}/about`}
               className="text-gray-700 hover:text-[#047857] transition-colors duration-200 font-medium relative pb-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#047857] after:transition-all after:duration-300 hover:after:w-full"
             >
               {t('nav.about')}
             </Link>
             <Link
-              to={`/${lang}/contact`}
+              to={`/${currentLang}/contact`}
               className="text-gray-700 hover:text-[#047857] transition-colors duration-200 font-medium relative pb-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#047857] after:transition-all after:duration-300 hover:after:w-full"
             >
               {t('nav.contact')}
@@ -182,28 +169,35 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
 
             <div className="space-y-4">
               <Link
-                to={`/${lang}`}
+                to={`/${currentLang}`}
                 className="block text-gray-700 hover:text-[#047857] py-3 font-medium border-b border-gray-100 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {t('nav.home')}
               </Link>
               <Link
-                to={`/${lang}/products`}
+                to={`/${currentLang}/applications`}
                 className="block text-gray-700 hover:text-[#047857] py-3 font-medium border-b border-gray-100 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                {t('nav.products')}
+                {t('nav.applications')}
               </Link>
               <Link
-                to={`/${lang}/about`}
+                to={`/${currentLang}/oem`}
+                className="block text-gray-700 hover:text-[#047857] py-3 font-medium border-b border-gray-100 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {t('nav.oem')}
+              </Link>
+              <Link
+                to={`/${currentLang}/about`}
                 className="block text-gray-700 hover:text-[#047857] py-3 font-medium border-b border-gray-100 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {t('nav.about')}
               </Link>
               <Link
-                to={`/${lang}/contact`}
+                to={`/${currentLang}/contact`}
                 className="block text-gray-700 hover:text-[#047857] py-3 font-medium border-b border-gray-100 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >

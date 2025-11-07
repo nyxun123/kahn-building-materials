@@ -1,0 +1,66 @@
+{
+  "meta_description": "Hangzhou Kahn Carboxymethyl Starch (CMS) applications in textile printing, water-based coatings, wallpaper adhesive, paper dyeing, construction materials, and desiccant gel",
+  "hero": {
+    "title": "CMS Application Fields",
+    "subtitle": "Professional carboxymethyl starch products widely used in textile, coating, construction, papermaking and other industrial fields"
+  },
+  "textile": {
+    "title": "Textile Printing & Dyeing",
+    "description": "Used as printing paste and dyeing thickener for excellent printing effects",
+    "applications": ["Textile printing paste", "Dyeing process thickening", "Reactive dye printing", "Resist printing process"],
+    "features": ["Excellent thickening performance", "Good penetration", "High printing clarity", "Easy to wash off"],
+    "detail_title": "Carboxymethyl Starch Applications in Textile",
+    "detail_content": ["CMS plays a crucial role in textile printing and dyeing.", "In printing processes, it provides appropriate viscosity.", "In dyeing processes, it controls dye liquor fluidity."]
+  },
+  "construction": {
+    "title": "Construction Materials",
+    "description": "Putty powder and gypsum additive",
+    "applications": ["Interior wall putty powder", "Gypsum-based materials", "Wall leveling materials", "Decorative gypsum products"],
+    "features": ["Improved bonding strength", "Enhanced workability", "Crack prevention", "Increased water resistance"],
+    "detail_title": "CMS in Construction Materials",
+    "detail_content": ["CMS is used in construction materials as water retention agent.", "In putty powder, it delays water evaporation.", "In gypsum materials, it improves fluidity."]
+  },
+  "coating": {
+    "title": "Water-Based Coatings",
+    "description": "Thickener to improve coating rheology and stability",
+    "applications": ["Water-based emulsion paint", "Architectural coating", "Interior/exterior coatings", "Water-based wood coatings"],
+    "features": ["Excellent thickening", "Improved rheology", "Enhanced stability", "Environmentally friendly"],
+    "detail_title": "CMS in Water-Based Coatings",
+    "detail_content": ["CMS serves as thickener and rheology modifier.", "It provides excellent thickening effects.", "It enhances coating stability."]
+  },
+  "wallpaper": {
+    "title": "Wallpaper Adhesive",
+    "description": "Professional wallpaper adhesive powder additive",
+    "applications": ["Wallpaper adhesive powder", "Wall covering paste", "Premium wallpaper adhesive", "Anti-mold wallpaper glue"],
+    "features": ["High adhesive strength", "Easy application", "Anti-mold properties", "Eco-friendly formula"],
+    "detail_title": "CMS in Wallpaper Adhesive",
+    "detail_content": ["CMS is core component of wallpaper adhesive powder.", "It forms uniform adhesive solution.", "We provide professional OEM services."]
+  },
+  "paper": {
+    "title": "Paper Dyeing",
+    "description": "Dyeing thickener for uniform coloring",
+    "applications": ["Colored paper dyeing", "Pulp dyeing", "Specialty paper", "Cardboard dyeing"],
+    "features": ["Excellent uniformity", "Bright colors", "Improved strength", "Enhanced texture"],
+    "detail_title": "CMS in Paper Industry",
+    "detail_content": ["CMS is used as surface sizing agent.", "It improves dye uptake and uniformity.", "It enhances paper properties."]
+  },
+  "desiccant": {
+    "title": "Desiccant Gel",
+    "description": "Calcium chloride desiccant additive",
+    "applications": ["Calcium chloride desiccant", "Moisture absorption gel", "Moisture-proof desiccant", "Industrial dehumidifying"],
+    "features": ["Excellent moisture absorption", "Stable gel retention", "Safe and reliable", "Long-lasting effect"],
+    "detail_title": "CMS in Desiccants",
+    "detail_content": ["CMS locks absorbed moisture into stable gel.", "It prevents liquid leakage.", "The product is safe to use."]
+  },
+  "applications_title": "Applications",
+  "features_title": "Features",
+  "learn_more": "Learn More",
+  "collapse": "Collapse",
+  "view_product": "View Recommended Product",
+  "cta": {
+    "title": "Need More Application Solutions?",
+    "description": "Our professional team is ready to provide CMS application solutions",
+    "contact": "Contact Us",
+    "products": "View Products"
+  }
+}

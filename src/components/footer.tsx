@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { Mail, MapPin, Phone, Clock, Award, Shield, CheckCircle, ChevronRight } from 'lucide-react';
-import { enforceMainDomainLanguage } from '@/lib/i18n';
 
 interface FooterProps {
   forceUpdate?: number;
@@ -12,11 +11,6 @@ interface FooterProps {
 export function Footer({ forceUpdate }: FooterProps = {}) {
   const { t } = useTranslation("common");
   const { lang = 'en' } = useParams<{ lang: string }>();
-  
-  // 处理主域名语言强制
-  React.useEffect(() => {
-    enforceMainDomainLanguage();
-  }, []);
 
   return (
     <footer key={`footer-${lang}-${forceUpdate}`} className="bg-white text-gray-800 border-t border-gray-200">

@@ -1,18 +1,135 @@
 {
-  "meta_description": "Hangzhou Karn New Building Materials Co., Ltd. - Professional wallpaper adhesive manufacturer providing high-quality wallpaper adhesive products, OEM services, and semi-finished small packaging solutions.",
+  "meta_description": "Hangzhou Karn New Building Materials Co., Ltd. - Professional Carboxymethyl Starch (CMS) manufacturer, products widely used in textile printing, construction materials, coating industry, paper processing and more, with OEM services.",
   "hero": {
     "badge": "KARN Professional Manufacturing",
-    "title": "Professional New Building Materials Supplier",
-    "subtitle": "Hangzhou Karn New Building Materials Co., Ltd. specializes in the R&D and production of high-quality wallpaper adhesive powders",
-    "subtitle_highlight": "Industrial-Grade Solutions",
+    "title": "Professional Carboxymethyl Starch (CMS) Manufacturer",
+    "subtitle": "Hangzhou Karn specializes in high-quality Carboxymethyl Starch R&D and production, serving textile, construction, coating, and paper industries",
+    "subtitle_highlight": "Multi-Industry Industrial Solutions",
     "company_alt": "Hangzhou Karn New Building Materials Co., Ltd."
+  },
+  "applications": {
+    "badge": "Application Fields",
+    "title": "CMS Application Fields",
+    "subtitle": "Professional Carboxymethyl Starch products serving 6 major industry applications",
+    "textile": {
+      "title": "Textile Printing",
+      "description": "Used as printing paste and dyeing thickener for excellent dyeing effects"
+    },
+    "construction": {
+      "title": "Construction Materials",
+      "description": "Additives for putty, gypsum, and wallpaper glue to enhance bonding performance"
+    },
+    "coating": {
+      "title": "Coating Industry",
+      "description": "Thickener for water-washable coatings, improving rheology and stability"
+    },
+    "dyeing": {
+      "title": "Dyeing Process",
+      "description": "Textile dyeing thickener with excellent color fixation"
+    },
+    "chemical": {
+      "title": "Chemical Products",
+      "description": "Desiccant gel water-locking material with high moisture absorption"
+    },
+    "paper": {
+      "title": "Paper Industry",
+      "description": "Adhesives and processing aids for specialty paper products"
+    },
+    "wallpaper": {
+      "title": "Wallpaper Adhesive",
+      "description": "Professional wallpaper adhesive powder, strong bonding, easy construction"
+    },
+    "desiccant": {
+      "title": "Desiccant",
+      "description": "Desiccant gel water-locking material, efficient moisture absorption"
+    },
+    "oem": {
+      "title": "OEM Customization",
+      "description": "Customize formulas and packaging according to customer needs"
+    },
+    "view_all": "View All Applications",
+    "learn_more": "Learn More"
   },
   "products": {
     "series": "Product Series",
     "title": "Our Products",
-    "subtitle": "Discover our high-quality wallpaper adhesive product series",
+    "subtitle": "Discover our high-quality Carboxymethyl Starch product series",
     "no_image": "No Image Available",
     "view_all": "View All Products"
+  },
+  "stats": {
+    "badge": "Our Strength",
+    "title": "Focus on CMS Production",
+    "subtitle": "Professional product range serving multiple industrial applications",
+    "years": {
+      "value": "15",
+      "label": "Years Production",
+      "description": "Since 2010"
+    },
+    "products": {
+      "value": "6",
+      "label": "Main Product Models",
+      "description": "8810/8840/K5/K6/999 Series"
+    },
+    "applications": {
+      "value": "6",
+      "label": "Application Fields",
+      "description": "Multiple industrial scenarios"
+    },
+    "quality": {
+      "value": "100%",
+      "label": "Quality Control",
+      "description": "Full process monitoring"
+    }
+  },
+  "advantages": {
+    "badge": "Product Advantages",
+    "title": "Core Advantages of CMS",
+    "subtitle": "Natural plant-based material, eco-friendly and safe, multi-functional industrial applications, enhancing your product quality",
+    "eco_friendly": {
+      "title": "Eco-Friendly & Safe",
+      "badge": "100% Natural Plant-Based",
+      "description": "Made from premium corn starch through advanced carboxymethylation modification, fully compliant with international environmental standards",
+      "features": [
+        "Natural plant extraction, non-toxic and harmless",
+        "Completely biodegradable",
+        "Meets food-grade packaging standards",
+        "ISO environmental certification"
+      ]
+    },
+    "high_performance": {
+      "title": "Exceptional Performance",
+      "badge": "Viscosity up to 65,000 mPa·s",
+      "description": "With 23 years of technical expertise and process optimization, our product performance far exceeds industry standards",
+      "features": [
+        "Superior adhesion, long-lasting stability",
+        "Excellent water and heat resistance",
+        "Wide temperature range -20°C ~ 80°C",
+        "Batch consistency >98%"
+      ]
+    },
+    "multi_functional": {
+      "title": "Multi-Functional",
+      "badge": "6 Major Industries",
+      "description": "One material, multiple uses, widely applied in textiles, construction, coatings, paper, and other industrial sectors",
+      "features": [
+        "Thickener - Improves rheology",
+        "Adhesive - Enhances bonding strength",
+        "Water retention - Prevents cracking",
+        "Emulsifier - Stabilizes dispersion"
+      ]
+    },
+    "easy_to_use": {
+      "title": "Convenient to Use",
+      "badge": "Cold Water Soluble",
+      "description": "Optimized formulation and particle design for simple, efficient use, significantly saving time and energy costs",
+      "features": [
+        "Quick dissolution at room temperature, 3-5 minutes",
+        "No heating equipment needed, energy-efficient",
+        "Simple operation, easy to master",
+        "Adjustable concentration as needed"
+      ]
+    }
   },
   "video": {
     "badge": "Product Demonstration",
@@ -34,10 +151,10 @@
   "why_us": {
     "badge": "Company Advantages",
     "title": "Why Choose Us",
-    "subtitle": "20 years of professional experience providing high-quality wall treatment products to global clients",
+    "subtitle": "23 years of expertise providing high-quality Carboxymethyl Starch products to 6 major industries worldwide",
     "quality": {
       "title": "Quality Assurance",
-      "description": "Strict implementation of ISO9001 quality management system to ensure stable and reliable product quality"
+      "description": "Full-process quality control from raw material testing to finished product, with 23 years of production experience ensuring stable and reliable quality"
     },
     "experience": {
       "title": "Professional Experience",
@@ -50,9 +167,9 @@
   },
   "oem": {
     "badge": "Custom Services",
-    "title": "OEM Custom Manufacturing Services",
-    "subtitle": "Karn has over 23 years of wallpaper adhesive production experience, providing professional OEM/ODM services to global clients. We can customize product formulations, packaging, and branding according to your requirements.",
-    "description": "Karn has over 23 years of wallpaper adhesive production experience, providing professional OEM/ODM services to global clients. We can customize product formulations, packaging, and branding according to your requirements.",
+    "title": "Carboxymethyl Starch Customization Services",
+    "subtitle": "Karn has over 23 years of Carboxymethyl Starch production experience, providing professional OEM/ODM services to global clients. We can customize product formulations, packaging, and branding according to your industry requirements.",
+    "description": "Karn has over 23 years of Carboxymethyl Starch production experience, providing professional OEM/ODM services to global clients. We can customize product formulations, packaging, and branding according to your industry requirements.",
     "image_alt": "OEM Custom Services",
     "features": {
       "brand": "Brand Customization: Production according to your brand requirements",
@@ -64,9 +181,9 @@
   },
   "semi": {
     "badge": "Convenient Solutions",
-    "title": "Semi-Finished Wallpaper Adhesive Small Packaging",
-    "subtitle": "We provide 200g to 500g aluminum foil bag small packaging of semi-finished wallpaper adhesive, suitable for small-area renovation needs and retail markets. These products are easy to store and transport, requiring only water addition before use.",
-    "description": "We provide 200g to 500g aluminum foil bag small packaging of semi-finished wallpaper adhesive, suitable for small-area renovation needs and retail markets. These products are easy to store and transport, requiring only water addition before use.",
+    "title": "Carboxymethyl Starch Semi-finished Small Packaging",
+    "subtitle": "We provide 200g to 500g aluminum foil bag small packaging of Carboxymethyl Starch semi-finished products, suitable for multiple industries and retail markets. Easy to store and transport, just add water when using.",
+    "description": "We provide 200g to 500g aluminum foil bag small packaging of Carboxymethyl Starch semi-finished products, suitable for multiple industries and retail markets. Easy to store and transport, just add water when using.",
     "image_alt": "Semi-finished Small Packaging Wallpaper Adhesive",
     "features": {
       "specs": "Complete Specifications: 200g, 300g, 400g, 500g available",
@@ -78,7 +195,7 @@
   },
   "cta": {
     "title": "Contact Us for Professional Solutions",
-    "description": "Contact our professional team now to get high-quality wallpaper adhesive products and custom services tailored to your needs",
+    "description": "Contact our professional team now to get high-quality Carboxymethyl Starch products and custom services tailored to your industry needs",
     "image_alt": "Industrial Robotics Automation Factory",
     "browse_products": "Browse Products"
   }

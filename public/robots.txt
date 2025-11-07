@@ -1,0 +1,56 @@
+# Robots.txt for kn-wallpaperglue.com
+# 杭州卡恩新型建材有限公司 - 羧甲基淀粉专业制造商
+
+# 允许所有搜索引擎抓取
+User-agent: *
+Allow: /
+
+# 禁止抓取后台管理页面
+Disallow: /admin/
+Disallow: /api/admin/
+
+# 禁止抓取API接口（除了公开API）
+Disallow: /api/
+
+# 允许抓取公开资源
+Allow: /images/
+Allow: /assets/
+Allow: /js/
+Allow: /*.js$
+Allow: /*.css$
+
+# 禁止抓取临时文件
+Disallow: /*?*test=
+Disallow: /*?*debug=
+Disallow: /*.json$
+
+# Sitemap 位置
+Sitemap: https://kn-wallpaperglue.com/sitemap.xml
+Sitemap: https://kn-wallpaperglue.com/sitemap-zh.xml
+Sitemap: https://kn-wallpaperglue.com/sitemap-en.xml
+Sitemap: https://kn-wallpaperglue.com/sitemap-ru.xml
+
+# 针对特定搜索引擎的配置
+# Google
+User-agent: Googlebot
+Allow: /
+
+# Bing
+User-agent: Bingbot
+Allow: /
+
+# Yandex (俄罗斯市场重要)
+User-agent: YandexBot
+Allow: /
+
+# Baidu (中国市场重要)
+User-agent: Baiduspider
+Allow: /
+
+# 抓取延迟设置（避免服务器压力）
+Crawl-delay: 1
+
+
+
+
+
