@@ -131,6 +131,8 @@
     "company": "Компания",
     "phone": "Телефон",
     "country": "Страна",
+    "subject": "Тема",
+    "language": "Язык",
     "received_on": "Получено",
     "message_content": "Содержание сообщения",
     "admin_notes": "Заметки администратора",

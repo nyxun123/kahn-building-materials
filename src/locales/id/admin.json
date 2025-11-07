@@ -131,6 +131,8 @@
     "company": "Perusahaan",
     "phone": "Telepon",
     "country": "Negara",
+    "subject": "Subjek",
+    "language": "Bahasa",
     "received_on": "Diterima Pada",
     "message_content": "Konten Pesan",
     "admin_notes": "Catatan Admin",

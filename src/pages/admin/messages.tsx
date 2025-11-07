@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Card,
   Table,
@@ -15,11 +15,12 @@ import {
   Title,
 } from "@tremor/react";
 import { useTable, useUpdate } from "@refinedev/core";
-import { Mail, Phone, Building2, Eye, CheckCircle2, MessageCircle } from "lucide-react";
+import { Mail, Phone, Building2, Eye, CheckCircle2, MessageCircle, Globe, MessageSquare, Languages } from "lucide-react";
 import { PageHeader, PageContent } from "@/components/admin";
 
 const Messages = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [adminNotes, setAdminNotes] = useState<string>("");
 
   const {
     tableQueryResult,
@@ -50,6 +51,13 @@ const Messages = () => {
     if (!selectedId) return records[0];
     return records.find((item: any) => item.id === selectedId) ?? records[0];
   }, [records, selectedId]);
+
+  // 同步管理员备注
+  useEffect(() => {
+    if (selectedMessage) {
+      setAdminNotes(selectedMessage.admin_notes || "");
+    }
+  }, [selectedMessage]);
 
   return (
     <PageContent maxWidth="2xl">
@@ -229,6 +237,38 @@ const Messages = () => {
                       <Text className="font-medium">{selectedMessage.company}</Text>
                     </Flex>
                   )}
+                  {selectedMessage.country && (
+                    <Flex alignItems="center" className="gap-3 text-gray-700">
+                      <div className="rounded-lg bg-blue-100 p-2">
+                        <Globe className="h-4 w-4 text-blue-600" />
+                      </div>
+                      <Text className="font-medium">{selectedMessage.country}</Text>
+                    </Flex>
+                  )}
+                  {selectedMessage.subject && (
+                    <Flex alignItems="center" className="gap-3 text-gray-700">
+                      <div className="rounded-lg bg-amber-100 p-2">
+                        <MessageSquare className="h-4 w-4 text-amber-600" />
+                      </div>
+                      <Text className="font-medium">{selectedMessage.subject}</Text>
+                    </Flex>
+                  )}
+                  {selectedMessage.language && (
+                    <Flex alignItems="center" className="gap-3 text-gray-700">
+                      <div className="rounded-lg bg-rose-100 p-2">
+                        <Languages className="h-4 w-4 text-rose-600" />
+                      </div>
+                      <Text className="font-medium">
+                        {selectedMessage.language === 'zh' && '中文'}
+                        {selectedMessage.language === 'en' && 'English'}
+                        {selectedMessage.language === 'ru' && 'Русский'}
+                        {selectedMessage.language === 'vi' && 'Tiếng Việt'}
+                        {selectedMessage.language === 'th' && 'ไทย'}
+                        {selectedMessage.language === 'id' && 'Indonesia'}
+                        {!['zh', 'en', 'ru', 'vi', 'th', 'id'].includes(selectedMessage.language) && selectedMessage.language}
+                      </Text>
+                    </Flex>
+                  )}
                 </div>
 
                 <div className="rounded-xl border-2 border-gray-100 bg-white p-4">
@@ -238,6 +278,32 @@ const Messages = () => {
                     value={selectedMessage.message}
                     readOnly
                   />
+                </div>
+
+                <div className="rounded-xl border-2 border-indigo-100 bg-white p-4">
+                  <Text className="text-sm font-semibold text-gray-700 mb-3">管理员备注</Text>
+                  <Textarea
+                    className="min-h-[120px] resize-none rounded-lg border-2 border-gray-200 bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200"
+                    value={adminNotes}
+                    onChange={(e) => setAdminNotes(e.target.value)}
+                    placeholder="添加管理员备注..."
+                  />
+                  <Flex justifyContent="end" className="mt-3">
+                    <Button
+                      size="sm"
+                      loading={updating}
+                      onClick={() =>
+                        updateMessage({
+                          resource: "messages",
+                          id: selectedMessage.id,
+                          values: { admin_notes: adminNotes },
+                        })
+                      }
+                      className="bg-indigo-600 text-white hover:bg-indigo-700 transition-all duration-200"
+                    >
+                      保存备注
+                    </Button>
+                  </Flex>
                 </div>
 
                 <Flex justifyContent="end" className="gap-3 pt-2 border-t border-gray-200">

@@ -131,6 +131,8 @@
     "company": "บริษัท",
     "phone": "โทรศัพท์",
     "country": "ประเทศ",
+    "subject": "หัวข้อ",
+    "language": "ภาษา",
     "received_on": "ได้รับเมื่อ",
     "message_content": "เนื้อหาข้อความ",
     "admin_notes": "บันทึกผู้ดูแล",

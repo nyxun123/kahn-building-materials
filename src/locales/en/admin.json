@@ -131,6 +131,8 @@
     "company": "Company",
     "phone": "Phone",
     "country": "Country",
+    "subject": "Subject",
+    "language": "Language",
     "received_on": "Received On",
     "message_content": "Message Content",
     "admin_notes": "Admin Notes",

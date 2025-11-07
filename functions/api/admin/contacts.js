@@ -41,9 +41,10 @@ export async function onRequestGet(context) {
     }
 
     try {
-      // 获取联系数据
+      // 获取联系数据（包含所有字段）
       const contacts = await env.DB.prepare(`
-        SELECT id, name, email, phone, company, country, subject, message, language, created_at, status, is_read
+        SELECT id, name, email, phone, company, country, subject, message, language, 
+               created_at, updated_at, status, is_read, admin_notes, ip_address, user_agent
         FROM contacts
         ORDER BY created_at DESC
         LIMIT ? OFFSET ?

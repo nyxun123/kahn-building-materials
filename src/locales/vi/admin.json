@@ -131,6 +131,8 @@
     "company": "Công ty",
     "phone": "Điện thoại",
     "country": "Quốc gia",
+    "subject": "Chủ đề",
+    "language": "Ngôn ngữ",
     "received_on": "Nhận vào",
     "message_content": "Nội dung Tin nhắn",
     "admin_notes": "Ghi chú Quản trị",
