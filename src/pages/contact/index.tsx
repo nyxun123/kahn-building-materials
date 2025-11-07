@@ -196,7 +196,7 @@ export default function ContactPage() {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-lg font-semibold text-[#064E3B]">{t('contact:info.phone.title')}</h3>
-                    <p className="text-gray-600 mt-1">13395711877</p>
+                    <p className="text-gray-600 mt-1">+86 13216156841</p>
                   </div>
                 </div>
 

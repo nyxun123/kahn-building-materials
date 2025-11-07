@@ -30,7 +30,7 @@
   },
   "header": {
     "company_name": "Hangzhou Karn New Building Materials Co., Ltd.",
-    "phone": "13395711877",
+    "phone": "+86 13216156841",
     "email": "karnstarch@gmail.com",
     "address": "No. 1, Huruixian Road, Chongxian Street, Linping District, Hangzhou, Zhejiang, China",
     "brand_name": "Hangzhou Karn New Building Materials Co., Ltd.",
@@ -53,7 +53,7 @@
     },
     "contact_info": {
       "address": "No. 1, Huruixian Road,<br />Chongxian Street, Linping District,<br />Hangzhou, Zhejiang, China",
-      "phone": "13395711877",
+      "phone": "+86 13216156841",
       "email": "2026233975@qq.com"
     },
     "quality_features": {
@@ -95,5 +95,14 @@
   "error": "Error",
   "required": "This field is required",
   "switch_language": "Switch Language",
-  "switch_theme": "Switch Theme"
+  "switch_theme": "Switch Theme",
+  "social": {
+    "follow_us": "Follow Us",
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "whatsapp": "WhatsApp",
+    "wechat": "WeChat"
+  }
 }

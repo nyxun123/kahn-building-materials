@@ -30,7 +30,7 @@
   },
   "header": {
     "company_name": "บริษัท Hangzhou Karn New Building Materials จำกัด",
-    "phone": "13395711877",
+    "phone": "+86 13216156841",
     "email": "karnstarch@gmail.com",
     "address": "เลขที่ 1 ถนน Huruixian ตำบล Chongxian เขต Linping หางโจว เจ้อเจียง จีน",
     "brand_name": "บริษัท Hangzhou Karn New Building Materials จำกัด",
@@ -53,7 +53,7 @@
     },
     "contact_info": {
       "address": "เลขที่ 1 ถนน Huruixian<br />ตำบล Chongxian เขต Linping<br />หางโจว เจ้อเจียง จีน",
-      "phone": "13395711877",
+      "phone": "+86 13216156841",
       "email": "2026233975@qq.com"
     },
     "quality_features": {
@@ -95,6 +95,15 @@
   "error": "ข้อผิดพลาด",
   "required": "ฟิลด์นี้จำเป็นต้องกรอก",
   "switch_language": "เปลี่ยนภาษา",
-  "switch_theme": "เปลี่ยนธีม"
+  "switch_theme": "เปลี่ยนธีม",
+  "social": {
+    "follow_us": "ติดตามเรา",
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "whatsapp": "WhatsApp",
+    "wechat": "WeChat"
+  }
 }
 

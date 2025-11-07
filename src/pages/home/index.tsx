@@ -282,7 +282,7 @@ export default function HomePage() {
           url: 'https://kn-wallpaperglue.com',
           logo: '/images/IMG_1412.JPG',
           image: '/images/IMG_1515.JPG',
-          telephone: '+86-13395711877',
+          telephone: '+86-13216156841',
           email: 'karnstarch@gmail.com',
           address: {
             streetAddress: '沪瑞线 1 号',

@@ -30,7 +30,7 @@
   },
   "header": {
     "company_name": "Công ty TNHH Vật liệu Xây dựng Mới Karn Hàng Châu",
-    "phone": "13395711877",
+    "phone": "+86 13216156841",
     "email": "karnstarch@gmail.com",
     "address": "Số 1, Đường Huruixian, Phố Chongxian, Quận Linping, Hàng Châu, Chiết Giang, Trung Quốc",
     "brand_name": "Công ty TNHH Vật liệu Xây dựng Mới Karn Hàng Châu",
@@ -53,7 +53,7 @@
     },
     "contact_info": {
       "address": "Số 1, Đường Huruixian,<br />Phố Chongxian, Quận Linping,<br />Hàng Châu, Chiết Giang, Trung Quốc",
-      "phone": "13395711877",
+      "phone": "+86 13216156841",
       "email": "2026233975@qq.com"
     },
     "quality_features": {
@@ -95,6 +95,15 @@
   "error": "Lỗi",
   "required": "Trường này là bắt buộc",
   "switch_language": "Chuyển đổi Ngôn ngữ",
-  "switch_theme": "Chuyển đổi Chủ đề"
+  "switch_theme": "Chuyển đổi Chủ đề",
+  "social": {
+    "follow_us": "Theo dõi chúng tôi",
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "whatsapp": "WhatsApp",
+    "wechat": "WeChat"
+  }
 }
 

@@ -30,7 +30,7 @@
   },
   "header": {
     "company_name": "杭州卡恩新型建材有限公司",
-    "phone": "13395711877",
+    "phone": "+86 13216156841",
     "email": "karnstarch@gmail.com",
     "address": "浙江省杭州市临平区崇贤街道沪瑞线 1 号",
     "brand_name": "杭州卡恩新型建材有限公司",
@@ -53,7 +53,7 @@
     },
     "contact_info": {
       "address": "浙江省杭州市临平区<br />崇贤街道沪瑞线 1 号",
-      "phone": "13395711877",
+      "phone": "+86 13216156841",
       "email": "2026233975@qq.com"
     },
     "quality_features": {
@@ -95,5 +95,14 @@
   "error": "操作失败",
   "required": "此字段为必填项",
   "switch_language": "切换语言",
-  "switch_theme": "切换主题"
+  "switch_theme": "切换主题",
+  "social": {
+    "follow_us": "关注我们",
+    "tiktok": "抖音/TikTok",
+    "youtube": "YouTube",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "whatsapp": "WhatsApp",
+    "wechat": "微信"
+  }
 }

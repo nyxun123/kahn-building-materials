@@ -30,7 +30,7 @@
   },
   "header": {
     "company_name": "Ханчжоу Карн Новые Строительные Материалы Ко., Лтд.",
-    "phone": "13395711877",
+    "phone": "+86 13216156841",
     "email": "karnstarch@gmail.com",
     "address": "Китай, провинция Чжэцзян, г. Ханчжоу, район Линьпин, улица Чунсянь, дорога Хуруйсянь, № 1",
     "brand_name": "Ханчжоу Карн Новые Строительные Материалы Ко., Лтд.",
@@ -53,7 +53,7 @@
     },
     "contact_info": {
       "address": "Дорога Хуруйсянь, № 1,<br />Улица Чунсянь, Район Линьпин,<br />Ханчжоу, Чжэцзян, Китай",
-      "phone": "13395711877",
+      "phone": "+86 13216156841",
       "email": "2026233975@qq.com"
     },
     "quality_features": {
@@ -95,5 +95,14 @@
   "error": "Ошибка",
   "required": "Это поле обязательно для заполнения",
   "switch_language": "Переключить язык",
-  "switch_theme": "Переключить тему"
+  "switch_theme": "Переключить тему",
+  "social": {
+    "follow_us": "Подписаться на нас",
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "whatsapp": "WhatsApp",
+    "wechat": "WeChat"
+  }
 }
