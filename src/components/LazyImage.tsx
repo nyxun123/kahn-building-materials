@@ -1,90 +1,86 @@
-import { useState, useRef, useEffect, memo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-interface LazyImageProps {
+interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
   alt: string;
+  webpSrc?: string; // WebP 格式的图片路径
   className?: string;
-  placeholder?: string;
-  errorFallback?: string;
-  loading?: 'eager' | 'lazy';
-  onLoad?: () => void;
-  onError?: () => void;
+  placeholderSrc?: string; // 占位图（可选）
 }
 
-export const LazyImage = memo(function LazyImage({
+/**
+ * 懒加载图片组件
+ * 支持 WebP 格式和渐进式加载
+ */
+export const LazyImage: React.FC<LazyImageProps> = ({
   src,
+  webpSrc,
   alt,
   className = '',
-  placeholder = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5YTNhZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxvYWRpbmcuLi48L3RleHQ+PC9zdmc+',
-  errorFallback = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5YTNhZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIG5vdCBmb3VuZDwvdGV4dD48L3N2Zz4=',
-  loading = 'lazy',
-  onLoad,
-  onError
-}: LazyImageProps) {
-  const [imageState, setImageState] = useState<'loading' | 'loaded' | 'error'>('loading');
-  const [currentSrc, setCurrentSrc] = useState(placeholder);
+  placeholderSrc,
+  ...props
+}) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isInView, setIsInView] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
-    const imgElement = imgRef.current;
-    if (!imgElement) return;
-
-    // If loading is eager, load immediately
-    if (loading === 'eager') {
-      loadImage();
-      return;
-    }
-
-    // Create intersection observer for lazy loading
-    observerRef.current = new IntersectionObserver(
+    // 使用 Intersection Observer 检测图片是否进入视口
+    const observer = new IntersectionObserver(
       (entries) => {
-        const [entry] = entries;
-        if (entry.isIntersecting) {
-          loadImage();
-          observerRef.current?.disconnect();
-        }
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsInView(true);
+            observer.disconnect();
+          }
+        });
       },
       {
-        threshold: 0.1,
-        rootMargin: '50px'
+        rootMargin: '50px', // 提前50px开始加载
       }
     );
 
-    observerRef.current.observe(imgElement);
+    if (imgRef.current) {
+      observer.observe(imgRef.current);
+    }
 
     return () => {
-      observerRef.current?.disconnect();
+      observer.disconnect();
     };
-  }, [src, loading]);
+  }, []);
 
-  const loadImage = () => {
-    const img = new Image();
+  // 获取WebP图片路径（自动转换）
+  const getWebPSrc = () => {
+    if (webpSrc) return webpSrc;
     
-    img.onload = () => {
-      setCurrentSrc(src);
-      setImageState('loaded');
-      onLoad?.();
-    };
+    // 自动将jpg/png替换为webp
+    if (src.match(/\.(jpe?g|png)$/i)) {
+      return src.replace(/\.(jpe?g|png)$/i, '.webp');
+    }
     
-    img.onerror = () => {
-      setCurrentSrc(errorFallback);
-      setImageState('error');
-      onError?.();
-    };
-    
-    img.src = src;
+    return null;
   };
 
+  const webpPath = getWebPSrc();
+
   return (
-    <img
-      ref={imgRef}
-      src={currentSrc}
-      alt={alt}
-      className={`transition-opacity duration-300 ${
-        imageState === 'loading' ? 'opacity-70' : 'opacity-100'
-      } ${className}`}
-      loading={loading}
-    />
+    <picture ref={imgRef as any}>
+      {/* WebP 格式（现代浏览器） */}
+      {webpPath && isInView && (
+        <source srcSet={webpPath} type="image/webp" />
+      )}
+      
+      {/* 原始格式（fallback） */}
+      <img
+        src={isInView ? src : (placeholderSrc || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3C/svg%3E')}
+        alt={alt}
+        className={`transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
+        onLoad={() => setIsLoaded(true)}
+        loading="lazy"
+        {...props}
+      />
+    </picture>
   );
-});
+};
+
+export default LazyImage;

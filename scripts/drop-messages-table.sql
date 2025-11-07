@@ -5,3 +5,5 @@
 -- 删除 messages 表
 DROP TABLE IF EXISTS messages;
 
+
+

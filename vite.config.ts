@@ -138,7 +138,18 @@ export default defineConfig({
       }
     },
     // 启用更好的压缩
-    minify: 'esbuild',
+    minify: isProd ? 'terser' : 'esbuild',
+    // Terser 压缩选项（仅生产环境）
+    terserOptions: isProd ? {
+      compress: {
+        drop_console: true, // 移除 console
+        drop_debugger: true, // 移除 debugger
+        pure_funcs: ['console.log'], // 移除特定函数调用
+      },
+      mangle: {
+        safari10: true, // Safari 10+ 兼容
+      },
+    } : undefined,
     // target优化
     target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
     // 生成source map（用于调试）
