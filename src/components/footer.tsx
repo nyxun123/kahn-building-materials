@@ -136,26 +136,7 @@ export function Footer({ forceUpdate }: FooterProps = {}) {
         </div>
       </div>
 
-      {/* 版权信息 - 白色背景风格 */}
-      <div className="border-t border-gray-200 bg-gray-50 py-6">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-gray-600">
-              {t('footer.copyright')}
-            </p>
-            <div className="flex items-center space-x-6 text-sm text-gray-600 mt-3 md:mt-0">
-              <a href="#" className="hover:text-[#047857] transition-colors duration-200">
-                {t('footer.bottom_links.privacy')}
-              </a>
-              <a href="#" className="hover:text-[#047857] transition-colors duration-200">
-                {t('footer.bottom_links.terms')}
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 社交媒体 - 页面最底部 */}
+      {/* 社交媒体 - 在版权信息之前 */}
       <div className="border-t border-gray-200 bg-white py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center space-y-4">
@@ -238,6 +219,25 @@ export function Footer({ forceUpdate }: FooterProps = {}) {
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 版权信息 - 白色背景风格 */}
+      <div className="border-t border-gray-200 bg-gray-50 py-6">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <p className="text-sm text-gray-600">
+              {t('footer.copyright')}
+            </p>
+            <div className="flex items-center space-x-6 text-sm text-gray-600 mt-3 md:mt-0">
+              <a href="#" className="hover:text-[#047857] transition-colors duration-200">
+                {t('footer.bottom_links.privacy')}
+              </a>
+              <a href="#" className="hover:text-[#047857] transition-colors duration-200">
+                {t('footer.bottom_links.terms')}
+              </a>
             </div>
           </div>
         </div>

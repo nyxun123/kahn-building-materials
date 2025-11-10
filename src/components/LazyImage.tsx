@@ -29,10 +29,10 @@ export const LazyImage: React.FC<LazyImageProps> = ({
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
+        if (entry.isIntersecting) {
             setIsInView(true);
             observer.disconnect();
-          }
+        }
         });
       },
       {
@@ -59,8 +59,8 @@ export const LazyImage: React.FC<LazyImageProps> = ({
     }
     
     return null;
-  };
-
+    };
+    
   const webpPath = getWebPSrc();
 
   return (
@@ -73,12 +73,12 @@ export const LazyImage: React.FC<LazyImageProps> = ({
       {/* 原始格式（fallback） */}
       <img
         src={isInView ? src : (placeholderSrc || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3C/svg%3E')}
-        alt={alt}
+      alt={alt}
         className={`transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
         onLoad={() => setIsLoaded(true)}
         loading="lazy"
         {...props}
-      />
+    />
     </picture>
   );
 };
