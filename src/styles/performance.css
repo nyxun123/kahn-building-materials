@@ -1,0 +1,120 @@
+/* 性能优化专用CSS */
+
+/* 图片优化样式 */
+.picture-lazy-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.picture-lazy-loading img {
+  transition: opacity 0.3s ease;
+}
+
+.picture-lazy-loading .placeholder {
+  filter: blur(10px);
+  transform: scale(1.05);
+  transition: opacity 0.3s ease;
+}
+
+/* 预加载样式 */
+.preload {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  visibility: hidden;
+}
+
+/* 内容可见性优化 */
+.content-visibility-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* 减少重排的优化 */
+.layout-stable {
+  contain: layout style paint;
+}
+
+/* GPU加速优化 */
+.gpu-optimized {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* 响应式图片断点 */
+@media (max-width: 640px) {
+  .mobile-hidden {
+    display: none;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .tablet-hidden {
+    display: none;
+  }
+}
+
+@media (min-width: 1025px) {
+  .desktop-hidden {
+    display: none;
+  }
+}
+
+/* 关键路径CSS优化 */
+.above-fold {
+  /* 首屏内容样式 */
+}
+
+.below-fold {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* 字体优化 */
+.font-display-swap {
+  font-display: swap;
+}
+
+.font-display-fallback {
+  font-display: fallback;
+}
+
+.font-display-optional {
+  font-display: optional;
+}
+
+/* 动画性能优化 */
+.animate-optimized {
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+/* 滚动性能优化 */
+.scroll-optimized {
+  scroll-behavior: smooth;
+  overflow-anchor: none;
+}
+
+/* 网络性能优化 */
+.network-slow {
+  /* 网络慢时的优化 */
+}
+
+.network-fast {
+  /* 网络快时的完整体验 */
+}
+
+/* 设备适配 */
+@media (hover: hover) {
+  .hover-styles {
+    /* 鼠标设备样式 */
+  }
+}
+
+@media (hover: none) {
+  .touch-styles {
+    /* 触摸设备样式 */
+  }
+}
