@@ -250,10 +250,14 @@ export default function FAQPage() {
 
   // 结构化数据
   const faqSchema = {
-    type: 'FAQPage',
+    type: 'FAQPage' as const,
     mainEntity: filteredFAQs.map(faq => ({
-      question: faq.question,
-      answer: faq.answer
+      '@type': 'Question' as const,
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer' as const,
+        text: faq.answer
+      }
     }))
   };
 
@@ -264,7 +268,7 @@ export default function FAQPage() {
         description={t('faq.description', '查找关于羧甲基淀粉(CMS)产品、订购、技术等常见问题的答案')}
         keywords={t('faq.keywords', 'CMS,羧甲基淀粉,常见问题,FAQ,技术支持,产品咨询')}
         type="website"
-        lang={currentLang}
+        lang={currentLang as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
       />
 
       <StructuredData schema={faqSchema} />
