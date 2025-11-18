@@ -252,12 +252,8 @@ export default function FAQPage() {
   const faqSchema = {
     type: 'FAQPage' as const,
     mainEntity: filteredFAQs.map(faq => ({
-      '@type': 'Question' as const,
-      name: faq.question,
-      acceptedAnswer: {
-        '@type': 'Answer' as const,
-        text: faq.answer
-      }
+      question: faq.question,
+      answer: faq.answer
     }))
   };
 
