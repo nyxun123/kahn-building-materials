@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Outlet, useParams } from 'react-router-dom';
+import { Outlet, useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Navbar } from './navbar';
 import { Footer } from './footer';
+import { FloatingContactButtons } from './FloatingContactButtons';
 
 export function Layout() {
   const { lang } = useParams<{ lang: string }>();
+  const location = useLocation();
   const { i18n } = useTranslation();
   const [forceUpdate, setForceUpdate] = useState(0);
 
@@ -64,6 +66,8 @@ export function Layout() {
         <Outlet />
       </main>
       <Footer forceUpdate={forceUpdate} />
+      {/* 右侧漂浮联络按钮 - 仅在前端页面显示，不在管理后台显示 */}
+      {!location.pathname.startsWith('/admin') && <FloatingContactButtons />}
     </div>
   );
 }

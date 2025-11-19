@@ -4,6 +4,13 @@
 /images/*  /images/:splat  200
 /js/*  /js/:splat  200
 /admin/*  /admin/:splat  200
+/sitemap.xml        /sitemap.xml        200
+/sitemap-zh.xml     /sitemap-zh.xml     200
+/sitemap-en.xml     /sitemap-en.xml     200
+/sitemap-ru.xml     /sitemap-ru.xml     200
+/sitemap-vi.xml     /sitemap-vi.xml     200
+/sitemap-th.xml     /sitemap-th.xml     200
+/sitemap-id.xml     /sitemap-id.xml     200
 /*.js  /:splat  200
 /*.css  /:splat  200
 /*.png  /:splat  200

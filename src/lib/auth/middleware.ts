@@ -254,6 +254,7 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
 }
 
 // 扩展Request类型以包含user属性
+ 
 declare global {
   namespace Express {
     interface Request {

@@ -221,7 +221,7 @@ const SEOManager = () => {
 
   const checkSEOScore = () => {
     let score = 0;
-    let issues = [];
+    const issues = [];
 
     // 检查标题长度
     if (seoConfig.title_zh.length > 0 && seoConfig.title_zh.length <= 60) score += 20;

@@ -8,6 +8,8 @@ import { SEOHelmet } from '@/components/SEOHelmet';
 import { StructuredData } from '@/components/StructuredData';
 import { getPageContents } from '@/lib/api/content-api';
 import { getOEMContentForFrontend } from '@/lib/api/oem-api';
+import { COMPANY_PROFILE } from '@/lib/company-profile';
+import { SOCIAL_LINKS } from '@/lib/social-links';
 
 interface Product {
   id: number;
@@ -34,6 +36,13 @@ export default function HomePage() {
   const [pageContent, setPageContent] = useState<Record<string, any>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [currentLang, setCurrentLang] = useState(i18n.language || 'en');
+  const socialProfileLinks = [
+    SOCIAL_LINKS.tiktok,
+    SOCIAL_LINKS.youtube,
+    SOCIAL_LINKS.instagram,
+    SOCIAL_LINKS.facebook,
+    SOCIAL_LINKS.whatsapp,
+  ].filter(Boolean);
 
   // 监听语言变化，确保组件重新渲染
   useEffect(() => {
@@ -266,12 +275,17 @@ export default function HomePage() {
   return (
     <>
       <SEOHelmet
-        title={t('nav.home')}
+        title={i18n.language === 'zh' 
+          ? '羧甲基淀粉CMS专业生产商 - 杭州卡恩新型建材有限公司'
+          : i18n.language === 'en'
+          ? 'Professional Carboxymethyl Starch CMS Manufacturer - Hangzhou Karn'
+          : t('nav.home')}
         description={pageContent.meta_description || t('home:meta_description')}
-        keywords="羧甲基淀粉,CMS,纺织印染,建筑材料,涂料工业,造纸,墙纸胶粉,carboxymethyl starch,textile,coating,wallpaper adhesive"
+        keywords="羧甲基淀粉,CMS,纺织印染,建筑材料,涂料工业,染纸,墙纸胶粉,carboxymethyl starch,textile,coating,paper dyeing industry,wallpaper adhesive"
         type="website"
-        lang={i18n.language as 'zh' | 'en' | 'ru'}
+        lang={i18n.language as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
         image="/images/IMG_1412.JPG"
+        logo="/images/logo.png"
       />
       <StructuredData
         schema={{
@@ -280,10 +294,11 @@ export default function HomePage() {
           alternateName: '浙江卡恩新型建材有限公司',
           description: pageContent.meta_description || t('home:meta_description'),
           url: 'https://kn-wallpaperglue.com',
-          logo: '/images/IMG_1412.JPG',
+          logo: '/images/logo.png',
           image: '/images/IMG_1515.JPG',
           telephone: '+86-13216156841',
-          email: 'karnstarch@gmail.com',
+          email: COMPANY_PROFILE.email,
+          sameAs: socialProfileLinks,
           address: {
             streetAddress: '沪瑞线 1 号',
             addressLocality: '杭州市临平区崇贤街道',
@@ -294,7 +309,26 @@ export default function HomePage() {
             latitude: 30.2741,
             longitude: 120.1551,
           },
+          areaServed: ['CN', 'RU', 'VN', 'TH', 'ID', 'Global'],
+          hasMap: 'https://maps.google.com/?q=30.2741,120.1551',
+          contactPoint: [
+            {
+              contactType: 'sales',
+              telephone: COMPANY_PROFILE.phone,
+              email: COMPANY_PROFILE.email,
+              areaServed: ['CN', 'RU', 'VN', 'TH', 'ID'],
+              availableLanguage: ['zh', 'en', 'ru', 'vi', 'th', 'id'],
+            },
+          ],
           foundingDate: '2010',
+        }}
+      />
+      <StructuredData
+        schema={{
+          type: 'WebSite',
+          name: 'Hangzhou Karn New Building Materials Co., Ltd',
+          url: 'https://kn-wallpaperglue.com',
+          logo: '/images/logo.png',
         }}
       />
 
@@ -472,13 +506,13 @@ export default function HomePage() {
                 </div>
             </div>
 
-            {/* 造纸工业 */}
+            {/* 染纸工业 */}
             <div className="group relative bg-white overflow-hidden rounded-sm border-t border-l border-gray-200 shadow-sm transition-all hover:shadow-md hover:border-[#10B981]">
               <div className="absolute top-0 left-0 w-2 h-full bg-[#047857]"></div>
               <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
                 <img 
                   src="/images/应用领域/造纸.JPG" 
-                  alt="造纸工业应用" 
+                  alt="染纸工业应用" 
                   loading="lazy"
                   decoding="async"
                   className="w-full h-full object-cover transition-all group-hover:scale-105"

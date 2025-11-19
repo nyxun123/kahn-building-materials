@@ -98,7 +98,7 @@ const Login = () => {
         let savedToken = localStorage.getItem('admin_access_token');
         let savedExpiry = localStorage.getItem('admin_token_expiry');
         let savedRefreshToken = localStorage.getItem('admin_refresh_token');
-        let savedUserInfo = localStorage.getItem('admin_user_info');
+        const savedUserInfo = localStorage.getItem('admin_user_info');
         
         console.log('🔍 第一次验证token保存状态:', {
           hasToken: !!savedToken,

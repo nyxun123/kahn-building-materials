@@ -12,6 +12,7 @@ import { SEOHelmet } from '@/components/SEOHelmet';
 import { StructuredData } from '@/components/StructuredData';
 import { OptimizedMap } from '@/components/OptimizedMap';
 import { getApiUrl, API_CONFIG } from '@/lib/config';
+import { COMPANY_PROFILE } from '@/lib/company-profile';
 
 interface ContactFormData {
   name: string;
@@ -134,11 +135,15 @@ export default function ContactPage() {
   return (
     <>
       <SEOHelmet
-        title={t('nav.contact')}
+        title={i18n.language === 'zh' 
+          ? '联系我们 - 杭州卡恩羧甲基淀粉供应商'
+          : i18n.language === 'en'
+          ? 'Contact Us - Hangzhou Karn CMS Supplier'
+          : t('nav.contact')}
         description={t('contact:meta_description')}
         keywords="联系我们,杭州卡恩,浙江省杭州市,羧甲基淀粉供应商,Contact us,Hangzhou Karn,CMS supplier,China manufacturer"
         type="website"
-        lang={i18n.language as 'zh' | 'en' | 'ru'}
+        lang={i18n.language as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
         image="/images/IMG_1515.JPG"
       />
       <StructuredData
@@ -181,10 +186,10 @@ export default function ContactPage() {
                   <div className="ml-4">
                     <h3 className="text-lg font-semibold text-[#064E3B]">{t('contact:info.address.title')}</h3>
                     <p className="text-gray-600 mt-1">
-                      浙江省杭州市临平区崇贤街道沪瑞线 1 号
+                      {COMPANY_PROFILE.addressZh}
                     </p>
                     <p className="text-gray-600">
-                      No. 1, Huruixian Road, Chongxian Street, Linping District, Hangzhou, Zhejiang, China
+                      {COMPANY_PROFILE.addressEn}
                     </p>
                   </div>
                 </div>
@@ -197,7 +202,7 @@ export default function ContactPage() {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-lg font-semibold text-[#064E3B]">{t('contact:info.phone.title')}</h3>
-                    <p className="text-gray-600 mt-1">+86 13216156841</p>
+                    <p className="text-gray-600 mt-1">{COMPANY_PROFILE.phone}</p>
                   </div>
                 </div>
 
@@ -209,7 +214,7 @@ export default function ContactPage() {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-lg font-semibold text-[#064E3B]">{t('contact:info.email.title')}</h3>
-                    <p className="text-gray-600 mt-1">karnstarch@gmail.com</p>
+                    <p className="text-gray-600 mt-1">{COMPANY_PROFILE.email}</p>
                   </div>
                 </div>
               </div>

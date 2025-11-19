@@ -20,7 +20,9 @@ const LanguageDetection = () => {
       // 确保i18n也设置为英文
       if (i18n.language !== 'en') {
         i18n.changeLanguage('en');
-        try { localStorage.setItem('userLanguage', 'en'); } catch {}
+        try { localStorage.setItem('userLanguage', 'en'); } catch {
+          // localStorage may not be available in some environments
+        }
       }
       
       // 如果URL中没有语言前缀，添加/en/
@@ -34,7 +36,9 @@ const LanguageDetection = () => {
       // 如果 URL 中已有语言代码，确保i18n同步
       if (i18n.language !== firstPart) {
         i18n.changeLanguage(firstPart);
-        try { localStorage.setItem('userLanguage', firstPart); } catch {}
+        try { localStorage.setItem('userLanguage', firstPart); } catch {
+          // localStorage may not be available in some environments
+        }
       }
       return;
     }

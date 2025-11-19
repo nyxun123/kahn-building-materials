@@ -24,8 +24,6 @@ export async function getPageContents(pageKey?: string): Promise<any[]> {
     return data;
     } else if (data && Array.isArray(data.data)) {
       return data.data;
-    } else if (data && data.success && Array.isArray(data.data)) {
-      return data.data;
     } else {
       console.warn('API返回格式异常，返回空数组:', data);
       return [];

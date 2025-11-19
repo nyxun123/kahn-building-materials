@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, CheckCircle, Package, FileText } from 'lucide-react';
 
@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { SEOHelmet } from '@/components/SEOHelmet';
 import { StructuredData } from '@/components/StructuredData';
 import { isLocalProduct, getLocalProduct, type LocalProduct, type ProductSpec } from '@/data/products-data';
+
+const SITE_URL = 'https://kn-wallpaperglue.com';
 
 interface Product {
   id: number;
@@ -45,7 +47,7 @@ const processImageUrl = (url: string): string => {
   if (!url) return '';
   // 如果是相对路径，转换为完整URL
   if (url.startsWith('/')) {
-    return `https://kn-wallpaperglue.com${url}`;
+    return `${SITE_URL}${url}`;
   }
   // 如果已经是完整URL或base64，直接返回
   return url;
@@ -54,6 +56,7 @@ const processImageUrl = (url: string): string => {
 export default function ProductDetailPage() {
   const { productCode } = useParams<{ productCode: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t, i18n } = useTranslation(['common', 'products']);
   const [product, setProduct] = useState<Product | null>(null);
   const [localProduct, setLocalProduct] = useState<LocalProduct | null>(null);
@@ -197,6 +200,7 @@ export default function ProductDetailPage() {
 
   // 获取产品代码（优先使用本地产品）
   const displayProductCode = localProduct?.product_code || product?.product_code || '';
+  const productUrl = `${SITE_URL}${location.pathname}${location.search || ''}`;
 
   return (
     <>
@@ -205,7 +209,7 @@ export default function ProductDetailPage() {
         description={getLocalizedContent('description')}
         keywords={`${displayProductCode},羧甲基淀粉,${getLocalizedContent('name')},CMS,carboxymethyl starch,${localProduct?.category || product?.category || ''}`}
         type="product"
-        lang={i18n.language as 'zh' | 'en' | 'ru'}
+        lang={i18n.language as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
         image={localProduct?.image_url || product?.image_url || '/images/IMG_1412.JPG'}
       />
       <StructuredData
@@ -223,8 +227,33 @@ export default function ProductDetailPage() {
           },
           offers: {
             availability: 'https://schema.org/InStock',
-            url: window.location.href,
+            url: productUrl,
           },
+        }}
+      />
+      <StructuredData
+        schema={{
+          type: 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: t('nav.home'),
+              item: `/${i18n.language || 'zh'}`,
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: t('nav.products'),
+              item: `/${i18n.language || 'zh'}/products`,
+            },
+            {
+              '@type': 'ListItem',
+              position: 3,
+              name: getLocalizedContent('name'),
+              item: location.pathname,
+            },
+          ],
         }}
       />
 

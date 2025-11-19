@@ -10,6 +10,7 @@ interface OrganizationSchema {
   image?: string;
   telephone?: string;
   email?: string;
+  sameAs?: string[];
   address?: {
     streetAddress: string;
     addressLocality: string;
@@ -21,7 +22,15 @@ interface OrganizationSchema {
     latitude: number;
     longitude: number;
   };
-  sameAs?: string[];
+  areaServed?: string | string[];
+  hasMap?: string;
+  contactPoint?: Array<{
+    contactType: string;
+    telephone?: string;
+    email?: string;
+    areaServed?: string | string[];
+    availableLanguage?: string | string[];
+  }>;
   foundingDate?: string;
 }
 
@@ -57,13 +66,75 @@ interface WebPageSchema {
   name: string;
   description: string;
   url: string;
+  inLanguage?: string;
+  areaServed?: string | string[];
+}
+
+interface FAQPageSchema {
+  type: 'FAQPage';
+  mainEntity: Array<{
+    question: string;
+    answer: string;
+  }>;
+}
+
+interface ItemListSchema {
+  type: 'ItemList';
+  name: string;
+  description: string;
+  numberOfItems: number;
+  itemListElement: Array<{
+    '@type': 'ListItem';
+    position: number;
+    item: {
+      '@type': 'Product' | 'WebPage';
+      name: string;
+      description: string;
+      image?: string;
+      sku?: string;
+      url: string;
+      brand?: {
+        '@type': 'Brand';
+        name: string;
+      };
+    };
+  }>;
+}
+
+interface BreadcrumbListSchema {
+  type: 'BreadcrumbList';
+  itemListElement: Array<{
+    '@type': 'ListItem';
+    position: number;
+    name: string;
+    item: string; // URL
+  }>;
+}
+
+interface WebSiteSchema {
+  type: 'WebSite';
+  name: string;
+  url: string;
+  logo: string;
+  potentialAction?: {
+    '@type': 'SearchAction';
+    target: {
+      '@type': 'EntryPoint';
+      urlTemplate: string;
+    };
+    'query-input': string;
+  };
 }
 
 type StructuredDataProps = 
   | { schema: OrganizationSchema }
   | { schema: ProductSchema }
   | { schema: ContactPageSchema }
-  | { schema: WebPageSchema };
+  | { schema: WebPageSchema }
+  | { schema: FAQPageSchema }
+  | { schema: ItemListSchema }
+  | { schema: BreadcrumbListSchema }
+  | { schema: WebSiteSchema };
 
 const SITE_URL = 'https://kn-wallpaperglue.com';
 
@@ -81,7 +152,12 @@ export function StructuredData({ schema }: StructuredDataProps) {
         alternateName: schema.alternateName,
         description: schema.description,
         url: schema.url,
-        logo: `${SITE_URL}${schema.logo}`,
+        logo: {
+          '@type': 'ImageObject',
+          url: `${SITE_URL}${schema.logo}`,
+          width: 512,
+          height: 512,
+        },
         image: schema.image ? `${SITE_URL}${schema.image}` : undefined,
         telephone: schema.telephone,
         email: schema.email,
@@ -99,6 +175,16 @@ export function StructuredData({ schema }: StructuredDataProps) {
           longitude: schema.geo.longitude,
         } : undefined,
         sameAs: schema.sameAs,
+        areaServed: schema.areaServed,
+        contactPoint: schema.contactPoint?.map(point => ({
+          '@type': 'ContactPoint',
+          contactType: point.contactType,
+          telephone: point.telephone,
+          email: point.email,
+          areaServed: point.areaServed,
+          availableLanguage: point.availableLanguage,
+        })),
+        hasMap: schema.hasMap,
         foundingDate: schema.foundingDate,
       };
     }
@@ -146,6 +232,92 @@ export function StructuredData({ schema }: StructuredDataProps) {
         name: schema.name,
         description: schema.description,
         url: schema.url,
+        inLanguage: schema.inLanguage,
+        areaServed: schema.areaServed,
+      };
+    }
+
+    if (schema.type === 'FAQPage') {
+      return {
+        ...baseSchema,
+        '@type': 'FAQPage',
+        mainEntity: schema.mainEntity.map(faq => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: faq.answer,
+          },
+        })),
+      };
+    }
+
+    if (schema.type === 'ItemList') {
+      return {
+        ...baseSchema,
+        '@type': 'ItemList',
+        name: schema.name,
+        description: schema.description,
+        numberOfItems: schema.numberOfItems,
+        itemListElement: schema.itemListElement.map(item => {
+          const baseItem: any = {
+            '@type': item.item['@type'],
+            name: item.item.name,
+            description: item.item.description,
+            url: item.item.url.startsWith('http') ? item.item.url : `${SITE_URL}${item.item.url}`,
+          };
+          
+          // 如果是 Product 类型，添加额外的字段
+          if (item.item['@type'] === 'Product') {
+            if (item.item.image) {
+              baseItem.image = item.item.image.startsWith('http') ? item.item.image : `${SITE_URL}${item.item.image}`;
+            }
+            if (item.item.sku) {
+              baseItem.sku = item.item.sku;
+            }
+            if (item.item.brand) {
+              baseItem.brand = {
+                '@type': 'Brand',
+                name: item.item.brand.name,
+              };
+            }
+          }
+          
+          return {
+            '@type': 'ListItem',
+            position: item.position,
+            item: baseItem,
+          };
+        }),
+      };
+    }
+
+    if (schema.type === 'BreadcrumbList') {
+      return {
+        ...baseSchema,
+        '@type': 'BreadcrumbList',
+        itemListElement: schema.itemListElement.map(item => ({
+          '@type': 'ListItem',
+          position: item.position,
+          name: item.name,
+          item: item.item.startsWith('http') ? item.item : `${SITE_URL}${item.item}`,
+        })),
+      };
+    }
+
+    if (schema.type === 'WebSite') {
+      return {
+        ...baseSchema,
+        '@type': 'WebSite',
+        name: schema.name,
+        url: schema.url,
+        logo: {
+          '@type': 'ImageObject',
+          url: `${SITE_URL}${schema.logo}`,
+          width: 512,
+          height: 512,
+        },
+        potentialAction: schema.potentialAction,
       };
     }
 
@@ -162,7 +334,6 @@ export function StructuredData({ schema }: StructuredDataProps) {
     </Helmet>
   );
 }
-
 
 
 

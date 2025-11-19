@@ -108,7 +108,7 @@ export class CloudflareWorkerUpload {
 
       // 处理不同的响应格式 - 优先使用 url 字段
       let imageUrl = data.data?.url || data.data?.original;
-      let uploadMethod = data.data?.uploadMethod || 'cloudflare';
+      const uploadMethod = data.data?.uploadMethod || 'cloudflare';
 
       // 如果是完整的URL对象，提取original URL
       if (data.data?.fullUrls?.original && !data.data?.url) {

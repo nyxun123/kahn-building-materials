@@ -9,7 +9,10 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/admin/
 
-# 禁止抓取API接口（除了公开API）
+# 允许抓取公开API接口
+Allow: /api/products
+Allow: /api/content
+# 禁止其他API接口
 Disallow: /api/
 
 # 允许抓取公开资源
@@ -18,6 +21,9 @@ Allow: /assets/
 Allow: /js/
 Allow: /*.js$
 Allow: /*.css$
+Allow: /favicon.ico
+Allow: /favicon-*.png
+Allow: /apple-touch-icon.png
 
 # 禁止抓取临时文件
 Disallow: /*?*test=
@@ -29,6 +35,9 @@ Sitemap: https://kn-wallpaperglue.com/sitemap.xml
 Sitemap: https://kn-wallpaperglue.com/sitemap-zh.xml
 Sitemap: https://kn-wallpaperglue.com/sitemap-en.xml
 Sitemap: https://kn-wallpaperglue.com/sitemap-ru.xml
+Sitemap: https://kn-wallpaperglue.com/sitemap-vi.xml
+Sitemap: https://kn-wallpaperglue.com/sitemap-th.xml
+Sitemap: https://kn-wallpaperglue.com/sitemap-id.xml
 
 # 针对特定搜索引擎的配置
 # Google
@@ -49,7 +58,6 @@ Allow: /
 
 # 抓取延迟设置（避免服务器压力）
 Crawl-delay: 1
-
 
 
 

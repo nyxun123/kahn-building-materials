@@ -5,6 +5,7 @@
     "home": "Beranda",
     "products": "Produk",
     "applications": "Aplikasi",
+    "solutions": "Halaman solusi pasar",
     "oem": "Layanan OEM",
     "about": "Tentang Kami",
     "contact": "Kontak",
@@ -107,4 +108,3 @@
     "wechat": "WeChat"
   }
 }
-

@@ -32,8 +32,8 @@
       "description": "Vật liệu giữ nước gel chất hút ẩm với khả năng hấp thụ ẩm cao"
     },
     "paper": {
-      "title": "Ngành Giấy",
-      "description": "Chất kết dính và phụ trợ chế biến cho sản phẩm giấy đặc biệt"
+      "title": "Ngành Nhuộm Giấy",
+      "description": "Chất làm đặc và phụ gia hỗ trợ cho quy trình nhuộm giấy"
     },
     "wallpaper": {
       "title": "Keo dán Giấy dán tường",
@@ -200,5 +200,4 @@
     "browse_products": "Duyệt Sản phẩm"
   }
 }
-
 

@@ -2,7 +2,7 @@
   "meta_description": "Aplikasi Carboxymethyl Starch (CMS) Hangzhou Kahn dalam pencetakan tekstil, pelapis berbasis air, perekat wallpaper, pewarnaan kertas, bahan bangunan, dan gel desikan",
   "hero": {
     "title": "Bidang Aplikasi CMS",
-    "subtitle": "Produk carboxymethyl starch profesional digunakan secara luas dalam tekstil, pelapis, konstruksi, pembuatan kertas, dan bidang industri lainnya"
+    "subtitle": "Produk carboxymethyl starch profesional digunakan secara luas dalam tekstil, pelapis, konstruksi, dan industri pewarnaan kertas"
   },
   "textile": {
     "title": "Pencetakan & Pewarnaan Tekstil",
@@ -37,12 +37,12 @@
     "detail_content": ["CMS adalah komponen inti bubuk perekat wallpaper.", "Ia membentuk larutan perekat yang seragam.", "Kami menyediakan layanan OEM profesional."]
   },
   "paper": {
-    "title": "Pewarnaan Kertas",
+    "title": "Industri Pewarnaan Kertas",
     "description": "Pengental pewarnaan untuk pewarnaan seragam",
     "applications": ["Pewarnaan kertas berwarna", "Pewarnaan pulp", "Kertas khusus", "Pewarnaan karton"],
     "features": ["Keseragaman yang sangat baik", "Warna cerah", "Meningkatkan kekuatan", "Meningkatkan tekstur"],
-    "detail_title": "CMS dalam Industri Kertas",
-    "detail_content": ["CMS digunakan sebagai agen sizing permukaan.", "Ia meningkatkan penyerapan pewarna dan keseragaman.", "Ia meningkatkan sifat kertas."]
+    "detail_title": "CMS dalam Industri Pewarnaan Kertas",
+    "detail_content": ["CMS digunakan sebagai pengental dan aditif bantu dalam proses pewarnaan kertas dan pulp.", "Ia membantu mengendalikan viskositas larutan pewarna sehingga warna merata.", "Juga meningkatkan permukaan serta kekuatan kertas khusus."]
   },
   "desiccant": {
     "title": "Gel Desikan",
@@ -64,5 +64,4 @@
     "products": "Lihat Produk"
   }
 }
-
 

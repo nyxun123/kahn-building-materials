@@ -10,6 +10,8 @@ const ApplicationsPage = lazy(() => import('@/pages/applications'));
 const OemPage = lazy(() => import('@/pages/oem'));
 const AboutPage = lazy(() => import('@/pages/about'));
 const ContactPage = lazy(() => import('@/pages/contact'));
+const SolutionsHubPage = lazy(() => import('@/pages/solutions/hub'));
+const SolutionsDetailPage = lazy(() => import('@/pages/solutions'));
 
 // Admin页面
 const AdminLoginPage = lazy(() => import('@/pages/admin/login'));
@@ -270,6 +272,14 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: 'solutions',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <SolutionsHubPage />
+          </Suspense>
+        ),
+      },
+      {
         path: 'about',
         element: (
           <Suspense fallback={<LoadingFallback />}>
@@ -282,6 +292,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <ContactPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'solutions/:slug',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <SolutionsDetailPage />
           </Suspense>
         ),
       },

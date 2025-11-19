@@ -1,12 +1,26 @@
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ArrowRight, Factory, FlaskConical, Globe, Truck, Users } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { SEOHelmet } from '@/components/SEOHelmet';
+import { StructuredData } from '@/components/StructuredData';
+import { COMPANY_PROFILE } from '@/lib/company-profile';
+import { SOCIAL_LINKS } from '@/lib/social-links';
 
 export default function OemPage() {
   const { t, i18n } = useTranslation(['common', 'oem']);
+  const location = useLocation();
+  const currentLang = i18n.language || 'zh';
+  const currentUrl = `https://kn-wallpaperglue.com${location.pathname}`;
+  
+  // 构建社交媒体链接数组
+  const socialProfileLinks = [
+    SOCIAL_LINKS.facebook,
+    SOCIAL_LINKS.instagram,
+    SOCIAL_LINKS.youtube,
+    SOCIAL_LINKS.tiktok,
+  ].filter(Boolean);
 
   return (
     <>
@@ -15,8 +29,36 @@ export default function OemPage() {
         description={t('oem:meta_description')}
         keywords="OEM定制,ODM服务,墙纸胶粉代工,小包装定制,品牌代工,wallpaper adhesive OEM,private label,custom packaging"
         type="website"
-        lang={i18n.language as 'zh' | 'en' | 'ru'}
+        lang={i18n.language as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
         image="/images/oem-home.png"
+      />
+      <StructuredData
+        schema={{
+          type: 'WebPage',
+          name: t('nav.oem'),
+          description: t('oem:meta_description'),
+          url: currentUrl,
+          inLanguage: currentLang,
+        }}
+      />
+      <StructuredData
+        schema={{
+          type: 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: t('nav.home'),
+              item: `/${currentLang}`,
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: t('nav.oem'),
+              item: `/${currentLang}/oem`,
+            },
+          ],
+        }}
       />
 
       {/* 英雄区 */}

@@ -32,8 +32,8 @@
       "description": "Bahan penahan air gel desikan dengan penyerapan kelembaban tinggi"
     },
     "paper": {
-      "title": "Industri Kertas",
-      "description": "Perekat dan bantuan pemrosesan untuk produk kertas khusus"
+      "title": "Industri Pewarnaan Kertas",
+      "description": "Bahan pengental dan aditif pendukung untuk proses pewarnaan kertas"
     },
     "wallpaper": {
       "title": "Perekat Wallpaper",
@@ -200,5 +200,4 @@
     "browse_products": "Telusuri Produk"
   }
 }
-
 

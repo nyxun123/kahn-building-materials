@@ -25,8 +25,8 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
 
   const navigation = [
     { name: t('nav.home'), href: `/${currentLang}` },
-    { 
-      name: t('nav.applications'), 
+    {
+      name: t('nav.applications'),
       href: `/${currentLang}/applications`,
     },
     { name: t('nav.oem'), href: `/${currentLang}/oem` },

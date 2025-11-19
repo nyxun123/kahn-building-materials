@@ -1,12 +1,26 @@
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ArrowRight, Award, CheckCircle2, Factory, Leaf, Microscope, Shield, Truck } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { SEOHelmet } from '@/components/SEOHelmet';
+import { StructuredData } from '@/components/StructuredData';
+import { COMPANY_PROFILE } from '@/lib/company-profile';
+import { SOCIAL_LINKS } from '@/lib/social-links';
 
 export default function AboutPage() {
   const { t, i18n } = useTranslation(['common', 'about']);
+  const location = useLocation();
+  const currentLang = i18n.language || 'zh';
+  const currentUrl = `https://kn-wallpaperglue.com${location.pathname}`;
+  
+  // 构建社交媒体链接数组
+  const socialProfileLinks = [
+    SOCIAL_LINKS.facebook,
+    SOCIAL_LINKS.instagram,
+    SOCIAL_LINKS.youtube,
+    SOCIAL_LINKS.tiktok,
+  ].filter(Boolean);
 
   return (
     <>
@@ -15,8 +29,72 @@ export default function AboutPage() {
         description={t('about:meta_description')}
         keywords="浙江卡恩,杭州卡恩,羧甲基淀粉制造商,CMS manufacturer,建材公司,23年经验,Hangzhou Karn,building materials"
         type="website"
-        lang={i18n.language as 'zh' | 'en' | 'ru'}
+        lang={i18n.language as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
         image="/images/IMG_1515.JPG"
+      />
+      <StructuredData
+        schema={{
+          type: 'Organization',
+          name: COMPANY_PROFILE.name,
+          alternateName: COMPANY_PROFILE.nameZh,
+          description: t('about:meta_description'),
+          url: 'https://kn-wallpaperglue.com',
+          logo: '/images/logo.png',
+          image: '/images/IMG_1515.JPG',
+          telephone: COMPANY_PROFILE.phone,
+          email: COMPANY_PROFILE.email,
+          sameAs: socialProfileLinks,
+          address: {
+            streetAddress: '沪瑞线 1 号',
+            addressLocality: '杭州市临平区崇贤街道',
+            addressRegion: '浙江省',
+            addressCountry: 'CN',
+          },
+          geo: {
+            latitude: 30.2741,
+            longitude: 120.1551,
+          },
+          areaServed: ['CN', 'RU', 'VN', 'TH', 'ID', 'Global'],
+          hasMap: 'https://maps.google.com/?q=30.2741,120.1551',
+          contactPoint: [
+            {
+              contactType: 'sales',
+              telephone: COMPANY_PROFILE.phone,
+              email: COMPANY_PROFILE.email,
+              areaServed: ['CN', 'RU', 'VN', 'TH', 'ID'],
+              availableLanguage: ['zh', 'en', 'ru', 'vi', 'th', 'id'],
+            },
+          ],
+          foundingDate: '2010',
+        }}
+      />
+      <StructuredData
+        schema={{
+          type: 'WebPage',
+          name: t('nav.about'),
+          description: t('about:meta_description'),
+          url: currentUrl,
+          inLanguage: currentLang,
+        }}
+      />
+      <StructuredData
+        schema={{
+          type: 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: t('nav.home'),
+              item: `/${currentLang}`,
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: t('nav.about'),
+              item: `/${currentLang}/about`,
+            },
+          ],
+        }}
       />
 
       {/* 页面标题区 */}

@@ -2,7 +2,7 @@
   "meta_description": "Hangzhou Kahn Carboxymethyl Starch (CMS) applications in textile printing, water-based coatings, wallpaper adhesive, paper dyeing, construction materials, and desiccant gel",
   "hero": {
     "title": "CMS Application Fields",
-    "subtitle": "Professional carboxymethyl starch products widely used in textile, coating, construction, papermaking and other industrial fields"
+    "subtitle": "Professional carboxymethyl starch products widely used in textile, coating, construction, paper dyeing and other industrial fields"
   },
   "textile": {
     "title": "Textile Printing & Dyeing",
@@ -37,12 +37,12 @@
     "detail_content": ["CMS is core component of wallpaper adhesive powder.", "It forms uniform adhesive solution.", "We provide professional OEM services."]
   },
   "paper": {
-    "title": "Paper Dyeing",
+    "title": "Paper Dyeing Industry",
     "description": "Dyeing thickener for uniform coloring",
     "applications": ["Colored paper dyeing", "Pulp dyeing", "Specialty paper", "Cardboard dyeing"],
     "features": ["Excellent uniformity", "Bright colors", "Improved strength", "Enhanced texture"],
-    "detail_title": "CMS in Paper Industry",
-    "detail_content": ["CMS is used as surface sizing agent.", "It improves dye uptake and uniformity.", "It enhances paper properties."]
+    "detail_title": "CMS in Paper Dyeing Industry",
+    "detail_content": ["CMS works as a thickener and auxiliary agent in paper and pulp dyeing.", "It stabilizes dye liquor flow to improve color uniformity and fixation.", "It also enhances the surface feel and strength of specialty paper."]
   },
   "desiccant": {
     "title": "Desiccant Gel",

@@ -1,10 +1,11 @@
 import { useEffect, useState, memo, useCallback, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Helmet } from 'react-helmet-async';
 import { ArrowRight } from 'lucide-react';
 import { useDebounce, useLocalStorage } from '@/lib/performance-utils';
 import { LazyImage } from '@/components/LazyImage';
+import { SEOHelmet } from '@/components/SEOHelmet';
+import { StructuredData } from '@/components/StructuredData';
 
 // 使用D1 API
 interface Product {
@@ -25,6 +26,7 @@ interface Product {
 
 const ProductsPage = memo(function ProductsPage() {
   const { t, i18n } = useTranslation(['common', 'products', 'home']);
+  const location = useLocation();
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -193,12 +195,87 @@ const ProductsPage = memo(function ProductsPage() {
     );
   });
 
+  // 构建当前页面URL
+  const currentUrl = `https://kn-wallpaperglue.com${location.pathname}`;
+  
+  // 生成产品列表的 ItemList 结构化数据
+  const itemListSchema = useMemo(() => {
+    if (filteredProducts.length === 0) return null;
+    
+    const currentLang = i18n.language || 'zh';
+    return {
+      type: 'ItemList' as const,
+      name: t('products:title'),
+      description: t('products:meta_description'),
+      numberOfItems: filteredProducts.length,
+      itemListElement: filteredProducts.map((product, index) => {
+        const productName = getProductName(product);
+        const productUrl = `/${currentLang}/products/${product.product_code}`;
+        return {
+          '@type': 'ListItem' as const,
+          position: index + 1,
+          item: {
+            '@type': 'Product' as const,
+            name: productName,
+            description: getProductDescription(product),
+            image: product.image_url || '/images/IMG_1412.JPG',
+            sku: product.product_code,
+            url: productUrl,
+            brand: {
+              '@type': 'Brand' as const,
+              name: 'Hangzhou Karn New Building Materials Co., Ltd',
+            },
+          },
+        };
+      }),
+    };
+  }, [filteredProducts, i18n.language, t, getProductName, getProductDescription]);
+
   return (
     <>
-      <Helmet>
-        <title>{t('title')} - {t('nav.products')}</title>
-        <meta name="description" content={t('products:meta_description')} />
-      </Helmet>
+      <SEOHelmet
+        title={i18n.language === 'zh' 
+          ? '羧甲基淀粉产品中心 - CMS产品系列'
+          : i18n.language === 'en'
+          ? 'Carboxymethyl Starch Products - CMS Product Center'
+          : t('nav.products')}
+        description={t('products:meta_description')}
+        keywords="羧甲基淀粉,CMS产品,纺织印染,建筑材料,涂料工业,染纸,墙纸胶粉,carboxymethyl starch,CMS products,textile,coating,paper dyeing industry,wallpaper adhesive"
+        type="website"
+        lang={i18n.language as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
+        image="/images/IMG_1412.JPG"
+      />
+      <StructuredData
+        schema={{
+          type: 'WebPage',
+          name: t('products:title'),
+          description: t('products:meta_description'),
+          url: currentUrl,
+          inLanguage: i18n.language || 'zh',
+        }}
+      />
+      <StructuredData
+        schema={{
+          type: 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: t('nav.home'),
+              item: `/${i18n.language || 'zh'}`,
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: t('nav.products'),
+              item: `/${i18n.language || 'zh'}/products`,
+            },
+          ],
+        }}
+      />
+      {itemListSchema && (
+        <StructuredData schema={itemListSchema} />
+      )}
 
       {/* 页面标题区 */}
       <section className="bg-gradient-to-r from-green-500 to-green-700 py-16 md:py-24">

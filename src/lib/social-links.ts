@@ -9,6 +9,7 @@ export const SOCIAL_LINKS = {
   facebook: 'https://www.facebook.com/profile.php?id=61565441264146',
   whatsapp: 'https://wa.me/8613216156841', // WhatsApp 国际格式
   wechat: '13216156841', // 微信号（与手机号同号）
+  skype: 'live:13216156841', // Skype ID
 };
 
 // WhatsApp 消息模板（可选）

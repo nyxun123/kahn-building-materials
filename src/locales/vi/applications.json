@@ -2,7 +2,7 @@
   "meta_description": "Ứng dụng Tinh bột Carboxymethyl (CMS) của Karn Hàng Châu trong in dệt, sơn gốc nước, keo dán giấy dán tường, nhuộm giấy, vật liệu xây dựng và gel chất hút ẩm",
   "hero": {
     "title": "Lĩnh vực Ứng dụng CMS",
-    "subtitle": "Sản phẩm tinh bột carboxymethyl chuyên nghiệp được sử dụng rộng rãi trong dệt may, sơn phủ, xây dựng, sản xuất giấy và các lĩnh vực công nghiệp khác"
+    "subtitle": "Sản phẩm tinh bột carboxymethyl chuyên nghiệp được sử dụng rộng rãi trong dệt may, sơn phủ, xây dựng và nhuộm giấy"
   },
   "textile": {
     "title": "In & Nhuộm Dệt",
@@ -37,12 +37,12 @@
     "detail_content": ["CMS là thành phần cốt lõi của bột keo dán giấy dán tường.", "Nó tạo thành dung dịch kết dính đồng nhất.", "Chúng tôi cung cấp dịch vụ OEM chuyên nghiệp."]
   },
   "paper": {
-    "title": "Nhuộm Giấy",
+    "title": "Ngành Nhuộm Giấy",
     "description": "Chất làm đặc nhuộm cho màu sắc đồng đều",
     "applications": ["Nhuộm giấy màu", "Nhuộm bột giấy", "Giấy đặc biệt", "Nhuộm bìa carton"],
     "features": ["Độ đồng đều xuất sắc", "Màu sắc tươi sáng", "Cải thiện độ bền", "Tăng cường kết cấu"],
-    "detail_title": "CMS trong Ngành Giấy",
-    "detail_content": ["CMS được sử dụng làm chất định hình bề mặt.", "Nó cải thiện khả năng hấp thụ thuốc nhuộm và độ đồng đều.", "Nó tăng cường tính chất của giấy."]
+    "detail_title": "CMS trong Ngành Nhuộm Giấy",
+    "detail_content": ["CMS được sử dụng như chất làm đặc và phụ trợ cho quy trình nhuộm giấy và bột giấy.", "Nó giúp kiểm soát độ nhớt dung dịch nhuộm và tăng độ đồng đều màu sắc.", "Đồng thời cải thiện bề mặt và độ bền của giấy đặc biệt."]
   },
   "desiccant": {
     "title": "Gel Chất hút ẩm",
@@ -64,5 +64,4 @@
     "products": "Xem Sản phẩm"
   }
 }
-
 

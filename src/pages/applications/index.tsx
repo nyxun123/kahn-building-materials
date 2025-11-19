@@ -1,18 +1,13 @@
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useLocation } from 'react-router-dom';
 import { ArrowRight, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SEOHelmet } from '@/components/SEOHelmet';
-import { useState } from 'react';
+import { StructuredData } from '@/components/StructuredData';
+import { useState, useMemo } from 'react';
 
-export default function ApplicationsPage() {
-  const { t, i18n } = useTranslation(['common', 'applications']);
-  const { lang = 'en' } = useParams<{ lang: string }>();
-  const currentLang = lang || i18n.language || 'en';
-  const [expandedCard, setExpandedCard] = useState<string | null>(null);
-
-  // 应用领域数据，包含对应的产品代码
-  const applications = [
+// 应用领域数据，包含对应的产品代码
+const applications = [
     {
       id: 'textile',
       nameKey: 'applications:textile.title',
@@ -69,16 +64,75 @@ export default function ApplicationsPage() {
     },
   ];
 
+export default function ApplicationsPage() {
+  const { t, i18n } = useTranslation(['common', 'applications']);
+  const { lang = 'en' } = useParams<{ lang: string }>();
+  const location = useLocation();
+  const currentLang = lang || i18n.language || 'en';
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
+  
+  // 构建当前页面URL
+  const currentUrl = `https://kn-wallpaperglue.com${location.pathname}`;
+  
+  // 生成应用领域的 ItemList 结构化数据
+  const itemListSchema = useMemo(() => {
+    return {
+      type: 'ItemList' as const,
+      name: t('applications:hero.title'),
+      description: t('applications:meta_description'),
+      numberOfItems: applications.length,
+      itemListElement: applications.map((app, index) => ({
+        '@type': 'ListItem' as const,
+        position: index + 1,
+        item: {
+          '@type': 'WebPage' as const,
+          name: t(app.nameKey),
+          description: t(app.descKey),
+          url: `https://kn-wallpaperglue.com/${currentLang}/applications#${app.id}`,
+        },
+      })),
+    };
+  }, [currentLang, t]);
+
   return (
     <>
       <SEOHelmet
         title={t('nav.applications')}
         description={t('applications:meta_description')}
-        keywords="纺织印染,墙纸胶粉,建筑材料,水性涂料,干燥剂,造纸,羧甲基淀粉应用,textile printing,wallpaper adhesive,construction,coating,desiccant,paper industry"
+        keywords="纺织印染,墙纸胶粉,建筑材料,水性涂料,干燥剂,染纸,羧甲基淀粉应用,textile printing,wallpaper adhesive,construction,coating,desiccant,paper dyeing industry"
         type="website"
-        lang={i18n.language as 'zh' | 'en' | 'ru'}
+        lang={i18n.language as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
         image="/images/应用领域/纺织印染.jpg"
       />
+      <StructuredData
+        schema={{
+          type: 'WebPage',
+          name: t('applications:hero.title'),
+          description: t('applications:meta_description'),
+          url: currentUrl,
+          inLanguage: i18n.language || 'zh',
+        }}
+      />
+      <StructuredData
+        schema={{
+          type: 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: t('nav.home'),
+              item: `/${currentLang}`,
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: t('nav.applications'),
+              item: `/${currentLang}/applications`,
+            },
+          ],
+        }}
+      />
+      <StructuredData schema={itemListSchema} />
 
       {/* 英雄区 - 工业风格 */}
       <section className="relative py-0 h-[60vh] flex items-center overflow-hidden">
@@ -256,9 +310,6 @@ export default function ApplicationsPage() {
     </>
   );
 }
-
-
-
 
 
 

@@ -389,7 +389,7 @@ export interface User {
   mfaEnabled: boolean;
 }
 
-export interface SanitizedUser extends Omit<User, 'passwordHash'> {}
+export type SanitizedUser = Omit<User, 'passwordHash'>;
 
 export interface RegisterData {
   username: string;

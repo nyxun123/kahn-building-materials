@@ -1,0 +1,29 @@
+
+/* 图片优化CSS */
+img {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+picture img {
+  transition: opacity 0.3s ease;
+}
+
+/* 懒加载占位符 */
+img[loading="lazy"] {
+  background-color: #f3f4f6;
+}
+
+/* 响应式图片 */
+@media (max-width: 768px) {
+  img {
+    width: 100vw;
+  }
+}
+
+/* 预加载关键图片 */
+img[data-priority] {
+  loading: eager;
+  preload: true;
+}
