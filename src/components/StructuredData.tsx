@@ -78,6 +78,25 @@ interface FAQPageSchema {
   }>;
 }
 
+interface VideoObjectSchema {
+  type: 'VideoObject';
+  name: string;
+  description: string;
+  thumbnailUrl: string;
+  uploadDate: string;
+  contentUrl?: string;
+  embedUrl?: string;
+  duration?: string;
+}
+
+interface AggregateRatingSchema {
+  type: 'AggregateRating';
+  ratingValue: number;
+  reviewCount: number;
+  bestRating?: number;
+  worstRating?: number;
+}
+
 interface ItemListSchema {
   type: 'ItemList';
   name: string;
@@ -132,6 +151,8 @@ type StructuredDataProps =
   | { schema: ContactPageSchema }
   | { schema: WebPageSchema }
   | { schema: FAQPageSchema }
+  | { schema: VideoObjectSchema }
+  | { schema: AggregateRatingSchema }
   | { schema: ItemListSchema }
   | { schema: BreadcrumbListSchema }
   | { schema: WebSiteSchema };
@@ -318,6 +339,31 @@ export function StructuredData({ schema }: StructuredDataProps) {
           height: 512,
         },
         potentialAction: schema.potentialAction,
+      };
+    }
+
+    if (schema.type === 'VideoObject') {
+      return {
+        ...baseSchema,
+        '@type': 'VideoObject',
+        name: schema.name,
+        description: schema.description,
+        thumbnailUrl: schema.thumbnailUrl.startsWith('http') ? schema.thumbnailUrl : `${SITE_URL}${schema.thumbnailUrl}`,
+        uploadDate: schema.uploadDate,
+        contentUrl: schema.contentUrl,
+        embedUrl: schema.embedUrl,
+        duration: schema.duration,
+      };
+    }
+
+    if (schema.type === 'AggregateRating') {
+      return {
+        ...baseSchema,
+        '@type': 'AggregateRating',
+        ratingValue: schema.ratingValue,
+        reviewCount: schema.reviewCount,
+        bestRating: schema.bestRating || 5,
+        worstRating: schema.worstRating || 1,
       };
     }
 

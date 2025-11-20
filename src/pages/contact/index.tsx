@@ -154,6 +154,25 @@ export default function ContactPage() {
           url: `https://kn-wallpaperglue.com/${i18n.language}/contact`,
         }}
       />
+      <StructuredData
+        schema={{
+          type: 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: t('nav.home'),
+              item: `/${i18n.language}`,
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: t('nav.contact'),
+              item: `/${i18n.language}/contact`,
+            },
+          ],
+        }}
+      />
 
       {/* 页面标题区 */}
       <section className="bg-gradient-to-r from-[#064E3B] to-[#047857] py-16 md:py-24">
