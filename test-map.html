@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地图组件测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        .test-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .iframe-container {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .test-button {
+            padding: 8px 16px;
+            background: #047857;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        .test-button:hover {
+            background: #064E3B;
+        }
+        .test-button.secondary {
+            background: white;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        .test-button.secondary:hover {
+            background: #f5f5f5;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+        .address {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>地图组件功能测试</h1>
+        
+        <div class="test-section">
+            <div class="test-title">1. OpenStreetMap 测试（推荐方案）</div>
+            <div class="address">地址：浙江省杭州市临平区崇贤街道沪瑞线1号</div>
+            <div class="button-group">
+                <button class="test-button" onclick="loadOSMMap()">
+                    🗺️ 加载 OpenStreetMap
+                </button>
+                <a href="https://www.openstreetmap.org/search?query=浙江省杭州市临平区崇贤街道沪瑞线1号" 
+                   target="_blank" class="test-button secondary">
+                    🔗 在新窗口打开
+                </a>
+            </div>
+            <div id="osm-status" class="status" style="display: none;"></div>
+            <div class="iframe-container" id="osm-container">
+                <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666; background: #f9f9f9;">
+                    点击上方按钮加载地图
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">2. Google Maps 测试</div>
+            <div class="address">地址：浙江省杭州市临平区崇贤街道沪瑞线1号</div>
+            <div class="button-group">
+                <button class="test-button" onclick="loadGoogleMap()">
+                    🌍 加载 Google Maps
+                </button>
+                <a href="https://www.google.com/maps/search/?api=1&query=浙江省杭州市临平区崇贤街道沪瑞线1号" 
+                   target="_blank" class="test-button secondary">
+                    🔗 在新窗口打开
+                </a>
+            </div>
+            <div id="google-status" class="status" style="display: none;"></div>
+            <div class="iframe-container" id="google-container">
+                <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666; background: #f9f9f9;">
+                    点击上方按钮加载地图
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">3. 百度地图测试</div>
+            <div class="address">地址：浙江省杭州市临平区崇贤街道沪瑞线1号</div>
+            <div class="button-group">
+                <button class="test-button" onclick="loadBaiduMap()">
+                    🗺️ 加载百度地图
+                </button>
+                <a href="https://map.baidu.com/?qt=inf&uid=浙江省杭州市临平区崇贤街道沪瑞线1号" 
+                   target="_blank" class="test-button secondary">
+                    🔗 在新窗口打开
+                </a>
+            </div>
+            <div id="baidu-status" class="status" style="display: none;"></div>
+            <div class="iframe-container" id="baidu-container">
+                <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666; background: #f9f9f9;">
+                    点击上方按钮加载地图
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">4. 静态地图测试</div>
+            <div class="button-group">
+                <button class="test-button" onclick="loadStaticMap()">
+                    🖼️ 加载静态地图预览
+                </button>
+            </div>
+            <div id="static-status" class="status" style="display: none;"></div>
+            <div class="iframe-container" id="static-container">
+                <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666; background: #f9f9f9;">
+                    点击上方按钮加载静态地图
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 坐标信息（杭州市临平区的大概坐标）
+        const latitude = 30.4344;
+        const longitude = 120.2593;
+        const address = '浙江省杭州市临平区崇贤街道沪瑞线1号';
+
+        function showStatus(containerId, message, isSuccess = true) {
+            const status = document.getElementById(containerId);
+            status.style.display = 'block';
+            status.className = `status ${isSuccess ? 'success' : 'error'}`;
+            status.textContent = message;
+        }
+
+        function loadOSMMap() {
+            const container = document.getElementById('osm-container');
+            const bbox = `${longitude-0.01},${latitude-0.01},${longitude+0.01},${latitude+0.01}`;
+            const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${latitude},${longitude}`;
+            
+            container.innerHTML = `
+                <iframe 
+                    src="${mapUrl}"
+                    width="100%" 
+                    height="100%" 
+                    style="border: 0" 
+                    allowfullscreen
+                    referrerpolicy="no-referrer-when-downgrade"
+                    onload="showStatus('osm-status', '✅ OpenStreetMap 加载成功！')"
+                    onerror="showStatus('osm-status', '❌ OpenStreetMap 加载失败', false)"
+                ></iframe>
+            `;
+            showStatus('osm-status', '⏳ 正在加载 OpenStreetMap...');
+        }
+
+        function loadGoogleMap() {
+            const container = document.getElementById('google-container');
+            const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed&hl=zh-CN`;
+            
+            container.innerHTML = `
+                <iframe 
+                    src="${mapUrl}"
+                    width="100%" 
+                    height="100%" 
+                    style="border: 0" 
+                    allowfullscreen
+                    referrerpolicy="no-referrer-when-downgrade"
+                    onload="showStatus('google-status', '✅ Google Maps 加载成功！')"
+                    onerror="showStatus('google-status', '❌ Google Maps 加载失败（可能被网络策略阻止）', false)"
+                ></iframe>
+            `;
+            showStatus('google-status', '⏳ 正在加载 Google Maps...');
+        }
+
+        function loadBaiduMap() {
+            const container = document.getElementById('baidu-container');
+            const mapUrl = `https://map.baidu.com/?qt=inf&uid=${encodeURIComponent(address)}`;
+            
+            container.innerHTML = `
+                <iframe 
+                    src="${mapUrl}"
+                    width="100%" 
+                    height="100%" 
+                    style="border: 0" 
+                    allowfullscreen
+                    onload="showStatus('baidu-status', '✅ 百度地图 加载成功！')"
+                    onerror="showStatus('baidu-status', '❌ 百度地图 加载失败', false)"
+                ></iframe>
+            `;
+            showStatus('baidu-status', '⏳ 正在加载 百度地图...');
+        }
+
+        function loadStaticMap() {
+            const container = document.getElementById('static-container');
+            const staticMapUrl = `https://picsum.photos/seed/map-hangzhou-karn/800/400.jpg`;
+            
+            container.innerHTML = `
+                <div style="position: relative; width: 100%; height: 100%;">
+                    <img 
+                        src="${staticMapUrl}"
+                        alt="Map preview"
+                        style="width: 100%; height: 100%; object-fit: cover;"
+                        onload="showStatus('static-status', '✅ 静态地图加载成功！')"
+                        onerror="showStatus('static-status', '❌ 静态地图加载失败', false)"
+                    />
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.9); padding: 10px 20px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">📍 杭州卡恩建材有限公司</div>
+                        <div style="font-size: 12px; color: #666;">浙江省杭州市临平区崇贤街道沪瑞线1号</div>
+                    </div>
+                </div>
+            `;
+            showStatus('static-status', '⏳ 正在加载静态地图...');
+        }
+
+        // 页面加载完成后自动测试 OpenStreetMap
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                loadOSMMap();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

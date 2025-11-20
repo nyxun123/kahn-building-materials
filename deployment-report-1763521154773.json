@@ -1,0 +1,77 @@
+{
+  "execution": {
+    "timestamp": "2025-11-19T02:59:14.773Z",
+    "duration": 7,
+    "domain": "https://kn-wallpaperglue.com"
+  },
+  "changes": {
+    "detectedFiles": 10,
+    "files": [
+      {
+        "status": " M",
+        "file": "public/sitemap-en.xml"
+      },
+      {
+        "status": " M",
+        "file": "public/sitemap-id.xml"
+      },
+      {
+        "status": " M",
+        "file": "public/sitemap-index.xml"
+      },
+      {
+        "status": " M",
+        "file": "public/sitemap-products.xml"
+      },
+      {
+        "status": " M",
+        "file": "public/sitemap-ru.xml"
+      },
+      {
+        "status": " M",
+        "file": "public/sitemap-th.xml"
+      },
+      {
+        "status": " M",
+        "file": "public/sitemap-vi.xml"
+      },
+      {
+        "status": " M",
+        "file": "public/sitemap-zh.xml"
+      },
+      {
+        "status": " M",
+        "file": "public/sitemap.xml"
+      },
+      {
+        "status": "??",
+        "file": "public/.deployment-trigger"
+      }
+    ],
+    "commitHash": "9b0f994b6c62f5cfcb0bdd3c9e6992af14b0f6f6"
+  },
+  "deployment": {
+    "status": "deployed",
+    "url": "https://kn-wallpaperglue.com"
+  },
+  "verification": {
+    "overall": true,
+    "details": [
+      {
+        "name": "主页访问",
+        "status": true
+      },
+      {
+        "name": "Sitemap访问",
+        "status": true
+      },
+      {
+        "name": "静态资源",
+        "status": true
+      }
+    ],
+    "timestamp": "2025-11-19T02:59:14.772Z"
+  },
+  "errors": [],
+  "success": true
+}

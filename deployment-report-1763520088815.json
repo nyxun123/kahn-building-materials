@@ -1,0 +1,269 @@
+{
+  "execution": {
+    "timestamp": "2025-11-19T02:41:28.814Z",
+    "duration": 8,
+    "domain": "https://kn-wallpaperglue.com"
+  },
+  "changes": {
+    "detectedFiles": 59,
+    "files": [
+      {
+        "status": " M",
+        "file": "public/_redirects"
+      },
+      {
+        "status": " M",
+        "file": "public/robots.txt"
+      },
+      {
+        "status": " M",
+        "file": "src/components/LanguageDetection.tsx"
+      },
+      {
+        "status": " M",
+        "file": "src/components/OptimizedMap.tsx"
+      },
+      {
+        "status": " M",
+        "file": "src/components/SEOHelmet.tsx"
+      },
+      {
+        "status": " M",
+        "file": "src/components/StructuredData.tsx"
+      },
+      {
+        "status": " M",
+        "file": "src/components/footer.tsx"
+      },
+      {
+        "status": " M",
+        "file": "src/components/layout.tsx"
+      },
+      {
+        "status": " M",
+        "file": "src/components/navbar.tsx"
+      },
+      {
+        "status": " M",
+        "file": "src/lib/api/content-api.ts"
+      },
+      {
+        "status": " M",
+        "file": "src/lib/auth/middleware.ts"
+      },
+      {
+        "status": " M",
+        "file": "src/lib/auth/user-service.ts"
+      },
+      {
+        "status": " M",
+        "file": "src/lib/cloudflare-worker-upload.ts"
+      },
+      {
+        "status": " M",
+        "file": "src/lib/router.tsx"
+      },
+      {
+        "status": " M",
+        "file": "src/lib/seo-config.ts"
+      },
+      {
+        "status": " M",
+        "file": "src/lib/social-links.ts"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/en/applications.json"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/en/common.json"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/en/home.json"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/id/applications.json"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/id/common.json"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/id/home.json"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/ru/applications.json"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/ru/common.json"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/ru/home.json"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/th/applications.json"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/th/common.json"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/th/home.json"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/vi/applications.json"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/vi/common.json"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/vi/home.json"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/zh/applications.json"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/zh/common.json"
+      },
+      {
+        "status": " M",
+        "file": "src/locales/zh/home.json"
+      },
+      {
+        "status": " M",
+        "file": "src/pages/about/index.tsx"
+      },
+      {
+        "status": " M",
+        "file": "src/pages/admin/login.tsx"
+      },
+      {
+        "status": " M",
+        "file": "src/pages/admin/seo.tsx"
+      },
+      {
+        "status": " M",
+        "file": "src/pages/applications/index.tsx"
+      },
+      {
+        "status": " M",
+        "file": "src/pages/contact/index.tsx"
+      },
+      {
+        "status": " M",
+        "file": "src/pages/home/index.tsx"
+      },
+      {
+        "status": " M",
+        "file": "src/pages/oem/index.tsx"
+      },
+      {
+        "status": " M",
+        "file": "src/pages/product-detail/index.tsx"
+      },
+      {
+        "status": " M",
+        "file": "src/pages/products/index.tsx"
+      },
+      {
+        "status": "??",
+        "file": "public/BingSiteAuth.xml"
+      },
+      {
+        "status": "??",
+        "file": "public/apple-touch-icon.png"
+      },
+      {
+        "status": "??",
+        "file": "public/css/"
+      },
+      {
+        "status": "??",
+        "file": "public/favicon-144x144.png"
+      },
+      {
+        "status": "??",
+        "file": "public/favicon-48x48.png"
+      },
+      {
+        "status": "??",
+        "file": "public/favicon-96x96.png"
+      },
+      {
+        "status": "??",
+        "file": "public/favicon.ico"
+      },
+      {
+        "status": "??",
+        "file": "public/favicon.svg"
+      },
+      {
+        "status": "??",
+        "file": "public/googlee5f164dd155314b6.html"
+      },
+      {
+        "status": "??",
+        "file": "public/images/logo.png"
+      },
+      {
+        "status": "??",
+        "file": "public/yandex_3c49061d23e42f32.html"
+      },
+      {
+        "status": "??",
+        "file": "src/components/FloatingContactButtons.tsx"
+      },
+      {
+        "status": "??",
+        "file": "src/components/SocialMediaIcons.tsx"
+      },
+      {
+        "status": "??",
+        "file": "src/data/solution-pages.ts"
+      },
+      {
+        "status": "??",
+        "file": "src/lib/company-profile.ts"
+      },
+      {
+        "status": "??",
+        "file": "src/pages/solutions/"
+      }
+    ],
+    "commitHash": "8b2c98c72e61a6fa843cec34fd1200f22b057837"
+  },
+  "deployment": {
+    "status": "deployed",
+    "url": "https://kn-wallpaperglue.com"
+  },
+  "verification": {
+    "overall": true,
+    "details": [
+      {
+        "name": "主页访问",
+        "status": true
+      },
+      {
+        "name": "静态资源",
+        "status": true
+      }
+    ],
+    "timestamp": "2025-11-19T02:41:28.813Z"
+  },
+  "errors": [],
+  "success": true
+}

@@ -1,0 +1,34 @@
+我需要你帮我操作三个搜索引擎控制台，完成 sitemap 提交和验证任务。
+
+网站信息：
+- 域名：kn-wallpaperglue.com
+- 主 Sitemap：https://kn-wallpaperglue.com/sitemap.xml
+- 语言版本：zh, en, ru, vi, th, id（共6个语言版本的 sitemap）
+
+需要执行的任务：
+
+1. Google Search Console (https://search.google.com/search-console)
+   - 删除旧的 sitemap.xml，重新提交
+   - 在 URL 检查中验证 sitemap.xml 返回 application/xml
+   - 检查国际定位，确认所有6种语言版本和 x-default 设置
+
+2. Bing Webmaster Tools (https://www.bing.com/webmasters)
+   - 删除旧的 sitemap.xml，重新提交 https://kn-wallpaperglue.com/sitemap.xml
+   - 记录提交时间和状态
+
+3. Yandex Webmaster (https://webmaster.yandex.com)
+   - 重要：如果显示"站点未验证"，先完成验证：
+     * 验证文件已存在：https://kn-wallpaperglue.com/yandex_3c49061d23e42f32.html
+     * 使用 HTML 文件验证方法，告诉 Yandex 验证文件已存在于网站根目录
+     * 如果 HTML 文件验证不工作，尝试 Meta 标签或 DNS 验证方法
+   - 验证完成后，检查现有 sitemap，删除后重新提交 https://kn-wallpaperglue.com/sitemap.xml
+   - 记录提交时间和状态
+
+要求：
+- 按顺序执行，详细记录每个步骤的结果
+- 关键步骤截图保存
+- 如果遇到错误，详细记录错误信息
+- 最后提供一份包含所有操作结果的报告
+
+请开始执行，如果遇到登录问题或需要账户信息，请告知我。
+

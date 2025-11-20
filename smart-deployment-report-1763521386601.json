@@ -1,0 +1,39 @@
+{
+  "timestamp": "2025-11-19T03:02:59.473Z",
+  "domain": "https://kn-wallpaperglue.com",
+  "changes": {
+    "total": 142,
+    "important": 1,
+    "files": [
+      "public/.deployment-trigger"
+    ]
+  },
+  "deployment": {
+    "commit": "4a924e074025ea115c2ab24e415c1789b4094846",
+    "apiTriggered": false,
+    "status": "completed"
+  },
+  "verification": [
+    {
+      "name": "网站访问",
+      "status": "✅ 通过"
+    },
+    {
+      "name": "SEO标题",
+      "status": "⚠️ 待生效"
+    },
+    {
+      "name": "SEO描述",
+      "status": "⚠️ 待生效"
+    },
+    {
+      "name": "Sitemap",
+      "status": "✅ 通过"
+    }
+  ],
+  "summary": {
+    "success": 2,
+    "warnings": 2,
+    "failed": 0
+  }
+}

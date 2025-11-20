@@ -1,0 +1,15 @@
+{
+  "allowedDirectories": [
+    "/Users/nll/Documents/可以用的网站",
+    "/Users/nll/Documents",
+    "/Users/nll/Desktop",
+    "/Users/nll/Downloads",
+    "/Users/nll/.config/mcp"
+  ],
+  "securityLevel": "moderate",
+  "maxFileSize": "100MB",
+  "enableEnhancedTools": true,
+  "allowedExtensions": ["*"],
+  "blockedExtensions": [".exe", ".bat", ".scr", ".com", ".pif"],
+  "logLevel": "info"
+}

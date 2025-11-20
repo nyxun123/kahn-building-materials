@@ -1,0 +1,83 @@
+Yandex 验证 meta 标签已经添加到网站首页的 <head> 区域并已部署到生产环境。
+
+Meta 标签内容：
+<meta name="yandex-verification" content="3c49061d23e42f32" />
+
+验证信息：
+- 网站URL：https://kn-wallpaperglue.com
+- Meta 标签位置：网站首页 <head> 区域
+- 部署状态：已成功部署到 Cloudflare Pages
+- 预览URL：https://0bb58a88.kahn-building-materials.pages.dev
+
+请现在执行以下步骤：
+
+1. **验证 meta 标签已存在**
+   - 在浏览器中访问 https://kn-wallpaperglue.com
+   - 右键点击页面，选择"查看页面源代码"（或按 Ctrl+U / Cmd+Option+U）
+   - 在源代码中搜索 "yandex-verification"
+   - 确认能找到：<meta name="yandex-verification" content="3c49061d23e42f32" />
+
+2. **在 Yandex Webmaster 中验证**
+   - 返回 Yandex Webmaster 的验证页面
+   - 点击红色的 "Verify" 按钮
+   - 等待验证完成（通常几秒钟）
+
+3. **验证成功后继续执行原任务**
+   - 一旦站点验证成功，立即继续执行以下任务：
+     a. 检查现有 Sitemap
+        - 在左侧菜单中，点击 "索引" (Indexing)
+        - 点击 "站点地图文件" (Sitemap files)
+        - 检查是否已有 `https://kn-wallpaperglue.com/sitemap.xml` 的提交记录
+     b. 删除并重新提交 Sitemap
+        - 如果存在旧的 sitemap 记录，点击 "删除" 按钮，确认删除
+        - 点击 "添加站点地图" (Add Sitemap) 按钮
+        - 在输入框中输入：`https://kn-wallpaperglue.com/sitemap.xml`
+        - 点击 "添加" (Add) 按钮
+        - 记录提交时间和状态
+        - 截图保存提交结果
+     c. 验证索引状态
+        - 等待几分钟后，刷新页面
+        - 检查 sitemap 状态是否更新
+        - 记录发现的页面数量（如果显示）
+        - 截图保存状态页面
+
+4. **提供最终报告**
+   请按照以下格式提供最终报告：
+
+   ```
+   # Yandex Webmaster 操作报告
+
+   ## 站点验证
+   - [ ] 验证方法：Meta 标签
+   - [ ] 验证状态：成功 / 失败（如失败，说明原因）
+   - [ ] Meta 标签验证：已确认存在于网站首页
+   - [ ] 截图：已保存/未保存
+   - [ ] 备注：_________________________
+
+   ## Sitemap 操作
+   - [ ] 已检查现有 sitemap
+   - [ ] 已删除旧 sitemap（如存在）
+   - [ ] 已重新提交 sitemap.xml
+   - [ ] 提交状态：成功/失败（如失败，说明原因）
+   - [ ] 提交时间：_________________________
+   - [ ] 发现的页面数量：_________________________
+   - [ ] 截图：已保存/未保存
+   - [ ] 备注：_________________________
+
+   ## 总结
+   - 成功完成的任务：_________________________
+   - 遇到的问题：_________________________
+   - 需要后续跟进的事项：_________________________
+   ```
+
+现在请开始执行，首先验证 meta 标签，然后点击 Yandex 的 "Verify" 按钮进行验证。
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,37 @@
+{
+  "totalUrls": 42,
+  "totalPages": 7,
+  "languages": {
+    "zh": {
+      "name": "中文",
+      "pages": 7,
+      "priority": 1
+    },
+    "en": {
+      "name": "English",
+      "pages": 7,
+      "priority": 0.9
+    },
+    "ru": {
+      "name": "Русский",
+      "pages": 7,
+      "priority": 0.8
+    },
+    "vi": {
+      "name": "Tiếng Việt",
+      "pages": 7,
+      "priority": 0.7
+    },
+    "th": {
+      "name": "ไทย",
+      "pages": 7,
+      "priority": 0.6
+    },
+    "id": {
+      "name": "Bahasa Indonesia",
+      "pages": 7,
+      "priority": 0.6
+    }
+  },
+  "generatedAt": "2025-11-19T02:56:11.632Z"
+}

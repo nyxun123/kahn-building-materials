@@ -1,0 +1,26 @@
+[
+  {
+    "debug": "Connection failed: Error: Connection to MCP server \"zai-mcp-server\" timed out after 30000ms",
+    "timestamp": "2025-11-17T06:57:10.330Z",
+    "sessionId": "fb52b43e-d07e-49a7-9d51-a74584544c21",
+    "cwd": "/Users/nll/Documents/可以用的网站"
+  },
+  {
+    "debug": "Error message: Connection to MCP server \"zai-mcp-server\" timed out after 30000ms",
+    "timestamp": "2025-11-17T06:57:10.332Z",
+    "sessionId": "fb52b43e-d07e-49a7-9d51-a74584544c21",
+    "cwd": "/Users/nll/Documents/可以用的网站"
+  },
+  {
+    "debug": "Error stack: Error: Connection to MCP server \"zai-mcp-server\" timed out after 30000ms\n    at Timeout._onTimeout (file:///usr/local/lib/node_modules/@anthropic-ai/claude-code/cli.js:1385:2677)\n    at listOnTimeout (node:internal/timers:588:17)\n    at process.processTimers (node:internal/timers:523:7)",
+    "timestamp": "2025-11-17T06:57:10.333Z",
+    "sessionId": "fb52b43e-d07e-49a7-9d51-a74584544c21",
+    "cwd": "/Users/nll/Documents/可以用的网站"
+  },
+  {
+    "error": "Connection failed: Connection to MCP server \"zai-mcp-server\" timed out after 30000ms",
+    "timestamp": "2025-11-17T06:57:10.334Z",
+    "sessionId": "fb52b43e-d07e-49a7-9d51-a74584544c21",
+    "cwd": "/Users/nll/Documents/可以用的网站"
+  }
+]

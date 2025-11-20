@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "zai-mcp-server": {
+      "command": "sh",
+      "args": [
+        "-c",
+        "set -a; if [ -f .env ]; then . ./.env; fi; set +a; if [ -z \"${Z_AI_MODE}\" ]; then export Z_AI_MODE=ZHIPU; fi; exec npx -y @z_ai/mcp-server"
+      ],
+      "env": {
+        "PATH": "/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin:~/.local/bin"
+      }
+    }
+  }
+}

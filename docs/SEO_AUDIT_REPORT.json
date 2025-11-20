@@ -1,0 +1,164 @@
+{
+  "timestamp": "2025-11-18T02:37:56.727Z",
+  "site": "https://kn-wallpaperglue.com",
+  "domain": "kn-wallpaperglue.com",
+  "sitemaps": {
+    "total": 7,
+    "accessible": 7,
+    "inaccessible": 0,
+    "details": [
+      {
+        "url": "/sitemap.xml",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/sitemap-zh.xml",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/sitemap-en.xml",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/sitemap-ru.xml",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/sitemap-vi.xml",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/sitemap-th.xml",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/sitemap-id.xml",
+        "accessible": true,
+        "status": 200
+      }
+    ]
+  },
+  "pages": {
+    "total": 17,
+    "accessible": 17,
+    "inaccessible": 0,
+    "details": [
+      {
+        "url": "/",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/zh",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/en",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/ru",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/vi",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/th",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/id",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/zh/products",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/en/products",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/zh/applications",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/en/applications",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/zh/oem",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/en/oem",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/zh/about",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/en/about",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/zh/contact",
+        "accessible": true,
+        "status": 200
+      },
+      {
+        "url": "/en/contact",
+        "accessible": true,
+        "status": 200
+      }
+    ]
+  },
+  "robots": {
+    "accessible": true,
+    "status": 200
+  },
+  "searchEngines": {
+    "note": "由于搜索引擎没有公开的收录查询API，请手动访问以下链接检查收录情况：",
+    "links": [
+      {
+        "name": "Google",
+        "url": "https://www.google.com/search?q=site:kn-wallpaperglue.com"
+      },
+      {
+        "name": "百度",
+        "url": "https://www.baidu.com/s?wd=site:kn-wallpaperglue.com"
+      },
+      {
+        "name": "Yandex",
+        "url": "https://yandex.com/search/?text=site:kn-wallpaperglue.com"
+      },
+      {
+        "name": "Bing",
+        "url": "https://www.bing.com/search?q=site:kn-wallpaperglue.com"
+      }
+    ]
+  }
+}

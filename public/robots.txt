@@ -1,5 +1,7 @@
 # Robots.txt for kn-wallpaperglue.com
 # 杭州卡恩新型建材有限公司 - 羧甲基淀粉专业制造商
+# Professional Carboxymethyl Starch (CMS) Manufacturer
+# Last Updated: 2024-01-20
 
 # 允许所有搜索引擎抓取
 User-agent: *
@@ -12,6 +14,7 @@ Disallow: /api/admin/
 # 允许抓取公开API接口
 Allow: /api/products
 Allow: /api/content
+Allow: /api/page-content
 # 禁止其他API接口
 Disallow: /api/
 
@@ -24,39 +27,105 @@ Allow: /*.css$
 Allow: /favicon.ico
 Allow: /favicon-*.png
 Allow: /apple-touch-icon.png
+Allow: /manifest.json
 
-# 禁止抓取临时文件
+# 禁止抓取临时文件和测试页面
 Disallow: /*?*test=
 Disallow: /*?*debug=
 Disallow: /*.json$
+Disallow: /test-*.html
+Disallow: /test-*.js
 
-# Sitemap 位置
+# Sitemap 位置 (主站点地图和多语言站点地图)
 Sitemap: https://kn-wallpaperglue.com/sitemap.xml
+Sitemap: https://kn-wallpaperglue.com/sitemap-index.xml
 Sitemap: https://kn-wallpaperglue.com/sitemap-zh.xml
 Sitemap: https://kn-wallpaperglue.com/sitemap-en.xml
 Sitemap: https://kn-wallpaperglue.com/sitemap-ru.xml
-Sitemap: https://kn-wallpaperglue.com/sitemap-vi.xml
-Sitemap: https://kn-wallpaperglue.com/sitemap-th.xml
-Sitemap: https://kn-wallpaperglue.com/sitemap-id.xml
+Sitemap: https://kn-wallpaperglue.com/sitemap-products.xml
 
-# 针对特定搜索引擎的配置
-# Google
+# 针对特定搜索引擎的优化配置
+
+# Google - 全球最大搜索引擎
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 0.5
 
-# Bing
+# Google图片搜索
+User-agent: Googlebot-Image
+Allow: /images/
+Allow: /
+
+# Google移动搜索
+User-agent: Googlebot-Mobile
+Allow: /
+
+# Bing - 微软搜索引擎
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 1
 
-# Yandex (俄罗斯市场重要)
+# Bing图片搜索
+User-agent: msnbot-media
+Allow: /images/
+Allow: /
+
+# Yandex - 俄罗斯最大搜索引擎（对俄罗斯市场重要）
 User-agent: YandexBot
 Allow: /
+Crawl-delay: 2
+Host: kn-wallpaperglue.com
 
-# Baidu (中国市场重要)
-User-agent: Baiduspider
+# Yandex图片搜索
+User-agent: YandexImages
+Allow: /images/
 Allow: /
 
-# 抓取延迟设置（避免服务器压力）
+# Baidu - 中国最大搜索引擎
+User-agent: Baiduspider
+Allow: /
+Crawl-delay: 1
+
+# Baidu图片搜索
+User-agent: Baiduspider-image
+Allow: /images/
+Allow: /
+
+# Sogou - 搜狗搜索
+User-agent: Sogou web spider
+Allow: /
+Crawl-delay: 2
+
+# 360搜索
+User-agent: 360Spider
+Allow: /
+Crawl-delay: 2
+
+# DuckDuckGo - 隐私搜索引擎
+User-agent: DuckDuckBot
+Allow: /
+
+# 社交媒体爬虫
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+# 禁止恶意爬虫
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+# 默认抓取延迟（避免服务器压力）
 Crawl-delay: 1
 
 

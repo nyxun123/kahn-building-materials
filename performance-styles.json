@@ -1,0 +1,62 @@
+{
+  "cssOptimization": {
+    "criticalCSS": {
+      "inline": true,
+      "maxSize": "15KB",
+      "files": [
+        "header",
+        "navigation",
+        "hero-section"
+      ]
+    },
+    "deferredCSS": {
+      "loadMethod": "preload",
+      "priority": "low",
+      "timeout": 3000
+    },
+    "compression": {
+      "enabled": true,
+      "algorithm": "brotli",
+      "level": 6
+    }
+  },
+  "performanceBudgets": {
+    "css": {
+      "total": 150,
+      "critical": 15,
+      "perFile": 50
+    }
+  },
+  "monitoring": {
+    "metrics": [
+      "firstContentfulPaint",
+      "largestContentfulPaint",
+      "cumulativeLayoutShift",
+      "firstInputDelay"
+    ],
+    "alerts": {
+      "cssSizeExceeded": true,
+      "renderBlockingResources": true
+    }
+  },
+  "optimizations": [
+    {
+      "type": "minification",
+      "enabled": true,
+      "tools": [
+        "cssnano",
+        "clean-css"
+      ]
+    },
+    {
+      "type": "purge",
+      "enabled": true,
+      "strategy": "unused-removal"
+    },
+    {
+      "type": "splitting",
+      "enabled": true,
+      "method": "route-based"
+    }
+  ]
+}

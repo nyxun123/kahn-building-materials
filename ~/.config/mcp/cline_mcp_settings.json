@@ -20,6 +20,45 @@
       "headers": {
         "Authorization": "Bearer YOUR_API_KEY"
       }
+    },
+    "github.com/Saik0s/mcp-browser-use": {
+      "command": "uvx",
+      "args": ["mcp-server-browser-use@latest"],
+      "env": {
+        "MCP_LLM_GOOGLE_API_KEY": "${input:google_api_key}",
+        "MCP_LLM_PROVIDER": "google",
+        "MCP_LLM_MODEL_NAME": "gemini-2.5-flash-preview-04-17",
+        "MCP_BROWSER_HEADLESS": "true",
+        "MCP_BROWSER_WINDOW_WIDTH": "1280",
+        "MCP_BROWSER_WINDOW_HEIGHT": "720",
+        "MCP_AGENT_TOOL_USE_VISION": "true",
+        "MCP_RESEARCH_TOOL_SAVE_DIR": "~/.config/mcp/mcp-browser-use/research_outputs",
+        "MCP_SERVER_LOGGING_LEVEL": "INFO"
+      }
+    },
+    "cloudflare-playwright-mcp": {
+      "url": "https://playwright-mcp-bjzy.bjzy.workers.dev/mcp",
+      "type": "streamableHttp",
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    },
+    "mcp-filesystem-server": {
+      "command": "mcp-filesystem-server",
+      "env": {
+        "MCP_FS_CONFIG_FILE": "~/.config/mcp-filesystem.json"
+      }
+    },
+    "enhanced-mcp-memory": {
+      "command": "uvx",
+      "args": ["enhanced-mcp-memory"],
+      "env": {
+        "LOG_LEVEL": "INFO",
+        "MAX_MEMORY_ITEMS": "1000",
+        "MAX_CONTEXT_TOKENS": "8000",
+        "ENABLE_AUTO_CLEANUP": "true",
+        "DATA_DIR": "~/.config/mcp/memory-data"
+      }
     }
   },
   "inputs": [
@@ -33,6 +72,13 @@
       "type": "promptString",
       "id": "context7_api_key",
       "description": "Context7 API Key (可选，用于更高速率限制和私有仓库)",
+      "password": true,
+      "default": ""
+    },
+    {
+      "type": "promptString",
+      "id": "google_api_key",
+      "description": "Google AI API Key (用于 Gemini 模型)",
       "password": true,
       "default": ""
     }

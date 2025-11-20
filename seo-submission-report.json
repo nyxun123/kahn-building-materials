@@ -1,0 +1,218 @@
+{
+  "timestamp": "2025-11-19T03:01:44.567Z",
+  "domain": "kn-wallpaperglue.com",
+  "verificationFiles": {
+    "google": true,
+    "bing": true,
+    "yandex": true
+  },
+  "websiteAccessibility": [
+    {
+      "url": "https://kn-wallpaperglue.com",
+      "accessible": true,
+      "statusCode": 200
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/faq",
+      "accessible": true,
+      "statusCode": 200
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/products",
+      "accessible": true,
+      "statusCode": 200
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/sitemap.xml",
+      "accessible": true,
+      "statusCode": 200
+    }
+  ],
+  "sitemapSubmission": {
+    "google": [
+      {
+        "sitemap": "https://kn-wallpaperglue.com/sitemap.xml",
+        "success": false,
+        "error": "Request timeout"
+      },
+      {
+        "sitemap": "https://kn-wallpaperglue.com/sitemap-zh.xml",
+        "success": false,
+        "error": "Request timeout"
+      },
+      {
+        "sitemap": "https://kn-wallpaperglue.com/sitemap-en.xml",
+        "success": false,
+        "error": "Request timeout"
+      },
+      {
+        "sitemap": "https://kn-wallpaperglue.com/sitemap-ru.xml",
+        "success": false,
+        "error": "Request timeout"
+      }
+    ],
+    "bing": [
+      {
+        "sitemap": "https://kn-wallpaperglue.com/sitemap.xml",
+        "success": false,
+        "statusCode": 302
+      },
+      {
+        "sitemap": "https://kn-wallpaperglue.com/sitemap-zh.xml",
+        "success": false,
+        "statusCode": 302
+      },
+      {
+        "sitemap": "https://kn-wallpaperglue.com/sitemap-en.xml",
+        "success": false,
+        "statusCode": 302
+      },
+      {
+        "sitemap": "https://kn-wallpaperglue.com/sitemap-ru.xml",
+        "success": false,
+        "statusCode": 302
+      }
+    ],
+    "yandex": [
+      {
+        "sitemap": "https://kn-wallpaperglue.com/sitemap.xml",
+        "success": false,
+        "manual": true
+      },
+      {
+        "sitemap": "https://kn-wallpaperglue.com/sitemap-zh.xml",
+        "success": false,
+        "manual": true
+      },
+      {
+        "sitemap": "https://kn-wallpaperglue.com/sitemap-en.xml",
+        "success": false,
+        "manual": true
+      },
+      {
+        "sitemap": "https://kn-wallpaperglue.com/sitemap-ru.xml",
+        "success": false,
+        "manual": true
+      }
+    ]
+  },
+  "urlSubmission": {
+    "google": [
+      {
+        "url": "https://kn-wallpaperglue.com",
+        "success": false,
+        "error": "Request timeout"
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/faq",
+        "success": false,
+        "error": "Request timeout"
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/products",
+        "success": false,
+        "error": "Request timeout"
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/about",
+        "success": false,
+        "error": "Request timeout"
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/contact",
+        "success": false,
+        "error": "Request timeout"
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/applications",
+        "success": false,
+        "error": "Request timeout"
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/oem",
+        "success": false,
+        "error": "Request timeout"
+      }
+    ],
+    "bing": [
+      {
+        "url": "https://kn-wallpaperglue.com",
+        "success": false,
+        "statusCode": 302
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/faq",
+        "success": false,
+        "statusCode": 302
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/products",
+        "success": false,
+        "statusCode": 302
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/about",
+        "success": false,
+        "statusCode": 302
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/contact",
+        "success": false,
+        "statusCode": 302
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/applications",
+        "success": false,
+        "statusCode": 302
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/oem",
+        "success": false,
+        "statusCode": 302
+      }
+    ],
+    "yandex": [
+      {
+        "url": "https://kn-wallpaperglue.com",
+        "success": false,
+        "manual": true
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/faq",
+        "success": false,
+        "manual": true
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/products",
+        "success": false,
+        "manual": true
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/about",
+        "success": false,
+        "manual": true
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/contact",
+        "success": false,
+        "manual": true
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/applications",
+        "success": false,
+        "manual": true
+      },
+      {
+        "url": "https://kn-wallpaperglue.com/oem",
+        "success": false,
+        "manual": true
+      }
+    ]
+  },
+  "summary": {
+    "totalUrlsChecked": 4,
+    "accessibleUrls": 4,
+    "searchEngines": 3,
+    "successfulSubmissions": 0
+  }
+}

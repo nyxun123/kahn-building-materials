@@ -1,0 +1,22 @@
+{
+  "rules": {
+    "imageCompression": {
+      "quality": 80,
+      "progressive": true
+    },
+    "breakpoints": {
+      "mobile": 400,
+      "tablet": 800,
+      "desktop": 1200,
+      "large": 1600
+    },
+    "caching": {
+      "browser": "1y",
+      "cdn": "30d"
+    }
+  },
+  "formatSupport": {
+    "webp": true,
+    "avif": "progressive"
+  }
+}

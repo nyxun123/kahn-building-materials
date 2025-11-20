@@ -1,0 +1,663 @@
+{
+  "immediate": [
+    "移除未使用的依赖包",
+    "实施代码分割",
+    "启用Tree Shaking",
+    "压缩生产构建"
+  ],
+  "medium": [
+    "迁移到更轻量的库",
+    "实施路由级别的懒加载",
+    "优化chunk分割策略",
+    "使用CDN加载大库"
+  ],
+  "long": [
+    "微前端架构",
+    "Web Workers处理重计算",
+    "渐进式Web App优化",
+    "边缘计算优化"
+  ],
+  "packageOptimizations": {
+    "@hookform/resolvers": {
+      "version": "^3.10.0",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "@radix-ui/react-accordion": {
+      "version": "^1.2.2",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-alert-dialog": {
+      "version": "^1.1.4",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-aspect-ratio": {
+      "version": "^1.1.1",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-avatar": {
+      "version": "^1.1.2",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-checkbox": {
+      "version": "^1.1.3",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-collapsible": {
+      "version": "^1.1.2",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-context-menu": {
+      "version": "^2.2.4",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-dialog": {
+      "version": "^1.1.4",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-dropdown-menu": {
+      "version": "^2.1.4",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-hover-card": {
+      "version": "^1.1.4",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-icons": {
+      "version": "^1.3.2",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-label": {
+      "version": "^2.1.1",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-menubar": {
+      "version": "^1.1.4",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-navigation-menu": {
+      "version": "^1.2.3",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-popover": {
+      "version": "^1.1.4",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-progress": {
+      "version": "^1.1.1",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-radio-group": {
+      "version": "^1.2.2",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-scroll-area": {
+      "version": "^1.2.2",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-select": {
+      "version": "^2.1.4",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-separator": {
+      "version": "^1.1.1",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-slider": {
+      "version": "^1.2.2",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-slot": {
+      "version": "^1.1.1",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-switch": {
+      "version": "^1.1.2",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-tabs": {
+      "version": "^1.1.2",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-toast": {
+      "version": "^1.2.4",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-toggle": {
+      "version": "^1.1.1",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-toggle-group": {
+      "version": "^1.1.1",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@radix-ui/react-tooltip": {
+      "version": "^1.1.6",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "检查是否必需，考虑替代方案"
+    },
+    "@refinedev/core": {
+      "version": "4.58.0",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "@refinedev/react-hook-form": {
+      "version": "4.10.2",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "@refinedev/react-router-v6": {
+      "version": "4.6.2",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "@tanstack/react-query": {
+      "version": "^4.39.2",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "@tanstack/react-table": {
+      "version": "^8.21.3",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "@tremor/react": {
+      "version": "^3.18.7",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "可以按需导入组件"
+    },
+    "@types/react-google-recaptcha": {
+      "version": "^2.1.9",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "class-variance-authority": {
+      "version": "^0.7.1",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "clsx": {
+      "version": "^2.1.1",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "cmdk": {
+      "version": "1.0.0",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "date-fns": {
+      "version": "^3.0.0",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "embla-carousel-react": {
+      "version": "^8.5.2",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "framer-motion": {
+      "version": "^12.23.12",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "i18next": {
+      "version": "^25.3.4",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "i18next-browser-languagedetector": {
+      "version": "^8.2.0",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "i18next-resources-to-backend": {
+      "version": "^1.2.1",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "input-otp": {
+      "version": "^1.4.2",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "jsonwebtoken": {
+      "version": "^9.0.2",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "考虑使用更轻量的JWT库"
+    },
+    "lucide-react": {
+      "version": "^0.364.0",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "pdfmake": {
+      "version": "^0.2.20",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "考虑懒加载或服务端生成"
+    },
+    "react": {
+      "version": "^18.3.1",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "react-day-picker": {
+      "version": "8.10.1",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "react-dom": {
+      "version": "^18.3.1",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "react-google-recaptcha": {
+      "version": "^3.1.0",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "react-helmet-async": {
+      "version": "^2.0.5",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "react-hook-form": {
+      "version": "^7.62.0",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "react-hot-toast": {
+      "version": "^2.5.2",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "react-i18next": {
+      "version": "^15.6.1",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "react-icons": {
+      "version": "^5.5.0",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "react-resizable-panels": {
+      "version": "^2.1.7",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "react-router-dom": {
+      "version": "^6",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "recharts": {
+      "version": "^2.12.4",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "使用动态导入，仅在需要图表页面加载"
+    },
+    "sonner": {
+      "version": "^1.7.2",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "sqlite3": {
+      "version": "^5.1.7",
+      "isLarge": true,
+      "isDevOnly": false,
+      "recommendedAction": "使用CDN版本或服务端API"
+    },
+    "tailwind-merge": {
+      "version": "^2.6.0",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "tailwindcss-animate": {
+      "version": "^1.0.7",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "vaul": {
+      "version": "^1.1.2",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "yup": {
+      "version": "^1.7.0",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "zod": {
+      "version": "^3.24.1",
+      "isLarge": false,
+      "isDevOnly": false,
+      "recommendedAction": "正常"
+    },
+    "@eslint/js": {
+      "version": "^9.15.0",
+      "isLarge": false,
+      "isDevOnly": "^9.15.0",
+      "recommendedAction": "正常"
+    },
+    "@testing-library/jest-dom": {
+      "version": "^6.6.3",
+      "isLarge": false,
+      "isDevOnly": "^6.6.3",
+      "recommendedAction": "正常"
+    },
+    "@testing-library/react": {
+      "version": "^16.1.0",
+      "isLarge": false,
+      "isDevOnly": "^16.1.0",
+      "recommendedAction": "正常"
+    },
+    "@testing-library/user-event": {
+      "version": "^14.5.2",
+      "isLarge": false,
+      "isDevOnly": "^14.5.2",
+      "recommendedAction": "正常"
+    },
+    "@types/express": {
+      "version": "^5.0.3",
+      "isLarge": false,
+      "isDevOnly": "^5.0.3",
+      "recommendedAction": "正常"
+    },
+    "@types/jsonwebtoken": {
+      "version": "^9.0.10",
+      "isLarge": false,
+      "isDevOnly": "^9.0.10",
+      "recommendedAction": "正常"
+    },
+    "@types/node": {
+      "version": "^22.10.7",
+      "isLarge": false,
+      "isDevOnly": "^22.10.7",
+      "recommendedAction": "正常"
+    },
+    "@types/react": {
+      "version": "^18.3.12",
+      "isLarge": false,
+      "isDevOnly": "^18.3.12",
+      "recommendedAction": "正常"
+    },
+    "@types/react-dom": {
+      "version": "^18.3.1",
+      "isLarge": false,
+      "isDevOnly": "^18.3.1",
+      "recommendedAction": "正常"
+    },
+    "@types/react-router-dom": {
+      "version": "^5",
+      "isLarge": false,
+      "isDevOnly": "^5",
+      "recommendedAction": "正常"
+    },
+    "@vitejs/plugin-react": {
+      "version": "^4.3.4",
+      "isLarge": false,
+      "isDevOnly": "^4.3.4",
+      "recommendedAction": "正常"
+    },
+    "autoprefixer": {
+      "version": "10.4.20",
+      "isLarge": false,
+      "isDevOnly": "10.4.20",
+      "recommendedAction": "正常"
+    },
+    "babel-plugin-dev-expression": {
+      "version": "^0.2.3",
+      "isLarge": false,
+      "isDevOnly": "^0.2.3",
+      "recommendedAction": "正常"
+    },
+    "eslint": {
+      "version": "^9.15.0",
+      "isLarge": false,
+      "isDevOnly": "^9.15.0",
+      "recommendedAction": "正常"
+    },
+    "eslint-plugin-react-hooks": {
+      "version": "^5.0.0",
+      "isLarge": false,
+      "isDevOnly": "^5.0.0",
+      "recommendedAction": "正常"
+    },
+    "eslint-plugin-react-refresh": {
+      "version": "^0.4.14",
+      "isLarge": false,
+      "isDevOnly": "^0.4.14",
+      "recommendedAction": "正常"
+    },
+    "globals": {
+      "version": "^15.12.0",
+      "isLarge": false,
+      "isDevOnly": "^15.12.0",
+      "recommendedAction": "正常"
+    },
+    "jsdom": {
+      "version": "^26.0.0",
+      "isLarge": false,
+      "isDevOnly": "^26.0.0",
+      "recommendedAction": "正常"
+    },
+    "playwright": {
+      "version": "^1.50.1",
+      "isLarge": true,
+      "isDevOnly": "^1.50.1",
+      "recommendedAction": "仅保留在开发环境"
+    },
+    "postcss": {
+      "version": "8.4.49",
+      "isLarge": false,
+      "isDevOnly": "8.4.49",
+      "recommendedAction": "正常"
+    },
+    "puppeteer": {
+      "version": "^23.11.1",
+      "isLarge": true,
+      "isDevOnly": "^23.11.1",
+      "recommendedAction": "移到服务端或worker中"
+    },
+    "rollup-plugin-copy": {
+      "version": "^3.5.0",
+      "isLarge": false,
+      "isDevOnly": "^3.5.0",
+      "recommendedAction": "正常"
+    },
+    "sharp": {
+      "version": "^0.34.5",
+      "isLarge": false,
+      "isDevOnly": "^0.34.5",
+      "recommendedAction": "正常"
+    },
+    "tailwindcss": {
+      "version": "v3.4.16",
+      "isLarge": false,
+      "isDevOnly": "v3.4.16",
+      "recommendedAction": "正常"
+    },
+    "terser": {
+      "version": "^5.44.1",
+      "isLarge": false,
+      "isDevOnly": "^5.44.1",
+      "recommendedAction": "正常"
+    },
+    "typescript": {
+      "version": "~5.6.2",
+      "isLarge": false,
+      "isDevOnly": "~5.6.2",
+      "recommendedAction": "正常"
+    },
+    "typescript-eslint": {
+      "version": "^8.15.0",
+      "isLarge": false,
+      "isDevOnly": "^8.15.0",
+      "recommendedAction": "正常"
+    },
+    "vite": {
+      "version": "^6.0.1",
+      "isLarge": false,
+      "isDevOnly": "^6.0.1",
+      "recommendedAction": "正常"
+    },
+    "vite-plugin-source-info": {
+      "version": "^1.0.0",
+      "isLarge": false,
+      "isDevOnly": "^1.0.0",
+      "recommendedAction": "正常"
+    },
+    "vitest": {
+      "version": "^2.1.8",
+      "isLarge": false,
+      "isDevOnly": "^2.1.8",
+      "recommendedAction": "正常"
+    },
+    "wrangler": {
+      "version": "^4.30.0",
+      "isLarge": false,
+      "isDevOnly": "^4.30.0",
+      "recommendedAction": "正常"
+    }
+  },
+  "chunkOptimizations": {
+    "admin": {
+      "size": "待分析",
+      "priority": "low",
+      "strategy": "route-based"
+    },
+    "charts": {
+      "size": "待分析",
+      "priority": "low",
+      "strategy": "feature-based"
+    },
+    "pdf": {
+      "size": "待分析",
+      "priority": "low",
+      "strategy": "dynamic-import"
+    },
+    "upload": {
+      "size": "待分析",
+      "priority": "medium",
+      "strategy": "component-based"
+    },
+    "editor": {
+      "size": "待分析",
+      "priority": "medium",
+      "strategy": "feature-based"
+    },
+    "modals": {
+      "size": "待分析",
+      "priority": "medium",
+      "strategy": "component-based"
+    },
+    "forms": {
+      "size": "待分析",
+      "priority": "low",
+      "strategy": "feature-based"
+    },
+    "maps": {
+      "size": "待分析",
+      "priority": "low",
+      "strategy": "component-based"
+    }
+  },
+  "expectedSavings": {
+    "bundleSize": "20-40%",
+    "loadTime": "300-800ms",
+    "memoryUsage": "15-30%"
+  }
+}

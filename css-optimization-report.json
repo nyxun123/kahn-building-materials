@@ -1,0 +1,63 @@
+{
+  "summary": {
+    "originalSize": 8470,
+    "optimizedSize": 6342,
+    "savings": 2128,
+    "savingsPercent": "25.1",
+    "filesProcessed": 4
+  },
+  "criticalCSS": {
+    "size": 2923,
+    "ratio": "46.1%"
+  },
+  "deferredCSS": [
+    {
+      "file": "index.css",
+      "size": 2179,
+      "optimizedSize": 1785,
+      "metrics": {
+        "totalLines": 101,
+        "totalRules": 10,
+        "totalImports": 1,
+        "totalMediaQueries": 0,
+        "complexity": 33
+      }
+    },
+    {
+      "file": "App.css",
+      "size": 548,
+      "optimizedSize": 441,
+      "metrics": {
+        "totalLines": 42,
+        "totalRules": 9,
+        "totalImports": 0,
+        "totalMediaQueries": 1,
+        "complexity": 32
+      }
+    },
+    {
+      "file": "styles/performance.css",
+      "size": 1700,
+      "optimizedSize": 1193,
+      "metrics": {
+        "totalLines": 120,
+        "totalRules": 21,
+        "totalImports": 0,
+        "totalMediaQueries": 5,
+        "complexity": 68
+      }
+    }
+  ],
+  "recommendations": [
+    "将关键CSS内联到HTML中减少渲染阻塞",
+    "使用content-visibility优化长页面",
+    "实施CSS分割和按需加载",
+    "考虑使用CSS-in-JS减少包大小",
+    "启用Brotli压缩获得更好压缩效果"
+  ],
+  "performanceMetrics": {
+    "firstContentfulPaint": "预计减少 300-500ms",
+    "largestContentfulPaint": "预计减少 200-400ms",
+    "cumulativeLayoutShift": "预计减少 0.1-0.2"
+  }
+}

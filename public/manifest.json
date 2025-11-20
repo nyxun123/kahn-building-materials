@@ -1,30 +1,49 @@
 {
-  "name": "专业胶粉产品平台",
-  "short_name": "胶粉产品",
-  "description": "专业的墙纸胶粉、植物淀粉等化工产品展示和销售平台",
+  "name": "Hangzhou Karn New Building Materials Co., Ltd - 专业羧甲基淀粉生产商",
+  "short_name": "杭州卡恩建材",
+  "description": "专业的羧甲基淀粉(CMS)生产商，23年行业经验，提供高质量壁纸胶粉、腻子粉添加剂等建筑材料。Professional carboxymethyl starch manufacturer, serving global markets.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "theme_color": "#16a34a",
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "zh-CN",
   "dir": "ltr",
-  "categories": ["business", "productivity"],
+  "categories": ["business", "productivity", "manufacturing"],
   "icons": [
     {
       "src": "/favicon.ico",
-      "sizes": "32x32",
-      "type": "image/x-icon"
+      "sizes": "48x48",
+      "type": "image/x-icon",
+      "purpose": "any"
     },
     {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
+      "src": "/favicon-48x48.png",
+      "sizes": "48x48",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.png", 
+      "src": "/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -46,38 +65,38 @@
   ],
   "shortcuts": [
     {
-      "name": "产品列表",
+      "name": "产品中心 - Products",
       "short_name": "产品",
-      "description": "查看所有产品",
+      "description": "查看羧甲基淀粉产品系列",
       "url": "/zh/products",
       "icons": [
         {
-          "src": "/icon-192.png",
-          "sizes": "192x192"
+          "src": "/favicon-96x96.png",
+          "sizes": "96x96"
         }
       ]
     },
     {
-      "name": "关于我们", 
+      "name": "关于我们 - About Us", 
       "short_name": "关于",
-      "description": "了解公司信息",
+      "description": "了解杭州卡恩建材公司信息",
       "url": "/zh/about",
       "icons": [
         {
-          "src": "/icon-192.png",
-          "sizes": "192x192"
+          "src": "/favicon-96x96.png",
+          "sizes": "96x96"
         }
       ]
     },
     {
-      "name": "联系我们",
+      "name": "联系我们 - Contact",
       "short_name": "联系",
-      "description": "获取联系方式",
+      "description": "获取联系方式和商务咨询",
       "url": "/zh/contact",
       "icons": [
         {
-          "src": "/icon-192.png",
-          "sizes": "192x192"
+          "src": "/favicon-96x96.png",
+          "sizes": "96x96"
         }
       ]
     }
