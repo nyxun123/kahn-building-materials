@@ -45,6 +45,7 @@
       "about": "Company Profile",
       "contact": "Contact Us",
       "quick_links": "Quick Links",
+      "partners": "Partners",
       "quality": "Quality Assurance"
     },
     "quick_links": {
@@ -64,6 +65,7 @@
       "industry_certification": "Industry Qualification Certification"
     },
     "copyright": "© 2024 Hangzhou Karn New Building Materials Co., Ltd. All rights reserved.",
+    "partners_welcome": "Exchange links welcome",
     "bottom_links": {
       "privacy": "Privacy Policy",
       "terms": "Terms of Service"
