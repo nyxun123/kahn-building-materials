@@ -47,9 +47,9 @@ export function SEOKeywordsCloud() {
     // For now, let's show a categorized view or a simple cloud.
 
     return (
-        <div className="bg-muted/30 py-8 mt-12 border-t">
+        <div className="bg-gray-50 py-8 mt-12 border-t border-gray-200">
             <div className="container mx-auto px-4">
-                <h3 className="text-sm font-semibold text-muted-foreground mb-4 uppercase tracking-wider">
+                <h3 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wider">
                     Popular Searches
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -57,13 +57,13 @@ export function SEOKeywordsCloud() {
                         <Link
                             key={index}
                             to={`/${i18n.language}/products?search=${encodeURIComponent(keyword)}`}
-                            className="text-xs text-muted-foreground/70 hover:text-primary transition-colors hover:underline"
+                            className="text-xs text-gray-500 hover:text-green-700 transition-colors hover:underline"
                         >
                             {keyword}
                         </Link>
                     ))}
                 </div>
-                <div className="mt-6 text-xs text-muted-foreground/50">
+                <div className="mt-6 text-xs text-gray-400">
                     <p>
                         Hangzhou Karn New Building Materials Co., Ltd. specializes in high-quality Carboxymethyl Starch (CMS) for construction, textile, paper, and oil drilling industries.
                     </p>
