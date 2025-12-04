@@ -53,7 +53,7 @@ export function SEOHelmet({
   supportedLangs,
 }: SEOHelmetProps) {
   const location = useLocation();
-  
+
   // 转换图片和 logo 路径为绝对 URL
   const absoluteImage = toAbsoluteUrl(image);
   const absoluteLogo = toAbsoluteUrl(logo);
@@ -64,10 +64,10 @@ export function SEOHelmet({
   const normalizedLang: SupportedLanguage = activeLanguages.includes(lang)
     ? lang
     : activeLanguages[0];
-  
+
   // 构建完整URL
   const currentUrl = `${SITE_URL}${location.pathname}`;
-  
+
   // 生成多语言URL
   const getAlternateUrl = (targetLang: SupportedLanguage) => {
     const pathParts = location.pathname.split('/').filter(part => part !== '');
@@ -91,10 +91,10 @@ export function SEOHelmet({
   const alternateLocales = activeLanguages
     .filter(code => code !== normalizedLang)
     .map(code => LOCALE_MAP[code]);
-  
+
   // 完整标题
   const fullTitle = `${title} - ${SITE_NAME}`;
-  
+
   return (
     <Helmet>
       {/* 基础Meta标签 */}
@@ -102,19 +102,19 @@ export function SEOHelmet({
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       {keywords && <meta name="keywords" content={keywords} />}
-      
+
       {/* Robots */}
       {noindex && <meta name="robots" content="noindex,nofollow" />}
-      
+
       {/* Canonical */}
       <link rel="canonical" href={currentUrl} />
-      
+
       {/* 多语言Hreflang标签 */}
       {alternateLinks.map(({ lang: langCode, url }) => (
         <link key={langCode} rel="alternate" hrefLang={langCode} href={url} />
       ))}
       <link rel="alternate" hrefLang="x-default" href={xDefaultUrl} />
-      
+
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />
       <meta property="og:url" content={currentUrl} />
@@ -128,7 +128,7 @@ export function SEOHelmet({
       {alternateLocales.map(locale => (
         <meta key={locale} property="og:locale:alternate" content={locale} />
       ))}
-      
+
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:url" content={currentUrl} />
@@ -136,7 +136,12 @@ export function SEOHelmet({
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={absoluteImage} />
       <meta name="twitter:image:alt" content={`${SITE_NAME} Logo`} />
-      
+
+      {/* Favicons with Absolute URLs for Search Engines */}
+      <link rel="icon" href={`${SITE_URL}/favicon.ico?v=2`} sizes="any" />
+      <link rel="icon" href={`${SITE_URL}/favicon.svg?v=2`} type="image/svg+xml" />
+      <link rel="apple-touch-icon" href={`${SITE_URL}/apple-touch-icon.png?v=2`} />
+
       {/* Logo for Search Engines */}
       <link rel="logo" href={absoluteLogo} />
       <meta itemProp="logo" content={absoluteLogo} />
@@ -144,13 +149,13 @@ export function SEOHelmet({
       <meta property="og:image:width" content="512" />
       <meta property="og:image:height" content="512" />
       <meta property="og:image:type" content="image/png" />
-      
+
       {/* 地理位置信息 */}
       <meta name="geo.region" content="CN-ZJ" />
       <meta name="geo.placename" content="Hangzhou" />
       <meta name="geo.position" content="30.2741;120.1551" />
       <meta name="ICBM" content="30.2741, 120.1551" />
-      
+
       {/* 额外的SEO标签 */}
       <meta name="author" content={SITE_NAME} />
       <meta name="copyright" content={`© ${new Date().getFullYear()} ${SITE_NAME}`} />
