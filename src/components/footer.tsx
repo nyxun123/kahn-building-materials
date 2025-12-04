@@ -22,11 +22,7 @@ export function Footer({ forceUpdate }: FooterProps = {}) {
   return (
     <footer key={`footer-${lang}-${forceUpdate}`} className="bg-white text-gray-800 border-t border-gray-200">
       <div className="py-16">
-        {/* DEBUG: Temporary SEO Cloud at Top */}
-        <div className="bg-red-100 p-4 mb-8 text-center font-bold text-red-600 border-2 border-red-500">
-          DEBUG: SEO CLOUD SHOULD BE HERE
-        </div>
-        <SEOKeywordsCloud />
+
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
@@ -228,30 +224,31 @@ export function Footer({ forceUpdate }: FooterProps = {}) {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* SEO Keywords Cloud */}
-        <SEOKeywordsCloud />
+      {/* SEO Keywords Cloud */}
+      <SEOKeywordsCloud />
 
-        {/* 版权信息 - 页脚最底部 */}
-        <div className="border-t border-gray-200 bg-gray-50 py-6">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col items-center justify-center gap-4">
-              <div className="text-center w-full">
-                <p className="text-sm text-gray-600">
-                  {t('footer.copyright')}
-                </p>
-                <div className="flex items-center justify-center space-x-6 text-sm text-gray-600 mt-3">
-                  <a href="#" className="hover:text-[#047857] transition-colors duration-200">
-                    {t('footer.bottom_links.privacy')}
-                  </a>
-                  <a href="#" className="hover:text-[#047857] transition-colors duration-200">
-                    {t('footer.bottom_links.terms')}
-                  </a>
-                </div>
+      {/* 版权信息 - 页脚最底部 */}
+      <div className="border-t border-gray-200 bg-gray-50 py-6">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center justify-center gap-4">
+            <div className="text-center w-full">
+              <p className="text-sm text-gray-600">
+                {t('footer.copyright')}
+              </p>
+              <div className="flex items-center justify-center space-x-6 text-sm text-gray-600 mt-3">
+                <a href="#" className="hover:text-[#047857] transition-colors duration-200">
+                  {t('footer.bottom_links.privacy')}
+                </a>
+                <a href="#" className="hover:text-[#047857] transition-colors duration-200">
+                  {t('footer.bottom_links.terms')}
+                </a>
               </div>
             </div>
           </div>
         </div>
+      </div>
     </footer>
   );
 }
