@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import {
     SEO_KEYWORDS_EN,
     SEO_KEYWORDS_ZH,
@@ -12,11 +13,9 @@ import {
 
 export function SEOKeywordsCloud() {
     const { i18n } = useTranslation();
+    const [isExpanded, setIsExpanded] = useState(false);
 
     // Select keywords based on current language
-    // For Chinese ('zh'), we default to English as per user request to focus on foreign markets,
-    // or we could show Chinese if they change their mind. Given "Chinese optimization is unnecessary",
-    // we will show English keywords for Chinese users to emphasize international nature.
     let keywords = SEO_KEYWORDS_EN;
 
     switch (i18n.language) {
@@ -33,45 +32,54 @@ export function SEOKeywordsCloud() {
             keywords = SEO_KEYWORDS_ID;
             break;
         case 'zh':
-            // User explicitly said Chinese optimization is not needed, so we show English
-            // to maintain the "foreign trade" feel even on the Chinese page.
+            // Show English keywords for Chinese users to emphasize international nature
             keywords = SEO_KEYWORDS_EN;
             break;
         default:
             keywords = SEO_KEYWORDS_EN;
     }
 
-    // Fallback to English if something goes wrong or for default
+    // Fallback
     if (!keywords || keywords.length === 0) {
-        console.warn('SEOKeywordsCloud: No keywords found for language ' + i18n.language + ', falling back to EN');
         keywords = SEO_KEYWORDS_EN;
     }
 
-    console.log('SEOKeywordsCloud rendering for language:', i18n.language, 'Keyword count:', keywords.length);
-
     return (
-        <div id="seo-keywords-cloud" className="bg-gray-100 py-10 mt-0 border-t border-b border-gray-300">
+        <div className="bg-white border-t border-gray-100 py-8 mt-8">
             <div className="container mx-auto px-4">
-                <h3 className="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wider flex items-center">
-                    <span className="w-1 h-4 bg-green-600 mr-2 rounded-full"></span>
-                    Popular Searches ({i18n.language.toUpperCase()})
-                </h3>
-                <div className="flex flex-wrap gap-x-4 gap-y-2">
+                <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                        Popular Tags
+                    </h3>
+                    <button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="flex items-center text-xs text-gray-400 hover:text-green-600 transition-colors"
+                    >
+                        {isExpanded ? (
+                            <>Show Less <ChevronUp className="w-3 h-3 ml-1" /></>
+                        ) : (
+                            <>Show More <ChevronDown className="w-3 h-3 ml-1" /></>
+                        )}
+                    </button>
+                </div>
+
+                <div className={`flex flex-wrap gap-x-3 gap-y-2 transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-full opacity-100' : 'max-h-6 overflow-hidden opacity-60'}`}>
                     {keywords.map((keyword, index) => (
                         <Link
                             key={index}
                             to={`/${i18n.language}/products?search=${encodeURIComponent(keyword)}`}
-                            className="text-xs text-gray-600 hover:text-green-700 transition-colors hover:underline whitespace-nowrap"
+                            className="text-[10px] text-gray-300 hover:text-green-600 transition-colors hover:underline whitespace-nowrap"
                         >
                             {keyword}
                         </Link>
                     ))}
                 </div>
-                <div className="mt-6 pt-4 border-t border-gray-200 text-xs text-gray-500">
-                    <p>
-                        Hangzhou Karn New Building Materials Co., Ltd. specializes in high-quality Carboxymethyl Starch (CMS) for construction, textile, paper, and oil drilling industries.
-                    </p>
-                </div>
+
+                {!isExpanded && (
+                    <div className="text-[10px] text-gray-300 mt-2 italic">
+                        + {keywords.length - 15} more keywords...
+                    </div>
+                )}
             </div>
         </div>
     );

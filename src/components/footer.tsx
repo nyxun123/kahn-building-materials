@@ -236,7 +236,6 @@ export function Footer({ forceUpdate }: FooterProps = {}) {
             <div className="text-center w-full">
               <p className="text-sm text-gray-600">
                 {t('footer.copyright')}
-                <span className="text-xs text-gray-300 ml-2">v2025.12.04.1</span>
               </p>
               <div className="flex items-center justify-center space-x-6 text-sm text-gray-600 mt-3">
                 <a href="#" className="hover:text-[#047857] transition-colors duration-200">
