@@ -1,5 +1,5 @@
-import { authenticate } from '../../../lib/jwt-auth.js';
-import { createSuccessResponse, createServerErrorResponse, createUnauthorizedResponse } from '../../../lib/api-response.js';
+import { authenticate } from '../../lib/jwt-auth.js';
+import { createSuccessResponse, createServerErrorResponse, createUnauthorizedResponse } from '../../lib/api-response.js';
 
 const YANDEX_API_BASE = 'https://api.webmaster.yandex.net/v4';
 

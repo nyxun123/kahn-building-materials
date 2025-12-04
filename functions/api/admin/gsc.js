@@ -1,5 +1,5 @@
-import { authenticate } from '../../../lib/jwt-auth.js';
-import { createSuccessResponse, createServerErrorResponse, createUnauthorizedResponse } from '../../../lib/api-response.js';
+import { authenticate } from '../../lib/jwt-auth.js';
+import { createSuccessResponse, createServerErrorResponse, createUnauthorizedResponse } from '../../lib/api-response.js';
 
 // Google Search Console API Endpoint
 const GSC_API_URL = 'https://www.googleapis.com/webmasters/v3/sites';
