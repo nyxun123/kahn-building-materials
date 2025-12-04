@@ -1,10 +1,11 @@
 export const COMPANY_PROFILE = {
-  name: 'Hangzhou Karn New Building Materials Co., Ltd',
+  name: 'Hangzhou Karn New Building Materials Co., Ltd.',
   nameZh: '杭州卡恩新型建材有限公司',
-  phone: '+86 13216156841',
+  nameEn: 'Hangzhou Karn New Building Materials Co., Ltd.',
+  addressZh: '浙江省杭州市临平区崇贤街道沪瑞线王家门1号',
+  addressEn: 'No. 1, Wangjiamen, Huruixian Road, Chongxian Street, Linping District, Hangzhou, Zhejiang, China',
   email: 'karnstarch@gmail.com',
-  addressZh: '浙江省杭州市临平区崇贤街道沪瑞线 1 号',
-  addressEn: 'No. 1, Huruixian Road, Chongxian Street, Linping District, Hangzhou, Zhejiang, China',
+  phone: '+86 13216156841',
 };
 
 export const COMPANY_ADDRESS = {

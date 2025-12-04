@@ -13,7 +13,7 @@ export default function OemPage() {
   const location = useLocation();
   const currentLang = i18n.language || 'zh';
   const currentUrl = `https://kn-wallpaperglue.com${location.pathname}`;
-  
+
   // 构建社交媒体链接数组
   const socialProfileLinks = [
     SOCIAL_LINKS.facebook,
@@ -27,7 +27,7 @@ export default function OemPage() {
       <SEOHelmet
         title={t('nav.oem')}
         description={t('oem:meta_description')}
-        keywords="OEM定制,ODM服务,墙纸胶粉代工,小包装定制,品牌代工,wallpaper adhesive OEM,private label,custom packaging"
+        keywords="OEM定制,ODM服务,墙纸胶粉代工,小包装定制,品牌代工,wallpaper adhesive OEM,private label,custom packaging, wallpaper glue manufacturer china, 墙纸胶代加工, производство клея для обоев под стм"
         type="website"
         lang={i18n.language as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
         image="/images/oem-home.png"
@@ -133,7 +133,7 @@ export default function OemPage() {
             </p>
           </div>
 
-            <div className="relative">
+          <div className="relative">
             {/* 连接线 */}
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 h-full bg-[#10B981]/20 hidden md:block"></div>
 
@@ -205,9 +205,9 @@ export default function OemPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 items-start">
             {/* 左侧图片 */}
             <div className="bg-muted rounded-sm overflow-hidden shadow-lg h-[500px]">
-              <img 
-                src="/images/generated 英文_image.png" 
-                alt="OEM定制包装生产" 
+              <img
+                src="/images/generated 英文_image.png"
+                alt="OEM定制包装生产"
                 className="w-full h-full object-cover"
                 style={{ objectPosition: 'center 15%' }}
               />

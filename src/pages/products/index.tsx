@@ -64,21 +64,21 @@ const ProductsPage = memo(function ProductsPage() {
 
   // 使用防抖优化搜索
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
-  
+
   // 优化的获取产品名称函数
   const getProductName = useCallback((product: Product) => {
     const currentLang = i18n.language || 'zh';
     const nameKey = `name_${currentLang}` as keyof typeof product;
     return product[nameKey] as string || product.name_zh;
   }, [i18n.language]);
-  
+
   // 优化的获取产品描述函数
   const getProductDescription = useCallback((product: Product) => {
     const currentLang = i18n.language || 'zh';
     const descKey = `description_${currentLang}` as keyof typeof product;
     return product[descKey] as string || product.description_zh;
   }, [i18n.language]);
-  
+
   // 缓存过滤结果
   const filteredProducts = useMemo(() => {
     if (!debouncedSearchTerm) return products;
@@ -86,8 +86,8 @@ const ProductsPage = memo(function ProductsPage() {
       const name = getProductName(product);
       const description = getProductDescription(product);
       const searchLower = debouncedSearchTerm.toLowerCase();
-      return name.toLowerCase().includes(searchLower) || 
-             description.toLowerCase().includes(searchLower);
+      return name.toLowerCase().includes(searchLower) ||
+        description.toLowerCase().includes(searchLower);
     });
   }, [products, debouncedSearchTerm, getProductName, getProductDescription]);
 
@@ -197,11 +197,11 @@ const ProductsPage = memo(function ProductsPage() {
 
   // 构建当前页面URL
   const currentUrl = `https://kn-wallpaperglue.com${location.pathname}`;
-  
+
   // 生成产品列表的 ItemList 结构化数据
   const itemListSchema = useMemo(() => {
     if (filteredProducts.length === 0) return null;
-    
+
     const currentLang = i18n.language || 'zh';
     return {
       type: 'ItemList' as const,
@@ -234,13 +234,13 @@ const ProductsPage = memo(function ProductsPage() {
   return (
     <>
       <SEOHelmet
-        title={i18n.language === 'zh' 
+        title={i18n.language === 'zh'
           ? '羧甲基淀粉产品中心 - CMS产品系列'
           : i18n.language === 'en'
-          ? 'Carboxymethyl Starch Products - CMS Product Center'
-          : t('nav.products')}
+            ? 'Carboxymethyl Starch Products - CMS Product Center'
+            : t('nav.products')}
         description={t('products:meta_description')}
-        keywords="羧甲基淀粉,CMS产品,纺织印染,建筑材料,涂料工业,染纸,墙纸胶粉,carboxymethyl starch,CMS products,textile,coating,paper dyeing industry,wallpaper adhesive"
+        keywords={t('products:keywords') + ", heavy duty wallpaper adhesive, vinyl wallpaper glue, methyl cellulose adhesive, 墙纸胶粉厂家, 乙烯基墙纸胶, 甲基纤维素胶粉, клей для виниловых обоев, клей кмц оптом"}
         type="website"
         lang={i18n.language as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
         image="/images/IMG_1412.JPG"
@@ -338,7 +338,7 @@ const ProductsPage = memo(function ProductsPage() {
           <p className="text-white/90 max-w-2xl mx-auto mb-8">
             {t('products:contact_description')}
           </p>
-          <Link 
+          <Link
             to="/contact"
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-white text-[#047857] shadow hover:bg-white/90 h-9 px-4 py-2"
           >

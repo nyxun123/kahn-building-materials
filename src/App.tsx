@@ -6,6 +6,7 @@ import { Toaster } from 'react-hot-toast';
 import { router } from './lib/router';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ServiceWorkerProvider } from './components/ServiceWorkerProvider';
+import { PerformanceMonitor } from './components/PerformanceMonitor';
 import './lib/i18n';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
     <ServiceWorkerProvider>
       <ErrorBoundary>
         <HelmetProvider>
+          <PerformanceMonitor />
           <Toaster position="top-center" />
           <RouterProvider router={router} />
         </HelmetProvider>

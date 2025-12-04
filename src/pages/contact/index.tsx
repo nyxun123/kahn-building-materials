@@ -27,7 +27,7 @@ interface ContactFormData {
 export default function ContactPage() {
   const { t, i18n } = useTranslation(['common', 'contact']);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const {
     register,
     handleSubmit,
@@ -37,10 +37,10 @@ export default function ContactPage() {
 
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
-    
+
     // 显示提交进度
     toast.loading('正在提交您的信息...');
-    
+
     try {
       // 使用Cloudflare Worker API提交联系信息（完全绕过Supabase）
       const response = await fetch(getApiUrl(API_CONFIG.PATHS.CONTACT), {
@@ -71,62 +71,62 @@ export default function ContactPage() {
       toast.dismiss();
       toast.success(
         i18n.language === 'en' ? 'Message submitted successfully! We will reply within 24 hours.' :
-        i18n.language === 'ru' ? 'Сообщение успешно отправлено! Мы ответим в течение 24 часов.' :
-        '留言已成功提交！我们会在24小时内回复您。'
+          i18n.language === 'ru' ? 'Сообщение успешно отправлено! Мы ответим в течение 24 часов.' :
+            '留言已成功提交！我们会在24小时内回复您。'
       );
       reset();
-      
+
     } catch (error) {
       toast.dismiss();
-      
+
       // 更详细的错误处理和用户友好的提示
       let errorMessage = '提交失败，请稍后重试';
-      
+
       if (error instanceof Error) {
         const message = error.message.toLowerCase();
-        
+
         if (message.includes('network') || message.includes('fetch')) {
-          errorMessage = i18n.language === 'en' ? 
+          errorMessage = i18n.language === 'en' ?
             'Network connection failed. Please check your internet connection and try again.' :
             i18n.language === 'ru' ?
-            'Ошибка сети. Пожалуйста, проверьте подключение к интернету и попробуйте снова.' :
-            '网络连接失败，请检查您的网络连接后重试';
+              'Ошибка сети. Пожалуйста, проверьте подключение к интернету и попробуйте снова.' :
+              '网络连接失败，请检查您的网络连接后重试';
         } else if (message.includes('spam') || message.includes('suspicious')) {
-          errorMessage = i18n.language === 'en' ? 
+          errorMessage = i18n.language === 'en' ?
             'Content detected as suspicious. Please revise your message.' :
             i18n.language === 'ru' ?
-            'Обнаружено подозрительное содержание. Пожалуйста, измените сообщение.' :
-            '检测到可疑内容，请修改您的消息';
+              'Обнаружено подозрительное содержание. Пожалуйста, измените сообщение.' :
+              '检测到可疑内容，请修改您的消息';
         } else if (message.includes('required')) {
-          errorMessage = i18n.language === 'en' ? 
+          errorMessage = i18n.language === 'en' ?
             'Please fill in all required fields.' :
             i18n.language === 'ru' ?
-            'Пожалуйста, заполните все обязательные поля.' :
-            '请填写所有必填字段';
+              'Пожалуйста, заполните все обязательные поля.' :
+              '请填写所有必填字段';
         } else if (message.includes('email')) {
-          errorMessage = i18n.language === 'en' ? 
+          errorMessage = i18n.language === 'en' ?
             'Invalid email format. Please check and try again.' :
             i18n.language === 'ru' ?
-            'Неверный формат электронной почты. Пожалуйста, проверьте и попробуйте снова.' :
-            '邮箱格式不正确，请检查后重试';
+              'Неверный формат электронной почты. Пожалуйста, проверьте и попробуйте снова.' :
+              '邮箱格式不正确，请检查后重试';
         } else {
-          errorMessage = i18n.language === 'en' ? 
+          errorMessage = i18n.language === 'en' ?
             'Submission failed. Please try again or contact us directly.' :
             i18n.language === 'ru' ?
-            'Ошибка отправки. Пожалуйста, попробуйте снова или свяжитесь с нами напрямую.' :
-            error.message;
+              'Ошибка отправки. Пожалуйста, попробуйте снова или свяжитесь с нами напрямую.' :
+              error.message;
         }
       }
-      
+
       toast.error(errorMessage);
-      
+
       // 记录错误到控制台便于调试
       console.error('联系表单提交错误:', {
         error: error,
         formData: data,
         timestamp: new Date().toISOString()
       });
-      
+
     } finally {
       setIsSubmitting(false);
     }
@@ -135,13 +135,13 @@ export default function ContactPage() {
   return (
     <>
       <SEOHelmet
-        title={i18n.language === 'zh' 
+        title={i18n.language === 'zh'
           ? '联系我们 - 杭州卡恩羧甲基淀粉供应商'
           : i18n.language === 'en'
-          ? 'Contact Us - Hangzhou Karn CMS Supplier'
-          : t('nav.contact')}
+            ? 'Contact Us - Hangzhou Karn CMS Supplier'
+            : t('nav.contact')}
         description={t('contact:meta_description')}
-        keywords="联系我们,杭州卡恩,浙江省杭州市,羧甲基淀粉供应商,Contact us,Hangzhou Karn,CMS supplier,China manufacturer"
+        keywords={t('contact:keywords')}
         type="website"
         lang={i18n.language as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
         image="/images/IMG_1515.JPG"
@@ -194,7 +194,7 @@ export default function ContactPage() {
             <div>
               <h2 className="text-2xl font-bold text-[#064E3B] mb-6">{t('contact:info.title')}</h2>
               <p className="text-gray-600 mb-8">{t('contact:info.description')}</p>
-              
+
               <div className="space-y-6">
                 <div className="flex items-start">
                   <div className="flex-shrink-0 mt-1">
@@ -237,7 +237,7 @@ export default function ContactPage() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="mt-12">
                 <h3 className="text-lg font-semibold text-[#064E3B] mb-4">{t('contact:info.hours.title')}</h3>
                 <ul className="space-y-2 text-gray-600">
@@ -289,9 +289,9 @@ export default function ContactPage() {
                         id="email"
                         type="email"
                         className={`pl-10 ${errors.email ? 'border-destructive' : ''}`}
-                        {...register('email', { 
+                        {...register('email', {
                           required: true,
-                          pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ 
+                          pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
                         })}
                       />
                       <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
@@ -381,8 +381,8 @@ export default function ContactPage() {
           <h2 className="text-2xl font-bold mb-8 text-center">{t('contact:map.title')}</h2>
           <OptimizedMap />
           <div className="mt-6 text-center text-sm text-muted-foreground">
-            <p>浙江省杭州市临平区崇贤街道沪瑞线 1 号</p>
-            <p className="mt-1">No. 1, Huruixian Road, Chongxian Street, Linping District, Hangzhou, Zhejiang, China</p>
+            <p>浙江省杭州市临平区崇贤街道沪瑞线王家门1号</p>
+            <p className="mt-1">No. 1, Wangjiamen, Huruixian Road, Chongxian Street, Linping District, Hangzhou, Zhejiang, China</p>
           </div>
         </div>
       </section>

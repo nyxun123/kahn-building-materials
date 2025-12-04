@@ -1,146 +1,163 @@
+/**
+ * 性能监控组件
+ * 用于收集和上报网站性能指标
+ */
+
 import { useEffect } from 'react';
 
 interface PerformanceMetrics {
-  loadTime: number;
-  domContentLoaded: number;
-  firstContentfulPaint?: number;
-  largestContentfulPaint?: number;
-  cumulativeLayoutShift?: number;
-  firstInputDelay?: number;
+  // 核心 Web Vitals
+  lcp?: number; // Largest Contentful Paint
+  fid?: number; // First Input Delay
+  cls?: number; // Cumulative Layout Shift
+  fcp?: number; // First Contentful Paint
+  ttfb?: number; // Time to First Byte
+  // 自定义指标
+  pageLoadTime?: number;
+  domContentLoaded?: number;
+  resourceLoadTime?: number;
 }
 
-export const PerformanceMonitor: React.FC = () => {
+export function PerformanceMonitor() {
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || !('PerformanceObserver' in window)) {
+      return;
+    }
 
-    const reportMetrics = () => {
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-      
-      const metrics: PerformanceMetrics = {
-        loadTime: navigation.loadEventEnd - navigation.fetchStart,
-        domContentLoaded: navigation.domContentLoadedEventEnd - navigation.fetchStart,
-      };
+    const metrics: PerformanceMetrics = {};
 
-      // Web Vitals measurements
-      if ('web-vitals' in window || typeof PerformanceObserver !== 'undefined') {
-        // First Contentful Paint
-        const paintEntries = performance.getEntriesByType('paint');
-        const fcp = paintEntries.find(entry => entry.name === 'first-contentful-paint');
-        if (fcp) {
-          metrics.firstContentfulPaint = fcp.startTime;
-        }
-
-        // Largest Contentful Paint
-        try {
-          new PerformanceObserver((entryList) => {
-            const entries = entryList.getEntries();
-            const lastEntry = entries[entries.length - 1];
-            if (lastEntry) {
-              metrics.largestContentfulPaint = lastEntry.startTime;
-            }
-          }).observe({ entryTypes: ['largest-contentful-paint'] });
-        } catch (e) {
-          console.debug('LCP measurement not supported');
-        }
-
-        // Cumulative Layout Shift
-        try {
-          let clsValue = 0;
-          new PerformanceObserver((entryList) => {
-            for (const entry of entryList.getEntries()) {
-              if (!(entry as any).hadRecentInput) {
-                clsValue += (entry as any).value;
-              }
-            }
-            metrics.cumulativeLayoutShift = clsValue;
-          }).observe({ entryTypes: ['layout-shift'] });
-        } catch (e) {
-          console.debug('CLS measurement not supported');
-        }
-
-        // First Input Delay
-        try {
-          new PerformanceObserver((entryList) => {
-            for (const entry of entryList.getEntries()) {
-              metrics.firstInputDelay = (entry as any).processingStart - entry.startTime;
-              break; // Only need the first one
-            }
-          }).observe({ entryTypes: ['first-input'] });
-        } catch (e) {
-          console.debug('FID measurement not supported');
-        }
-      }
-
-      // Log metrics in development
-      if (process.env.NODE_ENV === 'development') {
-        console.group('🚀 Performance Metrics');
-        console.log('Load Time:', `${metrics.loadTime.toFixed(2)}ms`);
-        console.log('DOM Content Loaded:', `${metrics.domContentLoaded.toFixed(2)}ms`);
-        if (metrics.firstContentfulPaint) {
-          console.log('First Contentful Paint:', `${metrics.firstContentfulPaint.toFixed(2)}ms`);
-        }
-        if (metrics.largestContentfulPaint) {
-          console.log('Largest Contentful Paint:', `${metrics.largestContentfulPaint.toFixed(2)}ms`);
-        }
-        if (metrics.cumulativeLayoutShift !== undefined) {
-          console.log('Cumulative Layout Shift:', metrics.cumulativeLayoutShift.toFixed(4));
-        }
-        if (metrics.firstInputDelay !== undefined) {
-          console.log('First Input Delay:', `${metrics.firstInputDelay.toFixed(2)}ms`);
-        }
-        console.groupEnd();
-      }
-
-      // In production, you might want to send metrics to an analytics service
-      if (process.env.NODE_ENV === 'production') {
-        // Example: Send to analytics
-        // analytics.track('Performance Metrics', metrics);
-        
-        // Report poor performance
-        if (metrics.loadTime > 3000) {
-          console.warn('⚠️ Slow page load detected:', `${metrics.loadTime.toFixed(2)}ms`);
-        }
-        
-        if (metrics.largestContentfulPaint && metrics.largestContentfulPaint > 2500) {
-          console.warn('⚠️ Poor LCP detected:', `${metrics.largestContentfulPaint.toFixed(2)}ms`);
-        }
-
-        if (metrics.cumulativeLayoutShift && metrics.cumulativeLayoutShift > 0.1) {
-          console.warn('⚠️ High CLS detected:', metrics.cumulativeLayoutShift.toFixed(4));
-        }
-
-        if (metrics.firstInputDelay && metrics.firstInputDelay > 100) {
-          console.warn('⚠️ High FID detected:', `${metrics.firstInputDelay.toFixed(2)}ms`);
-        }
-      }
-    };
-
-    // Wait for page load
-    if (document.readyState === 'complete') {
-      setTimeout(reportMetrics, 0);
-    } else {
-      window.addEventListener('load', () => {
-        setTimeout(reportMetrics, 0);
+    // 收集 LCP (Largest Contentful Paint)
+    try {
+      const lcpObserver = new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        const lastEntry = entries[entries.length - 1] as any;
+        metrics.lcp = lastEntry.renderTime || lastEntry.loadTime;
       });
+      lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+    } catch (e) {
+      console.warn('LCP observer not supported');
     }
 
-    // Memory usage monitoring (development only)
-    if (process.env.NODE_ENV === 'development' && 'memory' in performance) {
-      const logMemory = () => {
-        const memory = (performance as any).memory;
-        console.group('💾 Memory Usage');
-        console.log('Used JS Heap Size:', `${(memory.usedJSHeapSize / 1048576).toFixed(2)} MB`);
-        console.log('Total JS Heap Size:', `${(memory.totalJSHeapSize / 1048576).toFixed(2)} MB`);
-        console.log('JS Heap Size Limit:', `${(memory.jsHeapSizeLimit / 1048576).toFixed(2)} MB`);
+    // 收集 FID (First Input Delay)
+    try {
+      const fidObserver = new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        entries.forEach((entry: any) => {
+          metrics.fid = entry.processingStart - entry.startTime;
+        });
+      });
+      fidObserver.observe({ entryTypes: ['first-input'] });
+    } catch (e) {
+      console.warn('FID observer not supported');
+    }
+
+    // 收集 CLS (Cumulative Layout Shift)
+    try {
+      let clsValue = 0;
+      const clsObserver = new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        entries.forEach((entry: any) => {
+          if (!entry.hadRecentInput) {
+            clsValue += entry.value;
+          }
+        });
+        metrics.cls = clsValue;
+      });
+      clsObserver.observe({ entryTypes: ['layout-shift'] });
+    } catch (e) {
+      console.warn('CLS observer not supported');
+    }
+
+    // 收集 FCP (First Contentful Paint)
+    try {
+      const fcpObserver = new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        entries.forEach((entry: any) => {
+          if (entry.name === 'first-contentful-paint') {
+            metrics.fcp = entry.startTime;
+          }
+        });
+      });
+      fcpObserver.observe({ entryTypes: ['paint'] });
+    } catch (e) {
+      console.warn('FCP observer not supported');
+    }
+
+    // 收集页面加载时间
+    window.addEventListener('load', () => {
+      const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      if (perfData) {
+        metrics.pageLoadTime = perfData.loadEventEnd - perfData.fetchStart;
+        metrics.domContentLoaded = perfData.domContentLoadedEventEnd - perfData.fetchStart;
+        metrics.ttfb = perfData.responseStart - perfData.requestStart;
+      }
+
+      // 收集资源加载时间
+      const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
+      if (resources.length > 0) {
+        const totalResourceTime = resources.reduce((sum, resource) => {
+          return sum + (resource.responseEnd - resource.startTime);
+        }, 0);
+        metrics.resourceLoadTime = totalResourceTime / resources.length;
+      }
+
+      // 在开发环境输出性能指标
+      if (process.env.NODE_ENV === 'development') {
+        console.group('📊 性能指标');
+        console.log('LCP (最大内容绘制):', metrics.lcp?.toFixed(2), 'ms');
+        console.log('FID (首次输入延迟):', metrics.fid?.toFixed(2), 'ms');
+        console.log('CLS (累积布局偏移):', metrics.cls?.toFixed(4));
+        console.log('FCP (首次内容绘制):', metrics.fcp?.toFixed(2), 'ms');
+        console.log('TTFB (首字节时间):', metrics.ttfb?.toFixed(2), 'ms');
+        console.log('页面加载时间:', metrics.pageLoadTime?.toFixed(2), 'ms');
+        console.log('DOM 内容加载:', metrics.domContentLoaded?.toFixed(2), 'ms');
+        console.log('平均资源加载:', metrics.resourceLoadTime?.toFixed(2), 'ms');
         console.groupEnd();
-      };
+      }
 
-      setTimeout(logMemory, 5000); // Log after 5 seconds
-    }
+      // 可以在这里发送到分析服务
+      // sendToAnalytics(metrics);
+    });
 
+    // 清理函数
+    return () => {
+      // PerformanceObserver 会自动清理
+    };
   }, []);
 
-  return null; // This component doesn't render anything
-};
+  return null; // 此组件不渲染任何内容
+}
 
-export default PerformanceMonitor;
+/**
+ * 性能评分计算
+ */
+export function calculatePerformanceScore(metrics: PerformanceMetrics): number {
+  let score = 100;
+
+  // LCP 评分 (目标: < 2.5s)
+  if (metrics.lcp) {
+    if (metrics.lcp > 4000) score -= 30;
+    else if (metrics.lcp > 2500) score -= 20;
+    else if (metrics.lcp > 2000) score -= 10;
+  }
+
+  // FID 评分 (目标: < 100ms)
+  if (metrics.fid) {
+    if (metrics.fid > 300) score -= 20;
+    else if (metrics.fid > 100) score -= 10;
+  }
+
+  // CLS 评分 (目标: < 0.1)
+  if (metrics.cls) {
+    if (metrics.cls > 0.25) score -= 20;
+    else if (metrics.cls > 0.1) score -= 10;
+  }
+
+  // FCP 评分 (目标: < 1.8s)
+  if (metrics.fcp) {
+    if (metrics.fcp > 3000) score -= 15;
+    else if (metrics.fcp > 1800) score -= 10;
+  }
+
+  return Math.max(0, score);
+}

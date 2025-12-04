@@ -50,12 +50,12 @@ export default function HomePage() {
       console.log('🎯 首页检测到语言变化:', lng);
       setCurrentLang(lng || 'en');
     };
-    
+
     i18n.on('languageChanged', handleLanguageChanged);
-    
+
     // 初始化时也设置一次
     setCurrentLang(i18n.language || 'en');
-    
+
     return () => {
       i18n.off('languageChanged', handleLanguageChanged);
     };
@@ -66,18 +66,18 @@ export default function HomePage() {
     if (!rawContentData || rawContentData.length === 0) {
       return {};
     }
-    
+
     const lang = currentLang || 'en';
-            const langKey = `content_${lang}`;
+    const langKey = `content_${lang}`;
     const contentMap: Record<string, any> = {};
-    
+
     rawContentData.forEach((item: any) => {
-            const contentValue = item[langKey] || item.content_en || item.content_zh || '';
-            
+      const contentValue = item[langKey] || item.content_en || item.content_zh || '';
+
       // 特殊处理OEM图片（根据当前语言选择对应字段）
-      if (item.section_key === 'oem_image' || 
-          item.section_key === 'oem_images' ||
-          item.section_key.startsWith('oem_image')) {
+      if (item.section_key === 'oem_image' ||
+        item.section_key === 'oem_images' ||
+        item.section_key.startsWith('oem_image')) {
         // 根据当前语言选择对应的图片URL
         const langContent = item[langKey] || item.content_en || item.content_zh || item.content_ru || '';
         console.log('🔍 处理OEM图片（语言切换）:', {
@@ -87,7 +87,7 @@ export default function HomePage() {
           langContent: langContent ? langContent.substring(0, 100) : '',
           hasContent: !!langContent
         });
-        
+
         if (langContent) {
           try {
             // 尝试解析为JSON数组
@@ -102,32 +102,32 @@ export default function HomePage() {
             contentMap['oem_images'] = [langContent];
           }
         }
-            } else {
-              contentMap[item.section_key] = contentValue;
-            }
-            
+      } else {
+        contentMap[item.section_key] = contentValue;
+      }
+
       // 如果是数组内容，尝试解析（根据当前语言选择对应字段）
       if (item.section_key.includes('features') || item.section_key.includes('capabilities') || item.section_key.includes('process')) {
-              try {
+        try {
           const langContent = item[langKey] || item.content_en || item.content_zh || item.content_ru || '';
           contentMap[item.section_key] = JSON.parse(langContent) || langContent.split('\n');
-              } catch {
+        } catch {
           const langContent = item[langKey] || item.content_en || item.content_zh || item.content_ru || '';
           contentMap[item.section_key] = langContent.split('\n').filter((i: string) => i.trim());
-              }
-            }
-          });
-          
+        }
+      }
+    });
+
     return contentMap;
   }, [rawContentData, currentLang]);
 
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
-      
+
       try {
         // 获取首页内容（只获取一次，保存原始数据）
-          try {
+        try {
           const contentData = await getPageContents('home');
           setRawContentData(contentData || []); // 保存原始数据，processedContent会自动更新
         } catch (contentError) {
@@ -135,7 +135,7 @@ export default function HomePage() {
           console.log('页面内容API不可用，使用默认内容');
           setRawContentData([]); // 清空原始数据
         }
-        
+
         // 获取热门产品 - 修复API调用，添加时间戳绕过缓存
         const cacheBuster = `?limit=3&_t=${Date.now()}`;
         const productsResponse = await fetch(`/api/products${cacheBuster}`, {
@@ -146,7 +146,7 @@ export default function HomePage() {
           }
         });
         const productsData = await productsResponse.json();
-        
+
         if (productsResponse.ok && productsData.success) {
           // API返回成功，使用返回的数据
           setProducts(productsData.data || []);
@@ -209,7 +209,7 @@ export default function HomePage() {
           ];
           setProducts(mockProducts);
         }
-        
+
       } catch (error) {
         console.error('❌ 获取数据失败:', error);
         // 设置模拟数据确保页面正常显示
@@ -275,13 +275,13 @@ export default function HomePage() {
   return (
     <>
       <SEOHelmet
-        title={i18n.language === 'zh' 
+        title={i18n.language === 'zh'
           ? '羧甲基淀粉CMS专业生产商 - 杭州卡恩新型建材有限公司'
           : i18n.language === 'en'
-          ? 'Professional Carboxymethyl Starch CMS Manufacturer - Hangzhou Karn'
-          : t('nav.home')}
+            ? 'Professional Carboxymethyl Starch CMS Manufacturer - Hangzhou Karn'
+            : t('nav.home')}
         description={pageContent.meta_description || t('home:meta_description')}
-        keywords="羧甲基淀粉,CMS,纺织印染,建筑材料,涂料工业,染纸,墙纸胶粉,carboxymethyl starch,textile,coating,paper dyeing industry,wallpaper adhesive"
+        keywords={t('home:keywords') + ", high strength wallpaper adhesive, eco-friendly wallpaper glue, professional wallcovering adhesive, 强力墙纸胶粉, 环保墙纸胶, 专业墙纸粘合剂, клей для обоев усиленный, экологичный обойный клей"}
         type="website"
         lang={i18n.language as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
         image="/images/IMG_1412.JPG"
@@ -300,7 +300,7 @@ export default function HomePage() {
           email: COMPANY_PROFILE.email,
           sameAs: socialProfileLinks,
           address: {
-            streetAddress: '沪瑞线 1 号',
+            streetAddress: '沪瑞线王家门1号',
             addressLocality: '杭州市临平区崇贤街道',
             addressRegion: '浙江省',
             addressCountry: 'CN',
@@ -336,13 +336,13 @@ export default function HomePage() {
       <section className="relative py-0 h-[90vh] flex items-center overflow-hidden">
         {/* 背景图片 - 工厂仓库图片 */}
         <div className="absolute inset-0 z-0">
-          <img 
-            src="/images/5fbd3f1a-5077-4ecb-8f50-008dab912740.png" 
-            alt={t('home:hero.company_alt')} 
+          <img
+            src="/images/5fbd3f1a-5077-4ecb-8f50-008dab912740.png"
+            alt={t('home:hero.company_alt')}
             className="w-full h-full object-cover"
           />
         </div>
-        
+
         {/* 渐变覆盖层 - 使用深绿色调 */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#064E3B]/90 via-[#047857]/85 to-[#064E3B]/80 z-10"></div>
 
@@ -423,14 +423,14 @@ export default function HomePage() {
             <div className="group relative bg-white overflow-hidden rounded-sm border-t border-l border-gray-200 shadow-sm transition-all hover:shadow-md hover:border-[#10B981]">
               <div className="absolute top-0 left-0 w-2 h-full bg-[#047857]"></div>
               <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
-                <img 
-                  src="/images/应用领域/纺织印染.jpg" 
-                  alt="纺织印染应用" 
+                <img
+                  src="/images/应用领域/纺织印染.jpg"
+                  alt="纺织印染应用"
                   loading="lazy"
                   decoding="async"
                   className="w-full h-full object-cover transition-all group-hover:scale-105"
                 />
-            </div>
+              </div>
               <div className="p-6">
                 <h3 className="text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-3">
                   {t('home:applications.textile.title')}
@@ -438,7 +438,7 @@ export default function HomePage() {
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
                   {t('home:applications.textile.description')}
                 </p>
-                <Link 
+                <Link
                   to={`/${currentLang}/applications#textile`}
                   className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
                 >
@@ -450,16 +450,16 @@ export default function HomePage() {
 
             {/* 建筑材料 */}
             <div className="group relative bg-white overflow-hidden rounded-sm border-t border-l border-gray-200 shadow-sm transition-all hover:shadow-md hover:border-[#10B981]">
-                  <div className="absolute top-0 left-0 w-2 h-full bg-[#047857]"></div>
+              <div className="absolute top-0 left-0 w-2 h-full bg-[#047857]"></div>
               <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
-                      <img
-                  src="/images/应用领域/腻子粉.jpg" 
-                  alt="建筑材料应用" 
+                <img
+                  src="/images/应用领域/腻子粉.jpg"
+                  alt="建筑材料应用"
                   loading="lazy"
                   decoding="async"
                   className="w-full h-full object-cover transition-all group-hover:scale-105"
-                      />
-                    </div>
+                />
+              </div>
               <div className="p-6">
                 <h3 className="text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-3">
                   {t('home:applications.construction.title')}
@@ -467,23 +467,23 @@ export default function HomePage() {
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
                   {t('home:applications.construction.description')}
                 </p>
-                <Link 
+                <Link
                   to={`/${currentLang}/applications#construction`}
                   className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
                 >
                   {t('common:nav.view_applications')}
                   <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
-                    </div>
+              </div>
             </div>
 
             {/* 涂料工业 */}
             <div className="group relative bg-white overflow-hidden rounded-sm border-t border-l border-gray-200 shadow-sm transition-all hover:shadow-md hover:border-[#10B981]">
               <div className="absolute top-0 left-0 w-2 h-full bg-[#047857]"></div>
               <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
-                <img 
-                  src="/images/应用领域/水性涂料.png" 
-                  alt="涂料工业应用" 
+                <img
+                  src="/images/应用领域/水性涂料.png"
+                  alt="涂料工业应用"
                   loading="lazy"
                   decoding="async"
                   className="w-full h-full object-cover transition-all group-hover:scale-105"
@@ -495,24 +495,24 @@ export default function HomePage() {
                 </h3>
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
                   {t('home:applications.coating.description')}
-                  </p>
-                  <Link 
+                </p>
+                <Link
                   to={`/${currentLang}/applications#coating`}
                   className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
-                  >
+                >
                   {t('common:nav.view_applications')}
-                    <ArrowRight className="ml-1 h-4 w-4" />
-                  </Link>
-                </div>
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
+              </div>
             </div>
 
             {/* 染纸工业 */}
             <div className="group relative bg-white overflow-hidden rounded-sm border-t border-l border-gray-200 shadow-sm transition-all hover:shadow-md hover:border-[#10B981]">
               <div className="absolute top-0 left-0 w-2 h-full bg-[#047857]"></div>
               <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
-                <img 
-                  src="/images/应用领域/造纸.JPG" 
-                  alt="染纸工业应用" 
+                <img
+                  src="/images/应用领域/造纸.JPG"
+                  alt="染纸工业应用"
                   loading="lazy"
                   decoding="async"
                   className="w-full h-full object-cover transition-all group-hover:scale-105"
@@ -525,7 +525,7 @@ export default function HomePage() {
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
                   {t('home:applications.paper.description')}
                 </p>
-                <Link 
+                <Link
                   to={`/${currentLang}/applications#paper`}
                   className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
                 >
@@ -539,9 +539,9 @@ export default function HomePage() {
             <div className="group relative bg-white overflow-hidden rounded-sm border-t border-l border-gray-200 shadow-sm transition-all hover:shadow-md hover:border-[#10B981]">
               <div className="absolute top-0 left-0 w-2 h-full bg-[#047857]"></div>
               <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
-                <img 
-                  src="/images/应用领域/墙纸胶.jpeg" 
-                  alt="墙纸胶应用" 
+                <img
+                  src="/images/应用领域/墙纸胶.jpeg"
+                  alt="墙纸胶应用"
                   loading="lazy"
                   decoding="async"
                   className="w-full h-full object-cover transition-all group-hover:scale-105"
@@ -554,7 +554,7 @@ export default function HomePage() {
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
                   {t('home:applications.wallpaper.description')}
                 </p>
-                <Link 
+                <Link
                   to={`/${currentLang}/applications#wallpaper`}
                   className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
                 >
@@ -568,9 +568,9 @@ export default function HomePage() {
             <div className="group relative bg-white overflow-hidden rounded-sm border-t border-l border-gray-200 shadow-sm transition-all hover:shadow-md hover:border-[#10B981]">
               <div className="absolute top-0 left-0 w-2 h-full bg-[#047857]"></div>
               <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
-                <img 
-                  src="/images/应用领域/2ffad18a87f3f3af2a1773cf9ebc892b.JPG" 
-                  alt="干燥剂应用" 
+                <img
+                  src="/images/应用领域/2ffad18a87f3f3af2a1773cf9ebc892b.JPG"
+                  alt="干燥剂应用"
                   loading="lazy"
                   decoding="async"
                   className="w-full h-full object-cover transition-all group-hover:scale-105"
@@ -583,7 +583,7 @@ export default function HomePage() {
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">
                   {t('home:applications.desiccant.description')}
                 </p>
-                <Link 
+                <Link
                   to={`/${currentLang}/applications#desiccant`}
                   className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
                 >
@@ -620,11 +620,11 @@ export default function HomePage() {
               <div className="w-2 h-2 bg-[#10B981] rotate-45"></div>
               <span className="text-white text-sm font-medium tracking-wider uppercase">{t('home:stats.badge')}</span>
             </div>
-            
+
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               {t('home:stats.title')}
             </h2>
-            
+
             <p className="text-green-100 text-lg max-w-3xl mx-auto">
               {t('home:stats.subtitle')}
             </p>
@@ -705,39 +705,39 @@ export default function HomePage() {
                 {/* 工业风格装饰框 */}
                 <div className="absolute -top-3 -left-3 w-16 h-16 border-t-4 border-l-4 border-[#047857] z-10"></div>
                 <div className="absolute -bottom-3 -right-3 w-16 h-16 border-b-4 border-r-4 border-[#047857] z-10"></div>
-                
+
                 {/* 视频播放器 */}
                 <div className="aspect-video w-full bg-black relative z-0">
-                    <iframe 
-                      className="w-full h-full"
+                  <iframe
+                    className="w-full h-full"
                     src="https://www.youtube.com/embed/JJ8y8gjfpHY"
-                      title={pageContent.video_title || t('home:video.title')}
-                      frameBorder="0"
+                    title={pageContent.video_title || t('home:video.title')}
+                    frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                    ></iframe>
+                    allowFullScreen
+                  ></iframe>
                 </div>
-                
+
                 {/* 工业化粒子效果底部条 */}
                 <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-[#064E3B] via-[#047857] to-[#10B981]"></div>
               </div>
             </div>
-            
+
             {/* 右侧内容区域 */}
             <div className="md:w-1/2">
               <div className="flex items-center space-x-2 mb-3">
                 <div className="w-8 h-1 bg-[#047857]"></div>
                 <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">{t('home:video.badge')}</span>
               </div>
-              
+
               <h2 className="industrial-title text-3xl md:text-4xl font-bold text-[#064E3B] mb-6">
                 {pageContent.video_title || t('home:video.title')}
               </h2>
-              
+
               <p className="text-gray-600 leading-relaxed text-lg mb-8">
                 {pageContent.video_subtitle || t('home:video.subtitle')}
               </p>
-              
+
               {/* 工业风格特点列表 */}
               <div className="space-y-4 mb-8">
                 <div className="flex items-start space-x-4">
@@ -749,7 +749,7 @@ export default function HomePage() {
                     <p className="text-gray-600">{t('home:video.features.mixing.description')}</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-4">
                   <div className="w-8 h-8 rounded-sm bg-[#10B981] flex items-center justify-center flex-shrink-0 mt-1">
                     <CheckCircle2 className="h-5 w-5 text-white" />
@@ -760,7 +760,7 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-              
+
               <Button asChild className="bg-[#047857] hover:bg-[#064E3B] text-white rounded-sm px-8 py-6 text-lg transition-colors">
                 <Link to={`/${currentLang}/products`}>
                   {t('home:video.explore_products')}
@@ -779,25 +779,25 @@ export default function HomePage() {
           <div className="absolute top-10 left-10 w-72 h-72 bg-[#047857] rounded-full blur-3xl"></div>
           <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#064E3B] rounded-full blur-3xl"></div>
         </div>
-        
+
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* 标题区 */}
           <div className="text-center mb-16">
             <div className="flex items-center justify-center space-x-2 mb-3">
-                <div className="w-8 h-1 bg-[#047857]"></div>
+              <div className="w-8 h-1 bg-[#047857]"></div>
               <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">{t('home:advantages.badge')}</span>
               <div className="w-8 h-1 bg-[#047857]"></div>
-              </div>
-              
-              <h2 className="industrial-title text-3xl md:text-4xl font-bold text-[#064E3B] mb-6">
+            </div>
+
+            <h2 className="industrial-title text-3xl md:text-4xl font-bold text-[#064E3B] mb-6">
               {t('home:advantages.title')}
-              </h2>
-              
+            </h2>
+
             <p className="text-gray-600 max-w-4xl mx-auto leading-relaxed text-lg">
               {t('home:advantages.subtitle')}
-              </p>
+            </p>
           </div>
-              
+
           {/* 优势卡片网格 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* 环保安全 */}
@@ -806,7 +806,7 @@ export default function HomePage() {
               <div className="absolute top-4 right-4 text-7xl font-bold text-[#047857]/5 group-hover:text-[#047857]/10 transition-colors">
                 01
               </div>
-              
+
               <div className="relative z-10">
                 {/* 图标和徽章 */}
                 <div className="flex items-start justify-between mb-6">
@@ -817,17 +817,17 @@ export default function HomePage() {
                     {t('home:advantages.eco_friendly.badge')}
                   </span>
                 </div>
-                
+
                 {/* 标题 */}
                 <h3 className="text-2xl font-bold text-[#064E3B] mb-3 group-hover:text-[#047857] transition-colors">
                   {t('home:advantages.eco_friendly.title')}
                 </h3>
-                
+
                 {/* 描述 */}
                 <p className="text-gray-600 leading-relaxed mb-6 text-sm">
                   {t('home:advantages.eco_friendly.description')}
                 </p>
-                
+
                 {/* 特点列表 */}
                 <ul className="space-y-3">
                   {(t('home:advantages.eco_friendly.features', { returnObjects: true }) as string[]).map((feature: string, index: number) => (
@@ -837,18 +837,18 @@ export default function HomePage() {
                     </li>
                   ))}
                 </ul>
-                  
+
                 {/* 装饰性底部线条 */}
                 <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#047857] to-[#10B981] group-hover:w-full transition-all duration-500"></div>
               </div>
             </div>
-                
+
             {/* 高性能 */}
             <div className="group relative bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100">
               <div className="absolute top-4 right-4 text-7xl font-bold text-[#047857]/5 group-hover:text-[#047857]/10 transition-colors">
                 02
               </div>
-              
+
               <div className="relative z-10">
                 {/* 图标和徽章 */}
                 <div className="flex items-start justify-between mb-6">
@@ -859,15 +859,15 @@ export default function HomePage() {
                     {t('home:advantages.high_performance.badge')}
                   </span>
                 </div>
-                
+
                 <h3 className="text-2xl font-bold text-[#064E3B] mb-3 group-hover:text-[#047857] transition-colors">
                   {t('home:advantages.high_performance.title')}
                 </h3>
-                
+
                 <p className="text-gray-600 leading-relaxed mb-6 text-sm">
                   {t('home:advantages.high_performance.description')}
                 </p>
-                
+
                 {/* 特点列表 */}
                 <ul className="space-y-3">
                   {(t('home:advantages.high_performance.features', { returnObjects: true }) as string[]).map((feature: string, index: number) => (
@@ -877,17 +877,17 @@ export default function HomePage() {
                     </li>
                   ))}
                 </ul>
-                
+
                 <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#047857] to-[#10B981] group-hover:w-full transition-all duration-500"></div>
               </div>
             </div>
-                
+
             {/* 多功能性 */}
             <div className="group relative bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100">
               <div className="absolute top-4 right-4 text-7xl font-bold text-[#047857]/5 group-hover:text-[#047857]/10 transition-colors">
                 03
               </div>
-            
+
               <div className="relative z-10">
                 {/* 图标和徽章 */}
                 <div className="flex items-start justify-between mb-6">
@@ -898,15 +898,15 @@ export default function HomePage() {
                     {t('home:advantages.multi_functional.badge')}
                   </span>
                 </div>
-              
+
                 <h3 className="text-2xl font-bold text-[#064E3B] mb-3 group-hover:text-[#047857] transition-colors">
                   {t('home:advantages.multi_functional.title')}
                 </h3>
-              
+
                 <p className="text-gray-600 leading-relaxed mb-6 text-sm">
                   {t('home:advantages.multi_functional.description')}
                 </p>
-                
+
                 {/* 特点列表 */}
                 <ul className="space-y-3">
                   {(t('home:advantages.multi_functional.features', { returnObjects: true }) as string[]).map((feature: string, index: number) => (
@@ -916,7 +916,7 @@ export default function HomePage() {
                     </li>
                   ))}
                 </ul>
-              
+
                 <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#047857] to-[#10B981] group-hover:w-full transition-all duration-500"></div>
               </div>
             </div>
@@ -926,7 +926,7 @@ export default function HomePage() {
               <div className="absolute top-4 right-4 text-7xl font-bold text-[#047857]/5 group-hover:text-[#047857]/10 transition-colors">
                 04
               </div>
-              
+
               <div className="relative z-10">
                 {/* 图标和徽章 */}
                 <div className="flex items-start justify-between mb-6">
@@ -937,15 +937,15 @@ export default function HomePage() {
                     {t('home:advantages.easy_to_use.badge')}
                   </span>
                 </div>
-                
+
                 <h3 className="text-2xl font-bold text-[#064E3B] mb-3 group-hover:text-[#047857] transition-colors">
                   {t('home:advantages.easy_to_use.title')}
                 </h3>
-              
+
                 <p className="text-gray-600 leading-relaxed mb-6 text-sm">
                   {t('home:advantages.easy_to_use.description')}
                 </p>
-                
+
                 {/* 特点列表 */}
                 <ul className="space-y-3">
                   {(t('home:advantages.easy_to_use.features', { returnObjects: true }) as string[]).map((feature: string, index: number) => (
@@ -955,7 +955,7 @@ export default function HomePage() {
                     </li>
                   ))}
                 </ul>
-                
+
                 <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#047857] to-[#10B981] group-hover:w-full transition-all duration-500"></div>
               </div>
             </div>
@@ -973,11 +973,11 @@ export default function HomePage() {
               <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">{t('home:why_us.badge')}</span>
               <div className="w-3 h-3 bg-[#047857] rotate-45"></div>
             </div>
-            
+
             <h2 className="text-3xl md:text-4xl font-bold text-[#064E3B] mb-6">
               {pageContent.why_us_title || t('home:why_us.title')}
             </h2>
-            
+
             <div className="mx-auto max-w-2xl relative">
               <p className="text-gray-600 leading-relaxed text-lg">
                 {pageContent.why_us_subtitle || t('home:why_us.subtitle')}
@@ -992,17 +992,17 @@ export default function HomePage() {
             <div className="bg-white p-8 rounded-sm shadow-md relative group hover:shadow-lg transition-all border-t border-l border-gray-100 overflow-hidden">
               {/* 侧边装饰条 */}
               <div className="absolute top-0 left-0 w-1 h-full bg-[#047857] group-hover:w-2 transition-all"></div>
-              
+
               {/* 装饰性底部线条 */}
               <div className="absolute bottom-0 left-0 w-0 h-1 bg-[#10B981] group-hover:w-full transition-all duration-300"></div>
-              
+
               {/* 图标区 */}
               <div className="w-16 h-16 rounded-sm bg-[#047857]/10 flex items-center justify-center mb-6 group-hover:bg-[#047857]/20 transition-colors">
                 <div className="w-10 h-10 rounded-sm bg-[#047857] flex items-center justify-center">
                   <CheckCircle2 className="h-6 w-6 text-white" />
                 </div>
               </div>
-              
+
               <h3 className="text-xl font-bold text-[#064E3B] mb-4 group-hover:text-[#047857] transition-colors">{t('home:why_us.quality.title')}</h3>
               <p className="text-gray-600">{t('home:why_us.quality.description')}</p>
             </div>
@@ -1011,13 +1011,13 @@ export default function HomePage() {
             <div className="bg-white p-8 rounded-sm shadow-md relative group hover:shadow-lg transition-all border-t border-l border-gray-100 overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-[#047857] group-hover:w-2 transition-all"></div>
               <div className="absolute bottom-0 left-0 w-0 h-1 bg-[#10B981] group-hover:w-full transition-all duration-300"></div>
-              
+
               <div className="w-16 h-16 rounded-sm bg-[#047857]/10 flex items-center justify-center mb-6 group-hover:bg-[#047857]/20 transition-colors">
                 <div className="w-10 h-10 rounded-sm bg-[#047857] flex items-center justify-center">
                   <CheckCircle2 className="h-6 w-6 text-white" />
                 </div>
               </div>
-              
+
               <h3 className="text-xl font-bold text-[#064E3B] mb-4 group-hover:text-[#047857] transition-colors">{t('home:why_us.experience.title')}</h3>
               <p className="text-gray-600">{t('home:why_us.experience.description')}</p>
             </div>
@@ -1026,18 +1026,18 @@ export default function HomePage() {
             <div className="bg-white p-8 rounded-sm shadow-md relative group hover:shadow-lg transition-all border-t border-l border-gray-100 overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-[#047857] group-hover:w-2 transition-all"></div>
               <div className="absolute bottom-0 left-0 w-0 h-1 bg-[#10B981] group-hover:w-full transition-all duration-300"></div>
-              
+
               <div className="w-16 h-16 rounded-sm bg-[#047857]/10 flex items-center justify-center mb-6 group-hover:bg-[#047857]/20 transition-colors">
                 <div className="w-10 h-10 rounded-sm bg-[#047857] flex items-center justify-center">
                   <CheckCircle2 className="h-6 w-6 text-white" />
                 </div>
               </div>
-              
+
               <h3 className="text-xl font-bold text-[#064E3B] mb-4 group-hover:text-[#047857] transition-colors">{t('home:why_us.service.title')}</h3>
               <p className="text-gray-600">{t('home:why_us.service.description')}</p>
             </div>
           </div>
-          
+
           {/* 工业风格装饰性分隔线 */}
           <div className="industrial-divider mx-auto w-1/2 mt-16"></div>
         </div>
@@ -1047,21 +1047,21 @@ export default function HomePage() {
       <section className="py-20 md:py-28 relative overflow-hidden">
         {/* 背景图片 */}
         <div className="absolute inset-0 z-0">
-          <img 
-            src="/images/IMG_3247.JPG" 
-            alt={t('home:cta.image_alt')} 
+          <img
+            src="/images/IMG_3247.JPG"
+            alt={t('home:cta.image_alt')}
             className="w-full h-full object-cover"
           />
         </div>
-        
+
         {/* 渐变覆盖层 */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#064E3B]/95 via-[#047857]/90 to-[#064E3B]/85 z-10"></div>
-        
+
         {/* 装饰性网格引导线 */}
         <div className="absolute inset-0 z-20 opacity-10">
           <div className="h-full w-full" style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
         </div>
-        
+
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-30">
           <div className="max-w-4xl mx-auto text-center">
             {/* 装饰性图形 */}
@@ -1070,22 +1070,22 @@ export default function HomePage() {
               <div className="w-3 h-3 bg-[#10B981] mx-2 rotate-45"></div>
               <div className="w-12 h-1 bg-[#10B981]"></div>
             </div>
-            
+
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-8 leading-tight">
               {pageContent.cta_title || t('home:cta.title')}
             </h2>
-            
+
             <p className="text-xl text-green-100 mb-10 max-w-3xl mx-auto leading-relaxed">
               {pageContent.cta_description || t('home:cta.description')}
             </p>
-            
+
             <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
               <Button asChild size="lg" className="bg-white text-[#047857] hover:bg-green-50 px-10 py-7 text-lg rounded-sm">
                 <Link to={`/${currentLang}/contact`}>
                   {t('cta.contact')}
                 </Link>
               </Button>
-              
+
               <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-10 py-7 text-lg rounded-sm">
                 <Link to={`/${currentLang}/products`}>
                   {t('home:cta.browse_products')}
@@ -1093,7 +1093,7 @@ export default function HomePage() {
                 </Link>
               </Button>
             </div>
-            
+
             {/* 装饰性底部图形 */}
             <div className="mt-16 inline-flex items-center justify-center">
               <div className="w-20 h-0.5 bg-[#10B981]/40"></div>

@@ -13,7 +13,7 @@ export default function AboutPage() {
   const location = useLocation();
   const currentLang = i18n.language || 'zh';
   const currentUrl = `https://kn-wallpaperglue.com${location.pathname}`;
-  
+
   // 构建社交媒体链接数组
   const socialProfileLinks = [
     SOCIAL_LINKS.facebook,
@@ -27,7 +27,7 @@ export default function AboutPage() {
       <SEOHelmet
         title={t('nav.about')}
         description={t('about:meta_description')}
-        keywords="浙江卡恩,杭州卡恩,羧甲基淀粉制造商,CMS manufacturer,建材公司,23年经验,Hangzhou Karn,building materials"
+        keywords={t('about:keywords')}
         type="website"
         lang={i18n.language as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
         image="/images/IMG_1515.JPG"
@@ -45,7 +45,7 @@ export default function AboutPage() {
           email: COMPANY_PROFILE.email,
           sameAs: socialProfileLinks,
           address: {
-            streetAddress: '沪瑞线 1 号',
+            streetAddress: '沪瑞线王家门1号',
             addressLocality: '杭州市临平区崇贤街道',
             addressRegion: '浙江省',
             addressCountry: 'CN',
@@ -124,9 +124,9 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="rounded-sm overflow-hidden shadow-lg">
-              <img 
-                src="/images/IMG_1515.JPG" 
-                alt="杭州卡恩新型建材有限公司工厂" 
+              <img
+                src="/images/IMG_1515.JPG"
+                alt="杭州卡恩新型建材有限公司工厂"
                 className="w-full h-full object-cover"
               />
             </div>

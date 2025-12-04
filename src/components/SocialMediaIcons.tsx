@@ -43,7 +43,7 @@ export function SocialMediaIcons({
       <a
         href={SOCIAL_LINKS.youtube}
         target="_blank"
-        rel="noopener noreferrer"
+        rel="noopener noreferrer nofollow"
         className={cn(baseClasses, 'bg-red-600 hover:bg-red-700')}
         title={t('social.youtube')}
         aria-label={t('social.youtube')}
@@ -55,7 +55,7 @@ export function SocialMediaIcons({
       <a
         href={SOCIAL_LINKS.instagram}
         target="_blank"
-        rel="noopener noreferrer"
+        rel="noopener noreferrer nofollow"
         className={cn(baseClasses, 'bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 hover:from-purple-700 hover:via-pink-700 hover:to-orange-600')}
         title={t('social.instagram')}
         aria-label={t('social.instagram')}
@@ -67,7 +67,7 @@ export function SocialMediaIcons({
       <a
         href={SOCIAL_LINKS.facebook}
         target="_blank"
-        rel="noopener noreferrer"
+        rel="noopener noreferrer nofollow"
         className={cn(baseClasses, 'bg-blue-600 hover:bg-blue-700')}
         title={t('social.facebook')}
         aria-label={t('social.facebook')}
@@ -79,7 +79,7 @@ export function SocialMediaIcons({
       <a
         href={WHATSAPP_LINK}
         target="_blank"
-        rel="noopener noreferrer"
+        rel="noopener noreferrer nofollow"
         className={cn(baseClasses, 'bg-green-500 hover:bg-green-600')}
         title={t('social.whatsapp')}
         aria-label={t('social.whatsapp')}
@@ -89,6 +89,8 @@ export function SocialMediaIcons({
     </div>
   );
 }
+
+
 
 
 

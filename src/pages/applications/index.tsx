@@ -8,61 +8,61 @@ import { useState, useMemo } from 'react';
 
 // 应用领域数据，包含对应的产品代码
 const applications = [
-    {
-      id: 'textile',
-      nameKey: 'applications:textile.title',
-      descKey: 'applications:textile.description',
-      scenariosKey: 'applications:textile.applications',
-      benefitsKey: 'applications:textile.features',
-      productCode: 'textile-cms',
-      image: '/images/应用领域/纺织印染.jpg',
-    },
-    {
-      id: 'construction',
-      nameKey: 'applications:construction.title',
-      descKey: 'applications:construction.description',
-      scenariosKey: 'applications:construction.applications',
-      benefitsKey: 'applications:construction.features',
-      productCode: 'construction-cms',
-      image: '/images/应用领域/腻子粉.jpg',
-    },
-    {
-      id: 'coating',
-      nameKey: 'applications:coating.title',
-      descKey: 'applications:coating.description',
-      scenariosKey: 'applications:coating.applications',
-      benefitsKey: 'applications:coating.features',
-      productCode: 'coating-cms',
-      image: '/images/应用领域/水性涂料.png',
-    },
-    {
-      id: 'paper',
-      nameKey: 'applications:paper.title',
-      descKey: 'applications:paper.description',
-      scenariosKey: 'applications:paper.applications',
-      benefitsKey: 'applications:paper.features',
-      productCode: 'paper-dyeing-cms',
-      image: '/images/应用领域/造纸.JPG',
-    },
-    {
-      id: 'wallpaper',
-      nameKey: 'applications:wallpaper.title',
-      descKey: 'applications:wallpaper.description',
-      scenariosKey: 'applications:wallpaper.applications',
-      benefitsKey: 'applications:wallpaper.features',
-      productCode: 'wallpaper-adhesive',
-      image: '/images/应用领域/墙纸胶.jpeg',
-    },
-    {
-      id: 'desiccant',
-      nameKey: 'applications:desiccant.title',
-      descKey: 'applications:desiccant.description',
-      scenariosKey: 'applications:desiccant.applications',
-      benefitsKey: 'applications:desiccant.features',
-      productCode: 'desiccant-gel',
-      image: '/images/应用领域/2ffad18a87f3f3af2a1773cf9ebc892b.JPG',
-    },
-  ];
+  {
+    id: 'textile',
+    nameKey: 'applications:textile.title',
+    descKey: 'applications:textile.description',
+    scenariosKey: 'applications:textile.applications',
+    benefitsKey: 'applications:textile.features',
+    productCode: 'textile-cms',
+    image: '/images/应用领域/纺织印染.jpg',
+  },
+  {
+    id: 'construction',
+    nameKey: 'applications:construction.title',
+    descKey: 'applications:construction.description',
+    scenariosKey: 'applications:construction.applications',
+    benefitsKey: 'applications:construction.features',
+    productCode: 'construction-cms',
+    image: '/images/应用领域/腻子粉.jpg',
+  },
+  {
+    id: 'coating',
+    nameKey: 'applications:coating.title',
+    descKey: 'applications:coating.description',
+    scenariosKey: 'applications:coating.applications',
+    benefitsKey: 'applications:coating.features',
+    productCode: 'coating-cms',
+    image: '/images/应用领域/水性涂料.png',
+  },
+  {
+    id: 'paper',
+    nameKey: 'applications:paper.title',
+    descKey: 'applications:paper.description',
+    scenariosKey: 'applications:paper.applications',
+    benefitsKey: 'applications:paper.features',
+    productCode: 'paper-dyeing-cms',
+    image: '/images/应用领域/造纸.JPG',
+  },
+  {
+    id: 'wallpaper',
+    nameKey: 'applications:wallpaper.title',
+    descKey: 'applications:wallpaper.description',
+    scenariosKey: 'applications:wallpaper.applications',
+    benefitsKey: 'applications:wallpaper.features',
+    productCode: 'wallpaper-adhesive',
+    image: '/images/应用领域/墙纸胶.jpeg',
+  },
+  {
+    id: 'desiccant',
+    nameKey: 'applications:desiccant.title',
+    descKey: 'applications:desiccant.description',
+    scenariosKey: 'applications:desiccant.applications',
+    benefitsKey: 'applications:desiccant.features',
+    productCode: 'desiccant-gel',
+    image: '/images/应用领域/2ffad18a87f3f3af2a1773cf9ebc892b.JPG',
+  },
+];
 
 export default function ApplicationsPage() {
   const { t, i18n } = useTranslation(['common', 'applications']);
@@ -70,10 +70,10 @@ export default function ApplicationsPage() {
   const location = useLocation();
   const currentLang = lang || i18n.language || 'en';
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
-  
+
   // 构建当前页面URL
   const currentUrl = `https://kn-wallpaperglue.com${location.pathname}`;
-  
+
   // 生成应用领域的 ItemList 结构化数据
   const itemListSchema = useMemo(() => {
     return {
@@ -99,7 +99,7 @@ export default function ApplicationsPage() {
       <SEOHelmet
         title={t('nav.applications')}
         description={t('applications:meta_description')}
-        keywords="纺织印染,墙纸胶粉,建筑材料,水性涂料,干燥剂,染纸,羧甲基淀粉应用,textile printing,wallpaper adhesive,construction,coating,desiccant,paper dyeing industry"
+        keywords={t('applications:keywords') + ", textile sizing agent, construction putty additive, paper coating adhesive, 纺织上浆剂, 建筑腻子添加剂, 造纸涂布胶, шлихтующий агент для текстиля, добавка для шпатлевки"}
         type="website"
         lang={i18n.language as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
         image="/images/应用领域/纺织印染.jpg"
@@ -137,13 +137,13 @@ export default function ApplicationsPage() {
       {/* 英雄区 - 工业风格 */}
       <section className="relative py-0 h-[60vh] flex items-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img 
-            src="/images/5fbd3f1a-5077-4ecb-8f50-008dab912740.png" 
-            alt={t('applications:hero.alt')} 
+          <img
+            src="/images/5fbd3f1a-5077-4ecb-8f50-008dab912740.png"
+            alt={t('applications:hero.alt')}
             className="w-full h-full object-cover"
           />
         </div>
-        
+
         <div className="absolute inset-0 bg-gradient-to-r from-[#064E3B]/90 via-[#047857]/85 to-[#064E3B]/80 z-10"></div>
 
         <div className="absolute left-0 top-1/4 w-full h-px bg-[#10B981]/20 z-20"></div>
@@ -181,22 +181,22 @@ export default function ApplicationsPage() {
               >
                 {/* 图片区域 */}
                 <div className="relative overflow-hidden aspect-[16/9] bg-gray-100">
-                  <img 
-                    src={app.image} 
-                    alt={t(app.nameKey)} 
+                  <img
+                    src={app.image}
+                    alt={t(app.nameKey)}
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
-                
+
                 {/* 内容区域 */}
                 <div className="p-6 md:p-8 flex-1 flex flex-col">
                   <h2 className="text-2xl md:text-3xl font-bold text-[#064E3B] mb-3 group-hover:text-[#047857] transition-colors">
                     {t(app.nameKey)}
                   </h2>
-                  
+
                   <p className="text-gray-600 leading-relaxed mb-6">
                     {t(app.descKey)}
                   </p>
@@ -249,7 +249,7 @@ export default function ApplicationsPage() {
                           ))}
                         </div>
                       </div>
-                      
+
                       {/* 推荐产品链接 */}
                       <div className="mt-6 pt-4 border-t border-gray-100">
                         <Link to={`/${currentLang}/products/${app.productCode}`}>
@@ -264,7 +264,7 @@ export default function ApplicationsPage() {
 
                   {/* 了解更多/收起按钮 */}
                   <div className="mt-auto pt-4">
-                    <Button 
+                    <Button
                       onClick={() => setExpandedCard(expandedCard === app.id ? null : app.id)}
                       className="bg-[#047857] hover:bg-[#064E3B] text-white rounded-sm px-6 py-2.5 text-sm transition-colors w-full md:w-auto"
                     >
