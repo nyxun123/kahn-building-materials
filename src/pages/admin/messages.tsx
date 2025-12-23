@@ -104,8 +104,9 @@ const Messages = () => {
                   {records.map((message: any) => (
                     <TableRow
                       key={message.id}
+                      onClick={() => setSelectedId(message.id)}
                       className={`
-                        border-b border-gray-200 transition-colors duration-150
+                        border-b border-gray-200 transition-colors duration-150 cursor-pointer
                         ${selectedId === message.id ? 'bg-indigo-50' : 'hover:bg-indigo-50'}
                         ${!message.is_read ? 'border-l-4 border-l-amber-500' : ''}
                       `}

@@ -97,8 +97,102 @@ export default function AboutPage() {
         }}
       />
 
-      {/* 页面标题区 */}
-      <section className="bg-gradient-to-r from-[#064E3B] to-[#047857] py-16 md:py-24">
+      {/* Mobile Factory Card Header (App Style) */}
+      <section className="lg:hidden bg-white pb-6 pt-4 border-b border-gray-100">
+        <div className="container mx-auto px-4">
+          {/* Factory Profile Card */}
+          <div className="flex items-start space-x-4 mb-6">
+            <div className="w-16 h-16 bg-white border border-gray-200 rounded-sm p-1 flex items-center justify-center shadow-sm">
+              <img src="/images/logo.png" alt="Logo" className="w-full h-auto" />
+            </div>
+            <div className="flex-1">
+              <h1 className="text-lg font-bold text-[#064E3B] leading-tight mb-2">
+                {t('about:hero.title')}
+              </h1>
+              <div className="flex flex-wrap gap-2 text-[10px] text-gray-500">
+                <span className="bg-gray-100 px-2 py-0.5 rounded flex items-center">
+                  <CheckCircle2 className="w-3 h-3 mr-1 text-[#047857]" /> Verified
+                </span>
+                <span className="bg-gray-100 px-2 py-0.5 rounded">Est. 2010</span>
+                <span className="bg-gray-100 px-2 py-0.5 rounded">Hangzhou, CN</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Stats Grid */}
+          <div className="grid grid-cols-3 gap-2 mb-6">
+            <div className="bg-[#047857]/5 rounded p-3 text-center border border-[#047857]/10">
+              <div className="text-xl font-bold text-[#047857] mb-1">100k</div>
+              <div className="text-[10px] text-gray-500">Capacity(T)</div>
+            </div>
+            <div className="bg-[#047857]/5 rounded p-3 text-center border border-[#047857]/10">
+              <div className="text-xl font-bold text-[#047857] mb-1">20+</div>
+              <div className="text-[10px] text-gray-500">R&D Team</div>
+            </div>
+            <div className="bg-[#047857]/5 rounded p-3 text-center border border-[#047857]/10">
+              <div className="text-xl font-bold text-[#047857] mb-1">45+</div>
+              <div className="text-[10px] text-gray-500">Countries</div>
+            </div>
+          </div>
+
+          {/* Mobile Factory Photo */}
+          <div className="mb-6 rounded-sm overflow-hidden shadow-sm">
+            <img src="/images/factory-view.jpg" alt="Factory" className="w-full h-48 object-cover" />
+          </div>
+
+          {/* Mobile Introduction */}
+          <div className="mb-6">
+            <h3 className="text-sm font-bold text-[#064E3B] mb-2 uppercase tracking-wide">Factory Overview</h3>
+            <p className="text-xs text-gray-600 leading-relaxed text-justify">
+              {t('about:company.paragraph1')}
+            </p>
+          </div>
+
+          {/* Mobile Certs (Hidden as ISO not applicable yet) */}
+          {/* <div className="mb-2">
+              <h3 className="text-sm font-bold text-[#064E3B] mb-3 uppercase tracking-wide">Certificates</h3>
+              <div className="flex space-x-3 overflow-x-auto no-scrollbar pb-2">
+                 {[1,2,3].map((i) => (
+                    <div key={i} className="flex-shrink-0 w-24 h-16 bg-gray-100 border border-gray-200 rounded flex items-center justify-center text-[10px] text-gray-400">
+                       Best Quality
+                    </div>
+                 ))}
+              </div>
+           </div> */}
+        </div>
+      </section>
+
+      {/* Mobile History Timeline (Vertical) */}
+      <section className="lg:hidden bg-gray-50 py-8">
+        <div className="container mx-auto px-4">
+          <h3 className="text-sm font-bold text-[#064E3B] mb-6 uppercase tracking-wide text-center">Development Path</h3>
+          <div className="relative pl-4 space-y-8 before:absolute before:left-[19px] before:top-2 before:bottom-2 before:w-0.5 before:bg-[#047857]/20">
+            <div className="relative pl-8">
+              <div className="absolute left-0 top-1 w-2.5 h-2.5 rounded-full bg-[#047857] border-2 border-white shadow-sm z-10"></div>
+              <span className="text-xs font-bold text-[#047857] block mb-1">2010</span>
+              <p className="text-xs text-gray-600">{t('about:history.events.founding')}</p>
+            </div>
+            <div className="relative pl-8">
+              <div className="absolute left-0 top-1 w-2.5 h-2.5 rounded-full bg-[#047857] border-2 border-white shadow-sm z-10"></div>
+              <span className="text-xs font-bold text-[#047857] block mb-1">2015</span>
+              <p className="text-xs text-gray-600">{t('about:history.events.expansion')}</p>
+            </div>
+            <div className="relative pl-8">
+              <div className="absolute left-0 top-1 w-2.5 h-2.5 rounded-full bg-[#047857] border-2 border-white shadow-sm z-10"></div>
+              <span className="text-xs font-bold text-[#047857] block mb-1">2018</span>
+              <p className="text-xs text-gray-600">{t('about:history.events.international')}</p>
+            </div>
+            <div className="relative pl-8">
+              <div className="absolute left-0 top-1 w-2.5 h-2.5 rounded-full bg-[#047857] border-2 border-white shadow-sm z-10"></div>
+              <span className="text-xs font-bold text-[#047857] block mb-1">2023</span>
+              <p className="text-xs text-gray-600">{t('about:history.events.present')}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Desktop Specific Sections (Original) */}
+      <section className="hidden lg:block bg-gradient-to-r from-[#064E3B] to-[#047857] py-16 md:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             {t('about:hero.title')}
@@ -109,8 +203,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 公司简介 */}
-      <section className="py-16 md:py-24 bg-background">
+      {/* 公司简介 (Desktop) */}
+      <section className="hidden lg:block py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
@@ -134,8 +228,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 我们的优势 */}
-      <section className="py-16 md:py-24 bg-muted/30">
+      {/* 我们的优势 (Desktop) */}
+      <section className="hidden lg:block py-16 md:py-24 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-bold text-[#064E3B] mb-4">
@@ -186,8 +280,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 我们的历史 */}
-      <section className="py-16 md:py-24 bg-background">
+      {/* 我们的历史 (Desktop) */}
+      <section className="hidden lg:block py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-bold text-[#064E3B] mb-4">
@@ -253,8 +347,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 核心实力 */}
-      <section className="py-20 md:py-28 bg-muted/30">
+      {/* 核心实力 (Desktop) */}
+      <section className="hidden lg:block py-20 md:py-28 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-[#064E3B] mb-6">

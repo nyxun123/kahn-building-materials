@@ -84,35 +84,62 @@ const SCHEMA_TYPES = [
 const YandexStatusCard = () => {
   const [status, setStatus] = useState<'loading' | 'connected' | 'not_configured' | 'error'>('loading');
   const [data, setData] = useState<any>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    const fetchYandexData = async () => {
-      try {
-        const response = await fetch('/api/admin/yandex', {
-          headers: {
-            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('admin-auth') || '{}').token}`,
-          },
-        });
-        if (response.ok) {
-          const result = await response.json();
-          if (result.data && result.data.status === 'connected') {
-            setData(result.data.data);
-            setStatus('connected');
-          } else if (result.data && result.data.status === 'not_configured') {
-            setStatus('not_configured');
-          } else {
-            setStatus('error');
-          }
+    fetchYandexData();
+  }, []);
+
+  const fetchYandexData = async () => {
+    try {
+      const response = await fetch('/api/admin/yandex', {
+        headers: {
+          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('admin-auth') || '{}').token}`,
+        },
+      });
+      if (response.ok) {
+        const result = await response.json();
+        if (result.data && result.data.status === 'connected') {
+          setData(result.data.data);
+          setStatus('connected');
+        } else if (result.data && result.data.status === 'not_configured') {
+          setStatus('not_configured');
         } else {
           setStatus('error');
         }
-      } catch (e) {
-        console.error('Failed to fetch Yandex data', e);
+      } else {
         setStatus('error');
       }
-    };
-    fetchYandexData();
-  }, []);
+    } catch (e) {
+      console.error('Failed to fetch Yandex data', e);
+      setStatus('error');
+    }
+  };
+
+  const handleSubmitSitemap = async () => {
+    setSubmitting(true);
+    try {
+      const response = await fetch('/api/admin/yandex-submit-sitemap', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${JSON.parse(localStorage.getItem('admin-auth') || '{}').token}`,
+        },
+      });
+      const result = await response.json();
+      if (result.success) {
+        toast.success('Sitemap 已成功提交至 Yandex');
+        // Refresh data to see if anything changes (though indexing takes time)
+        fetchYandexData();
+      } else {
+        toast.error(`提交失败: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      toast.error('提交 Sitemap 时发生错误');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   if (status === 'not_configured') {
     return (
@@ -160,7 +187,18 @@ const YandexStatusCard = () => {
           <span className="text-red-600 font-bold">Y</span>
           Yandex Webmaster
         </Title>
-        <Badge color="green">已连接</Badge>
+        <div className="flex gap-2">
+          <Button
+            size="xs"
+            variant="secondary"
+            onClick={handleSubmitSitemap}
+            loading={submitting}
+            disabled={status !== 'connected'}
+          >
+            提交 Sitemap
+          </Button>
+          <Badge color="green">已连接</Badge>
+        </div>
       </Flex>
 
       <Grid numItems={3} className="gap-4">

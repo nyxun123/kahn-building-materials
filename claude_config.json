@@ -13,8 +13,19 @@
       }
     },
     "chrome-devtools": {
-      "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"]
+      "command": "/usr/local/bin/npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--logFile=/Users/nll/Documents/可以用的网站/tmp/chrome-mcp.log",
+        "--userDataDir=/Users/nll/Documents/可以用的网站/tmp-chrome-profile"
+      ],
+      "env": {
+        "npm_config_cache": "/Users/nll/Documents/可以用的网站/tmp/.npm-cache",
+        "npm_config_offline": "true",
+        "DEBUG": "mcp:*",
+        "PATH": "/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin:~/.local/bin"
+      }
     },
     "zai-mcp-server": {
       "command": "sh",

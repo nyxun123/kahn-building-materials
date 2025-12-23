@@ -1,8 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, CheckCircle2, Play, Leaf, Zap, Layers, Droplets, Check } from 'lucide-react';
-
+import { ArrowRight, CheckCircle2, Play, Leaf, Zap, Layers, Droplets, Check, ShoppingBag, Hammer, Shirt, Brush, FileText, Factory, Grid, Star, Truck, Package, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SEOHelmet } from '@/components/SEOHelmet';
 import { StructuredData } from '@/components/StructuredData';
@@ -332,9 +331,9 @@ export default function HomePage() {
         }}
       />
 
-      {/* 英雄区域 - 工业化设计 */}
-      <section className="relative py-0 h-[90vh] flex items-center overflow-hidden">
-        {/* 背景图片 - 工厂仓库图片 */}
+      {/* 英雄区域 (Banner) - B2B 工厂看板风格 */}
+      <section className="relative py-0 min-h-[320px] md:min-h-[85vh] flex items-center overflow-hidden">
+        {/* 背景图片 */}
         <div className="absolute inset-0 z-0">
           <img
             src="/images/5fbd3f1a-5077-4ecb-8f50-008dab912740.png"
@@ -343,53 +342,45 @@ export default function HomePage() {
           />
         </div>
 
-        {/* 渐变覆盖层 - 使用深绿色调 */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#064E3B]/90 via-[#047857]/85 to-[#064E3B]/80 z-10"></div>
+        {/* 渐变覆盖层 - 增加专业感 */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#064E3B]/90 to-transparent z-10"></div>
 
-        {/* 装饰性工业线条元素 */}
-        <div className="absolute left-0 top-1/4 w-full h-px bg-[#10B981]/20 z-20"></div>
-        <div className="absolute left-0 bottom-1/4 w-full h-px bg-[#10B981]/20 z-20"></div>
-        <div className="absolute top-0 left-1/3 w-px h-full bg-[#10B981]/20 z-20"></div>
-        <div className="absolute top-0 right-1/3 w-px h-full bg-[#10B981]/20 z-20"></div>
-
-        {/* 装饰性几何元素 */}
-        <div className="absolute top-20 left-20 w-24 h-24 border-l-2 border-t-2 border-[#10B981]/30 z-20"></div>
-        <div className="absolute bottom-20 right-20 w-24 h-24 border-r-2 border-b-2 border-[#10B981]/30 z-20"></div>
-
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-30">
-          <div className="max-w-3xl mx-auto">
-            <div className="flex flex-col items-start space-y-8">
-              {/* 工业风格小标题 */}
-              <div className="inline-flex items-center space-x-2 bg-[#064E3B] px-4 py-1.5 rounded-sm">
-                <div className="w-2 h-2 bg-[#10B981] rotate-45"></div>
-                <span className="text-white text-sm font-medium tracking-wider uppercase">{t('home:hero.badge')}</span>
+        <div className="container mx-auto px-4 relative z-30 h-full flex flex-col justify-center">
+          <div className="max-w-3xl mx-auto w-full">
+            <div className="flex flex-col items-start lg:space-y-8">
+              {/* Mobile Factory Identity */}
+              <div className="lg:hidden flex items-center space-x-2 mb-2 bg-white/10 backdrop-blur-sm px-2 py-1 rounded border border-white/20">
+                <Factory className="w-3 h-3 text-[#10B981]" />
+                <span className="text-white text-[10px] uppercase tracking-wider font-medium">Source Factory</span>
               </div>
 
-              {/* 大标题 - 使用更大更精细的字体 */}
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight">
+              <h1 className="text-xl lg:text-6xl font-bold text-white leading-tight tracking-tight mb-2 lg:mb-0">
                 <span className="block">{pageContent.hero_title || t('home:hero.title')}</span>
-                <span className="block mt-2 text-[#10B981]">{t('home:hero.subtitle_highlight')}</span>
               </h1>
-
-              {/* 副标题 - 清晰简洁 */}
-              <p className="text-green-100 text-lg md:text-xl leading-relaxed max-w-xl">
+              <p className="hidden lg:block text-green-100 text-xl leading-relaxed max-w-xl">
                 {pageContent.hero_subtitle || t('home:hero.subtitle')}
               </p>
 
-              {/* 工业风格分隔线 */}
-              <div className="w-24 h-1 bg-[#10B981]"></div>
+              {/* Mobile Trust Badges */}
+              <div className="lg:hidden flex flex-wrap gap-2 mt-2">
+                <span className="text-[10px] text-white/80 bg-black/20 px-2 py-0.5 rounded flex items-center">
+                  <CheckCircle2 className="w-3 h-3 mr-1 text-[#10B981]" /> 15+ Years
+                </span>
+                <span className="text-[10px] text-white/80 bg-black/20 px-2 py-0.5 rounded flex items-center">
+                  <CheckCircle2 className="w-3 h-3 mr-1 text-[#10B981]" /> ISO 9001
+                </span>
+                <span className="text-[10px] text-white/80 bg-black/20 px-2 py-0.5 rounded flex items-center">
+                  <CheckCircle2 className="w-3 h-3 mr-1 text-[#10B981]" /> Global Shipping
+                </span>
+              </div>
 
-              {/* 按钮区 - 更大更突出 */}
-              <div className="flex flex-col sm:flex-row gap-5 mt-4">
+              {/* Desktop CTA */}
+              <div className="hidden lg:flex flex-row gap-5 mt-4">
                 <Button asChild size="lg" className="bg-[#10B981] text-white hover:bg-[#059669] px-8 py-6 text-lg rounded-sm">
-                  <Link to={`/${currentLang}/products`}>
-                    {t('cta.view_products')}
-                  </Link>
+                  <Link to={`/${currentLang}/products`}>{t('cta.view_products')}</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-8 py-6 text-lg rounded-sm">
-                  <Link to={`/${currentLang}/contact`}>
-                    {t('cta.contact')}
-                  </Link>
+                  <Link to={`/${currentLang}/contact`}>{t('cta.contact')}</Link>
                 </Button>
               </div>
             </div>
@@ -397,28 +388,143 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 应用领域展示区 - 工业风格 */}
-      <section className="py-20 md:py-28 bg-white industrial-bg">
+      {/* Mobile Factory Capability Stats (The "Trust" Row) */}
+      <section className="bg-white border-b border-gray-100 lg:hidden">
+        <div className="grid grid-cols-3 divide-x divide-gray-100">
+          <div className="p-3 text-center">
+            <div className="text-[#047857] font-bold text-lg">2010</div>
+            <div className="text-[10px] text-gray-500">{t('home:stats.years.description') || 'Established'}</div>
+          </div>
+          <div className="p-3 text-center">
+            <div className="text-[#047857] font-bold text-lg">45+</div>
+            <div className="text-[10px] text-gray-500">Export Countries</div>
+          </div>
+          <div className="p-3 text-center">
+            <div className="text-[#047857] font-bold text-lg">100%</div>
+            <div className="text-[10px] text-gray-500">Quality Assured</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Mobile Category Dashboard (Grid Navigation) */}
+      <section className="bg-gray-50 py-4 lg:hidden">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wide">Product Catalog</h3>
+            <Link to={`/${currentLang}/applications`} className="text-xs text-[#047857] font-medium flex items-center">
+              All Products <ArrowRight className="w-3 h-3 ml-1" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            {/* Wallpaper Adhesive */}
+            <Link to={`/${currentLang}/products/wallpaper-adhesive`} className="group bg-white p-4 rounded shadow-sm border border-gray-200 flex flex-col items-center text-center hover:border-[#047857]/50 transition-colors">
+              <div className="w-10 h-10 bg-[#047857]/10 rounded-full flex items-center justify-center mb-2 group-hover:bg-[#047857] transition-colors">
+                <Package className="w-5 h-5 text-[#047857] group-hover:text-white transition-colors" />
+              </div>
+              <span className="text-sm font-medium text-gray-800">{t('nav.wallpaper_glue')}</span>
+              <span className="text-[10px] text-gray-400 mt-1">High Strength / Eco</span>
+            </Link>
+
+            {/* Construction Grade */}
+            <Link to={`/${currentLang}/products/construction-cms`} className="group bg-white p-4 rounded shadow-sm border border-gray-200 flex flex-col items-center text-center hover:border-[#047857]/50 transition-colors">
+              <div className="w-10 h-10 bg-[#047857]/10 rounded-full flex items-center justify-center mb-2 group-hover:bg-[#047857] transition-colors">
+                <Hammer className="w-5 h-5 text-[#047857] group-hover:text-white transition-colors" />
+              </div>
+              <span className="text-sm font-medium text-gray-800">{t('home:applications.construction.title')}</span>
+              <span className="text-[10px] text-gray-400 mt-1">Putty / Mortar Additive</span>
+            </Link>
+
+            {/* Textile Grade */}
+            <Link to={`/${currentLang}/products/textile-cms`} className="group bg-white p-4 rounded shadow-sm border border-gray-200 flex flex-col items-center text-center hover:border-[#047857]/50 transition-colors">
+              <div className="w-10 h-10 bg-[#047857]/10 rounded-full flex items-center justify-center mb-2 group-hover:bg-[#047857] transition-colors">
+                <Shirt className="w-5 h-5 text-[#047857] group-hover:text-white transition-colors" />
+              </div>
+              <span className="text-sm font-medium text-gray-800">{t('home:applications.textile.title')}</span>
+              <span className="text-[10px] text-gray-400 mt-1">Sizing / Printing</span>
+            </Link>
+
+            {/* Coating Grade */}
+            <Link to={`/${currentLang}/products/coating-cms`} className="group bg-white p-4 rounded shadow-sm border border-gray-200 flex flex-col items-center text-center hover:border-[#047857]/50 transition-colors">
+              <div className="w-10 h-10 bg-[#047857]/10 rounded-full flex items-center justify-center mb-2 group-hover:bg-[#047857] transition-colors">
+                <Brush className="w-5 h-5 text-[#047857] group-hover:text-white transition-colors" />
+              </div>
+              <span className="text-sm font-medium text-gray-800">{t('home:applications.coating.title')}</span>
+              <span className="text-[10px] text-gray-400 mt-1">Water-based Paint</span>
+            </Link>
+
+            {/* Paper Grade */}
+            <Link to={`/${currentLang}/products/paper-dyeing-cms`} className="group bg-white p-4 rounded shadow-sm border border-gray-200 flex flex-col items-center text-center hover:border-[#047857]/50 transition-colors">
+              <div className="w-10 h-10 bg-[#047857]/10 rounded-full flex items-center justify-center mb-2 group-hover:bg-[#047857] transition-colors">
+                <FileText className="w-5 h-5 text-[#047857] group-hover:text-white transition-colors" />
+              </div>
+              <span className="text-sm font-medium text-gray-800">{t('home:applications.paper.title')}</span>
+              <span className="text-[10px] text-gray-400 mt-1">Wet End / Coating</span>
+            </Link>
+
+            {/* Desiccant */}
+            <Link to={`/${currentLang}/products/desiccant-gel`} className="group bg-white p-4 rounded shadow-sm border border-gray-200 flex flex-col items-center text-center hover:border-[#047857]/50 transition-colors">
+              <div className="w-10 h-10 bg-[#047857]/10 rounded-full flex items-center justify-center mb-2 group-hover:bg-[#047857] transition-colors">
+                <Droplets className="w-5 h-5 text-[#047857] group-hover:text-white transition-colors" />
+              </div>
+              <span className="text-sm font-medium text-gray-800">{t('home:applications.desiccant.title')}</span>
+              <span className="text-[10px] text-gray-400 mt-1">Moisture Control</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Factory Info Preview (Mobile) - Replaces Product Feed */}
+      <section className="bg-white py-6 lg:hidden border-t border-gray-100">
+        <div className="container mx-auto px-4">
+          <h3 className="text-sm font-bold text-gray-800 mb-4 uppercase tracking-wide">Factory Overview</h3>
+          <div className="bg-gray-50 rounded p-4 border border-gray-100">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-12 h-12 bg-white rounded border border-gray-200 p-1 flex items-center justify-center">
+                <img src="/images/logo.png" alt="Logo" className="w-full h-auto" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-gray-900">{t('header.company_name')}</h4>
+                <p className="text-[10px] text-gray-500">Est. 2010 · Hangzhou, China</p>
+              </div>
+            </div>
+            <div className="text-xs text-gray-600 leading-relaxed mb-3 line-clamp-3">
+              {t('footer.company_brief')}
+            </div>
+            <div className="flex gap-2">
+              <Button asChild size="sm" variant="outline" className="flex-1 h-8 text-xs border-gray-300">
+                <Link to={`/${currentLang}/about`}>View Profile</Link>
+              </Button>
+              <Button asChild size="sm" className="flex-1 h-8 text-xs bg-[#047857] hover:bg-[#064E3B]">
+                <Link to={`/${currentLang}/contact`}>Contact Us</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Desktop Sections (Hidden on Mobile) */}
+      <section className="hidden lg:block py-20 md:py-28 bg-white industrial-bg">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* 工业风格标题区 */}
-          <div className="mb-16 text-center">
+          <div className="mb-10 md:mb-16 text-center">
             <div className="flex items-center justify-center space-x-2 mb-3">
               <div className="w-8 h-1 bg-[#047857]"></div>
               <span className="text-[#047857] font-medium uppercase tracking-wider text-sm">{t('home:applications.badge')}</span>
               <div className="w-8 h-1 bg-[#047857]"></div>
             </div>
 
-            <h2 className="industrial-title text-3xl md:text-4xl font-bold text-[#064E3B] mb-6">
+            <h2 className="industrial-title text-2xl md:text-4xl font-bold text-[#064E3B] mb-4 md:mb-6">
               {t('home:applications.title')}
             </h2>
 
-            <p className="text-gray-600 max-w-3xl mx-auto leading-relaxed text-lg">
+            <p className="text-gray-600 max-w-3xl mx-auto leading-relaxed text-base md:text-lg">
               {t('home:applications.subtitle')}
             </p>
           </div>
 
           {/* 6大应用领域卡片 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mt-8 md:mt-12">
             {/* 纺织印染 */}
             <div className="group relative bg-white overflow-hidden rounded-sm border-t border-l border-gray-200 shadow-sm transition-all hover:shadow-md hover:border-[#10B981]">
               <div className="absolute top-0 left-0 w-2 h-full bg-[#047857]"></div>
@@ -431,15 +537,15 @@ export default function HomePage() {
                   className="w-full h-full object-cover transition-all group-hover:scale-105"
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-3">
+              <div className="p-4 md:p-6">
+                <h3 className="text-lg md:text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-2 md:mb-3">
                   {t('home:applications.textile.title')}
                 </h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                <p className="text-gray-600 text-sm leading-relaxed mb-3 md:mb-4 line-clamp-2 md:line-clamp-none">
                   {t('home:applications.textile.description')}
                 </p>
                 <Link
-                  to={`/${currentLang}/applications#textile`}
+                  to={`/${currentLang}/products/textile-cms`}
                   className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
                 >
                   {t('common:nav.view_applications')}
@@ -460,15 +566,15 @@ export default function HomePage() {
                   className="w-full h-full object-cover transition-all group-hover:scale-105"
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-3">
+              <div className="p-4 md:p-6">
+                <h3 className="text-lg md:text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-2 md:mb-3">
                   {t('home:applications.construction.title')}
                 </h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                <p className="text-gray-600 text-sm leading-relaxed mb-3 md:mb-4 line-clamp-2 md:line-clamp-none">
                   {t('home:applications.construction.description')}
                 </p>
                 <Link
-                  to={`/${currentLang}/applications#construction`}
+                  to={`/${currentLang}/products/construction-cms`}
                   className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
                 >
                   {t('common:nav.view_applications')}
@@ -489,15 +595,15 @@ export default function HomePage() {
                   className="w-full h-full object-cover transition-all group-hover:scale-105"
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-3">
+              <div className="p-4 md:p-6">
+                <h3 className="text-lg md:text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-2 md:mb-3">
                   {t('home:applications.coating.title')}
                 </h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                <p className="text-gray-600 text-sm leading-relaxed mb-3 md:mb-4 line-clamp-2 md:line-clamp-none">
                   {t('home:applications.coating.description')}
                 </p>
                 <Link
-                  to={`/${currentLang}/applications#coating`}
+                  to={`/${currentLang}/products/coating-cms`}
                   className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
                 >
                   {t('common:nav.view_applications')}
@@ -511,22 +617,22 @@ export default function HomePage() {
               <div className="absolute top-0 left-0 w-2 h-full bg-[#047857]"></div>
               <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
                 <img
-                  src="/images/应用领域/造纸.JPG"
+                  src="/images/应用领域/paper_roll_v2.jpg"
                   alt="染纸工业应用"
                   loading="lazy"
                   decoding="async"
                   className="w-full h-full object-cover transition-all group-hover:scale-105"
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-3">
+              <div className="p-4 md:p-6">
+                <h3 className="text-lg md:text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-2 md:mb-3">
                   {t('home:applications.paper.title')}
                 </h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                <p className="text-gray-600 text-sm leading-relaxed mb-3 md:mb-4 line-clamp-2 md:line-clamp-none">
                   {t('home:applications.paper.description')}
                 </p>
                 <Link
-                  to={`/${currentLang}/applications#paper`}
+                  to={`/${currentLang}/products/paper-dyeing-cms`}
                   className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
                 >
                   {t('common:nav.view_applications')}
@@ -547,15 +653,15 @@ export default function HomePage() {
                   className="w-full h-full object-cover transition-all group-hover:scale-105"
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-3">
+              <div className="p-4 md:p-6">
+                <h3 className="text-lg md:text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-2 md:mb-3">
                   {t('home:applications.wallpaper.title')}
                 </h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                <p className="text-gray-600 text-sm leading-relaxed mb-3 md:mb-4 line-clamp-2 md:line-clamp-none">
                   {t('home:applications.wallpaper.description')}
                 </p>
                 <Link
-                  to={`/${currentLang}/applications#wallpaper`}
+                  to={`/${currentLang}/products/wallpaper-adhesive`}
                   className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
                 >
                   {t('common:nav.view_applications')}
@@ -569,22 +675,22 @@ export default function HomePage() {
               <div className="absolute top-0 left-0 w-2 h-full bg-[#047857]"></div>
               <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center overflow-hidden">
                 <img
-                  src="/images/应用领域/2ffad18a87f3f3af2a1773cf9ebc892b.JPG"
+                  src="/images/应用领域/desiccant_bag_v2.jpg"
                   alt="干燥剂应用"
                   loading="lazy"
                   decoding="async"
                   className="w-full h-full object-cover transition-all group-hover:scale-105"
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-3">
+              <div className="p-4 md:p-6">
+                <h3 className="text-lg md:text-xl font-bold text-[#064E3B] group-hover:text-[#047857] transition-colors mb-2 md:mb-3">
                   {t('home:applications.desiccant.title')}
                 </h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                <p className="text-gray-600 text-sm leading-relaxed mb-3 md:mb-4 line-clamp-2 md:line-clamp-none">
                   {t('home:applications.desiccant.description')}
                 </p>
                 <Link
-                  to={`/${currentLang}/applications#desiccant`}
+                  to={`/${currentLang}/products/desiccant-gel`}
                   className="inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
                 >
                   {t('common:nav.view_applications')}
@@ -595,8 +701,8 @@ export default function HomePage() {
           </div>
 
           {/* 查看全部按钮 */}
-          <div className="mt-16 text-center">
-            <Button asChild size="lg" className="bg-[#047857] text-white hover:bg-[#059669] px-10 py-7 text-lg rounded-sm group">
+          <div className="mt-12 md:mt-16 text-center">
+            <Button asChild size="lg" className="bg-[#047857] text-white hover:bg-[#059669] w-full sm:w-auto px-10 py-7 text-lg rounded-sm group">
               <Link to={`/${currentLang}/applications`}>
                 {t('common:nav.view_applications')}
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -607,7 +713,7 @@ export default function HomePage() {
       </section>
 
       {/* 数据统计区 - 工业风格 */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-[#064E3B] to-[#047857] relative overflow-hidden">
+      <section className="hidden lg:block py-20 md:py-28 bg-gradient-to-br from-[#064E3B] to-[#047857] relative overflow-hidden">
         {/* 装饰性工业网格 */}
         <div className="absolute inset-0 opacity-10">
           <div className="h-full w-full" style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
@@ -696,7 +802,7 @@ export default function HomePage() {
       </section>
 
       {/* 演示视频区 - 工业风格 */}
-      <section className="py-20 md:py-28 bg-[#F9FAFB]">
+      <section className="hidden lg:block py-20 md:py-28 bg-[#F9FAFB]">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-center md:space-x-16">
             {/* 左侧视频区域 */}
@@ -773,7 +879,7 @@ export default function HomePage() {
       </section>
 
       {/* 产品核心优势区 - 工业风格 */}
-      <section className="py-20 md:py-28 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+      <section className="hidden lg:block py-20 md:py-28 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
         {/* 背景装饰 */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-10 left-10 w-72 h-72 bg-[#047857] rounded-full blur-3xl"></div>

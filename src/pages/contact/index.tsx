@@ -10,6 +10,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { SEOHelmet } from '@/components/SEOHelmet';
 import { StructuredData } from '@/components/StructuredData';
+import { LocalBusinessSchema } from '@/components/LocalBusinessSchema';
+import { GeoMetaTags } from '@/components/GeoMetaTags';
+import { OpenGraphTags } from '@/components/OpenGraphTags';
+import { HreflangTags } from '@/components/HreflangTags';
 import { OptimizedMap } from '@/components/OptimizedMap';
 import { getApiUrl, API_CONFIG } from '@/lib/config';
 import { COMPANY_PROFILE } from '@/lib/company-profile';
@@ -97,24 +101,30 @@ export default function ContactPage() {
             i18n.language === 'ru' ?
               'Обнаружено подозрительное содержание. Пожалуйста, измените сообщение.' :
               '检测到可疑内容，请修改您的消息';
-        } else if (message.includes('required')) {
+        } else if (message.includes('required') || message.includes('必填')) {
           errorMessage = i18n.language === 'en' ?
             'Please fill in all required fields.' :
             i18n.language === 'ru' ?
               'Пожалуйста, заполните все обязательные поля.' :
               '请填写所有必填字段';
-        } else if (message.includes('email')) {
+        } else if (message.includes('email') || message.includes('邮箱')) {
           errorMessage = i18n.language === 'en' ?
             'Invalid email format. Please check and try again.' :
             i18n.language === 'ru' ?
               'Неверный формат электронной почты. Пожалуйста, проверьте и попробуйте снова.' :
               '邮箱格式不正确，请检查后重试';
         } else {
-          errorMessage = i18n.language === 'en' ?
-            'Submission failed. Please try again or contact us directly.' :
-            i18n.language === 'ru' ?
-              'Ошибка отправки. Пожалуйста, попробуйте снова или свяжитесь с нами напрямую.' :
-              error.message;
+          // If we have a specific error message from backend, show it (even if in Chinese)
+          // otherwise show generic fallback
+          if (error.message && error.message !== 'Error') {
+            errorMessage = error.message;
+          } else {
+            errorMessage = i18n.language === 'en' ?
+              'Submission failed. Please try again or contact us directly.' :
+              i18n.language === 'ru' ?
+                'Ошибка отправки. Пожалуйста, попробуйте снова или свяжитесь с нами напрямую.' :
+                '提交失败，请稍后重试';
+          }
         }
       }
 
@@ -174,8 +184,68 @@ export default function ContactPage() {
         }}
       />
 
-      {/* 页面标题区 */}
-      <section className="bg-gradient-to-r from-[#064E3B] to-[#047857] py-16 md:py-24">
+      {/* LocalBusiness Schema */}
+      <LocalBusinessSchema language={i18n.language as 'zh' | 'en' | 'ru'} />
+
+      {/* GEO Meta Tags */}
+      <GeoMetaTags
+        latitude={30.39}
+        longitude={120.17}
+        placename={i18n.language === 'zh' ? '杭州' : 'Hangzhou'}
+        region="CN-ZJ"
+      />
+
+      {/* Enhanced Open Graph Tags */}
+      <OpenGraphTags
+        title={i18n.language === 'zh'
+          ? '联系我们 - 杭州卡恩羧甲基淀粉供应商'
+          : i18n.language === 'en'
+            ? 'Contact Us - Hangzhou Karn CMS Supplier'
+            : t('nav.contact')}
+        description={t('contact:meta_description')}
+        url={`https://kn-wallpaperglue.com/${i18n.language}/contact`}
+        type="website"
+        locale={i18n.language === 'zh' ? 'zh_CN' : i18n.language === 'en' ? 'en_US' : 'ru_RU'}
+        alternateLocales={['en_US', 'ru_RU', 'th_TH', 'vi_VN', 'id_ID']}
+      />
+
+      {/* Hreflang Tags */}
+      <HreflangTags
+        currentLanguage={i18n.language as 'zh' | 'en' | 'ru'}
+        basePath="/contact"
+      />
+
+      {/* Mobile Action Sheet (App Style) */}
+      <section className="lg:hidden bg-white pt-6 pb-2 border-b border-gray-100">
+        <div className="container mx-auto px-4">
+          <h1 className="text-xl font-bold text-[#064E3B] mb-2">{t('contact:hero.title')}</h1>
+          <p className="text-xs text-gray-500 mb-6">Response within 24 hours</p>
+
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <a href={`tel:${COMPANY_PROFILE.phone}`} className="flex flex-col items-center justify-center bg-[#047857]/5 p-3 rounded border border-[#047857]/10 active:scale-95 transition-transform">
+              <div className="w-10 h-10 rounded-full bg-[#047857] flex items-center justify-center text-white mb-2 shadow-sm">
+                <Phone className="w-5 h-5" />
+              </div>
+              <span className="text-[10px] font-medium text-[#047857]">Call Us</span>
+            </a>
+            <a href="https://wa.me/8613216156841" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center bg-[#047857]/5 p-3 rounded border border-[#047857]/10 active:scale-95 transition-transform">
+              <div className="w-10 h-10 rounded-full bg-[#047857] flex items-center justify-center text-white mb-2 shadow-sm">
+                <div className="font-bold text-xs">WA</div>
+              </div>
+              <span className="text-[10px] font-medium text-[#047857]">WhatsApp</span>
+            </a>
+            <a href={`mailto:${COMPANY_PROFILE.email}`} className="flex flex-col items-center justify-center bg-[#047857]/5 p-3 rounded border border-[#047857]/10 active:scale-95 transition-transform">
+              <div className="w-10 h-10 rounded-full bg-[#047857] flex items-center justify-center text-white mb-2 shadow-sm">
+                <Mail className="w-5 h-5" />
+              </div>
+              <span className="text-[10px] font-medium text-[#047857]">Email</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* 页面标题区 (Desktop Only) */}
+      <section className="hidden lg:block bg-gradient-to-r from-[#064E3B] to-[#047857] py-16 md:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
             {t('contact:hero.title')}

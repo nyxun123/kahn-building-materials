@@ -138,9 +138,8 @@ export function SEOHelmet({
       <meta name="twitter:image:alt" content={`${SITE_NAME} Logo`} />
 
       {/* Favicons with Absolute URLs for Search Engines */}
-      <link rel="icon" href={`${SITE_URL}/favicon.ico?v=2`} sizes="any" />
-      <link rel="icon" href={`${SITE_URL}/favicon.svg?v=2`} type="image/svg+xml" />
-      <link rel="apple-touch-icon" href={`${SITE_URL}/apple-touch-icon.png?v=2`} />
+      <link rel="icon" href={`${SITE_URL}/favicon-v8.ico`} sizes="any" />
+      <link rel="apple-touch-icon" href={`${SITE_URL}/apple-touch-icon-v8.png`} />
 
       {/* Logo for Search Engines */}
       <link rel="logo" href={absoluteLogo} />

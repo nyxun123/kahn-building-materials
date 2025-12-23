@@ -11,19 +11,20 @@
 /sitemap-vi.xml     /sitemap-vi.xml     200
 /sitemap-th.xml     /sitemap-th.xml     200
 /sitemap-id.xml     /sitemap-id.xml     200
-/*.js  /:splat  200
-/*.css  /:splat  200
-/*.png  /:splat  200
-/*.jpg  /:splat  200
-/*.jpeg  /:splat  200
-/*.gif  /:splat  200
-/*.svg  /:splat  200
-/*.ico  /:splat  200
-/*.woff  /:splat  200
-/*.woff2  /:splat  200
-/*.json  /:splat  200
-/*.txt  /:splat  200
-/*.xml  /:splat  200
+
+
+# Product Redirects (SEO)
+/products/999             /ru/products/wallpaper-adhesive  302  Language=ru
+/products/999             /zh/products/wallpaper-adhesive  302  Language=zh
+/products/999             /en/products/wallpaper-adhesive  301
+
+/products/8840            /ru/products/construction-cms    302  Language=ru
+/products/8840            /zh/products/construction-cms    302  Language=zh
+/products/8840            /en/products/construction-cms    301
+
+/products/K6              /ru/products/textile-cms         302  Language=ru
+/products/K6              /zh/products/textile-cms         302  Language=zh
+/products/K6              /en/products/textile-cms         301
 
 # SPA routing for all other routes (frontend + admin)
 /*    /index.html   200

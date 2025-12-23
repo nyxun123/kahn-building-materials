@@ -175,16 +175,16 @@ export default function SolutionsHubPage() {
         }}
       />
 
-      <section className="bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-600 text-white py-20">
+      <section className="bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-600 text-white py-12 md:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
-          <p className="uppercase tracking-[0.3em] text-xs mb-4 text-emerald-200">
+          <p className="uppercase tracking-[0.3em] text-[10px] md:text-xs mb-3 md:mb-4 text-emerald-200">
             Go-to-Market
           </p>
-          <h1 className="text-3xl md:text-4xl font-bold leading-snug mb-4">{heroCopy.title}</h1>
-          <p className="text-white/90 text-base md:text-lg mb-4">{heroCopy.subtitle}</p>
-          <p className="text-white/70 text-sm md:text-base">{heroCopy.description}</p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-            <Button asChild size="lg" className="bg-white text-emerald-700 hover:bg-emerald-100">
+          <h1 className="text-2xl md:text-4xl font-bold leading-snug mb-3 md:mb-4">{heroCopy.title}</h1>
+          <p className="text-white/90 text-sm md:text-lg mb-3 md:mb-4">{heroCopy.subtitle}</p>
+          <p className="text-white/70 text-xs md:text-base hidden sm:block">{heroCopy.description}</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mt-6 md:mt-8">
+            <Button asChild size="lg" className="w-full sm:w-auto bg-white text-emerald-700 hover:bg-emerald-100">
               <Link to={`/${requestedLang}/contact`}>
                 {heroCopy.contactCta}
                 <ArrowRight className="h-4 w-4 ml-2" />
@@ -194,7 +194,7 @@ export default function SolutionsHubPage() {
               asChild
               size="lg"
               variant="outline"
-              className="bg-transparent border-white text-white hover:bg-white/10"
+              className="w-full sm:w-auto bg-transparent border-white text-white hover:bg-white/10"
             >
               <a href="#solutions-grid">{heroCopy.viewCta}</a>
             </Button>

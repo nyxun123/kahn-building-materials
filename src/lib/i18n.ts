@@ -5,7 +5,7 @@ import Backend from 'i18next-resources-to-backend';
 
 i18n
   .use(Backend(
-    (language: string, namespace: string) => 
+    (language: string, namespace: string) =>
       import(`../locales/${language}/${namespace}.json`)
   ))
   .use(LanguageDetector)
@@ -14,7 +14,7 @@ i18n
     fallbackLng: 'en',
     supportedLngs: ['zh', 'en', 'ru', 'vi', 'th', 'id'],
     load: 'languageOnly',
-    ns: ['common', 'home', 'products', 'applications', 'oem', 'about', 'contact', 'admin'],
+    ns: ['common', 'home', 'products', 'applications', 'oem', 'about', 'contact', 'admin', 'blog'],
     defaultNS: 'common',
     debug: false,
     react: {
@@ -43,7 +43,7 @@ export const enforceMainDomainLanguage = () => {
       const current = i18n.language?.split('-')[0] || 'en';
       if (current !== 'en') {
         i18n.changeLanguage('en');
-        try { localStorage.setItem('userLanguage', 'en'); } catch {}
+        try { localStorage.setItem('userLanguage', 'en'); } catch { }
       }
       return true;
     }

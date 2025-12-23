@@ -1,7 +1,7 @@
 # Robots.txt for kn-wallpaperglue.com
 # 杭州卡恩新型建材有限公司 - 羧甲基淀粉专业制造商
 # Professional Carboxymethyl Starch (CMS) Manufacturer
-# Last Updated: 2024-01-20
+# Last Updated: 2025-12-09
 
 # 允许所有搜索引擎抓取
 User-agent: *
@@ -42,6 +42,9 @@ Sitemap: https://kn-wallpaperglue.com/sitemap-index.xml
 Sitemap: https://kn-wallpaperglue.com/sitemap-zh.xml
 Sitemap: https://kn-wallpaperglue.com/sitemap-en.xml
 Sitemap: https://kn-wallpaperglue.com/sitemap-ru.xml
+Sitemap: https://kn-wallpaperglue.com/sitemap-vi.xml
+Sitemap: https://kn-wallpaperglue.com/sitemap-th.xml
+Sitemap: https://kn-wallpaperglue.com/sitemap-id.xml
 Sitemap: https://kn-wallpaperglue.com/sitemap-products.xml
 
 # 针对特定搜索引擎的优化配置
@@ -127,7 +130,6 @@ Crawl-delay: 10
 
 # 默认抓取延迟（避免服务器压力）
 Crawl-delay: 1
-
 
 
 
