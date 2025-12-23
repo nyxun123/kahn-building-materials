@@ -5,6 +5,7 @@ import { ProductDetailRedirect } from '@/components/ProductDetailRedirect';
 
 // 延迟加载组件
 const HomePage = lazy(() => import('@/pages/home'));
+const ProductsPage = lazy(() => import('@/pages/products'));
 const ProductDetailPage = lazy(() => import('@/pages/product-detail'));
 const ApplicationsPage = lazy(() => import('@/pages/applications'));
 const OemPage = lazy(() => import('@/pages/oem'));
@@ -12,6 +13,8 @@ const AboutPage = lazy(() => import('@/pages/about'));
 const ContactPage = lazy(() => import('@/pages/contact'));
 const SolutionsHubPage = lazy(() => import('@/pages/solutions/hub'));
 const SolutionsDetailPage = lazy(() => import('@/pages/solutions'));
+const BlogPage = lazy(() => import('@/pages/blog'));
+const BlogDetailPage = lazy(() => import('@/pages/blog/[slug]'));
 
 // Admin页面
 const AdminLoginPage = lazy(() => import('@/pages/admin/login'));
@@ -27,6 +30,8 @@ const AdminCompanyInfoPage = lazy(() => import('@/pages/admin/company-info'));
 const AdminSEOPage = lazy(() => import('@/pages/admin/seo'));
 const AdminAnalyticsPage = lazy(() => import('@/pages/admin/analytics'));
 const AdminSitemapPage = lazy(() => import('@/pages/admin/sitemap'));
+const AdminBlogPage = lazy(() => import('@/pages/admin/blog'));
+const AdminBlogEditPage = lazy(() => import('@/pages/admin/blog/[id]'));
 
 // 加载中组件
 const LoadingFallback = () => (
@@ -154,6 +159,22 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
       },
+      {
+        path: 'blog',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <AdminBlogPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'blog/:id',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <AdminBlogEditPage />
+          </Suspense>
+        ),
+      },
     ],
   },
   {
@@ -248,6 +269,14 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: 'products',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <ProductsPage />
+          </Suspense>
+        ),
+      },
+      {
         path: 'products/:productCode',
         element: (
           <Suspense fallback={<LoadingFallback />}>
@@ -303,12 +332,28 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
       },
+      {
+        path: 'blog',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <BlogPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'blog/:slug',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <BlogDetailPage />
+          </Suspense>
+        ),
+      },
     ],
   },
   // 重定向路由
   {
     path: '/',
-    element: <Navigate to="/zh" replace />,
+    element: <Navigate to="/en" replace />,
   },
   {
     path: '/products/:productCode',
