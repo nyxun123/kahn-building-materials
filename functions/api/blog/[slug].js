@@ -111,8 +111,141 @@ const STATIC_ARTICLE_DETAILS = {
         seo_title_zh: 'CMS产品选型指南 - 杭州卡恩新材料',
         seo_description_zh: '专业解析K6、8840、999等CMS型号在纺织、建筑、石油行业的应用区别。',
         seo_keywords_zh: 'CMS选型, 羧甲基淀粉型号, K6, 8840, 999, 8820-2'
+    },
+    'cms-construction-applications-guide': {
+        id: 3,
+        slug: 'cms-construction-applications-guide',
+        title_zh: '羧甲基淀粉在建筑行业的全面应用指南：从腻子粉到墙纸胶',
+        title_en: 'Complete Guide to CMS Applications in Construction: From Putty to Wallpaper Adhesive',
+        title_ru: 'Полное руководство по применению КМК в строительстве',
+        content_zh: `
+            <h2>建筑级羧甲基淀粉（CMS）的核心价值</h2>
+            <p>在现代建筑材料工业中，<a href="/zh/products/construction-cms" class="product-link">建筑材料专用羧甲基淀粉 8840</a> 作为一种关键的添加剂，扮演着不可或缺的角色。它不仅能显著提高材料的粘结强度，更在改善施工性能方面效果卓越。</p>
+
+            <h3>1. 腻子粉中的“保水尖兵”</h3>
+            <p>内墙腻子粉对保水率有着极高的要求。使用 <a href="/zh/products/construction-cms" class="product-link">8840型建筑级CMS</a> 可以带来以下提升：</p>
+            <ul>
+                <li><strong>防止开裂：</strong> 通过优异的保水性能，确保腻子在干燥过程中水分不会过快流失，从根本上解决开裂问题。</li>
+                <li><strong>提高施工效率：</strong> 增强浆料的爽滑感，使工人批刮时更加省力，提高施工速度。</li>
+                <li><strong>防止粉化：</strong> 增强腻子层干燥后的表面强度，防止后期出现脱粉现象。</li>
+            </ul>
+
+            <h3>2. 墙纸胶粉的核心原料</h3>
+            <p>专业的强力墙纸胶粉主要由高粘度的 CMS 组成。我们的 <a href="/zh/products/wallpaper-adhesive" class="product-link">999型墙纸胶粉专用CMS</a> 粘度高达 65,000 mPa·s，是该领域的顶级选择。</p>
+            <blockquote>
+                <p><strong>SEO提示：</strong> 墙纸胶粉的质量直接决定了壁纸的寿命。优质的 CMS 不仅要粘度高，还要具备出色的防霉抗菌性能。</p>
+            </blockquote>
+
+            <h3>3. 石膏基材料的流变改性</h3>
+            <p>在粉刷石膏或石膏勾缝剂中，CMS 可以有效调节石膏的凝结时间，改善流动性，使石膏面层更加细腻平整。</p>
+
+            <h2>总结与建议</h2>
+            <p>选择建筑级 CMS 时，应重点关注产品的<strong>纯度、粘度和稳定性</strong>。作为中国领先的羧甲基淀粉制造商，杭州卡恩提供量身定制的 <a href="/zh/oem" class="product-link">OEM服务</a>，可根据您的特定配方需求调整参数。</p>
+        `,
+        content_en: `
+            <h2>Core Value of Construction-Grade Carboxymethyl Starch (CMS)</h2>
+            <p><a href="/en/products/construction-cms" class="product-link">Construction Materials CMS 8840</a> is a crucial additive in modern construction, enhancing bonding strength and workability.</p>
+            <h3>1. Water Retention in Putty Powder</h3>
+            <p>Using <a href="/en/products/construction-cms" class="product-link">Model 8840</a> prevents cracking and improves surface strength.</p>
+            <h3>2. Wallpaper Adhesive Expert</h3>
+            <p>Our <a href="/en/products/wallpaper-adhesive" class="product-link">999 Wallpaper Adhesive CMS</a> features 65,000 mPa·s viscosity for heavy-duty applications.</p>
+        `,
+        cover_image: '/images/应用领域/腻子粉.jpg',
+        category: 'guide',
+        author: 'Technical Team',
+        view_count: 320,
+        published_at: '2025-12-23T10:00:00Z',
+        created_at: '2025-12-23T09:00:00Z',
+        seo_title_zh: '建筑级羧甲基淀粉应用指南 - 腻子粉/墙纸胶专用CMS',
+        seo_description_zh: '详细介绍8840和999型CMS在建筑腻子、石膏及墙纸胶中的应用优势和技术参数。',
+        seo_keywords_zh: '建筑级CMS, 腻子粉添加剂, 墙纸胶粉原料, 8840, 999, 杭州卡恩'
+    },
+    'k6-textile-printing-revolution': {
+        id: 4,
+        slug: 'k6-textile-printing-revolution',
+        title_zh: 'K6型羧甲基淀粉：纺织印染行业的革命性材料',
+        title_en: 'K6 Carboxymethyl Starch: A Revolution in Textile Printing',
+        content_zh: `
+            <h2>打破传统：K6型CMS替代海藻酸钠</h2>
+            <p>长期以来，海藻酸钠一直是活性染料印花的标准糊料。然而，由于原材料价格波动大且供应不稳定，纺织企业急需一种更具性价比的选择。<a href="/zh/products/textile-cms" class="product-link">纺织印染专用羧甲基淀粉 K6</a> 正是为此而生。</p>
+
+            <h3>K6型号的核心技术优势</h3>
+            <ul>
+                <li><strong>超高粘度稳定性：</strong> 旋转粘度可达 38,000 mPa·s，确保染料在织物上分布极其均匀。</li>
+                <li><strong>极色鲜艳度：</strong> 优异的渗透性提高了色牢度，使印花图案色彩更加饱满、细节更清晰。</li>
+                <li><strong>易水洗性：</strong> K6 的特殊化学结构使其在后处理过程中极易去除，不残留硬块，保持织物手感。</li>
+            </ul>
+
+            <h3>经济效益分析</h3>
+            <p>根据纺织客户反馈，使用 <a href="/zh/products/textile-cms" class="product-link">K6型CMS</a> 替代海藻酸钠，在保证同等印花质量的前提下，浆料成本可降低 <strong>20%-40%</strong>。这对于利润微薄的纺织印染企业来说是巨大的竞争优势。</p>
+
+            <h2>为什么选择卡恩新材料？</h2>
+            <p>我们专注于 <a href="/zh/products/textile-cms" class="product-link">纺织印染级羧甲基淀粉</a> 的研发。我们的 K6 型号具有极强的耐盐和耐碱性，非常适合各种纤维材质（如棉、麻、丝及化纤）的印花工艺。欢迎联系我们获取免费样品体验选型方案。</p>
+        `,
+        content_en: `
+            <h2>K6 CMS: The Perfect Substitute for Sodium Alginate</h2>
+            <p><a href="/en/products/textile-cms" class="product-link">Textile Printing CMS K6</a> offers a cost-effective solution with 38,000 mPa·s viscosity.</p>
+            <h3>Advantages</h3>
+            <ul>
+                <li>High color yield and sharp patterns.</li>
+                <li>Excellent salt/alkali resistance.</li>
+                <li>Significant cost reduction (20-40%).</li>
+            </ul>
+        `,
+        cover_image: '/images/应用领域/纺织印染.jpg',
+        category: 'industry',
+        author: 'Technical Team',
+        view_count: 180,
+        published_at: '2025-12-23T11:00:00Z',
+        created_at: '2025-12-23T10:00:00Z',
+        seo_title_zh: 'K6型纺织印染增稠剂 - 海藻酸钠最佳替代方案',
+        seo_description_zh: 'K6型羧甲基淀粉具有高粘度、易褪色、耐碱等特点，是纺织印染企业的降本利器。',
+        seo_keywords_zh: 'K6, 纺织印染级CMS, 印花糊料, 杭州卡恩, 粘度38000'
+    },
+    'cms-desiccant-gel-technology': {
+        id: 5,
+        slug: 'cms-desiccant-gel-technology',
+        title_zh: '工业干燥剂中的CMS应用：凝胶锁水技术详解',
+        title_en: 'CMS in Industrial Desiccants: Gel Water-Locking Technology',
+        content_zh: `
+            <h2>攻克干燥剂泄漏难题</h2>
+            <p>传统的氯化钙干燥剂在吸收大量水分后会液化，变成黄色的水溶液，一旦袋子破损极易污染货物。使用 <a href="/zh/products/desiccant-gel" class="product-link">干燥剂凝胶锁水专用羧甲基淀粉 8820-2</a> 可以从根本上解决这一安全隐患。</p>
+
+            <h3>凝胶锁水原理探秘</h3>
+            <p>当水分接触到 <a href="/zh/products/desiccant-gel" class="product-link">8820-2 CMS</a> 与氯化钙的复配材料时，CMS 会迅速吸水膨胀，并将液态水分包裹在分子链中，形成极其稳定的凝胶状态。</p>
+
+            <h3>产品特性与参数</h3>
+            <ul>
+                <li><strong>超强吸附：</strong> 饱和吸附量可达 250% - 300%。</li>
+                <li><strong>物理安全：</strong> 即使在集装箱的高温高湿环境下，凝胶也极度稳定，不会液化。</li>
+                <li><strong>配方灵活：</strong> 建议配比为 35% CMS + 65% 氯化钙，可根据需求进行 <a href="/zh/oem" class="product-link">OEM定制</a>。</li>
+            </ul>
+
+            <h2>多元应用场景</h2>
+            <p>除集装箱外，该技术已广泛应用于家用除湿盒、精密电子产品防潮及高档成衣仓储。杭州卡恩采用优质玉米淀粉为原料，确保产品天然环保、无毒无害。</p>
+        `,
+        content_en: `
+            <h2>Eliminate Desiccant Leakage with CMS Gel Technology</h2>
+            <p><a href="/en/products/desiccant-gel" class="product-link">Desiccant Gel CMS 8820-2</a> turns liquid moisture into stable gel.</p>
+            <h3>Technical Benefits</h3>
+            <ul>
+                <li>Strong water-locking performance.</li>
+                <li>Stable even under high physical pressure.</li>
+                <li>Eco-friendly corn-starch based polymer.</li>
+            </ul>
+        `,
+        cover_image: '/images/应用领域/desiccant_bag_v2.jpg',
+        category: 'guide',
+        author: 'Technical Team',
+        view_count: 95,
+        published_at: '2025-12-23T12:00:00Z',
+        created_at: '2025-12-23T11:00:00Z',
+        seo_title_zh: '干燥剂专用CMS锁水凝胶技术 - 杭州卡恩定制方案',
+        seo_description_zh: '了解8820-2型CMS在氯化钙干燥剂中的锁水应用，防止液化泄漏，提升产品安全性。',
+        seo_keywords_zh: '干燥剂CMS, 锁水凝胶, 8820-2, 氯化钙除湿, 杭州卡恩'
     }
 };
+
 
 export async function onRequestGet(context) {
     const { request, params } = context;
