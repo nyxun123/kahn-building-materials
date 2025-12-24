@@ -29,9 +29,8 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
       name: t('nav.applications'),
       href: `/${currentLang}/applications`,
     },
-
     { name: t('nav.oem'), href: `/${currentLang}/oem` },
-    { name: t('nav.blog'), href: `/${currentLang}/blog` },
+    // { name: t('nav.blog'), href: `/${currentLang}/blog` }, // 暂时隐藏博客
     { name: t('nav.about'), href: `/${currentLang}/about` },
     { name: t('nav.contact'), href: `/${currentLang}/contact` },
   ];
@@ -109,12 +108,14 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
             >
               {t('nav.oem')}
             </Link>
+            {/* 暂时隐藏博客链接
             <Link
               to={`/${currentLang}/blog`}
               className="text-gray-700 hover:text-[#047857] transition-colors duration-200 font-medium relative pb-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#047857] after:transition-all after:duration-300 hover:after:w-full"
             >
               {t('nav.blog')}
             </Link>
+            */}
             <Link
               to={`/${currentLang}/about`}
               className="text-gray-700 hover:text-[#047857] transition-colors duration-200 font-medium relative pb-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#047857] after:transition-all after:duration-300 hover:after:w-full"
@@ -198,6 +199,7 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
             >
               {t('nav.oem')}
             </Link>
+            {/* 暂时隐藏博客链接
             <Link
               to={`/${currentLang}/blog`}
               className="block text-gray-700 hover:text-[#047857] py-2.5 font-medium border-b border-gray-100 transition-colors"
@@ -205,6 +207,7 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
             >
               {t('nav.blog')}
             </Link>
+            */}
             <Link
               to={`/${currentLang}/about`}
               className="block text-gray-700 hover:text-[#047857] py-2.5 font-medium border-b border-gray-100 transition-colors"
