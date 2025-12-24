@@ -421,7 +421,8 @@ export async function onRequestGet(context) {
                 title: article[`seo_title_${lang}`] || article[`title_${lang}`],
                 description: article[`seo_description_${lang}`] || article[`excerpt_${lang}`],
                 keywords: article[`seo_keywords_${lang}`] || ''
-            }
+            },
+            tags: (article[`seo_keywords_${lang}`] || '').split(/,|，/).map(tag => tag.trim()).filter(Boolean)
         };
 
         return createSuccessResponse({
