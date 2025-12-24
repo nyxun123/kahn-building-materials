@@ -243,6 +243,143 @@ const STATIC_ARTICLE_DETAILS = {
         seo_title_zh: '干燥剂专用CMS锁水凝胶技术 - 杭州卡恩定制方案',
         seo_description_zh: '了解8820-2型CMS在氯化钙干燥剂中的锁水应用，防止液化泄漏，提升产品安全性。',
         seo_keywords_zh: '干燥剂CMS, 锁水凝胶, 8820-2, 氯化钙除湿, 杭州卡恩'
+    },
+    'karn-expands-production-2025': {
+        id: 6,
+        slug: 'karn-expands-production-2025',
+        title_zh: '公司新闻：2025年卡恩新材料年产5万吨CMS生产线正式投产',
+        title_en: 'Company News: Karn New Materials Commences 50,000-Ton CMS Production Line in 2025',
+        title_ru: 'Новости компании: Karn New Materials запускает линию по производству CMS мощностью 50 000 тонн',
+        content_zh: `
+            <h2>迈向新高度：产能与技术的双重飞跃</h2>
+            <p>我们自豪地宣布，杭州卡恩新材料有限公司全新的现代化生产基地已于2025年初正式投入运营。新工厂配备了全自动化的反应釜与干燥系统，标志着我们在<a href="/zh/products" class="product-link">羧甲基淀粉(CMS)</a>制造领域迈上了新的台阶。</p>
+
+            <h3>新工厂亮点</h3>
+            <ul>
+                <li><strong>产能翻倍：</strong> 年设计产能达到50,000吨，确保为全球客户提供稳定、及时的供货保障。</li>
+                <li><strong>质量控制：</strong> 引入了德国西门子DCS控制系统，实现从原料投料到成品包装的全程精准控制，批次稳定性提高40%。</li>
+                <li><strong>环保升级：</strong> 配备了先进的污水处理与粉尘回收系统，全面符合ISO14001环境管理体系要求，践行绿色制造承诺。</li>
+            </ul>
+
+            <h3>研发中心同步升级</h3>
+            <p>与此同时，我们扩建了应用技术实验室，配备了Brookfield粘度计、流变仪等高端检测设备。我们的技术团队现在可以更快速地为客户提供<a href="/zh/oem" class="product-link">定制化配方服务</a>，特别是在纺织印染和石油钻井领域的高端应用开发上。</p>
+
+            <h2>展望未来</h2>
+            <p>此次扩产不仅是规模的扩大，更是服务能力的提升。我们将继续秉持"品质第一，客户至上"的理念，致力于成为全球领先的水溶性高分子材料供应商。</p>
+        `,
+        content_en: `
+            <h2>A Leap in Capacity and Technology</h2>
+            <p>We are proud to announce that our new state-of-the-art production facility has officially commenced operations in early 2025. This marks a significant milestone in our <a href="/en/products" class="product-link">Carboxymethyl Starch (CMS)</a> manufacturing capabilities.</p>
+            <h3>Highlights</h3>
+            <ul>
+                <li><strong>50,000 Tons Capacity:</strong> Ensuring stable supply for global customers.</li>
+                <li><strong>Advanced Quality Control:</strong> Siemens DCS system ensures 40% higher batch stability.</li>
+                <li><strong>Green Manufacturing:</strong> Fully compliant with ISO14001 standards.</li>
+            </ul>
+        `,
+        cover_image: '/images/company/factory_expansion.jpg',
+        category: 'news',
+        author: 'PR Dept',
+        view_count: 560,
+        published_at: '2025-12-24T09:00:00Z',
+        created_at: '2025-12-24T08:00:00Z',
+        seo_title_zh: '卡恩新材料5万吨CMS新工厂投产 - 公司新闻',
+        seo_description_zh: '杭州卡恩新材料2025年新工厂正式投产，年产5万吨羧甲基淀粉，引入自动化控制系统，提升产品质量与供货稳定性。',
+        seo_keywords_zh: 'CMS生产厂家, 卡恩新材料, 羧甲基淀粉工厂, 5万吨产能, 扩产新闻'
+    },
+    'green-building-trends-2026': {
+        id: 7,
+        slug: 'green-building-trends-2026',
+        title_zh: '行业资讯：环保风暴下，建筑添加剂行业的绿色转型之路',
+        title_en: 'Industry News: Green Transition in Construction Additives Amid Environmental Regulations',
+        title_ru: 'Новости отрасли: Зеленый переход в добавках для строительства',
+        content_zh: `
+            <h2>环保法规趋严，建材行业面临新挑战</h2>
+            <p>随着全球对建筑材料VOC（挥发性有机化合物）排放标准的日益严格，传统化学添加剂正面临淘汰风险。以淀粉醚为代表的天然改性材料，因其可再生、可降解的特性，正成为行业新宠。</p>
+
+            <h3>羧甲基淀粉(CMS)的环保优势</h3>
+            <p>与传统的纤维素醚相比，<a href="/zh/products/construction-cms" class="product-link">建筑级CMS</a> 在环保性能上具有天然优势：</p>
+            <ul>
+                <li><strong>源于自然：</strong> 主要原料为天然玉米淀粉，碳足迹远低于石油基产品。</li>
+                <li><strong>无毒无害：</strong> 生产过程无有害副产物，最终产品安全无气味，非常适合用于家庭装修的腻子粉和墙纸胶。</li>
+                <li><strong>性价比高：</strong> 在保证保水性和增稠效果的前提下，成本更具竞争力。</li>
+            </ul>
+
+            <h3>市场趋势预测</h3>
+            <p>根据最新行业报告，预计到2026年，生物基建筑添加剂的市场份额将增长30%。对于建材生产商而言，尽早引入<a href="/zh/products/construction-cms" class="product-link">高品质CMS</a> 优化配方，不仅是应对环保检查的需要，更是抢占绿色建筑市场的关键策略。</p>
+        `,
+        content_en: `
+            <h2>Green Transition in Construction Materials</h2>
+            <p>With stricter VOC regulations, natural modified materials like <a href="/en/products/construction-cms" class="product-link">CMS</a> are gaining popularity.</p>
+            <h3>Eco-friendly Advantages</h3>
+            <ul>
+                <li><strong>Natural Origin:</strong> Made from corn starch, low carbon footprint.</li>
+                <li><strong>Non-toxic:</strong> Safe for indoor use in putty and adhesives.</li>
+                <li><strong>Cost-effective:</strong> Competitive pricing with excellent performance.</li>
+            </ul>
+        `,
+        cover_image: '/images/industry/green_building.jpg',
+        category: 'industry',
+        author: 'Market Research',
+        view_count: 420,
+        published_at: '2025-12-24T10:00:00Z',
+        created_at: '2025-12-24T09:00:00Z',
+        seo_title_zh: '2026建筑添加剂行业趋势 - 环保CMS的应用前景',
+        seo_description_zh: '探讨环保法规下建筑添加剂的绿色转型，分析羧甲基淀粉(CMS)作为生物基材料在低VOC建材中的应用优势。',
+        seo_keywords_zh: '绿色建材, 环保添加剂, CMS优势, 建筑行业趋势, 生物基材料'
+    },
+    'guide-mixing-cms-with-putty': {
+        id: 8,
+        slug: 'guide-mixing-cms-with-putty',
+        title_zh: '使用指南：干货分享！如何正确使用CMS提高腻子粉保水性？',
+        title_en: 'User Guide: How to Properly Use CMS to Improve Putty Water Retention',
+        title_ru: 'Руководство: Как правильно использовать КМК для улучшения шпатлевки',
+        content_zh: `
+            <h2>为什么你的腻子粉容易干裂？</h2>
+            <p>很多客户反馈，即使使用了添加剂，腻子粉在施工时仍然容易干得太快，甚至后期出现裂纹。这往往是因为<strong>保水剂的选择或配比不当</strong>。</p>
+
+            <h3>正确使用CMS的三个关键步骤</h3>
+            
+            <h4>1. 选择合适的型号</h4>
+            <p>并不是所有的CMS都适合做腻子。必须选择粘度在30,000 mPa.s以上的高取代度产品，如我们的 <a href="/zh/products/construction-cms" class="product-link">8840型</a>，才能保证足够的保水率。</p>
+
+            <h4>2. 科学的复配比例</h4>
+            <p>CMS很少单独使用，通常与HPMC（羟丙基甲基纤维素）复配效果最佳。推荐配方：</p>
+            <div class="bg-gray-50 p-4 rounded-lg my-4">
+                <ul class="list-disc pl-5">
+                    <li><strong>内墙腻子：</strong> HPMC (3-4公斤) + <a href="/zh/products/construction-cms" class="product-link">CMS 8840</a> (2-3公斤) / 吨</li>
+                    <li><strong>粉刷石膏：</strong> HPMC (1.5公斤) + CMS 8840 (1.5公斤) / 吨</li>
+                </ul>
+            </div>
+            <p><em>注意：具体比例需根据当地气温和原料进行微调。</em></p>
+
+            <h4>3. 充分的干混时间</h4>
+            <p>由于CMS添加量较小，必须确保在干粉混合机中搅拌足够的时间（通常建议15-20分钟），以保证分散均匀。局部浓度过高可能导致起泡或剥落。</p>
+
+            <blockquote>
+                <p><strong>专家提示：</strong> 在夏季高温施工环境下，可适当增加 <a href="/zh/products/construction-cms" class="product-link">CMS</a> 的添加量0.5公斤/吨，以延长开放时间。</p>
+            </blockquote>
+        `,
+        content_en: `
+            <h2>Why Does Your Putty Crack?</h2>
+            <p>Poor water retention is the main culprit. Using <a href="/en/products/construction-cms" class="product-link">Model 8840 CMS</a> correctly can solve this.</p>
+            <h3>Key Steps</h3>
+            <h4>1. Choose High Viscosity</h4>
+            <p>Select CMS with >30,000 mPa.s viscosity for optimal water retention.</p>
+            <h4>2. Recommended Ratio</h4>
+            <p>Mix HPMC (3-4kg) + <a href="/en/products/construction-cms" class="product-link">CMS 8840</a> (2-3kg) per ton for interior putty.</p>
+            <h4>3. Mixing Time</h4>
+            <p>Ensure 15-20 minutes of dry mixing to prevent local concentration issues.</p>
+        `,
+        cover_image: '/images/guide/mixing_putty.jpg',
+        category: 'guide',
+        author: 'Technical Support',
+        view_count: 890,
+        published_at: '2025-12-24T11:00:00Z',
+        created_at: '2025-12-24T10:00:00Z',
+        seo_title_zh: '腻子粉CMS添加配方指南 - 提高保水性防开裂',
+        seo_description_zh: '详细教程：如何在腻子粉生产中正确添加羧甲基淀粉(CMS)，包含最佳复配比例和施工建议，解决干裂问题。',
+        seo_keywords_zh: '腻子粉配方, CMS使用方法, 保水剂配比, 8840使用指南, 建筑施工技巧'
     }
 };
 
@@ -253,7 +390,9 @@ export async function onRequestGet(context) {
 
     try {
         const url = new URL(request.url);
-        const lang = url.searchParams.get('lang') || 'en';
+        // Fix: Normalize language code (e.g. zh-CN -> zh, en-US -> en) to match data keys
+        const rawLang = url.searchParams.get('lang') || 'en';
+        const lang = rawLang.split('-')[0].toLowerCase();
 
         const article = STATIC_ARTICLE_DETAILS[slug];
 
