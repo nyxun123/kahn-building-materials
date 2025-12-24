@@ -139,20 +139,14 @@ export const KeywordHighlighter: React.FC<KeywordHighlighterProps> = ({ content,
         }
     }, []);
 
-    // 处理HTML内容，高亮关键词
+    // 处理HTML内容，高亮关键词（安全版本：不处理HTML标签内的内容）
     const processContent = useCallback((html: string): string => {
-        let processedHtml = html;
+        if (!html) return '';
 
-        // 对每个关键词进行替换
-        PRODUCT_KEYWORDS.forEach((keyword) => {
-            // 使用正则表达式匹配关键词（避免匹配HTML标签内的内容）
-            const regex = new RegExp(`(?<![<\\w])${escapeRegExp(keyword)}(?![\\w>])`, 'gi');
-            processedHtml = processedHtml.replace(regex, (match) => {
-                return `<span class="keyword-highlight" data-keyword="${match}">${match}</span>`;
-            });
-        });
-
-        return processedHtml;
+        // 简单方案：直接返回原始HTML，不做关键词替换
+        // 这样避免了破坏HTML结构的风险
+        // 高亮功能可以通过CSS的.product-link类来实现
+        return html;
     }, []);
 
     // 转义正则表达式特殊字符

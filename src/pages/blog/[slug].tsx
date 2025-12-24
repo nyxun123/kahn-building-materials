@@ -226,9 +226,24 @@ export default function BlogDetailPage() {
                         )}
 
                         {/* Article Content */}
-                        <KeywordHighlighter
-                            content={article.content}
-                            className="prose prose-lg max-w-none prose-headings:text-[#064E3B] prose-a:text-[#047857] prose-img:rounded-lg"
+                        <div
+                            className="prose prose-base max-w-none
+                                prose-headings:text-[#064E3B] prose-headings:font-semibold
+                                prose-h2:text-xl prose-h2:mt-8 prose-h2:mb-4
+                                prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-3
+                                prose-p:text-gray-700 prose-p:leading-relaxed prose-p:my-4
+                                prose-a:text-[#047857] prose-a:no-underline hover:prose-a:underline
+                                prose-strong:text-gray-900
+                                prose-ul:my-4 prose-li:text-gray-700 prose-li:my-1
+                                prose-img:rounded-lg prose-img:shadow-md
+                                prose-table:text-sm prose-th:bg-[#064E3B] prose-th:text-white prose-th:p-3
+                                prose-td:p-3 prose-td:border prose-td:border-gray-200
+                                [&_.product-link]:text-[#047857] [&_.product-link]:font-medium
+                                [&_.article-hero]:bg-gradient-to-r [&_.article-hero]:from-[#064E3B] [&_.article-hero]:to-[#047857]
+                                [&_.article-hero]:text-white [&_.article-hero]:p-6 [&_.article-hero]:rounded-xl [&_.article-hero]:mb-8
+                                [&_.article-hero_h2]:text-white [&_.article-hero_h2]:text-2xl [&_.article-hero_h2]:mb-2
+                                [&_figcaption]:text-center [&_figcaption]:text-gray-500 [&_figcaption]:text-sm [&_figcaption]:mt-2"
+                            dangerouslySetInnerHTML={{ __html: article.content }}
                         />
 
                         {/* Tags */}
