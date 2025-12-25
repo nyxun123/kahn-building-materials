@@ -423,6 +423,9 @@ const ProductsPage = memo(function ProductsPage() {
     </div>
   );
 
+  // 检查URL是否有搜索参数，有搜索参数的页面不应被索引
+  const hasSearchParams = location.search.includes('search=') || location.search.includes('category=');
+
   return (
     <>
       <SEOHelmet
@@ -432,6 +435,7 @@ const ProductsPage = memo(function ProductsPage() {
         type="website"
         lang={i18n.language as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
         image="/images/IMG_1412.JPG"
+        noindex={hasSearchParams}
       />
       <StructuredData
         schema={{
