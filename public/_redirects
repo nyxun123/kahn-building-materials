@@ -11,6 +11,16 @@
 /sitemap-vi.xml     /sitemap-vi.xml     200
 /sitemap-th.xml     /sitemap-th.xml     200
 /sitemap-id.xml     /sitemap-id.xml     200
+/sitemap-index.xml  /sitemap-index.xml  200
+/sitemap-products.xml  /sitemap-products.xml  200
+
+# Favicon and manifest (critical for search engines)
+/favicon.ico        /favicon.ico        200
+/favicon.svg        /favicon.svg        200
+/favicon-*.png      /favicon-:splat.png     200
+/apple-touch-icon.png  /apple-touch-icon.png  200
+/manifest.json      /manifest.json      200
+/robots.txt         /robots.txt         200
 
 
 # Product Redirects (SEO)
