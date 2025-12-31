@@ -744,5 +744,426 @@ export const STATIC_BLOG_ARTICLES = [
     published_at: '2025-01-07T10:00:00Z',
     created_at: '2025-01-07T09:00:00Z',
     updated_at: '2025-01-07T10:00:00Z'
+  },
+  {
+    id: 4,
+    slug: 'industrial-grade-cms-ink-pigment-paper',
+    category: 'industry',
+    tags: [
+      'carboxymethyl starch',
+      'CMS',
+      'water-based ink',
+      'pearlescent pigment',
+      'paper dyeing',
+      'specialty paper',
+      'thickener',
+      'suspension agent'
+    ],
+    author: 'Kahn Team',
+    cover_image: '/images/blog/cms-ink-paper-cover.jpg?v=20251231',
+    title_zh: '工业级羧甲基淀粉在水性油墨、珠光粉与染纸中的应用',
+    title_en: 'Industrial-Grade CMS in Water-Based Ink, Pearlescent Pigments & Paper Dyeing',
+    title_ru: 'Промышленный КМК в водных красках, перламутровых пигментах и окраске бумаги',
+    excerpt_zh: '颜料沉降、光泽不够、染色不均？CMS 作为增稠剂与悬浮剂，在水性油墨、珠光粉加工与染纸行业中发挥着关键作用。本文从 B2B 角度详解技术优势与使用指南。',
+    excerpt_en: 'Pigment settling, poor gloss, uneven dyeing? CMS serves as a thickener and suspension agent in water-based inks, pearlescent pigment processing, and paper dyeing. This B2B guide covers technical advantages and usage.',
+    excerpt_ru: 'Осаждение пигмента, слабый блеск, неравномерная окраска? КМК работает как загуститель и суспендирующий агент в водных красках и окраске бумаги. Практическое руководство для B2B.',
+    content_zh: `<p>在水性油墨、珠光粉加工与染纸生产中，体系的流变稳定性直接决定了产品质量。工业级羧甲基淀粉（CMS）作为高效增稠剂与悬浮稳定剂，能够解决颜料沉降、光泽度不足、染色不均等常见问题。</p>
+<h2>一、水性油墨中的应用</h2>
+<h3>行业痛点</h3>
+<p>水性油墨体系中，颜料悬浮稳定性是核心挑战。颜料沉降会导致印刷色差、堵塞喷头、浪费物料。</p>
+<h3>CMS 的作用机理</h3>
+<ul>
+  <li><strong>增稠与触变：</strong>CMS 溶解后形成假塑性流体，静置时维持颜料悬浮，剪切时流动性良好。</li>
+  <li><strong>悬浮稳定：</strong>形成三维网络结构，有效防止颜料沉降分层。</li>
+  <li><strong>成本优势：</strong>相比进口合成增稠剂，CMS 成本更低，供应稳定。</li>
+</ul>
+<figure>
+  <img src="/images/blog/cms-ink-paper-cover.jpg?v=20251231" alt="水性油墨生产中的CMS应用" loading="lazy" decoding="async" />
+  <figcaption>CMS 帮助水性油墨体系保持稳定的流变性能。</figcaption>
+</figure>
+<h3>推荐用量与工艺</h3>
+<table>
+  <thead>
+    <tr>
+      <th>参数</th>
+      <th>建议范围</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>添加比例</td>
+      <td>0.5% - 2.0%（按总配方重量）</td>
+    </tr>
+    <tr>
+      <td>溶解温度</td>
+      <td>常温或40-50°C加速溶解</td>
+    </tr>
+    <tr>
+      <td>搅拌方式</td>
+      <td>先低速分散，后中速均质</td>
+    </tr>
+    <tr>
+      <td>配合使用</td>
+      <td>可与少量 CMC 或合成增稠剂复配</td>
+    </tr>
+  </tbody>
+</table>
+<h2>二、珠光粉加工中的应用</h2>
+<h3>行业痛点</h3>
+<p>珠光粉（云母钛）密度大、易沉降，在涂料与化妆品配方中保持悬浮是技术难点。</p>
+<figure>
+  <img src="/images/blog/cms-pearlescent-pigment.jpg?v=20251231" alt="珠光粉颜料的悬浮与分散" loading="lazy" decoding="async" />
+  <figcaption>CMS 提供稳定的悬浮体系，保持珠光效果均匀。</figcaption>
+</figure>
+<h3>CMS 的优势</h3>
+<ul>
+  <li><strong>悬浮能力强：</strong>凝胶网络结构有效托载高密度颜料颗粒。</li>
+  <li><strong>透明度高：</strong>溶解后体系透明，不影响珠光光学效果。</li>
+  <li><strong>兼容性好：</strong>与水性体系完全相容，不影响后续加工。</li>
+  <li><strong>环保无毒：</strong>淀粉基原料，符合化妆品与食品接触安全标准。</li>
+</ul>
+<h3>典型配方建议</h3>
+<ol>
+  <li>先将 CMS 分散于去离子水中，搅拌至完全溶解。</li>
+  <li>加入珠光粉，低速搅拌均匀分散。</li>
+  <li>根据需要调整粘度和 pH 值。</li>
+  <li>静置脱泡后使用或灌装。</li>
+</ol>
+<h2>三、染纸与特种纸中的应用</h2>
+<h3>行业痛点</h3>
+<p>染纸生产中，染料和颜料（如银粉、铝粉、珠光粉）需要在涂布前保持均匀分散，否则会出现色斑、深浅不一、脱粉等问题。</p>
+<figure>
+  <img src="/images/blog/cms-paper-dyeing.jpg?v=20251231" alt="特种纸染色生产线" loading="lazy" decoding="async" />
+  <figcaption>CMS 在染纸涂布液中提供稳定的悬浮与增稠效果。</figcaption>
+</figure>
+<h3>CMS 的作用</h3>
+<ul>
+  <li><strong>涂布液增稠：</strong>控制涂布量，保证均匀上色。</li>
+  <li><strong>颜料悬浮：</strong>防止金属粉末和珠光颜料沉降。</li>
+  <li><strong>成膜性好：</strong>干燥后形成连续膜层，提高表面光泽度。</li>
+  <li><strong>粘结力辅助：</strong>增强颜料与纸张纤维的附着力。</li>
+</ul>
+<h2>CMS vs 其他增稠剂对比</h2>
+<table>
+  <thead>
+    <tr>
+      <th>对比项</th>
+      <th>工业级 CMS</th>
+      <th>合成增稠剂</th>
+      <th>天然树胶</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>成本</td>
+      <td>低</td>
+      <td>中-高</td>
+      <td>高</td>
+    </tr>
+    <tr>
+      <td>悬浮稳定性</td>
+      <td>优秀</td>
+      <td>优秀</td>
+      <td>中等</td>
+    </tr>
+    <tr>
+      <td>透明度</td>
+      <td>高</td>
+      <td>高</td>
+      <td>中等</td>
+    </tr>
+    <tr>
+      <td>环保性</td>
+      <td>可生物降解</td>
+      <td>部分不可降解</td>
+      <td>可降解</td>
+    </tr>
+    <tr>
+      <td>供应稳定</td>
+      <td>稳定</td>
+      <td>稳定</td>
+      <td>季节波动</td>
+    </tr>
+  </tbody>
+</table>
+<h2>FAQ</h2>
+<h3>CMS 会影响油墨的颜色吗？</h3>
+<p>不会。工业级 CMS 溶解后接近无色透明，不干扰颜料的色彩表现。</p>
+<h3>珠光粉体系中需要多高的粘度？</h3>
+<p>根据珠光粉密度和颗粒大小调整。一般建议 1000-5000 mPa.s 区间可有效悬浮。</p>
+<h3>染纸用量如何确定？</h3>
+<p>通常 0.3%-1.5%，需根据涂布方式（刮涂、喷涂、浸涂）和纸张克重调整。</p>
+<h3>能否与其他助剂复配？</h3>
+<p>可以。CMS 与大多数水性助剂相容，可与消泡剂、分散剂、防腐剂配合使用。</p>
+<p>需要样品测试或配方支持，欢迎联系我们获取工业级羧甲基淀粉解决方案。</p>`,
+    content_en: `<p>In water-based ink formulation, pearlescent pigment processing, and paper dyeing, rheological stability directly determines product quality. Industrial-grade carboxymethyl starch (CMS) serves as an efficient thickener and suspension stabilizer, solving common issues like pigment settling, poor gloss, and uneven dyeing.</p>
+<h2>1. Application in Water-Based Inks</h2>
+<h3>Industry Pain Points</h3>
+<p>Pigment suspension stability is the core challenge in water-based ink systems. Pigment settling leads to print color deviation, nozzle clogging, and material waste.</p>
+<h3>How CMS Works</h3>
+<ul>
+  <li><strong>Thickening & Thixotropy:</strong> CMS forms a pseudoplastic fluid that maintains pigment suspension at rest while flowing well under shear.</li>
+  <li><strong>Suspension Stability:</strong> Creates a 3D network structure that effectively prevents pigment settling.</li>
+  <li><strong>Cost Advantage:</strong> Lower cost than imported synthetic thickeners with stable supply.</li>
+</ul>
+<figure>
+  <img src="/images/blog/cms-ink-paper-cover.jpg?v=20251231" alt="CMS application in water-based ink production" loading="lazy" decoding="async" />
+  <figcaption>CMS helps maintain stable rheological performance in water-based ink systems.</figcaption>
+</figure>
+<h3>Recommended Dosage & Process</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Suggested Range</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Addition Rate</td>
+      <td>0.5% - 2.0% (by total formula weight)</td>
+    </tr>
+    <tr>
+      <td>Dissolution Temperature</td>
+      <td>Room temperature or 40-50°C for faster dissolution</td>
+    </tr>
+    <tr>
+      <td>Mixing Method</td>
+      <td>Low-speed dispersion first, then medium-speed homogenization</td>
+    </tr>
+    <tr>
+      <td>Combination Use</td>
+      <td>Can be blended with small amounts of CMC or synthetic thickeners</td>
+    </tr>
+  </tbody>
+</table>
+<h2>2. Application in Pearlescent Pigment Processing</h2>
+<h3>Industry Pain Points</h3>
+<p>Pearlescent pigments (mica-titanium) have high density and tend to settle. Maintaining suspension in coatings and cosmetic formulations is a technical challenge.</p>
+<figure>
+  <img src="/images/blog/cms-pearlescent-pigment.jpg?v=20251231" alt="Suspension and dispersion of pearlescent pigments" loading="lazy" decoding="async" />
+  <figcaption>CMS provides stable suspension systems to maintain uniform pearlescent effects.</figcaption>
+</figure>
+<h3>CMS Advantages</h3>
+<ul>
+  <li><strong>Strong Suspension:</strong> Gel network structure effectively supports high-density pigment particles.</li>
+  <li><strong>High Transparency:</strong> Dissolved system is transparent, not affecting pearlescent optical effects.</li>
+  <li><strong>Good Compatibility:</strong> Fully compatible with aqueous systems without affecting downstream processing.</li>
+  <li><strong>Eco-Friendly:</strong> Starch-based material meeting cosmetic and food-contact safety standards.</li>
+</ul>
+<h3>Typical Formulation Steps</h3>
+<ol>
+  <li>Disperse CMS in deionized water and stir until fully dissolved.</li>
+  <li>Add pearlescent pigment and mix at low speed for uniform dispersion.</li>
+  <li>Adjust viscosity and pH as needed.</li>
+  <li>Defoam and use or package.</li>
+</ol>
+<h2>3. Application in Paper Dyeing & Specialty Papers</h2>
+<h3>Industry Pain Points</h3>
+<p>In paper dyeing, dyes and pigments (such as silver powder, aluminum powder, pearlescent pigments) must remain uniformly dispersed before coating, or issues like color spots, shade variation, and powder shedding occur.</p>
+<figure>
+  <img src="/images/blog/cms-paper-dyeing.jpg?v=20251231" alt="Specialty paper dyeing production line" loading="lazy" decoding="async" />
+  <figcaption>CMS provides stable thickening and suspension in paper coating solutions.</figcaption>
+</figure>
+<h3>CMS Functions</h3>
+<ul>
+  <li><strong>Coating Thickening:</strong> Controls coating weight for uniform color application.</li>
+  <li><strong>Pigment Suspension:</strong> Prevents metal powders and pearlescent pigments from settling.</li>
+  <li><strong>Film Formation:</strong> Forms continuous film layer after drying, improving surface gloss.</li>
+  <li><strong>Adhesion Aid:</strong> Enhances pigment adhesion to paper fibers.</li>
+</ul>
+<h2>CMS vs Other Thickeners Comparison</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Industrial-Grade CMS</th>
+      <th>Synthetic Thickeners</th>
+      <th>Natural Gums</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Cost</td>
+      <td>Low</td>
+      <td>Medium-High</td>
+      <td>High</td>
+    </tr>
+    <tr>
+      <td>Suspension Stability</td>
+      <td>Excellent</td>
+      <td>Excellent</td>
+      <td>Moderate</td>
+    </tr>
+    <tr>
+      <td>Transparency</td>
+      <td>High</td>
+      <td>High</td>
+      <td>Moderate</td>
+    </tr>
+    <tr>
+      <td>Eco-Friendliness</td>
+      <td>Biodegradable</td>
+      <td>Some non-degradable</td>
+      <td>Biodegradable</td>
+    </tr>
+    <tr>
+      <td>Supply Stability</td>
+      <td>Stable</td>
+      <td>Stable</td>
+      <td>Seasonal fluctuation</td>
+    </tr>
+  </tbody>
+</table>
+<h2>FAQ</h2>
+<h3>Does CMS affect ink color?</h3>
+<p>No. Industrial-grade CMS is nearly colorless and transparent when dissolved, not interfering with pigment color performance.</p>
+<h3>What viscosity is needed for pearlescent systems?</h3>
+<p>Adjust based on pigment density and particle size. Generally, 1000-5000 mPa.s provides effective suspension.</p>
+<h3>How to determine dosage for paper dyeing?</h3>
+<p>Typically 0.3%-1.5%, adjusted based on coating method (blade, spray, dip) and paper basis weight.</p>
+<h3>Can it be combined with other additives?</h3>
+<p>Yes. CMS is compatible with most water-based additives including defoamers, dispersants, and preservatives.</p>
+<p>Contact us for samples and formulation support for industrial-grade carboxymethyl starch solutions.</p>`,
+    content_ru: `<p>В производстве водных красок, обработке перламутровых пигментов и окраске бумаги реологическая стабильность напрямую определяет качество продукции. Промышленный карбоксиметилкрахмал (КМК) служит эффективным загустителем и стабилизатором суспензии, решая распространенные проблемы осаждения пигмента, низкого блеска и неравномерной окраски.</p>
+<h2>1. Применение в водных красках</h2>
+<h3>Проблемы отрасли</h3>
+<p>Стабильность суспензии пигмента — главная задача в системах водных красок. Осаждение пигмента приводит к отклонению цвета печати, засорению сопел и потере материала.</p>
+<h3>Механизм действия КМК</h3>
+<ul>
+  <li><strong>Загущение и тиксотропия:</strong> КМК образует псевдопластичную жидкость, которая удерживает пигмент в покое и хорошо течет при сдвиге.</li>
+  <li><strong>Стабильность суспензии:</strong> Создает трехмерную сетевую структуру, эффективно предотвращающую осаждение.</li>
+  <li><strong>Ценовое преимущество:</strong> Ниже стоимость по сравнению с импортными синтетическими загустителями.</li>
+</ul>
+<figure>
+  <img src="/images/blog/cms-ink-paper-cover.jpg?v=20251231" alt="Применение КМК в производстве водных красок" loading="lazy" decoding="async" />
+  <figcaption>КМК помогает поддерживать стабильную реологию водных красок.</figcaption>
+</figure>
+<h3>Рекомендуемая дозировка и процесс</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Параметр</th>
+      <th>Рекомендуемый диапазон</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Норма добавления</td>
+      <td>0,5% - 2,0% (от общего веса рецептуры)</td>
+    </tr>
+    <tr>
+      <td>Температура растворения</td>
+      <td>Комнатная или 40-50°C для ускорения</td>
+    </tr>
+    <tr>
+      <td>Способ смешивания</td>
+      <td>Сначала низкоскоростное диспергирование, затем гомогенизация</td>
+    </tr>
+    <tr>
+      <td>Комбинирование</td>
+      <td>Можно сочетать с небольшим количеством КМЦ или синтетических загустителей</td>
+    </tr>
+  </tbody>
+</table>
+<h2>2. Применение в обработке перламутровых пигментов</h2>
+<h3>Проблемы отрасли</h3>
+<p>Перламутровые пигменты (слюда-титан) имеют высокую плотность и склонны к осаждению. Поддержание суспензии в покрытиях и косметических рецептурах — техническая задача.</p>
+<figure>
+  <img src="/images/blog/cms-pearlescent-pigment.jpg?v=20251231" alt="Суспендирование и диспергирование перламутровых пигментов" loading="lazy" decoding="async" />
+  <figcaption>КМК обеспечивает стабильную систему суспензии для равномерного перламутрового эффекта.</figcaption>
+</figure>
+<h3>Преимущества КМК</h3>
+<ul>
+  <li><strong>Сильное суспендирование:</strong> Гелевая сетка эффективно поддерживает частицы высокой плотности.</li>
+  <li><strong>Высокая прозрачность:</strong> Растворенная система прозрачна, не влияет на оптику перламутра.</li>
+  <li><strong>Хорошая совместимость:</strong> Полностью совместим с водными системами.</li>
+  <li><strong>Экологичность:</strong> Крахмальная основа соответствует стандартам безопасности косметики.</li>
+</ul>
+<h3>Типичные этапы рецептуры</h3>
+<ol>
+  <li>Диспергировать КМК в деионизированной воде до полного растворения.</li>
+  <li>Добавить перламутровый пигмент, перемешать на низкой скорости.</li>
+  <li>Скорректировать вязкость и pH по необходимости.</li>
+  <li>Дегазировать и использовать или расфасовать.</li>
+</ol>
+<h2>3. Применение в окраске бумаги и спецбумаге</h2>
+<h3>Проблемы отрасли</h3>
+<p>При окраске бумаги красители и пигменты (серебряный порошок, алюминиевый порошок, перламутр) должны оставаться равномерно распределенными перед нанесением, иначе появляются пятна, неравномерность цвета и осыпание.</p>
+<figure>
+  <img src="/images/blog/cms-paper-dyeing.jpg?v=20251231" alt="Линия окраски спецбумаги" loading="lazy" decoding="async" />
+  <figcaption>КМК обеспечивает стабильное загущение и суспендирование в растворах для покрытия бумаги.</figcaption>
+</figure>
+<h3>Функции КМК</h3>
+<ul>
+  <li><strong>Загущение покрытия:</strong> Контроль нанесения для равномерной окраски.</li>
+  <li><strong>Суспендирование пигмента:</strong> Предотвращает осаждение металлических порошков.</li>
+  <li><strong>Пленкообразование:</strong> После высыхания формирует сплошную пленку с глянцем.</li>
+  <li><strong>Адгезионная помощь:</strong> Улучшает сцепление пигмента с волокнами бумаги.</li>
+</ul>
+<h2>Сравнение КМК с другими загустителями</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Параметр</th>
+      <th>Промышленный КМК</th>
+      <th>Синтетические загустители</th>
+      <th>Натуральные камеди</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Стоимость</td>
+      <td>Низкая</td>
+      <td>Средняя-высокая</td>
+      <td>Высокая</td>
+    </tr>
+    <tr>
+      <td>Стабильность суспензии</td>
+      <td>Отличная</td>
+      <td>Отличная</td>
+      <td>Средняя</td>
+    </tr>
+    <tr>
+      <td>Прозрачность</td>
+      <td>Высокая</td>
+      <td>Высокая</td>
+      <td>Средняя</td>
+    </tr>
+    <tr>
+      <td>Экологичность</td>
+      <td>Биоразлагаемый</td>
+      <td>Частично неразлагаемые</td>
+      <td>Биоразлагаемые</td>
+    </tr>
+    <tr>
+      <td>Стабильность поставок</td>
+      <td>Стабильная</td>
+      <td>Стабильная</td>
+      <td>Сезонные колебания</td>
+    </tr>
+  </tbody>
+</table>
+<h2>FAQ</h2>
+<h3>Влияет ли КМК на цвет краски?</h3>
+<p>Нет. Промышленный КМК практически бесцветен и прозрачен, не влияет на цвет пигментов.</p>
+<h3>Какая вязкость нужна для перламутровых систем?</h3>
+<p>Зависит от плотности и размера частиц пигмента. Обычно 1000-5000 мПа·с обеспечивают эффективное суспендирование.</p>
+<h3>Как определить дозировку для окраски бумаги?</h3>
+<p>Обычно 0,3%-1,5%, коррекция по способу нанесения (ракель, распыление, погружение) и плотности бумаги.</p>
+<h3>Можно ли сочетать с другими добавками?</h3>
+<p>Да. КМК совместим с большинством водных добавок, включая пеногасители, диспергаторы и консерванты.</p>
+<p>Свяжитесь с нами для образцов и поддержки по рецептуре промышленного карбоксиметилкрахмала.</p>`,
+    meta_title_zh: '工业级羧甲基淀粉在水性油墨、珠光粉与染纸中的应用指南',
+    meta_title_en: 'Industrial-Grade CMS for Water-Based Ink, Pearlescent Pigments & Paper Dyeing',
+    meta_title_ru: 'Промышленный КМК для водных красок, перламутровых пигментов и окраски бумаги',
+    meta_description_zh: '详解CMS在水性油墨增稠、珠光粉悬浮与染纸涂布中的技术优势与使用指南，帮助B2B客户优化配方。',
+    meta_description_en: 'Technical guide on CMS for water-based ink thickening, pearlescent pigment suspension, and paper dyeing coating. B2B formulation optimization.',
+    meta_description_ru: 'Техническое руководство по КМК для загущения водных красок, суспендирования перламутра и покрытия бумаги. Оптимизация B2B рецептур.',
+    view_count: 0,
+    published_at: '2025-12-31T10:00:00Z',
+    created_at: '2025-12-31T09:00:00Z',
+    updated_at: '2025-12-31T10:00:00Z'
   }
 ];
+
