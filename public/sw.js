@@ -3,10 +3,11 @@
  * 实现资源缓存和离线支持
  */
 
-const CACHE_NAME = 'wallpaper-glue-v1.0.1';
-const STATIC_CACHE = 'static-resources-v1';
-const DYNAMIC_CACHE = 'dynamic-resources-v1';
-const API_CACHE = 'api-responses-v1';
+const CACHE_VERSION = 'v1.0.3';
+const CACHE_NAME = `wallpaper-glue-${CACHE_VERSION}`;
+const STATIC_CACHE = `static-resources-${CACHE_VERSION}`;
+const DYNAMIC_CACHE = `dynamic-resources-${CACHE_VERSION}`;
+const API_CACHE = `api-responses-${CACHE_VERSION}`;
 
 // 需要缓存的静态资源
 const STATIC_ASSETS = [

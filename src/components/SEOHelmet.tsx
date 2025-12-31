@@ -138,8 +138,14 @@ export function SEOHelmet({
       <meta name="twitter:image:alt" content={`${SITE_NAME} Logo`} />
 
       {/* Favicons with Absolute URLs for Search Engines */}
-      <link rel="icon" href={`${SITE_URL}/favicon-v8.ico`} sizes="any" />
-      <link rel="apple-touch-icon" href={`${SITE_URL}/apple-touch-icon-v8.png`} />
+      <link rel="icon" href={`${SITE_URL}/favicon.ico`} sizes="any" type="image/x-icon" />
+      <link rel="icon" href={`${SITE_URL}/favicon-16x16.png`} sizes="16x16" type="image/png" />
+      <link rel="icon" href={`${SITE_URL}/favicon-32x32.png`} sizes="32x32" type="image/png" />
+      <link rel="icon" href={`${SITE_URL}/favicon-48x48.png`} sizes="48x48" type="image/png" />
+      <link rel="icon" href={`${SITE_URL}/favicon-96x96.png`} sizes="96x96" type="image/png" />
+      <link rel="icon" href={`${SITE_URL}/favicon-144x144.png`} sizes="144x144" type="image/png" />
+      <link rel="icon" href={`${SITE_URL}/favicon-192x192.png`} sizes="192x192" type="image/png" />
+      <link rel="apple-touch-icon" href={`${SITE_URL}/apple-touch-icon.png`} sizes="180x180" />
 
       {/* Logo for Search Engines */}
       <link rel="logo" href={absoluteLogo} />
@@ -163,6 +169,4 @@ export function SEOHelmet({
     </Helmet>
   );
 }
-
-
 

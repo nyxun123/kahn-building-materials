@@ -30,7 +30,7 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
       href: `/${currentLang}/applications`,
     },
     { name: t('nav.oem'), href: `/${currentLang}/oem` },
-    // { name: t('nav.blog'), href: `/${currentLang}/blog` }, // 暂时隐藏博客
+    { name: t('nav.blog'), href: `/${currentLang}/blog` },
     { name: t('nav.about'), href: `/${currentLang}/about` },
     { name: t('nav.contact'), href: `/${currentLang}/contact` },
   ];
@@ -45,7 +45,11 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
   }, []);
 
   return (
-    <header key={`navbar-${currentLang}-${forceUpdate}`} className="fixed top-0 left-0 right-0 z-50 bg-white w-full">
+    <header
+      key={`navbar-${currentLang}-${forceUpdate}`}
+      data-site-header
+      className="fixed top-0 left-0 right-0 z-50 bg-white w-full"
+    >
       {/* 顶部信息条 - 深绿色工业风格 - 移动端隐藏 */}
       <div className="hidden md:block bg-[#064E3B] text-white py-2 px-4">
         <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center text-sm">
@@ -77,7 +81,7 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
           <div className="flex items-center flex-shrink-0">
             <Link to={`/${currentLang}`} className="flex items-center group">
               <div className="text-[#047857] font-bold text-xl group-hover:text-[#064E3B] transition-colors">
-                KARN
+                K
               </div>
               <div className="ml-3 hidden sm:block">
                 <div className="text-gray-700 text-sm font-medium group-hover:text-[#047857] transition-colors">
@@ -108,14 +112,12 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
             >
               {t('nav.oem')}
             </Link>
-            {/* 暂时隐藏博客链接
             <Link
               to={`/${currentLang}/blog`}
               className="text-gray-700 hover:text-[#047857] transition-colors duration-200 font-medium relative pb-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#047857] after:transition-all after:duration-300 hover:after:w-full"
             >
               {t('nav.blog')}
             </Link>
-            */}
             <Link
               to={`/${currentLang}/about`}
               className="text-gray-700 hover:text-[#047857] transition-colors duration-200 font-medium relative pb-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-[#047857] after:transition-all after:duration-300 hover:after:w-full"
@@ -199,7 +201,6 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
             >
               {t('nav.oem')}
             </Link>
-            {/* 暂时隐藏博客链接
             <Link
               to={`/${currentLang}/blog`}
               className="block text-gray-700 hover:text-[#047857] py-2.5 font-medium border-b border-gray-100 transition-colors"
@@ -207,7 +208,6 @@ export function Navbar({ forceUpdate }: NavbarProps = {}) {
             >
               {t('nav.blog')}
             </Link>
-            */}
             <Link
               to={`/${currentLang}/about`}
               className="block text-gray-700 hover:text-[#047857] py-2.5 font-medium border-b border-gray-100 transition-colors"

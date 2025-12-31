@@ -332,13 +332,13 @@ export default function HomePage() {
       />
 
       {/* 英雄区域 (Banner) - B2B 工厂看板风格 */}
-      <section className="relative py-0 min-h-[320px] md:min-h-[85vh] flex items-center overflow-hidden">
+      <section className="home-hero relative py-0 flex items-center overflow-hidden">
         {/* 背景图片 */}
         <div className="absolute inset-0 z-0">
           <img
             src="/images/5fbd3f1a-5077-4ecb-8f50-008dab912740.png"
             alt={t('home:hero.company_alt')}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-bottom"
           />
         </div>
 

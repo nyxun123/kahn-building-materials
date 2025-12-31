@@ -15,6 +15,9 @@ const SolutionsHubPage = lazy(() => import('@/pages/solutions/hub'));
 const SolutionsDetailPage = lazy(() => import('@/pages/solutions'));
 const BlogPage = lazy(() => import('@/pages/blog'));
 const BlogDetailPage = lazy(() => import('@/pages/blog/[slug]'));
+const BlogOfflinePage = lazy(() => import('@/pages/blog/offline'));
+
+const BLOG_DISABLED = false;
 
 // Admin页面
 const AdminLoginPage = lazy(() => import('@/pages/admin/login'));
@@ -336,7 +339,7 @@ export const router = createBrowserRouter([
         path: 'blog',
         element: (
           <Suspense fallback={<LoadingFallback />}>
-            <BlogPage />
+            {BLOG_DISABLED ? <BlogOfflinePage /> : <BlogPage />}
           </Suspense>
         ),
       },
@@ -344,7 +347,7 @@ export const router = createBrowserRouter([
         path: 'blog/:slug',
         element: (
           <Suspense fallback={<LoadingFallback />}>
-            <BlogDetailPage />
+            {BLOG_DISABLED ? <BlogOfflinePage /> : <BlogDetailPage />}
           </Suspense>
         ),
       },

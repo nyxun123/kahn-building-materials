@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { Outlet, useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Navbar } from './navbar';
@@ -11,6 +11,7 @@ export function Layout() {
   const location = useLocation();
   const { i18n } = useTranslation();
   const [forceUpdate, setForceUpdate] = useState(0);
+  const [navHeight, setNavHeight] = useState(96);
 
   // 当URL中的语言参数变化时切换语言（URL是唯一来源）
   useEffect(() => {
@@ -60,10 +61,36 @@ export function Layout() {
     }
   }, [lang]); // 只依赖 lang，URL 变化时触发
 
+  useLayoutEffect(() => {
+    const header = document.querySelector<HTMLElement>('[data-site-header]');
+    if (!header) {
+      return;
+    }
+
+    const updateHeight = () => {
+      const nextHeight = Math.ceil(header.getBoundingClientRect().height);
+      if (nextHeight) {
+        setNavHeight(nextHeight);
+        document.documentElement.style.setProperty('--site-header-height', `${nextHeight}px`);
+      }
+    };
+
+    updateHeight();
+
+    if (typeof ResizeObserver !== 'undefined') {
+      const observer = new ResizeObserver(updateHeight);
+      observer.observe(header);
+      return () => observer.disconnect();
+    }
+
+    window.addEventListener('resize', updateHeight);
+    return () => window.removeEventListener('resize', updateHeight);
+  }, []);
+
   return (
     <div key={forceUpdate} className="flex flex-col min-h-screen">
       <Navbar forceUpdate={forceUpdate} />
-      <main className="flex-1 pt-24">
+      <main className="flex-1" style={{ paddingTop: navHeight }}>
         <Outlet />
       </main>
       <Footer forceUpdate={forceUpdate} />

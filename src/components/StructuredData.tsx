@@ -70,6 +70,27 @@ interface WebPageSchema {
   areaServed?: string | string[];
 }
 
+interface BlogPostingSchema {
+  type: 'BlogPosting';
+  headline: string;
+  description: string;
+  url: string;
+  image?: string;
+  datePublished?: string;
+  dateModified?: string;
+  author: {
+    name: string;
+  };
+  publisher: {
+    name: string;
+    logo: string;
+  };
+  inLanguage?: string;
+  keywords?: string;
+  articleSection?: string;
+  wordCount?: number;
+}
+
 interface FAQPageSchema {
   type: 'FAQPage';
   mainEntity: Array<{
@@ -150,6 +171,7 @@ type StructuredDataProps =
   | { schema: ProductSchema }
   | { schema: ContactPageSchema }
   | { schema: WebPageSchema }
+  | { schema: BlogPostingSchema }
   | { schema: FAQPageSchema }
   | { schema: VideoObjectSchema }
   | { schema: AggregateRatingSchema }
@@ -255,6 +277,49 @@ export function StructuredData({ schema }: StructuredDataProps) {
         url: schema.url,
         inLanguage: schema.inLanguage,
         areaServed: schema.areaServed,
+      };
+    }
+
+    if (schema.type === 'BlogPosting') {
+      const url = schema.url.startsWith('http') ? schema.url : `${SITE_URL}${schema.url}`;
+      const image = schema.image
+        ? (schema.image.startsWith('http') ? schema.image : `${SITE_URL}${schema.image}`)
+        : undefined;
+      const logoUrl = schema.publisher.logo.startsWith('http')
+        ? schema.publisher.logo
+        : `${SITE_URL}${schema.publisher.logo}`;
+
+      return {
+        ...baseSchema,
+        '@type': 'BlogPosting',
+        headline: schema.headline,
+        description: schema.description,
+        url,
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': url,
+        },
+        image,
+        datePublished: schema.datePublished,
+        dateModified: schema.dateModified,
+        author: {
+          '@type': 'Person',
+          name: schema.author.name,
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: schema.publisher.name,
+          logo: {
+            '@type': 'ImageObject',
+            url: logoUrl,
+            width: 512,
+            height: 512,
+          },
+        },
+        inLanguage: schema.inLanguage,
+        keywords: schema.keywords,
+        articleSection: schema.articleSection,
+        wordCount: schema.wordCount,
       };
     }
 
@@ -380,7 +445,6 @@ export function StructuredData({ schema }: StructuredDataProps) {
     </Helmet>
   );
 }
-
 
 
 
