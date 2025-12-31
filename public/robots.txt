@@ -46,6 +46,7 @@ Sitemap: https://kn-wallpaperglue.com/sitemap-vi.xml
 Sitemap: https://kn-wallpaperglue.com/sitemap-th.xml
 Sitemap: https://kn-wallpaperglue.com/sitemap-id.xml
 Sitemap: https://kn-wallpaperglue.com/sitemap-products.xml
+Sitemap: https://kn-wallpaperglue.com/sitemap-blog.xml
 
 # 针对特定搜索引擎的优化配置
 
