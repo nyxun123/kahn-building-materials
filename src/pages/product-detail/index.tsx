@@ -227,6 +227,8 @@ export default function ProductDetailPage() {
             name: 'Hangzhou Karn New Building Materials Co., Ltd',
           },
           offers: {
+            price: '0',
+            priceCurrency: 'USD',
             availability: 'https://schema.org/InStock',
             url: productUrl,
           },
