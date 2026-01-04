@@ -226,6 +226,12 @@ const ProductsPage = memo(function ProductsPage() {
               '@type': 'Brand' as const,
               name: 'Hangzhou Karn New Building Materials Co., Ltd',
             },
+            offers: {
+              '@type': 'Offer' as const,
+              price: '0',
+              priceCurrency: 'USD',
+              availability: 'https://schema.org/InStock',
+            },
           },
         };
       }),

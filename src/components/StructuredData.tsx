@@ -137,6 +137,12 @@ interface ItemListSchema {
         '@type': 'Brand';
         name: string;
       };
+      offers?: {
+        '@type': 'Offer';
+        price: string;
+        priceCurrency: string;
+        availability?: string;
+      };
     };
   }>;
 }
@@ -166,7 +172,7 @@ interface WebSiteSchema {
   };
 }
 
-type StructuredDataProps = 
+type StructuredDataProps =
   | { schema: OrganizationSchema }
   | { schema: ProductSchema }
   | { schema: ContactPageSchema }
@@ -352,7 +358,7 @@ export function StructuredData({ schema }: StructuredDataProps) {
             description: item.item.description,
             url: item.item.url.startsWith('http') ? item.item.url : `${SITE_URL}${item.item.url}`,
           };
-          
+
           // 如果是 Product 类型，添加额外的字段
           if (item.item['@type'] === 'Product') {
             if (item.item.image) {
@@ -367,8 +373,16 @@ export function StructuredData({ schema }: StructuredDataProps) {
                 name: item.item.brand.name,
               };
             }
+            if (item.item.offers) {
+              baseItem.offers = {
+                '@type': 'Offer',
+                price: item.item.offers.price,
+                priceCurrency: item.item.offers.priceCurrency,
+                availability: item.item.offers.availability || 'https://schema.org/InStock',
+              };
+            }
           }
-          
+
           return {
             '@type': 'ListItem',
             position: item.position,
