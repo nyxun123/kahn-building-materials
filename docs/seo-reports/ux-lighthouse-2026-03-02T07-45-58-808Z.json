@@ -1,0 +1,44 @@
+{
+  "generatedAt": "2026-03-02T07:47:17.189Z",
+  "site": "https://093a9180.kahn-building-materials.pages.dev",
+  "summary": {
+    "errors": 0,
+    "warnings": 3,
+    "pages": 3
+  },
+  "pages": [
+    {
+      "path": "/",
+      "performance": 84,
+      "accessibility": 93,
+      "bestPractices": 100,
+      "seo": 69,
+      "lcp": "3.0 s",
+      "tbt": "80 ms"
+    },
+    {
+      "path": "/zh/blog",
+      "performance": 75,
+      "accessibility": 96,
+      "bestPractices": 100,
+      "seo": 69,
+      "lcp": "4.2 s",
+      "tbt": "50 ms"
+    },
+    {
+      "path": "/zh/oem",
+      "performance": 87,
+      "accessibility": 95,
+      "bestPractices": 100,
+      "seo": 69,
+      "lcp": "3.0 s",
+      "tbt": "40 ms"
+    }
+  ],
+  "warnings": [
+    "/: seo score 69 < 90",
+    "/zh/blog: seo score 69 < 90",
+    "/zh/oem: seo score 69 < 90"
+  ],
+  "errors": []
+}

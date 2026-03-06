@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 
 import { SEOHelmet } from '@/components/SEOHelmet';
 import { StructuredData } from '@/components/StructuredData';
-import { LOCAL_PRODUCTS } from '@/data/products-data';
+import BreadcrumbNavigation from '@/components/BreadcrumbNavigation';
+import { getLocalProductSlug, LOCAL_PRODUCTS } from '@/data/products-data';
 
 // 使用D1 API
 interface Product {
@@ -47,51 +48,88 @@ const getProductFeatures = (product: Product, lang: string) => {
   return (product[featuresKey] as string[]) || product.features_zh || [];
 };
 
+const getProductHighlights = (product: Product, lang: string): string[] => {
+  const rawFeatures = getProductFeatures(product, lang).filter(Boolean);
+  if (rawFeatures.length > 0) {
+    return rawFeatures.slice(0, 3);
+  }
+
+  const description = getProductDescription(product, lang) || '';
+  const segments = description
+    .split(/[。；;，,\n]/)
+    .map((item) => item.trim())
+    .filter((item) => item.length >= 4);
+
+  return segments.slice(0, 3);
+};
+
+const getProductPathSegment = (productCode: string) => getLocalProductSlug(productCode) || productCode;
+
 // 优化的产品卡片组件
 const ProductCard = ({ product }: { product: Product }) => {
   const { t, i18n } = useTranslation(['common', 'products', 'home']);
   const currentLang = i18n.language || 'zh';
-  const productDetailUrl = `/${currentLang}/products/${product.product_code}`;
+  const productDetailUrl = `/${currentLang}/products/${getProductPathSegment(product.product_code)}`;
+  const highlightList = getProductHighlights(product, currentLang);
+  const categoryLabel = product.category
+    ? t(`home:applications.${product.category}.title`, { defaultValue: product.category })
+    : null;
 
   return (
-    <div className="group relative overflow-hidden rounded-lg border bg-background p-6 shadow-sm transition-all hover:shadow-md">
-      {/* 可点击的图片区域 */}
-      <Link to={productDetailUrl} className="block">
+    <article className="group relative overflow-hidden rounded-lg border border-gray-200 bg-background p-4 shadow-sm transition-all hover:shadow-md hover:border-[#047857]/30 flex flex-col h-full">
+      <Link to={productDetailUrl} className="block mb-4">
         {product.image_url ? (
-          <div className="aspect-square mb-5 overflow-hidden rounded-md bg-muted cursor-pointer">
+          <div className="aspect-[16/10] overflow-hidden rounded-md bg-gradient-to-b from-gray-50 to-gray-100 border border-gray-200">
             <LazyImage
               src={product.image_url}
               alt={getProductName(product, currentLang)}
-              className="h-full w-full object-cover object-center transition-all group-hover:scale-105"
+              className="h-full w-full object-contain p-4 transition-all"
             />
-            {/* 点击提示覆盖层 - 仅在桌面端显示 hover 效果 */}
-            <div className="hidden md:flex absolute inset-0 bg-black/0 opacity-0 group-hover:opacity-10 transition-all duration-200 items-center justify-center">
-              <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 bg-white/90 rounded-full p-3">
-                <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 9l3 3m0 0l-3-3m3 3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
           </div>
         ) : (
-          <div className="aspect-square mb-5 overflow-hidden rounded-md bg-muted flex items-center justify-center text-muted-foreground cursor-pointer">
+          <div className="aspect-[16/10] overflow-hidden rounded-md bg-muted flex items-center justify-center text-muted-foreground border border-gray-200">
             {t('home:products.no_image')}
           </div>
         )}
       </Link>
 
-      <h3 className="text-lg font-semibold">{getProductName(product, currentLang)}</h3>
-      <p className="mt-2 line-clamp-3 text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-2 mb-3">
+        <span className="inline-flex items-center rounded bg-[#047857]/10 text-[#047857] px-2 py-1 text-xs font-semibold">
+          {product.product_code}
+        </span>
+        {categoryLabel && (
+          <span className="inline-flex items-center rounded bg-gray-100 text-gray-600 px-2 py-1 text-xs font-medium">
+            {categoryLabel}
+          </span>
+        )}
+      </div>
+
+      <h3 className="text-lg font-semibold leading-snug line-clamp-2 min-h-[3.25rem]">
+        {getProductName(product, currentLang)}
+      </h3>
+      <p className="mt-2 line-clamp-2 text-sm text-muted-foreground min-h-[2.75rem]">
         {getProductDescription(product, currentLang)}
       </p>
+
+      {highlightList.length > 0 && (
+        <ul className="mt-3 space-y-1.5">
+          {highlightList.map((feature, index) => (
+            <li key={index} className="flex items-start gap-2 text-xs text-gray-600">
+              <Check className="h-3.5 w-3.5 text-[#10B981] mt-0.5 flex-shrink-0" />
+              <span className="line-clamp-1">{feature}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
       <Link
         to={productDetailUrl}
-        className="mt-4 inline-flex items-center text-sm font-medium text-primary hover:underline"
+        className="mt-4 inline-flex items-center justify-center w-full rounded-md border border-[#047857]/25 bg-[#047857]/5 py-2 text-sm font-medium text-[#047857] transition-colors hover:bg-[#047857]/10"
       >
         {t('cta.learn_more')}
         <ArrowRight className="ml-1 h-4 w-4" />
       </Link>
-    </div>
+    </article>
   );
 };
 
@@ -211,7 +249,7 @@ const ProductsPage = memo(function ProductsPage() {
       numberOfItems: filteredProducts.length,
       itemListElement: filteredProducts.map((product, index) => {
         const productName = getProductName(product, currentLang);
-        const productUrl = `/${currentLang}/products/${product.product_code}`;
+        const productUrl = `/${currentLang}/products/${getProductPathSegment(product.product_code)}`;
         return {
           '@type': 'ListItem' as const,
           position: index + 1,
@@ -219,7 +257,7 @@ const ProductsPage = memo(function ProductsPage() {
             '@type': 'Product' as const,
             name: productName,
             description: getProductDescription(product, currentLang),
-            image: product.image_url || '/images/IMG_1412.JPG',
+            image: product.image_url || '/images/IMG_1412.jpg',
             sku: product.product_code,
             url: productUrl,
             brand: {
@@ -239,17 +277,16 @@ const ProductsPage = memo(function ProductsPage() {
   }, [filteredProducts, i18n.language, t, currentLang]);
   // Specialized Mobile OEM Card (Horizontal List Style)
   const MobileOEMCard = ({ product }: { product: Product }) => {
-    const features = getProductFeatures(product, currentLang);
-    const topFeatures = features.slice(0, 3); // Show top 3 features to keep it compact
+    const topFeatures = getProductHighlights(product, currentLang).slice(0, 2);
 
     return (
-      <div className="bg-white rounded p-3 shadow-sm border border-gray-100 flex gap-3">
+      <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 flex gap-2.5">
         {/* Left: Image Thumbnail (Matches standard card size w-20 h-20) */}
-        <Link to={`/${currentLang}/oem`} className="w-20 h-20 bg-gray-100 rounded overflow-hidden flex-shrink-0 relative border border-gray-100 group">
+        <Link to={`/${currentLang}/oem`} className="w-[4.5rem] h-[4.5rem] bg-gray-100 rounded overflow-hidden flex-shrink-0 relative border border-gray-100 group">
           <img
             src="/images/oem-v999.jpg"
             alt={getProductName(product, currentLang)}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain p-1"
           />
           <div className="absolute top-0 left-0 bg-[#047857] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-br">
             OEM
@@ -259,37 +296,37 @@ const ProductsPage = memo(function ProductsPage() {
         {/* Right: Content */}
         <div className="flex-1 flex flex-col justify-between min-w-0">
           <div>
-            <div className="flex justify-between items-start mb-1">
-              <h3 className="text-sm font-bold text-gray-900 leading-snug line-clamp-1">
+            <div className="flex justify-between items-start mb-1.5">
+              <h3 className="text-sm font-bold text-gray-900 leading-snug line-clamp-2">
                 {getProductName(product, currentLang)}
               </h3>
-              <span className="inline-flex items-center px-1.5 py-0.5 rounded-[2px] text-[9px] font-medium bg-gray-100 text-gray-500 whitespace-nowrap ml-2">
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded-[2px] text-[10px] font-medium bg-gray-100 text-gray-600 whitespace-nowrap ml-2">
                 Source Factory
               </span>
             </div>
 
-            {topFeatures && topFeatures.length > 0 ? (
+            {topFeatures.length > 0 ? (
               <div className="space-y-1 mb-2">
                 {topFeatures.map((feature, idx) => (
-                  <div key={idx} className="flex items-start text-[10px] text-gray-500 leading-tight">
+                  <div key={idx} className="flex items-start text-xs text-gray-600 leading-tight">
                     <Check className="w-3 h-3 text-[#047857] mr-1 flex-shrink-0" strokeWidth={3} />
                     <span className="line-clamp-1">{feature}</span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-[10px] text-gray-500 line-clamp-2 leading-relaxed mb-2">
+              <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed mb-2">
                 {getProductDescription(product, currentLang)}
               </p>
             )}
           </div>
 
           <div className="flex items-center justify-end gap-3 mt-2">
-            <Link to={`/${currentLang}/oem`} className="text-[10px] text-gray-500 hover:text-[#047857]">
+            <Link to={`/${currentLang}/oem`} className="text-xs text-gray-600 hover:text-[#047857]">
               {t('cta.learn_more') || 'Details'}
             </Link>
             <Link to={`/${currentLang}/contact`}>
-              <button className="bg-[#047857] text-white text-[10px] font-bold px-3 py-1.5 rounded-sm flex items-center shadow-sm active:scale-95 transition-transform">
+              <button className="bg-[#047857] text-white text-xs font-bold px-3 py-1.5 rounded-sm flex items-center shadow-sm active:scale-95 transition-transform">
                 {t('cta.contact') || 'Contact'}
               </button>
             </Link>
@@ -309,7 +346,7 @@ const ProductsPage = memo(function ProductsPage() {
         <div className="container mx-auto px-4 relative z-30 h-full flex flex-col justify-center">
           <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-[2px] px-2 py-0.5 rounded border border-white/20 mb-2 w-fit">
             <Package className="w-3 h-3 text-[#10B981]" />
-            <span className="text-white text-[10px] uppercase tracking-wider font-bold">Product Catalog</span>
+            <span className="text-white text-xs uppercase tracking-wider font-bold">Product Catalog</span>
           </div>
           <h1 className="text-2xl font-bold text-white leading-tight shadow-sm mb-1">
             {t('products:title')}
@@ -354,18 +391,21 @@ const ProductsPage = memo(function ProductsPage() {
             <p className="text-gray-500 text-xs mt-1">Try adjusting your search criteria</p>
           </div>
         ) : <div className="space-y-3">
-          {filteredProducts.map((product) => (
-            product.product_code === 'OEM' ? (
-              <MobileOEMCard key={product.id} product={product} />
-            ) : (
-              <div key={product.id} className="bg-white rounded p-3 shadow-sm border border-gray-100 flex gap-3">
+          {filteredProducts.map((product) => {
+            if (product.product_code === 'OEM') {
+              return <MobileOEMCard key={product.id} product={product} />;
+            }
+
+            const mobileFeatureList = getProductHighlights(product, currentLang).slice(0, 2);
+            return (
+              <div key={product.id} className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 flex gap-2.5">
                 {/* Thumbnail */}
-                <Link to={`/${currentLang}/products/${product.product_code}`} className="w-20 h-20 bg-gray-100 rounded overflow-hidden flex-shrink-0 border border-gray-100 relative group">
+                <Link to={`/${currentLang}/products/${getProductPathSegment(product.product_code)}`} className="w-[4.5rem] h-[4.5rem] bg-gray-100 rounded overflow-hidden flex-shrink-0 border border-gray-100 relative group">
                   {product.image_url ? (
                     <img
                       src={product.image_url}
                       alt={getProductName(product, currentLang)}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain p-1.5"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-300">
@@ -380,24 +420,35 @@ const ProductsPage = memo(function ProductsPage() {
                   <div>
                     <div className="flex justify-between items-start">
                       {product.category && (
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-[2px] text-[9px] font-medium bg-gray-100 text-gray-500 mb-1">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded-[2px] text-[10px] font-medium bg-gray-100 text-gray-600 mb-1">
                           {t(`home:applications.${product.category}.title`) || product.category}
                         </span>
                       )}
                     </div>
-                    <Link to={`/${currentLang}/products/${product.product_code}`}>
+                    <Link to={`/${currentLang}/products/${getProductPathSegment(product.product_code)}`}>
                       <h3 className="text-sm font-bold text-gray-900 mb-1 leading-snug line-clamp-2">
                         {getProductName(product, currentLang)}
                       </h3>
                     </Link>
-                    <p className="text-[10px] text-gray-500 line-clamp-1 leading-relaxed">
-                      {getProductDescription(product, currentLang)}
-                    </p>
+                    {mobileFeatureList.length > 0 ? (
+                      <ul className="space-y-0.5 mt-1">
+                        {mobileFeatureList.map((feature, index) => (
+                          <li key={index} className="flex items-start gap-1.5 text-xs text-gray-600">
+                            <Check className="w-3 h-3 text-[#10B981] mt-0.5 flex-shrink-0" />
+                            <span className="line-clamp-1">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-xs text-gray-600 line-clamp-1 leading-relaxed">
+                        {getProductDescription(product, currentLang)}
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex items-center justify-end mt-2">
-                    <Link to={`/${currentLang}/products/${product.product_code}`}>
-                      <button className="bg-[#047857] text-white text-[10px] font-bold px-3 py-1.5 rounded-sm flex items-center shadow-sm active:scale-95 transition-transform">
+                    <Link to={`/${currentLang}/products/${getProductPathSegment(product.product_code)}`}>
+                      <button className="bg-[#047857] text-white text-xs font-bold px-3 py-1.5 rounded-sm flex items-center shadow-sm active:scale-95 transition-transform">
                         {t('cta.learn_more') || 'View'}
                         <ArrowRight className="w-3 h-3 ml-1" />
                       </button>
@@ -405,8 +456,8 @@ const ProductsPage = memo(function ProductsPage() {
                   </div>
                 </div>
               </div>
-            )
-          ))}
+            );
+          })}
         </div>
         }
       </div>
@@ -440,7 +491,7 @@ const ProductsPage = memo(function ProductsPage() {
         keywords={t('products:keywords') + ", heavy duty wallpaper adhesive, vinyl wallpaper glue, methyl cellulose adhesive"}
         type="website"
         lang={i18n.language as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
-        image="/images/IMG_1412.JPG"
+        image="/images/IMG_1412.jpg"
         noindex={hasSearchParams}
       />
       <StructuredData
@@ -477,6 +528,10 @@ const ProductsPage = memo(function ProductsPage() {
 
       {/* Main Container with Background Switch */}
       <div className="min-h-screen bg-gray-50 lg:bg-background">
+        {/* Breadcrumb Navigation */}
+        <div className="container mx-auto px-4 pt-4">
+          <BreadcrumbNavigation />
+        </div>
 
         {/* Mobile View */}
         <MobileProductList />

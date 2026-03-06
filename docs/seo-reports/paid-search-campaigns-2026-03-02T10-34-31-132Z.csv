@@ -1,0 +1,7 @@
+platform,campaign_name,campaign_type,budget_usd_per_day,bidding_strategy,target_locations,target_languages,start_date,status
+google_ads,Search | OEM Wallpaper Adhesive | EN,search,55,Maximize Clicks,"United States, Canada, United Kingdom, Australia",English,2026-03-02,paused
+google_ads,Search | Construction CMS Additive | EN,search,40,Maximize Clicks,"United States, Canada, United Kingdom, Australia",English,2026-03-02,paused
+google_ads,Search | Desiccant Gel Material | EN,search,30,Maximize Clicks,"United States, Canada, United Kingdom, Australia",English,2026-03-02,paused
+microsoft_ads,Search | OEM Wallpaper Adhesive | EN,search,55,Maximize Clicks,"United States, Canada, United Kingdom, Australia",English,2026-03-02,paused
+microsoft_ads,Search | Construction CMS Additive | EN,search,40,Maximize Clicks,"United States, Canada, United Kingdom, Australia",English,2026-03-02,paused
+microsoft_ads,Search | Desiccant Gel Material | EN,search,30,Maximize Clicks,"United States, Canada, United Kingdom, Australia",English,2026-03-02,paused

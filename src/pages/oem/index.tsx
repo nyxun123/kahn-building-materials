@@ -5,11 +5,13 @@ import { ArrowRight, Factory, FlaskConical, Globe, Truck, Users, Check, ChevronR
 import { Button } from '@/components/ui/button';
 import { SEOHelmet } from '@/components/SEOHelmet';
 import { StructuredData } from '@/components/StructuredData';
+import BreadcrumbNavigation from '@/components/BreadcrumbNavigation';
 import { COMPANY_PROFILE } from '@/lib/company-profile';
 import { SOCIAL_LINKS } from '@/lib/social-links';
 
 export default function OemPage() {
   const { t, i18n } = useTranslation(['common', 'oem']);
+  const tr = (key: string, fallback: string) => t(key, { defaultValue: fallback });
   const location = useLocation();
   const currentLang = i18n.language || 'zh';
   const currentUrl = `https://kn-wallpaperglue.com${location.pathname}`;
@@ -61,6 +63,11 @@ export default function OemPage() {
         }}
       />
 
+      {/* Breadcrumb Navigation */}
+      <div className="container mx-auto px-4 pt-4">
+        <BreadcrumbNavigation />
+      </div>
+
       {/* =====================================================================================
           MOBILE VIEW (App-like Style)
          ===================================================================================== */}
@@ -68,19 +75,36 @@ export default function OemPage() {
 
         {/* Mobile App Header / Hero */}
         <div className="relative h-56 bg-gray-900 overflow-hidden">
-          <img
-            src="/images/oem-banner-product.png"
-            alt="OEM Product Packaging"
-            className="w-full h-full object-cover opacity-100"
-          />
+          <picture>
+            <source
+              media="(max-width: 420px)"
+              srcSet="/images/oem-banner-product-360.jpg"
+              type="image/jpeg"
+            />
+            <source
+              srcSet="/images/oem-banner-product-513.jpg"
+              type="image/jpeg"
+            />
+            <img
+              src="/images/oem-banner-product.png"
+              alt="OEM Product Packaging"
+              className="w-full h-full object-cover opacity-100"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              sizes="100vw"
+              width={513}
+              height={364}
+            />
+          </picture>
           {/* Gradient optimized for visibility: Only darkens bottom 75% for text, top is clear */}
           <div className="absolute bottom-0 left-0 w-full h-3/4 bg-gradient-to-t from-black/90 to-transparent"></div>
 
           <div className="absolute bottom-0 left-0 w-full p-5 z-10">
             <div className="flex items-center space-x-2 text-white/90 text-xs mb-1 font-medium tracking-wider uppercase">
-              <span>Source Factory</span>
+              <span>{tr('oem:mobile.source_factory', 'Source Factory')}</span>
               <span className="w-1 h-1 bg-white rounded-full"></span>
-              <span>Customization</span>
+              <span>{tr('oem:mobile.customization', 'Customization')}</span>
             </div>
             <h1 className="text-2xl font-bold text-white leading-tight shadow-sm">
               {t('oem:hero.title')}
@@ -100,7 +124,7 @@ export default function OemPage() {
                 <FlaskConical size={16} />
               </div>
               <h3 className="text-xs font-bold text-gray-900 mb-1">{t('oem:services.development.title')}</h3>
-              <p className="text-[10px] text-gray-500 leading-snug line-clamp-2">{t('oem:services.development.description')}</p>
+              <p className="text-xs text-gray-600 leading-snug line-clamp-2">{t('oem:services.development.description')}</p>
             </div>
 
             <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm flex flex-col items-center text-center">
@@ -108,7 +132,7 @@ export default function OemPage() {
                 <Factory size={16} />
               </div>
               <h3 className="text-xs font-bold text-gray-900 mb-1">{t('oem:services.manufacturing.title')}</h3>
-              <p className="text-[10px] text-gray-500 leading-snug line-clamp-2">{t('oem:services.manufacturing.description')}</p>
+              <p className="text-xs text-gray-600 leading-snug line-clamp-2">{t('oem:services.manufacturing.description')}</p>
             </div>
 
             <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm flex flex-col items-center text-center col-span-2">
@@ -116,7 +140,7 @@ export default function OemPage() {
                 <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-[#047857]"><Truck size={16} /></div>
                 <div className="text-left">
                   <h3 className="text-sm font-bold text-gray-900">{t('oem:services.logistics.title')}</h3>
-                  <p className="text-[10px] text-gray-500">{t('oem:services.logistics.description')}</p>
+                  <p className="text-xs text-gray-600">{t('oem:services.logistics.description')}</p>
                 </div>
               </div>
             </div>
@@ -157,7 +181,7 @@ export default function OemPage() {
             ].map((step, i) => (
               <div key={i} className="bg-white p-3 rounded border border-gray-100 flex items-center justify-between shadow-sm">
                 <div className="flex items-center">
-                  <span className="text-xs font-bold text-gray-300 mr-3">{step.step}</span>
+                  <span className="text-xs font-bold text-gray-600 mr-3">{step.step}</span>
                   <span className="text-sm font-medium text-gray-800">{step.title}</span>
                 </div>
                 <ChevronRight size={14} className="text-gray-400" />
@@ -169,11 +193,11 @@ export default function OemPage() {
         {/* Sticky Bottom Action Bar */}
         <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 p-4 safe-area-pb z-50 flex items-center justify-between shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
           <div className="flex flex-col">
-            <span className="text-[10px] text-gray-500">Need Customization?</span>
-            <span className="text-sm font-bold text-[#047857]">Factory Direct</span>
+            <span className="text-xs text-gray-700">{tr('oem:mobile.need_customization', 'Need Customization?')}</span>
+            <span className="text-sm font-bold text-[#047857]">{tr('oem:mobile.factory_direct', 'Factory Direct')}</span>
           </div>
           <Button asChild className="bg-[#047857] hover:bg-[#064E3B] text-white shadow-lg px-8 rounded-full">
-            <Link to="/contact">
+            <Link to={`/${currentLang}/contact`}>
               {t('oem:cta.button')}
             </Link>
           </Button>
@@ -196,7 +220,7 @@ export default function OemPage() {
               {t('oem:hero.subtitle')}
             </p>
             <Button asChild size="lg" className="bg-white text-[#047857] hover:bg-green-50">
-              <Link to="/contact">
+              <Link to={`/${currentLang}/contact`}>
                 {t('oem:hero.cta')}
               </Link>
             </Button>
@@ -204,7 +228,7 @@ export default function OemPage() {
         </section>
 
         {/* 服务介绍 */}
-        <section className="py-16 md:py-24 bg-background">
+        <section className="py-16 md:py-24 bg-background cv-auto">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
@@ -247,7 +271,7 @@ export default function OemPage() {
         </section>
 
         {/* OEM流程 */}
-        <section className="py-16 md:py-24 bg-muted/30">
+        <section className="py-16 md:py-24 bg-muted/30 cv-auto">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
@@ -316,7 +340,7 @@ export default function OemPage() {
         </section>
 
         {/* 优势 */}
-        <section className="py-16 md:py-24 bg-background">
+        <section className="py-16 md:py-24 bg-background cv-auto">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
@@ -331,8 +355,10 @@ export default function OemPage() {
               {/* 左侧图片 */}
               <div className="bg-muted rounded-sm overflow-hidden shadow-lg h-[500px]">
                 <img
-                  src="/images/generated 英文_image.png"
-                  alt="OEM定制包装生产"
+                  src="/images/factory-view.webp"
+                  alt="OEM生产工厂实拍"
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover"
                   style={{ objectPosition: 'center 15%' }}
                 />
@@ -381,7 +407,7 @@ export default function OemPage() {
         </section>
 
         {/* 行动召唤区 CTA */}
-        <section className="py-16 md:py-24 bg-gradient-to-r from-[#064E3B] to-[#047857] text-white">
+        <section className="py-16 md:py-24 bg-gradient-to-r from-[#064E3B] to-[#047857] text-white cv-auto">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-6">
               {t('oem:cta.title')}
@@ -390,7 +416,7 @@ export default function OemPage() {
               {t('oem:cta.description')}
             </p>
             <Button asChild size="lg" className="bg-white text-[#047857] hover:bg-green-50">
-              <Link to="/contact">
+              <Link to={`/${currentLang}/contact`}>
                 {t('oem:cta.button')}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>

@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-03-02T08:21:13.413Z",
+  "site": "https://kn-wallpaperglue.com",
+  "summary": {
+    "errors": 1,
+    "warnings": 0,
+    "pages": 2
+  },
+  "pages": [
+    {
+      "path": "/zh/blog",
+      "performance": 79,
+      "accessibility": 96,
+      "bestPractices": 100,
+      "seo": 100,
+      "lcp": "3.9 s",
+      "tbt": "40 ms"
+    },
+    {
+      "path": "/zh/oem",
+      "performance": 80,
+      "accessibility": 95,
+      "bestPractices": 100,
+      "seo": 100,
+      "lcp": "3.8 s",
+      "tbt": "20 ms"
+    }
+  ],
+  "warnings": [],
+  "errors": [
+    "Lighthouse failed for / (https://kn-wallpaperglue.com/)"
+  ]
+}

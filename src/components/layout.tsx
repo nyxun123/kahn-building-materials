@@ -5,6 +5,7 @@ import { Navbar } from './navbar';
 import { Footer } from './footer';
 import { FloatingContactButtons } from './FloatingContactButtons';
 import { BottomNav } from './BottomNav';
+import { prefetchBlogList } from '@/lib/blog-prefetch';
 
 export function Layout() {
   const { lang } = useParams<{ lang: string }>();
@@ -21,7 +22,6 @@ export function Layout() {
 
     // 验证语言代码是否有效
     if (!['zh', 'en', 'ru', 'vi', 'th', 'id'].includes(lang)) {
-      console.warn(`无效的语言代码: ${lang}，使用默认语言 en`);
       // 无效语言代码，重定向到英文
       const currentPath = window.location.pathname;
       const pathParts = currentPath.split('/').filter(part => part !== '');
@@ -37,17 +37,13 @@ export function Layout() {
     const currentLang = (i18n.language || 'en').split('-')[0];
 
     // 统一更新 i18n（每次 URL 变化都强制更新，确保同步）
-    console.log(`🔄 Layout处理语言: 当前=${currentLang}, 目标=${targetLang}, URL=${lang}`);
-
     // 如果语言不同，立即切换
     if (currentLang !== targetLang) {
-      console.log(`🔄 语言变化，开始切换: ${currentLang} -> ${targetLang}`);
       i18n.changeLanguage(targetLang).then(() => {
-        console.log(`✅ 语言切换成功: ${targetLang}`);
         try {
           localStorage.setItem('userLanguage', targetLang);
         } catch (e) {
-          console.warn('无法保存语言偏好:', e);
+          console.error('无法保存语言偏好:', e);
         }
         // 强制重新渲染所有组件
         setForceUpdate(prev => prev + 1);
@@ -56,7 +52,6 @@ export function Layout() {
       });
     } else {
       // 即使语言相同，也强制更新一次（确保组件使用最新语言）
-      console.log(`✓ 语言已同步，强制更新组件: ${targetLang}`);
       setForceUpdate(prev => prev + 1);
     }
   }, [lang]); // 只依赖 lang，URL 变化时触发
@@ -86,6 +81,38 @@ export function Layout() {
     window.addEventListener('resize', updateHeight);
     return () => window.removeEventListener('resize', updateHeight);
   }, []);
+
+  useEffect(() => {
+    if (!lang || location.pathname.startsWith('/admin')) {
+      return;
+    }
+
+    const win = window as Window & {
+      requestIdleCallback?: (cb: IdleRequestCallback, opts?: IdleRequestOptions) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+
+    let idleId: number | null = null;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    const runPrefetch = () => {
+      void prefetchBlogList(lang);
+    };
+
+    if (typeof win.requestIdleCallback === 'function') {
+      idleId = win.requestIdleCallback(runPrefetch, { timeout: 2500 });
+    } else {
+      timeoutId = setTimeout(runPrefetch, 1200);
+    }
+
+    return () => {
+      if (typeof idleId === 'number' && typeof win.cancelIdleCallback === 'function') {
+        win.cancelIdleCallback(idleId);
+      }
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [lang, location.pathname]);
 
   return (
     <div key={forceUpdate} className="flex flex-col min-h-screen">

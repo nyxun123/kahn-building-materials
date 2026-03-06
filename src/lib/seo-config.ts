@@ -5,7 +5,7 @@
 
 export const SITE_NAME = 'Hangzhou Karn New Building Materials Co., Ltd';
 export const SITE_URL = 'https://kn-wallpaperglue.com';
-export const DEFAULT_IMAGE = `${SITE_URL}/images/IMG_1412.JPG`;
+export const DEFAULT_IMAGE = `${SITE_URL}/images/IMG_1412.jpg`;
 export const DEFAULT_LOGO = `${SITE_URL}/images/logo.png`;
 
 // 增强的通用关键词 - 针对SEO优化
@@ -59,8 +59,8 @@ export const PAGE_KEYWORDS: Record<string, Record<string, string>> = {
 
 // 页面默认图片配置
 export const PAGE_IMAGES: Record<string, string> = {
-  home: '/images/IMG_1412.JPG',
-  products: '/images/IMG_1412.JPG',
+  home: '/images/IMG_1412.jpg',
+  products: '/images/IMG_1412.jpg',
   applications: '/images/应用领域/纺织印染.jpg',
   oem: '/images/oem-home.png',
   about: '/images/IMG_1515.JPG',

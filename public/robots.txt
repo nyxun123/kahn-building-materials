@@ -13,6 +13,8 @@ Disallow: /api/admin/
 
 # 允许抓取公开API接口
 Allow: /api/products
+Allow: /api/blog
+Allow: /api/blog/
 Allow: /api/content
 Allow: /api/page-content
 # 禁止其他API接口
@@ -47,6 +49,8 @@ Sitemap: https://kn-wallpaperglue.com/sitemap-th.xml
 Sitemap: https://kn-wallpaperglue.com/sitemap-id.xml
 Sitemap: https://kn-wallpaperglue.com/sitemap-products.xml
 Sitemap: https://kn-wallpaperglue.com/sitemap-blog.xml
+# 移动端专用Sitemap（优化移动搜索）
+Sitemap: https://kn-wallpaperglue.com/sitemap-mobile.xml
 
 # 针对特定搜索引擎的优化配置
 
@@ -132,7 +136,6 @@ Crawl-delay: 10
 
 # 默认抓取延迟（避免服务器压力）
 Crawl-delay: 1
-
 
 
 

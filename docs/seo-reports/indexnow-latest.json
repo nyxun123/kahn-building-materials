@@ -1,0 +1,82 @@
+{
+  "generatedAt": "2026-03-02T10:38:30.819Z",
+  "startedAt": "2026-03-02T10:38:19.526Z",
+  "site": "https://kn-wallpaperglue.com",
+  "host": "kn-wallpaperglue.com",
+  "keyLocation": "https://kn-wallpaperglue.com/kn20260302indexnowa8c4f7d93e1b6c2.txt",
+  "urlsDiscovered": 140,
+  "urlsSubmitted": 140,
+  "sitemapChecks": [
+    {
+      "sitemapUrl": "https://kn-wallpaperglue.com/sitemap-zh.xml",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "sitemapUrl": "https://kn-wallpaperglue.com/sitemap-en.xml",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "sitemapUrl": "https://kn-wallpaperglue.com/sitemap-ru.xml",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "sitemapUrl": "https://kn-wallpaperglue.com/sitemap-vi.xml",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "sitemapUrl": "https://kn-wallpaperglue.com/sitemap-th.xml",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "sitemapUrl": "https://kn-wallpaperglue.com/sitemap-id.xml",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "sitemapUrl": "https://kn-wallpaperglue.com/sitemap-products.xml",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "sitemapUrl": "https://kn-wallpaperglue.com/sitemap-blog.xml",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "sitemapUrl": "https://kn-wallpaperglue.com/sitemap-mobile.xml",
+      "status": 200,
+      "ok": true
+    }
+  ],
+  "endpointResults": [
+    {
+      "endpoint": "https://api.indexnow.org/indexnow",
+      "ok": true,
+      "status": 200,
+      "okBatches": 1,
+      "totalBatches": 1,
+      "responseSample": ""
+    },
+    {
+      "endpoint": "https://www.bing.com/indexnow",
+      "ok": true,
+      "status": 200,
+      "okBatches": 1,
+      "totalBatches": 1,
+      "responseSample": ""
+    },
+    {
+      "endpoint": "https://yandex.com/indexnow",
+      "ok": true,
+      "status": 202,
+      "okBatches": 1,
+      "totalBatches": 1,
+      "responseSample": "{\n  \"success\":true\n}"
+    }
+  ]
+}

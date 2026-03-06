@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-03-02T08:49:49.680Z",
+  "site": "https://kn-wallpaperglue.com",
+  "summary": {
+    "errors": 0,
+    "warnings": 0,
+    "pages": 2
+  },
+  "pages": [
+    {
+      "path": "/zh/blog",
+      "performance": 79,
+      "accessibility": 96,
+      "bestPractices": 100,
+      "seo": 100,
+      "lcp": "4.1 s",
+      "tbt": "20 ms"
+    },
+    {
+      "path": "/zh/blog?page=2",
+      "performance": 83,
+      "accessibility": 93,
+      "bestPractices": 100,
+      "seo": 100,
+      "lcp": "3.5 s",
+      "tbt": "20 ms"
+    }
+  ],
+  "warnings": [],
+  "errors": []
+}

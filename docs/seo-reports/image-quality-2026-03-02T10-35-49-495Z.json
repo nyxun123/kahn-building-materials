@@ -1,0 +1,53 @@
+{
+  "generatedAt": "2026-03-02T10:35:49.495Z",
+  "summary": {
+    "errors": 6,
+    "warnings": 2,
+    "referencedLocalImages": 16,
+    "referencedExternalImages": 0
+  },
+  "errors": [
+    {
+      "type": "missing_file",
+      "where": "src/pages/home/index.tsx",
+      "message": "Referenced image not found: /images/应用领域/纺织印染-480.webp 480w, /images/应用领域/纺织印染-640.webp 640w, /images/应用领域/纺织印染.webp 1200w"
+    },
+    {
+      "type": "missing_file",
+      "where": "src/pages/home/index.tsx",
+      "message": "Referenced image not found: /images/应用领域/腻子粉-480.webp 480w, /images/应用领域/腻子粉-640.webp 640w, /images/应用领域/腻子粉.webp 1200w"
+    },
+    {
+      "type": "missing_file",
+      "where": "src/pages/home/index.tsx",
+      "message": "Referenced image not found: /images/应用领域/水性涂料-480.webp 480w, /images/应用领域/水性涂料-640.webp 640w, /images/应用领域/水性涂料.webp 1200w"
+    },
+    {
+      "type": "missing_file",
+      "where": "src/pages/home/index.tsx",
+      "message": "Referenced image not found: /images/应用领域/paper_roll_v2-480.webp 480w, /images/应用领域/paper_roll_v2-640.webp 640w, /images/应用领域/paper_roll_v2.webp 1200w"
+    },
+    {
+      "type": "missing_file",
+      "where": "src/pages/home/index.tsx",
+      "message": "Referenced image not found: /images/应用领域/墙纸胶-480.webp 480w, /images/应用领域/墙纸胶-640.webp 640w, /images/应用领域/墙纸胶.webp 1200w"
+    },
+    {
+      "type": "missing_file",
+      "where": "src/pages/home/index.tsx",
+      "message": "Referenced image not found: /images/应用领域/desiccant_bag_v2-480.webp 480w, /images/应用领域/desiccant_bag_v2-640.webp 640w, /images/应用领域/desiccant_bag_v2.webp 1200w"
+    }
+  ],
+  "warnings": [
+    {
+      "type": "low_resolution_cover",
+      "where": "blog:industrial-grade-cms-ink-pigment-paper",
+      "message": "Cover image is below 1200x630: /images/blog/cms-ink-paper-cover.jpg (1024x1024)"
+    },
+    {
+      "type": "low_resolution_cover",
+      "where": "blog:eco-friendly-wallpaper-glue-guide",
+      "message": "Cover image is below 1200x630: /images/blog/professional_wallpaper_glue_powder_packaging.jpg (1169x1280)"
+    }
+  ]
+}

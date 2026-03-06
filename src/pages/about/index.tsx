@@ -5,6 +5,7 @@ import { ArrowRight, Award, CheckCircle2, Factory, Leaf, Microscope, Shield, Tru
 import { Button } from '@/components/ui/button';
 import { SEOHelmet } from '@/components/SEOHelmet';
 import { StructuredData } from '@/components/StructuredData';
+import BreadcrumbNavigation from '@/components/BreadcrumbNavigation';
 import { COMPANY_PROFILE } from '@/lib/company-profile';
 import { SOCIAL_LINKS } from '@/lib/social-links';
 
@@ -96,6 +97,11 @@ export default function AboutPage() {
           ],
         }}
       />
+
+      {/* Breadcrumb Navigation */}
+      <div className="container mx-auto px-4 pt-4">
+        <BreadcrumbNavigation />
+      </div>
 
       {/* Mobile Factory Card Header (App Style) */}
       <section className="lg:hidden bg-white pb-6 pt-4 border-b border-gray-100">

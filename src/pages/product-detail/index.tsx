@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
+import { Link, Navigate, useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, CheckCircle, Package, FileText } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { SEOHelmet } from '@/components/SEOHelmet';
 import { StructuredData } from '@/components/StructuredData';
-import { isLocalProduct, getLocalProduct, type LocalProduct, type ProductSpec } from '@/data/products-data';
+import { getLocalProduct, getLocalProductSlug, isLocalProduct, type LocalProduct, type ProductSpec } from '@/data/products-data';
 
 const SITE_URL = 'https://kn-wallpaperglue.com';
 
@@ -53,8 +53,16 @@ const processImageUrl = (url: string): string => {
   return url;
 };
 
+const getReadableHighlights = (text: string, maxItems = 4): string[] => {
+  return text
+    .split(/[\n。！？.!?；;]+/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, maxItems);
+};
+
 export default function ProductDetailPage() {
-  const { productCode } = useParams<{ productCode: string }>();
+  const { lang = 'en', productCode } = useParams<{ lang: string; productCode: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const { t, i18n } = useTranslation(['common', 'products']);
@@ -63,6 +71,8 @@ export default function ProductDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const resolvedProductCode = productCode ? decodeURIComponent(productCode) : '';
+  const canonicalProductSlug = resolvedProductCode ? getLocalProductSlug(resolvedProductCode) : null;
+  const isCanonicalLocalRoute = !canonicalProductSlug || canonicalProductSlug === resolvedProductCode;
 
   useEffect(() => {
     async function fetchProductDetail() {
@@ -117,6 +127,10 @@ export default function ProductDetailPage() {
 
     fetchProductDetail();
   }, [resolvedProductCode, t]);
+
+  if (canonicalProductSlug && !isCanonicalLocalRoute) {
+    return <Navigate to={`/${lang}/products/${canonicalProductSlug}`} replace />;
+  }
 
   // 根据当前语言获取内容
   const getLocalizedContent = (fieldPrefix: string): string => {
@@ -201,24 +215,28 @@ export default function ProductDetailPage() {
 
   // 获取产品代码（优先使用本地产品）
   const displayProductCode = localProduct?.product_code || product?.product_code || '';
-  const productUrl = `${SITE_URL}${location.pathname}${location.search || ''}`;
+  const productUrl = `${SITE_URL}/${lang}/products/${canonicalProductSlug || resolvedProductCode}${location.search || ''}`;
+  const localizedName = getLocalizedContent('name');
+  const localizedDescription = getLocalizedContent('description');
+  const descriptionHighlights = getReadableHighlights(localizedDescription);
 
   return (
     <>
       <SEOHelmet
-        title={getLocalizedContent('name')}
-        description={getLocalizedContent('description')}
-        keywords={`${displayProductCode},羧甲基淀粉,${getLocalizedContent('name')},CMS,carboxymethyl starch,${localProduct?.category || product?.category || ''}`}
+        title={localizedName}
+        description={localizedDescription}
+        keywords={`${displayProductCode},羧甲基淀粉,${localizedName},CMS,carboxymethyl starch,${localProduct?.category || product?.category || ''}`}
         type="product"
         lang={i18n.language as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
-        image={localProduct?.image_url || product?.image_url || '/images/IMG_1412.JPG'}
+        image={localProduct?.image_url || product?.image_url || '/images/IMG_1412.jpg'}
+        canonicalUrl={`/${lang}/products/${canonicalProductSlug || resolvedProductCode}`}
       />
       <StructuredData
         schema={{
           type: 'Product',
-          name: getLocalizedContent('name'),
-          description: getLocalizedContent('description'),
-          image: localProduct?.image_url || product?.image_url || '/images/IMG_1412.JPG',
+          name: localizedName,
+          description: localizedDescription,
+          image: localProduct?.image_url || product?.image_url || '/images/IMG_1412.jpg',
           sku: displayProductCode,
           brand: {
             name: 'Hangzhou Karn New Building Materials Co., Ltd',
@@ -264,12 +282,12 @@ export default function ProductDetailPage() {
         {/* Mobile View */}
         <div className="lg:hidden">
           {/* 1. Full Width Hero Image */}
-          <div className="relative aspect-square w-full bg-white">
+          <div className="relative aspect-[4/3] w-full bg-white">
             {(localProduct?.image_url || product?.image_url) ? (
               <img
                 src={localProduct?.image_url || processImageUrl(product?.image_url || '')}
-                alt={getLocalizedContent('name')}
-                className="w-full h-full object-cover"
+                alt={localizedName}
+                className="w-full h-full object-contain p-2"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-100">
@@ -291,7 +309,7 @@ export default function ProductDetailPage() {
             {/* Title Section */}
             <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
               <h1 className="text-xl font-bold text-gray-900 mb-2 leading-snug">
-                {getLocalizedContent('name')}
+                {localizedName}
               </h1>
               <div className="flex items-center justify-between">
                 <div className="inline-flex items-center px-2 py-1 rounded bg-green-50 text-[#047857] text-xs font-medium">
@@ -314,8 +332,8 @@ export default function ProductDetailPage() {
                 <div className="grid grid-cols-2 gap-3">
                   {getLocalizedSpecs().slice(0, 4).map((spec, i) => (
                     <div key={i} className="bg-gray-50 rounded p-2">
-                      <div className="text-[10px] text-gray-500 mb-0.5">{spec.label}</div>
-                      <div className="text-xs font-bold text-gray-800 line-clamp-1">{spec.value}</div>
+                      <div className="text-xs text-gray-600 mb-0.5">{spec.label}</div>
+                      <div className="text-sm font-bold text-gray-800 line-clamp-1">{spec.value}</div>
                     </div>
                   ))}
                 </div>
@@ -334,11 +352,21 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Description */}
-            {getLocalizedContent('description') && (
+            {localizedDescription && (
               <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                 <h3 className="text-sm font-bold text-gray-900 mb-2">Description</h3>
-                <p className="text-sm text-gray-600 leading-relaxed text-justify">
-                  {getLocalizedContent('description')}
+                {descriptionHighlights.length > 1 && (
+                  <ul className="space-y-1.5 mb-3">
+                    {descriptionHighlights.map((item, index) => (
+                      <li key={index} className="flex items-start gap-2 text-sm text-gray-700 leading-relaxed">
+                        <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[#047857] flex-shrink-0"></span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  {localizedDescription}
                 </p>
               </div>
             )}
@@ -375,7 +403,7 @@ export default function ProductDetailPage() {
             <div className="flex items-start justify-between">
               <div>
                 <h1 className="text-3xl md:text-4xl font-bold text-[#064E3B] mb-3">
-                  {getLocalizedContent('name')}
+                  {localizedName}
                 </h1>
                 <div className="inline-flex items-center gap-2 bg-[#047857]/10 text-[#047857] px-4 py-2 rounded-sm text-sm font-semibold">
                   <Package className="h-4 w-4" />
@@ -389,12 +417,12 @@ export default function ProductDetailPage() {
             {/* 左侧：产品图片 */}
             <div className="lg:col-span-1">
               <div className="sticky top-6">
-                <div className="bg-gray-100 rounded-lg overflow-hidden aspect-square border border-gray-200">
+                <div className="bg-gray-100 rounded-lg overflow-hidden aspect-[4/3] border border-gray-200">
                   {(localProduct?.image_url || product?.image_url) ? (
                     <img
                       src={localProduct?.image_url || processImageUrl(product?.image_url || '')}
-                      alt={getLocalizedContent('name')}
-                      className="w-full h-full object-cover"
+                      alt={localizedName}
+                      className="w-full h-full object-contain p-4 bg-white"
                       loading="lazy"
                       decoding="async"
                     />
@@ -419,14 +447,24 @@ export default function ProductDetailPage() {
             {/* 右侧：产品信息 */}
             <div className="lg:col-span-2 space-y-6">
               {/* 产品描述 */}
-              {getLocalizedContent('description') && (
+              {localizedDescription && (
                 <div className="bg-white border border-gray-200 rounded-lg p-6">
                   <h2 className="text-xl font-bold text-[#064E3B] mb-4 flex items-center gap-2">
                     <div className="w-1 h-6 bg-[#047857]"></div>
                     产品简介
                   </h2>
-                  <p className="text-gray-700 leading-relaxed">
-                    {getLocalizedContent('description')}
+                  {descriptionHighlights.length > 1 && (
+                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
+                      {descriptionHighlights.map((item, index) => (
+                        <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
+                          <CheckCircle className="h-4 w-4 text-[#10B981] flex-shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <p className="text-gray-700 leading-relaxed border-t border-gray-100 pt-4">
+                    {localizedDescription}
                   </p>
                 </div>
               )}

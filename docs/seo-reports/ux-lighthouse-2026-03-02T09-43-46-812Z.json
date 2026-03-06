@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-03-02T09:44:13.382Z",
+  "site": "https://234aea5f.kahn-building-materials.pages.dev",
+  "summary": {
+    "errors": 0,
+    "warnings": 1,
+    "pages": 1
+  },
+  "pages": [
+    {
+      "path": "/zh/products",
+      "performance": 90,
+      "accessibility": 94,
+      "bestPractices": 100,
+      "seo": 69,
+      "lcp": "2.8 s",
+      "tbt": "30 ms"
+    }
+  ],
+  "warnings": [
+    "/zh/products: seo score 69 < 90"
+  ],
+  "errors": []
+}

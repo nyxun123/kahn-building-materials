@@ -111,6 +111,14 @@ img {
   }
 }
 
+/* Defer off-screen rendering cost while keeping DOM/SEO intact */
+@supports (content-visibility: auto) {
+  .cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 1000px;
+  }
+}
+
 /* 博客文章内容样式 - Custom Prose Styles */
 .prose {
   color: #1F2937;
@@ -269,8 +277,10 @@ img {
   margin-top: 1.75rem;
   margin-bottom: 1.75rem;
   border-radius: 0.75rem;
-  max-width: 100%;
+  max-width: none;
+  width: 100%;
   height: auto;
+  display: block;
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
 }
 
@@ -283,6 +293,10 @@ img {
 
 .article-content {
   width: 100%;
+  max-width: 100%;
+}
+
+.article-content p {
   max-width: 72ch;
 }
 

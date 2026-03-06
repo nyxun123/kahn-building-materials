@@ -2,12 +2,15 @@
  * 博客列表页
  */
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, Calendar, Eye, Tag, Newspaper } from 'lucide-react';
 import { SEOHelmet } from '@/components/SEOHelmet';
 import { StructuredData } from '@/components/StructuredData';
+import BreadcrumbNavigation from '@/components/BreadcrumbNavigation';
 import { Button } from '@/components/ui/button';
+import { getBlogCoverImageSource } from '@/lib/blog-image-utils';
+import { getCachedBlogList, setCachedBlogList } from '@/lib/blog-prefetch';
 
 interface BlogArticle {
     id: number;
@@ -35,24 +38,71 @@ const CATEGORY_LABELS: Record<string, Record<string, string>> = {
     guide: { zh: '使用指南', en: 'User Guide', ru: 'Руководство' }
 };
 
+const BLOG_SUPPORTED_LANGS = ['zh', 'en', 'ru'] as const;
+type BlogSupportedLanguage = typeof BLOG_SUPPORTED_LANGS[number];
+
 export default function BlogPage() {
     const { t, i18n } = useTranslation(['common', 'blog']);
-    const location = useLocation();
+    const { lang } = useParams<{ lang: string }>();
+    const [searchParams] = useSearchParams();
     const [articles, setArticles] = useState<BlogArticle[]>([]);
     const [pagination, setPagination] = useState<Pagination | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-    const currentLang = i18n.language || 'en';
+    const requestedLang = (lang || i18n.language || 'en').split('-')[0].toLowerCase();
+    const isSupportedLang = BLOG_SUPPORTED_LANGS.includes(requestedLang as BlogSupportedLanguage);
+    const currentLang: BlogSupportedLanguage = isSupportedLang
+        ? (requestedLang as BlogSupportedLanguage)
+        : 'en';
+    const pageParam = Number.parseInt(searchParams.get('page') || '1', 10);
+    const currentPage = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
+    const categoryParam = searchParams.get('category');
+    const selectedCategory = categoryParam && CATEGORY_LABELS[categoryParam] ? categoryParam : null;
+
+    const buildBlogListPath = ({
+        page = 1,
+        category = selectedCategory,
+    }: {
+        page?: number;
+        category?: string | null;
+    } = {}) => {
+        const params = new URLSearchParams();
+        if (category) {
+            params.set('category', category);
+        }
+        if (page > 1) {
+            params.set('page', String(page));
+        }
+        const query = params.toString();
+        return `/${currentLang}/blog${query ? `?${query}` : ''}`;
+    };
+    const canonicalBlogUrl = buildBlogListPath({ page: currentPage, category: selectedCategory });
+
+    if (!isSupportedLang) {
+        const query = searchParams.toString();
+        return <Navigate to={`/en/blog${query ? `?${query}` : ''}`} replace />;
+    }
 
     useEffect(() => {
-        fetchArticles();
-    }, [selectedCategory, currentLang]);
+        let useBackgroundRefresh = false;
+        if (!selectedCategory && currentPage === 1) {
+            const cached = getCachedBlogList(currentLang);
+            if (cached?.data?.length) {
+                setArticles(cached.data);
+                setPagination(cached.pagination);
+                setIsLoading(false);
+                useBackgroundRefresh = true;
+            }
+        }
+        void fetchArticles({ background: useBackgroundRefresh });
+    }, [selectedCategory, currentLang, currentPage]);
 
-    const fetchArticles = async () => {
-        setIsLoading(true);
+    const fetchArticles = async ({ background = false }: { background?: boolean } = {}) => {
+        if (!background) {
+            setIsLoading(true);
+        }
         try {
-            let url = `/api/blog?lang=${currentLang}`;
+            let url = `/api/blog?lang=${currentLang}&page=${currentPage}&limit=10`;
             if (selectedCategory) {
                 url += `&category=${selectedCategory}`;
             }
@@ -61,11 +111,16 @@ export default function BlogPage() {
             if (data.success) {
                 setArticles(data.data || []);
                 setPagination(data.pagination || null);
+                if (!selectedCategory && currentPage === 1) {
+                    setCachedBlogList(currentLang, data.data || [], data.pagination || null);
+                }
             }
         } catch (error) {
             console.error('Failed to fetch articles:', error);
         } finally {
-            setIsLoading(false);
+            if (!background) {
+                setIsLoading(false);
+            }
         }
     };
 
@@ -90,17 +145,24 @@ export default function BlogPage() {
                 description={t('blog:meta_description', 'Latest news, industry insights, and product guides from Kahn Building Materials')}
                 keywords="blog, news, industry, CMS, carboxymethyl starch, wallpaper adhesive"
                 type="website"
-                lang={currentLang as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
+                lang={currentLang}
+                supportedLangs={[...BLOG_SUPPORTED_LANGS]}
+                canonicalUrl={canonicalBlogUrl}
             />
             <StructuredData
                 schema={{
                     type: 'WebPage',
                     name: t('blog:title', 'Blog & News'),
                     description: t('blog:meta_description'),
-                    url: `https://kn-wallpaperglue.com${location.pathname}`,
+                    url: `https://kn-wallpaperglue.com${canonicalBlogUrl}`,
                     inLanguage: currentLang,
                 }}
             />
+
+            {/* Breadcrumb Navigation */}
+            <div className="container mx-auto px-4 pt-4">
+                <BreadcrumbNavigation />
+            </div>
 
             {/* Hero Section */}
             <section className="bg-gradient-to-r from-[#064E3B] to-[#047857] py-16 md:py-24">
@@ -124,26 +186,26 @@ export default function BlogPage() {
             <section className="py-6 bg-white border-b">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-wrap gap-2 justify-center">
-                        <button
-                            onClick={() => setSelectedCategory(null)}
+                        <Link
+                            to={buildBlogListPath({ page: 1, category: null })}
                             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${!selectedCategory
                                     ? 'bg-[#047857] text-white'
                                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                 }`}
                         >
                             {t('blog:all_categories', 'All')}
-                        </button>
+                        </Link>
                         {Object.keys(CATEGORY_LABELS).map(cat => (
-                            <button
+                            <Link
                                 key={cat}
-                                onClick={() => setSelectedCategory(cat)}
+                                to={buildBlogListPath({ page: 1, category: cat })}
                                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedCategory === cat
                                         ? 'bg-[#047857] text-white'
                                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                     }`}
                             >
                                 {getCategoryLabel(cat)}
-                            </button>
+                            </Link>
                         ))}
                     </div>
                 </div>
@@ -168,27 +230,53 @@ export default function BlogPage() {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {articles.map(article => (
-                                <article
-                                    key={article.id}
-                                    className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group"
-                                >
-                                    <Link to={`/${currentLang}/blog/${article.slug}`}>
-                                        <div className="aspect-[16/9] bg-gray-100 overflow-hidden">
-                                            {article.coverImage ? (
+                            {articles.map((article, index) => {
+                                const cover = article.coverImage ? getBlogCoverImageSource(article.coverImage) : null;
+
+                                return (
+                                    <article
+                                        key={article.id}
+                                        className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col h-full"
+                                    >
+                                    <Link
+                                        to={`/${currentLang}/blog/${article.slug}`}
+                                        className="block bg-gray-100 relative overflow-hidden aspect-[16/9]"
+                                    >
+                                        {cover ? (
+                                            <picture>
+                                                {cover.webpSrcSet && (
+                                                    <source
+                                                        srcSet={cover.webpSrcSet}
+                                                        type="image/webp"
+                                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                    />
+                                                )}
+                                                {cover.srcSet && (
+                                                    <source
+                                                        srcSet={cover.srcSet}
+                                                        type="image/jpeg"
+                                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                    />
+                                                )}
                                                 <img
-                                                    src={article.coverImage}
+                                                    src={cover.src}
                                                     alt={article.title}
-                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                    width={cover.width}
+                                                    height={cover.height}
+                                                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                    loading={index === 0 ? 'eager' : 'lazy'}
+                                                    fetchPriority={index === 0 ? 'high' : 'auto'}
+                                                    decoding="async"
                                                 />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                                    <Newspaper className="w-12 h-12" />
-                                                </div>
-                                            )}
-                                        </div>
+                                            </picture>
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                                <Newspaper className="w-12 h-12" />
+                                            </div>
+                                        )}
                                     </Link>
-                                    <div className="p-6">
+                                    <div className="p-6 flex-1 flex flex-col">
                                         <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
                                             <span className="inline-flex items-center px-2 py-1 bg-[#047857]/10 text-[#047857] rounded">
                                                 <Tag className="w-3 h-3 mr-1" />
@@ -204,11 +292,11 @@ export default function BlogPage() {
                                                 {article.title}
                                             </h2>
                                         </Link>
-                                        <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                                        <p className="text-gray-600 text-sm line-clamp-3 mb-4 flex-1">
                                             {article.excerpt}
                                         </p>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-xs text-gray-400 flex items-center">
+                                        <div className="flex items-center justify-between mt-auto">
+                                            <span className="text-xs text-gray-600 flex items-center">
                                                 <Eye className="w-3 h-3 mr-1" />
                                                 {article.viewCount} {t('blog:views', 'views')}
                                             </span>
@@ -221,26 +309,59 @@ export default function BlogPage() {
                                             </Link>
                                         </div>
                                     </div>
-                                </article>
-                            ))}
+                                    </article>
+                                );
+                            })}
                         </div>
                     )}
 
                     {/* Pagination */}
                     {pagination && pagination.totalPages > 1 && (
-                        <div className="flex justify-center mt-12 gap-2">
-                            {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(page => (
-                                <button
-                                    key={page}
-                                    className={`w-10 h-10 rounded ${page === pagination.page
-                                            ? 'bg-[#047857] text-white'
-                                            : 'bg-white text-gray-600 hover:bg-gray-100'
-                                        }`}
+                        <nav className="flex justify-center mt-12 gap-2" aria-label="Blog pagination">
+                            {pagination.page > 1 ? (
+                                <Link
+                                    to={buildBlogListPath({ page: pagination.page - 1 })}
+                                    className="px-3 h-10 inline-flex items-center rounded bg-white text-gray-600 hover:bg-gray-100"
                                 >
-                                    {page}
-                                </button>
+                                    {t('common:previous', 'Prev')}
+                                </Link>
+                            ) : (
+                                <span className="px-3 h-10 inline-flex items-center rounded bg-gray-100 text-gray-400">
+                                    {t('common:previous', 'Prev')}
+                                </span>
+                            )}
+                            {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(page => (
+                                page === pagination.page ? (
+                                    <span
+                                        key={page}
+                                        className="w-10 h-10 rounded bg-[#047857] text-white inline-flex items-center justify-center"
+                                        aria-current="page"
+                                    >
+                                        {page}
+                                    </span>
+                                ) : (
+                                    <Link
+                                        key={page}
+                                        to={buildBlogListPath({ page })}
+                                        className="w-10 h-10 rounded bg-white text-gray-600 hover:bg-gray-100 inline-flex items-center justify-center"
+                                    >
+                                        {page}
+                                    </Link>
+                                )
                             ))}
-                        </div>
+                            {pagination.page < pagination.totalPages ? (
+                                <Link
+                                    to={buildBlogListPath({ page: pagination.page + 1 })}
+                                    className="px-3 h-10 inline-flex items-center rounded bg-white text-gray-600 hover:bg-gray-100"
+                                >
+                                    {t('common:next', 'Next')}
+                                </Link>
+                            ) : (
+                                <span className="px-3 h-10 inline-flex items-center rounded bg-gray-100 text-gray-400">
+                                    {t('common:next', 'Next')}
+                                </span>
+                            )}
+                        </nav>
                     )}
                 </div>
             </section>

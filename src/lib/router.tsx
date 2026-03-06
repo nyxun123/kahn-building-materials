@@ -16,6 +16,9 @@ const SolutionsDetailPage = lazy(() => import('@/pages/solutions'));
 const BlogPage = lazy(() => import('@/pages/blog'));
 const BlogDetailPage = lazy(() => import('@/pages/blog/[slug]'));
 const BlogOfflinePage = lazy(() => import('@/pages/blog/offline'));
+const FAQPage = lazy(() => import('@/pages/faq'));
+const PrivacyPage = lazy(() => import('@/pages/privacy'));
+const TermsPage = lazy(() => import('@/pages/terms'));
 
 const BLOG_DISABLED = false;
 
@@ -328,6 +331,30 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: 'faq',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <FAQPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'privacy',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <PrivacyPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'terms',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <TermsPage />
+          </Suspense>
+        ),
+      },
+      {
         path: 'solutions/:slug',
         element: (
           <Suspense fallback={<LoadingFallback />}>
@@ -363,6 +390,10 @@ export const router = createBrowserRouter([
     element: <ProductDetailRedirect />,
   },
   {
+    path: '/products',
+    element: <Navigate to="/en/products" replace />,
+  },
+  {
     path: '/applications',
     element: <Navigate to="/en/applications" replace />,
   },
@@ -377,6 +408,22 @@ export const router = createBrowserRouter([
   {
     path: '/contact',
     element: <Navigate to="/en/contact" replace />,
+  },
+  {
+    path: '/faq',
+    element: <Navigate to="/en/faq" replace />,
+  },
+  {
+    path: '/privacy',
+    element: <Navigate to="/en/privacy" replace />,
+  },
+  {
+    path: '/terms',
+    element: <Navigate to="/en/terms" replace />,
+  },
+  {
+    path: '/solutions',
+    element: <Navigate to="/en/solutions" replace />,
   },
   {
     path: '/blog',

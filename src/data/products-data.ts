@@ -1042,4 +1042,19 @@ export function getLocalProduct(productCode: string): LocalProduct | null {
   return found || null;
 }
 
+// 获取本地产品的规范 slug（兼容 slug 和 product_code）
+export function getLocalProductSlug(productCode: string): string | null {
+  const normalized = normalizeCode(productCode);
+
+  const slugKey = Object.keys(LOCAL_PRODUCTS).find(
+    key => normalizeCode(key) === normalized
+  );
+  if (slugKey) return slugKey;
+
+  const matchedEntry = Object.entries(LOCAL_PRODUCTS).find(
+    ([, product]) => normalizeCode(product.product_code) === normalized
+  );
+
+  return matchedEntry?.[0] || null;
+}
 

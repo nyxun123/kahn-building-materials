@@ -2,12 +2,15 @@
  * 博客文章详情页
  */
 import { useState, useEffect, useMemo } from 'react';
-import { Link, useParams, useLocation } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Calendar, Eye, Tag, Share2, User } from 'lucide-react';
 import { SEOHelmet } from '@/components/SEOHelmet';
 import { StructuredData } from '@/components/StructuredData';
 import { Button } from '@/components/ui/button';
+import { getBlogCoverImageSource } from '@/lib/blog-image-utils';
+
+type BlogSupportedLanguage = 'zh' | 'en' | 'ru';
 
 interface BlogArticle {
     id: number;
@@ -27,11 +30,7 @@ interface BlogArticle {
         title: string;
         description: string;
     };
-    translations: {
-        zh: { title: string; available: boolean };
-        en: { title: string; available: boolean };
-        ru: { title: string; available: boolean };
-    };
+    translations: Record<BlogSupportedLanguage, { title: string; available: boolean }>;
 }
 
 const CATEGORY_LABELS: Record<string, Record<string, string>> = {
@@ -42,6 +41,7 @@ const CATEGORY_LABELS: Record<string, Record<string, string>> = {
 
 const SITE_NAME = 'Hangzhou Karn New Building Materials Co., Ltd';
 const SITE_LOGO = '/images/logo.png';
+const BLOG_SUPPORTED_LANGS: BlogSupportedLanguage[] = ['zh', 'en', 'ru'];
 
 const slugifyHeading = (value: string) => {
     return value
@@ -63,14 +63,17 @@ const estimateWordCount = (text: string) => {
 };
 
 export default function BlogDetailPage() {
-    const { slug } = useParams<{ slug: string }>();
+    const { lang, slug } = useParams<{ lang: string; slug: string }>();
     const { t, i18n } = useTranslation(['common', 'blog']);
-    const location = useLocation();
     const [article, setArticle] = useState<BlogArticle | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const currentLang = i18n.language || 'en';
+    const requestedLang = (lang || i18n.language || 'en').split('-')[0].toLowerCase();
+    const isSupportedLang = BLOG_SUPPORTED_LANGS.includes(requestedLang as BlogSupportedLanguage);
+    const currentLang: BlogSupportedLanguage = isSupportedLang
+        ? (requestedLang as BlogSupportedLanguage)
+        : 'en';
 
     useEffect(() => {
         if (slug) {
@@ -152,6 +155,14 @@ export default function BlogDetailPage() {
     }, [article?.content]);
 
     const showToc = tocItems.length >= 2;
+    const articleCover = article?.coverImage ? getBlogCoverImageSource(article.coverImage) : null;
+    const availableLanguages = article
+        ? BLOG_SUPPORTED_LANGS.filter((languageCode) => article.translations?.[languageCode]?.available)
+        : BLOG_SUPPORTED_LANGS;
+    const canonicalLang = availableLanguages.includes(currentLang)
+        ? currentLang
+        : availableLanguages[0] || 'en';
+    const canonicalBlogUrl = article ? `/${canonicalLang}/blog/${article.slug}` : null;
 
     const handleShare = async () => {
         if (navigator.share && article) {
@@ -169,6 +180,14 @@ export default function BlogDetailPage() {
             navigator.clipboard.writeText(window.location.href);
         }
     };
+
+    if (!slug) {
+        return <Navigate to="/en/blog" replace />;
+    }
+
+    if (!isSupportedLang) {
+        return <Navigate to={`/en/blog/${slug}`} replace />;
+    }
 
     if (isLoading) {
         return (
@@ -195,6 +214,10 @@ export default function BlogDetailPage() {
         );
     }
 
+    if (canonicalLang !== currentLang) {
+        return <Navigate to={`/${canonicalLang}/blog/${article.slug}`} replace />;
+    }
+
     return (
         <>
             <SEOHelmet
@@ -202,7 +225,9 @@ export default function BlogDetailPage() {
                 description={article.seo.description || article.excerpt}
                 keywords={article.tags.join(', ')}
                 type="article"
-                lang={currentLang as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
+                lang={canonicalLang}
+                supportedLangs={availableLanguages}
+                canonicalUrl={canonicalBlogUrl || undefined}
                 image={article.coverImage}
             />
             <StructuredData
@@ -210,13 +235,13 @@ export default function BlogDetailPage() {
                     type: 'BlogPosting',
                     headline: article.title,
                     description: article.excerpt,
-                    url: `https://kn-wallpaperglue.com${location.pathname}`,
+                    url: `https://kn-wallpaperglue.com${canonicalBlogUrl}`,
                     image: article.coverImage,
                     datePublished: article.publishedAt,
                     dateModified: article.updatedAt || article.publishedAt,
                     author: { name: article.author || SITE_NAME },
                     publisher: { name: SITE_NAME, logo: SITE_LOGO },
-                    inLanguage: currentLang,
+                    inLanguage: canonicalLang,
                     keywords: article.tags?.join(', '),
                     articleSection: getCategoryLabel(article.category),
                     wordCount,
@@ -242,7 +267,7 @@ export default function BlogDetailPage() {
                             '@type': 'ListItem',
                             position: 3,
                             name: article.title,
-                            item: `https://kn-wallpaperglue.com${location.pathname}`,
+                            item: `https://kn-wallpaperglue.com${canonicalBlogUrl}`,
                         },
                     ],
                 }}
@@ -313,15 +338,35 @@ export default function BlogDetailPage() {
                     </header>
 
                     {/* Cover Image */}
-                    {article.coverImage && (
+                    {articleCover && (
                         <figure className="mt-8 rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-                            <img
-                                src={article.coverImage}
-                                alt={article.title}
-                                className="w-full h-auto object-cover"
-                                loading="lazy"
-                                decoding="async"
-                            />
+                            <picture>
+                                {articleCover.webpSrcSet && (
+                                    <source
+                                        srcSet={articleCover.webpSrcSet}
+                                        type="image/webp"
+                                        sizes="(max-width: 1024px) 100vw, 960px"
+                                    />
+                                )}
+                                {articleCover.srcSet && (
+                                    <source
+                                        srcSet={articleCover.srcSet}
+                                        type="image/jpeg"
+                                        sizes="(max-width: 1024px) 100vw, 960px"
+                                    />
+                                )}
+                                <img
+                                    src={articleCover.src}
+                                    alt={article.title}
+                                    width={articleCover.width}
+                                    height={articleCover.height}
+                                    className="w-full h-auto object-cover"
+                                    sizes="(max-width: 1024px) 100vw, 960px"
+                                    loading="eager"
+                                    fetchPriority="high"
+                                    decoding="async"
+                                />
+                            </picture>
                         </figure>
                     )}
 

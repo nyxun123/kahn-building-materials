@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-03-02T06:52:56.237Z",
+  "site": "https://ef557e1b.kahn-building-materials.pages.dev",
+  "summary": {
+    "errors": 0,
+    "warnings": 1,
+    "pages": 1
+  },
+  "pages": [
+    {
+      "path": "/zh/blog",
+      "performance": 67,
+      "accessibility": 96,
+      "bestPractices": 100,
+      "seo": 69,
+      "lcp": "4.6 s",
+      "tbt": "100 ms"
+    }
+  ],
+  "warnings": [
+    "/zh/blog: seo score 69 < 90"
+  ],
+  "errors": []
+}

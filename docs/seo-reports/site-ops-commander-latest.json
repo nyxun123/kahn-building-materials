@@ -1,0 +1,43 @@
+{
+  "generatedAt": "2026-03-02T06:08:07.496Z",
+  "site": "https://kn-wallpaperglue.com",
+  "summary": {
+    "total": 4,
+    "success": 4,
+    "failed": 0
+  },
+  "tasks": [
+    {
+      "label": "SEO sitemap agent",
+      "command": "pnpm seo:sitemaps:generate",
+      "status": 0,
+      "success": true,
+      "stdout": "\n> react_repo@0.0.0 seo:sitemaps:generate /Users/nll/Documents/可以用的网站\n> node scripts/generate-sitemaps.js\n\nGenerated sitemaps at 2026-03-02T06:05:51.776Z\n",
+      "stderr": ""
+    },
+    {
+      "label": "Image quality agent",
+      "command": "pnpm seo:images:check --no-fail",
+      "status": 0,
+      "success": true,
+      "stdout": "\n> react_repo@0.0.0 seo:images:check /Users/nll/Documents/可以用的网站\n> node scripts/seo-image-quality-check.mjs \"--no-fail\"\n\nImage quality check: errors=0, warnings=2\nReport: /Users/nll/Documents/可以用的网站/docs/seo-reports/image-quality-2026-03-02T06-05-52-199Z.json\nLatest: /Users/nll/Documents/可以用的网站/docs/seo-reports/image-quality-latest.json\n",
+      "stderr": ""
+    },
+    {
+      "label": "SEO audit agent",
+      "command": "pnpm seo:audit:continuous --site=https://kn-wallpaperglue.com --no-fail",
+      "status": 0,
+      "success": true,
+      "stdout": "\n> react_repo@0.0.0 seo:audit:continuous /Users/nll/Documents/可以用的网站\n> node scripts/seo-continuous-audit.mjs \"--site=https://kn-wallpaperglue.com\" \"--no-fail\"\n\nSEO score: 100/100\nCritical: 0, Warning: 0\nReport JSON: /Users/nll/Documents/可以用的网站/docs/seo-reports/continuous-seo-2026-03-02T06-05-53-000Z.json\nReport MD: /Users/nll/Documents/可以用的网站/docs/seo-reports/continuous-seo-2026-03-02T06-05-53-000Z.md\n",
+      "stderr": ""
+    },
+    {
+      "label": "UX lighthouse agent",
+      "command": "pnpm ops:ux:lighthouse --site=https://kn-wallpaperglue.com --no-fail",
+      "status": 0,
+      "success": true,
+      "stdout": "\n> react_repo@0.0.0 ops:ux:lighthouse /Users/nll/Documents/可以用的网站\n> node scripts/agents/ux-lighthouse-agent.mjs \"--site=https://kn-wallpaperglue.com\" \"--no-fail\"\n\nUX lighthouse: pages=3, errors=0, warnings=1\nReport JSON: /Users/nll/Documents/可以用的网站/docs/seo-reports/ux-lighthouse-2026-03-02T06-06-36-956Z.json\nReport MD: /Users/nll/Documents/可以用的网站/docs/seo-reports/ux-lighthouse-2026-03-02T06-06-36-956Z.md\n",
+      "stderr": ""
+    }
+  ]
+}

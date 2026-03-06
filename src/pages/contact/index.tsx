@@ -10,10 +10,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { SEOHelmet } from '@/components/SEOHelmet';
 import { StructuredData } from '@/components/StructuredData';
+import BreadcrumbNavigation from '@/components/BreadcrumbNavigation';
 import { LocalBusinessSchema } from '@/components/LocalBusinessSchema';
 import { GeoMetaTags } from '@/components/GeoMetaTags';
-import { OpenGraphTags } from '@/components/OpenGraphTags';
-import { HreflangTags } from '@/components/HreflangTags';
 import { OptimizedMap } from '@/components/OptimizedMap';
 import { getApiUrl, API_CONFIG } from '@/lib/config';
 import { COMPANY_PROFILE } from '@/lib/company-profile';
@@ -195,25 +194,10 @@ export default function ContactPage() {
         region="CN-ZJ"
       />
 
-      {/* Enhanced Open Graph Tags */}
-      <OpenGraphTags
-        title={i18n.language === 'zh'
-          ? '联系我们 - 杭州卡恩羧甲基淀粉供应商'
-          : i18n.language === 'en'
-            ? 'Contact Us - Hangzhou Karn CMS Supplier'
-            : t('nav.contact')}
-        description={t('contact:meta_description')}
-        url={`https://kn-wallpaperglue.com/${i18n.language}/contact`}
-        type="website"
-        locale={i18n.language === 'zh' ? 'zh_CN' : i18n.language === 'en' ? 'en_US' : 'ru_RU'}
-        alternateLocales={['en_US', 'ru_RU', 'th_TH', 'vi_VN', 'id_ID']}
-      />
-
-      {/* Hreflang Tags */}
-      <HreflangTags
-        currentLanguage={i18n.language as 'zh' | 'en' | 'ru'}
-        basePath="/contact"
-      />
+      {/* Breadcrumb Navigation */}
+      <div className="container mx-auto px-4 pt-4">
+        <BreadcrumbNavigation />
+      </div>
 
       {/* Mobile Action Sheet (App Style) */}
       <section className="lg:hidden bg-white pt-6 pb-2 border-b border-gray-100">

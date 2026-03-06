@@ -18,10 +18,12 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   alt,
   className = '',
   placeholderSrc,
+  onError,
   ...props
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(false);
+  const [useWebp, setUseWebp] = useState(true);
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
@@ -62,24 +64,31 @@ export const LazyImage: React.FC<LazyImageProps> = ({
     };
     
   const webpPath = getWebPSrc();
+  const handleError: React.ReactEventHandler<HTMLImageElement> = (event) => {
+    if (useWebp && webpPath) {
+      setUseWebp(false);
+      setIsLoaded(false);
+      return;
+    }
+
+    onError?.(event);
+  };
+
+  const displaySrc = isInView
+    ? (useWebp && webpPath ? webpPath : src)
+    : (placeholderSrc || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3C/svg%3E');
 
   return (
-    <picture ref={imgRef as any}>
-      {/* WebP 格式（现代浏览器） */}
-      {webpPath && isInView && (
-        <source srcSet={webpPath} type="image/webp" />
-      )}
-      
-      {/* 原始格式（fallback） */}
-      <img
-        src={isInView ? src : (placeholderSrc || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3C/svg%3E')}
+    <img
+      ref={imgRef}
+      src={displaySrc}
       alt={alt}
-        className={`transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
-        onLoad={() => setIsLoaded(true)}
-        loading="lazy"
-        {...props}
+      className={`transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
+      onLoad={() => setIsLoaded(true)}
+      onError={handleError}
+      loading="lazy"
+      {...props}
     />
-    </picture>
   );
 };
 

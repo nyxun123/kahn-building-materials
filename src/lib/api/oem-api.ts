@@ -91,65 +91,49 @@ export async function updateOEMService(oemData: Partial<OEMService>): Promise<OE
  */
 export async function getOEMContentForFrontend(lang: string = 'en'): Promise<any> {
   try {
-    // 尝试从OEM API获取内容
-    try {
-      const oemData = await getOEMService();
-      return {
-        oem_title: oemData.title || '',
-        oem_description: oemData.description || '',
-        oem_features: oemData.features || [],
-        oem_process: oemData.process || [],
-        oem_capabilities: oemData.capabilities || [],
-        oem_images: oemData.images || [],
-        seo_title: oemData.seo_title || '',
-        seo_description: oemData.seo_description || '',
-        seo_keywords: oemData.seo_keywords || ''
-      };
-    } catch (oemError) {
-      console.log('OEM API不可用，尝试从page_contents获取');
-      // 如果OEM API不可用，回退到page_contents API
-      const response = await fetch(getApiUrl('/api/content?page=oem'));
-      if (!response.ok) {
-        throw new Error('获取OEM内容失败');
-      }
-      
-      const responseData = await response.json();
-      // 确保contentData是数组
-      const contentData = Array.isArray(responseData) 
-        ? responseData 
-        : (responseData?.data && Array.isArray(responseData.data) 
-            ? responseData.data 
-            : (responseData?.success && Array.isArray(responseData.data) 
-                ? responseData.data 
-                : []));
-      
-      const contentMap: Record<string, any> = {};
-      const langKey = `content_${lang}`;
-      
-      if (!Array.isArray(contentData)) {
-        console.error('OEM API返回的数据不是数组:', responseData);
-        return contentMap;
-      }
-      
-      contentData.forEach((item: any) => {
-        // 根据语言选择对应的字段
-        const contentValue = item[langKey] || item.content_en || item.content_zh || item.content_ru || '';
-        contentMap[item.section_key] = contentValue;
-        
-        // 如果是数组内容，尝试解析（根据当前语言）
-        if (item.section_key.includes('features') || item.section_key.includes('capabilities') || item.section_key.includes('process') || item.section_key.includes('images')) {
-          try {
-            const langContent = item[langKey] || item.content_en || item.content_zh || item.content_ru || '';
-            contentMap[item.section_key] = JSON.parse(langContent) || langContent.split('\n');
-          } catch {
-            const langContent = item[langKey] || item.content_en || item.content_zh || item.content_ru || '';
-            contentMap[item.section_key] = langContent.split('\n').filter((i: string) => i.trim());
-          }
-        }
-      });
-      
+    // 公共前台必须只走公开API，避免触发 /api/admin/oem 的 401 噪声
+    const response = await fetch(getApiUrl('/api/content?page=oem'));
+    if (!response.ok) {
+      throw new Error('获取OEM内容失败');
+    }
+
+    const responseData = await response.json();
+    const contentData = Array.isArray(responseData)
+      ? responseData
+      : (responseData?.data && Array.isArray(responseData.data)
+        ? responseData.data
+        : (responseData?.success && Array.isArray(responseData.data)
+          ? responseData.data
+          : []));
+
+    const contentMap: Record<string, any> = {};
+    const langKey = `content_${lang}`;
+
+    if (!Array.isArray(contentData)) {
       return contentMap;
     }
+
+    contentData.forEach((item: any) => {
+      const contentValue = item[langKey] || item.content_en || item.content_zh || item.content_ru || '';
+      contentMap[item.section_key] = contentValue;
+
+      if (
+        item.section_key.includes('features') ||
+        item.section_key.includes('capabilities') ||
+        item.section_key.includes('process') ||
+        item.section_key.includes('images')
+      ) {
+        try {
+          const langContent = item[langKey] || item.content_en || item.content_zh || item.content_ru || '';
+          contentMap[item.section_key] = JSON.parse(langContent) || langContent.split('\n');
+        } catch {
+          const langContent = item[langKey] || item.content_en || item.content_zh || item.content_ru || '';
+          contentMap[item.section_key] = langContent.split('\n').filter((i: string) => i.trim());
+        }
+      }
+    });
+
+    return contentMap;
   } catch (error) {
     console.error('获取OEM内容失败:', error);
     // 返回默认内容

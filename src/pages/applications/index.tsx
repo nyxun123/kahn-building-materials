@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SEOHelmet } from '@/components/SEOHelmet';
 import { StructuredData } from '@/components/StructuredData';
+import BreadcrumbNavigation from '@/components/BreadcrumbNavigation';
 import { useState, useMemo } from 'react';
 
 // 应用领域数据，包含对应的产品代码
@@ -15,7 +16,7 @@ const applications = [
     scenariosKey: 'applications:textile.applications',
     benefitsKey: 'applications:textile.features',
     productCode: 'textile-cms',
-    image: '/images/应用领域/纺织印染.jpg',
+    image: '/images/应用领域/纺织印染.webp',
   },
   {
     id: 'construction',
@@ -24,7 +25,7 @@ const applications = [
     scenariosKey: 'applications:construction.applications',
     benefitsKey: 'applications:construction.features',
     productCode: 'construction-cms',
-    image: '/images/应用领域/腻子粉.jpg',
+    image: '/images/应用领域/腻子粉.webp',
   },
   {
     id: 'coating',
@@ -33,7 +34,7 @@ const applications = [
     scenariosKey: 'applications:coating.applications',
     benefitsKey: 'applications:coating.features',
     productCode: 'coating-cms',
-    image: '/images/应用领域/水性涂料.png',
+    image: '/images/应用领域/水性涂料.webp',
   },
   {
     id: 'paper',
@@ -42,7 +43,7 @@ const applications = [
     scenariosKey: 'applications:paper.applications',
     benefitsKey: 'applications:paper.features',
     productCode: 'paper-dyeing-cms',
-    image: '/images/应用领域/造纸.JPG',
+    image: '/images/应用领域/paper_roll_v2.webp',
   },
   {
     id: 'wallpaper',
@@ -51,7 +52,7 @@ const applications = [
     scenariosKey: 'applications:wallpaper.applications',
     benefitsKey: 'applications:wallpaper.features',
     productCode: 'wallpaper-adhesive',
-    image: '/images/应用领域/墙纸胶.jpeg',
+    image: '/images/应用领域/墙纸胶.webp',
   },
   {
     id: 'desiccant',
@@ -60,7 +61,7 @@ const applications = [
     scenariosKey: 'applications:desiccant.applications',
     benefitsKey: 'applications:desiccant.features',
     productCode: 'desiccant-gel',
-    image: '/images/应用领域/calcium-chloride-gel.jpg',
+    image: '/images/应用领域/desiccant_bag_v2.webp',
   },
   {
     id: 'oem',
@@ -69,13 +70,31 @@ const applications = [
     scenariosKey: 'applications:wallpaper.applications', // placeholder, will use simplified logic if needed
     benefitsKey: 'applications:wallpaper.features',
     productCode: 'oem-service',
-    image: '/images/5fbd3f1a-5077-4ecb-8f50-008dab912740.png', // Hero image or specific OEM image
+    image: '/images/5fbd3f1a-5077-4ecb-8f50-008dab912740.webp', // Hero image or specific OEM image
     isService: true, // Flag to handle specific link logic if needed
   },
 ];
 
+const getAppImageSrcSet = (src: string) => {
+  if (!src.endsWith('.webp')) return undefined;
+  return `${src.replace('.webp', '-480.webp')} 480w, ${src.replace('.webp', '-640.webp')} 640w, ${src} 1200w`;
+};
+
+const getAppHighlights = (items: string[], description: string, limit: number): string[] => {
+  const normalizedItems = (items || []).filter(Boolean);
+  if (normalizedItems.length > 0) {
+    return normalizedItems.slice(0, limit);
+  }
+
+  return (description || '')
+    .split(/[。；;，,\n]/)
+    .map((item) => item.trim())
+    .filter((item) => item.length >= 4)
+    .slice(0, limit);
+};
+
 export default function ApplicationsPage() {
-  const { t, i18n } = useTranslation(['common', 'applications']);
+  const { t, i18n } = useTranslation(['common', 'applications', 'home']);
   const { lang = 'en' } = useParams<{ lang: string }>();
   const location = useLocation();
   const currentLang = lang || i18n.language || 'en';
@@ -144,14 +163,36 @@ export default function ApplicationsPage() {
       />
       <StructuredData schema={itemListSchema} />
 
+      {/* Breadcrumb Navigation */}
+      <div className="container mx-auto px-4 pt-4">
+        <BreadcrumbNavigation />
+      </div>
+
       {/* Hero Section (Responsive) */}
       <section id="top" className="relative py-0 h-[150px] lg:h-[60vh] flex items-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img
-            src="/images/5fbd3f1a-5077-4ecb-8f50-008dab912740.png"
-            alt={t('applications:hero.alt')}
-            className="w-full h-full object-cover"
-          />
+          <picture>
+            <source
+              media="(max-width: 768px)"
+              srcSet="/images/5fbd3f1a-5077-4ecb-8f50-008dab912740-768.webp"
+              type="image/webp"
+            />
+            <source
+              srcSet="/images/5fbd3f1a-5077-4ecb-8f50-008dab912740-1200.webp"
+              type="image/webp"
+            />
+            <img
+              src="/images/5fbd3f1a-5077-4ecb-8f50-008dab912740-1200.webp"
+              alt={t('applications:hero.alt')}
+              className="w-full h-full object-cover"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              sizes="100vw"
+              width={1440}
+              height={1080}
+            />
+          </picture>
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-[#064E3B]/90 via-[#047857]/85 to-[#064E3B]/80 z-10"></div>
         <div className="container mx-auto px-4 relative z-30">
@@ -161,13 +202,15 @@ export default function ApplicationsPage() {
               <h1 className="text-xl font-bold text-white leading-tight mb-1">
                 {t('applications:hero.title')}
               </h1>
-              <p className="text-green-100 text-xs opacity-90">Professional Manufacturer since 2010</p>
+              <p className="text-green-100 text-xs opacity-90">
+                {t('home:stats.years.description', { defaultValue: 'Since 2010' })}
+              </p>
             </div>
 
             {/* Desktop Content */}
             <div className="hidden lg:block">
               <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-3 py-1 rounded-sm mb-2 border border-white/20">
-                <span className="text-white text-[10px] uppercase tracking-wider font-bold">Product Catalog</span>
+                <span className="text-white text-xs uppercase tracking-wider font-bold">{t('nav.applications')}</span>
               </div>
               <h1 className="text-2xl lg:text-5xl font-bold text-white leading-tight mb-2 lg:mb-6">
                 {t('applications:hero.title')}
@@ -191,7 +234,7 @@ export default function ApplicationsPage() {
               }}
               className="whitespace-nowrap px-4 py-1.5 bg-[#047857] text-white text-xs font-medium rounded-full shadow-sm"
             >
-              All
+              {t('nav.applications')}
             </button>
             {applications.map((app) => (
               <button
@@ -216,34 +259,63 @@ export default function ApplicationsPage() {
       {/* Mobile Product List (Original List Style) */}
       <section className="lg:hidden bg-gray-50 pb-20 pt-4">
         <div className="container mx-auto px-4 space-y-4">
-          {applications.map((app) => (
-            <div key={app.id} id={app.id} className="bg-white rounded p-4 shadow-sm border border-gray-100 flex gap-4">
-              {/* Thumbnail */}
-              <div className="w-20 h-20 bg-gray-100 rounded overflow-hidden flex-shrink-0">
-                <img src={app.image} className="w-full h-full object-cover" alt={t(app.nameKey)} />
-              </div>
+          {applications.map((app) => {
+            const benefitList = t(app.benefitsKey, { returnObjects: true }) as string[];
+            const mobileHighlights = getAppHighlights(benefitList, t(app.descKey), 2);
 
-              {/* Info */}
-              <div className="flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-sm font-bold text-[#064E3B] mb-1 leading-tight">{t(app.nameKey)}</h3>
-                  <p className="text-[10px] text-gray-500 line-clamp-2 leading-relaxed">{t(app.descKey)}</p>
+            return (
+              <div key={app.id} id={app.id} className="bg-white rounded-lg p-3 shadow-sm border border-gray-100 flex gap-2.5">
+                {/* Thumbnail */}
+                <div className="w-[4.5rem] h-[4.5rem] bg-gray-100 rounded overflow-hidden flex-shrink-0 border border-gray-100">
+                  <img
+                    src={app.image}
+                    srcSet={app.id !== 'oem' ? getAppImageSrcSet(app.image) : undefined}
+                    sizes="72px"
+                    className="w-full h-full object-contain p-1.5"
+                    alt={t(app.nameKey)}
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </div>
 
-                <div className="flex items-center justify-between mt-3">
-                  <span className="text-[10px] text-[#047857] bg-[#047857]/5 px-2 py-0.5 rounded font-medium">
-                    {app.id === 'oem' ? 'Service' : 'In Stock'}
-                  </span>
-                  <Link to={app.id === 'oem' ? `/${currentLang}/oem` : `/${currentLang}/contact`}>
-                    <button className="bg-[#047857] text-white text-[10px] font-bold px-3 py-1.5 rounded-sm flex items-center shadow-sm active:scale-95 transition-transform">
-                      {app.id === 'oem' ? 'View Details' : 'Inquire'}
-                      <ArrowRight className="w-3 h-3 ml-1" />
-                    </button>
-                  </Link>
+                {/* Info */}
+                <div className="flex-1 flex flex-col justify-between min-w-0">
+                  <div>
+                    <h3 className="text-sm font-bold text-[#064E3B] mb-1 leading-tight line-clamp-2">{t(app.nameKey)}</h3>
+                    {app.id !== 'oem' && mobileHighlights.length > 0 ? (
+                      <ul className="space-y-0.5 mt-1">
+                        {mobileHighlights.map((benefit, idx) => (
+                          <li key={idx} className="flex items-start gap-1.5 text-xs text-gray-600">
+                            <CheckCircle2 className="w-3 h-3 text-[#10B981] mt-0.5 flex-shrink-0" />
+                            <span className="line-clamp-1">{benefit}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">{t(app.descKey)}</p>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-xs text-[#047857] bg-[#047857]/5 px-2 py-0.5 rounded font-medium">
+                      {app.id === 'oem' ? t('nav.oem') : t('nav.applications')}
+                    </span>
+                    <Link to={app.id === 'oem' ? `/${currentLang}/oem` : `/${currentLang}/products/${app.productCode}`}>
+                      <button
+                        className="bg-[#047857] text-white text-xs font-bold px-3 py-1.5 rounded-sm flex items-center shadow-sm active:scale-95 transition-transform"
+                        aria-label={`${t('cta.learn_more')} ${t(app.nameKey)}`}
+                        title={`${t('cta.learn_more')} ${t(app.nameKey)}`}
+                      >
+                        {t('cta.learn_more')}
+                        <span className="sr-only"> {t(app.nameKey)}</span>
+                        <ArrowRight className="w-3 h-3 ml-1" />
+                      </button>
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -257,34 +329,36 @@ export default function ApplicationsPage() {
                 className="group bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col h-full"
               >
                 {/* Compact Image Area */}
-                <div className="relative h-72 bg-gray-100 overflow-hidden">
+                <div className="relative aspect-[16/10] bg-gray-100 overflow-hidden border-b border-gray-100">
                   <img
-                    src={
-                      app.id === 'paper' ? '/images/应用领域/paper_roll.jpg' :
-                        app.id === 'desiccant' ? '/images/应用领域/desiccant_bag.jpg' :
-                          app.image
-                    }
+                    src={app.image}
+                    srcSet={getAppImageSrcSet(app.image)}
+                    sizes="(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 90vw"
                     alt={t(app.nameKey)}
                     loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    decoding="async"
+                    className="w-full h-full object-contain p-2 transition-transform duration-300"
                   />
                 </div>
 
                 {/* Compact Content Area */}
                 <div className="p-5 flex-1 flex flex-col">
-                  <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#047857] transition-colors">
+                  <div className="mb-2 inline-flex w-fit items-center rounded bg-[#047857]/10 px-2 py-1 text-xs font-semibold text-[#047857]">
+                    {t('nav.applications')}
+                  </div>
+                  <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#047857] transition-colors line-clamp-2 min-h-[3.5rem]">
                     {t(app.nameKey)}
                   </h2>
 
-                  <p className="text-sm text-gray-500 line-clamp-2 mb-4">
+                  <p className="text-sm text-gray-600 line-clamp-2 min-h-[2.5rem] mb-4">
                     {t(app.descKey)}
                   </p>
 
                   <div className="mt-auto space-y-3">
                     {/* Simplified Features List (Max 3 items) */}
-                    <ul className="space-y-1">
-                      {(t(app.benefitsKey, { returnObjects: true }) as string[]).slice(0, 3).map((benefit, idx) => (
-                        <li key={idx} className="flex items-center text-xs text-gray-600">
+                    <ul className="space-y-1 min-h-[4.25rem]">
+                      {getAppHighlights(t(app.benefitsKey, { returnObjects: true }) as string[], t(app.descKey), 3).map((benefit, idx) => (
+                        <li key={idx} className="flex items-center text-xs text-gray-700">
                           <CheckCircle2 className="h-3 w-3 text-[#10B981] mr-2 flex-shrink-0" />
                           <span className="line-clamp-1">{benefit}</span>
                         </li>
@@ -292,8 +366,14 @@ export default function ApplicationsPage() {
                     </ul>
 
                     <Link to={`/${currentLang}/products/${app.productCode}`} className="block pt-2">
-                      <Button variant="outline" className="w-full border-[#047857] text-[#047857] hover:bg-[#047857] hover:text-white h-9 text-sm font-medium transition-colors">
-                        Learn More
+                      <Button
+                        variant="outline"
+                        className="w-full border-[#047857]/25 bg-[#047857]/5 text-[#047857] hover:bg-[#047857]/10 h-9 text-sm font-medium transition-colors"
+                        aria-label={`${t('cta.learn_more')} ${t(app.nameKey)}`}
+                        title={`${t('cta.learn_more')} ${t(app.nameKey)}`}
+                      >
+                        {t('cta.learn_more')}
+                        <span className="sr-only"> {t(app.nameKey)}</span>
                       </Button>
                     </Link>
                   </div>
@@ -321,7 +401,7 @@ export default function ApplicationsPage() {
             </Link>
             <Link to={`/${currentLang}/oem`}>
               <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-8 py-6 text-lg rounded-sm">
-                OEM定制服务
+                {t('nav.oem')}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
@@ -331,10 +411,3 @@ export default function ApplicationsPage() {
     </>
   );
 }
-
-
-
-
-
-
-

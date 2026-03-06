@@ -14,11 +14,15 @@ interface SEOHelmetProps {
   lang?: SupportedLanguage;
   noindex?: boolean;
   supportedLangs?: SupportedLanguage[];
+  canonicalUrl?: string;
+  // 搜索引擎验证码
+  baiduVerification?: string;
+  yandexVerification?: string;
 }
 
 const SITE_NAME = 'Hangzhou Karn New Building Materials Co., Ltd';
 const SITE_URL = 'https://kn-wallpaperglue.com';
-const DEFAULT_IMAGE = `${SITE_URL}/images/IMG_1412.JPG`;
+const DEFAULT_IMAGE = `${SITE_URL}/images/IMG_1412.jpg`;
 const DEFAULT_LOGO = `${SITE_URL}/images/logo.png`; // Logo for search results
 
 const LOCALE_MAP: Record<SupportedLanguage, string> = {
@@ -29,6 +33,7 @@ const LOCALE_MAP: Record<SupportedLanguage, string> = {
   th: 'th_TH',
   id: 'id_ID',
 };
+const BRAND_MARKERS = [SITE_NAME, 'Hangzhou Karn', '杭州卡恩', 'Ханчжоу Карн'];
 
 // 将相对路径转换为绝对 URL
 const toAbsoluteUrl = (url: string): string => {
@@ -51,6 +56,9 @@ export function SEOHelmet({
   lang = 'en',
   noindex = false,
   supportedLangs,
+  canonicalUrl,
+  baiduVerification,
+  yandexVerification,
 }: SEOHelmetProps) {
   const location = useLocation();
 
@@ -65,12 +73,14 @@ export function SEOHelmet({
     ? lang
     : activeLanguages[0];
 
-  // 构建完整URL
-  const currentUrl = `${SITE_URL}${location.pathname}`;
+  const currentUrl = canonicalUrl
+    ? toAbsoluteUrl(canonicalUrl)
+    : `${SITE_URL}${location.pathname}${location.search}`;
+  const canonicalLocation = new URL(currentUrl);
 
   // 生成多语言URL
   const getAlternateUrl = (targetLang: SupportedLanguage) => {
-    const pathParts = location.pathname.split('/').filter(part => part !== '');
+    const pathParts = canonicalLocation.pathname.split('/').filter(part => part !== '');
     const newParts = [...pathParts];
     if (newParts.length > 0 && SUPPORTED_LANGUAGES.includes(newParts[0] as SupportedLanguage)) {
       newParts[0] = targetLang;
@@ -78,7 +88,9 @@ export function SEOHelmet({
       newParts.unshift(targetLang);
     }
 
-    return `${SITE_URL}/${newParts.join('/')}`.replace(/\/+$/, '');
+    const alternateUrl = new URL(`${SITE_URL}/${newParts.join('/')}`.replace(/\/+$/, ''));
+    alternateUrl.search = canonicalLocation.search;
+    return alternateUrl.toString();
   };
 
   const alternateLinks = activeLanguages.map(languageCode => ({
@@ -93,7 +105,9 @@ export function SEOHelmet({
     .map(code => LOCALE_MAP[code]);
 
   // 完整标题
-  const fullTitle = `${title} - ${SITE_NAME}`;
+  const fullTitle = BRAND_MARKERS.some(marker => title.includes(marker))
+    ? title
+    : `${title} - ${SITE_NAME}`;
 
   return (
     <Helmet>
@@ -166,7 +180,10 @@ export function SEOHelmet({
       <meta name="copyright" content={`© ${new Date().getFullYear()} ${SITE_NAME}`} />
       <meta name="language" content={normalizedLang} />
       <meta name="revisit-after" content="7 days" />
+
+      {/* 搜索引擎验证 */}
+      {baiduVerification && <meta name="baidu-site-verification" content={baiduVerification} />}
+      {yandexVerification && <meta name="yandex-verification" content={yandexVerification} />}
     </Helmet>
   );
 }
-

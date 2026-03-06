@@ -22,6 +22,19 @@
 /manifest.json      /manifest.json      200
 /robots.txt         /robots.txt         200
 
+# Canonical entry points
+/                    /en                             301
+/products            /en/products                    301
+/applications        /en/applications                301
+/oem                 /en/oem                         301
+/about               /en/about                       301
+/contact             /en/contact                     301
+/faq                 /en/faq                         301
+/privacy             /en/privacy                     301
+/terms               /en/terms                       301
+/solutions           /en/solutions                   301
+/blog                /en/blog                        301
+
 
 # Product Redirects (SEO)
 /products/999             /ru/products/wallpaper-adhesive  302  Language=ru
@@ -35,6 +48,27 @@
 /products/K6              /ru/products/textile-cms         302  Language=ru
 /products/K6              /zh/products/textile-cms         302  Language=zh
 /products/K6              /en/products/textile-cms         301
+
+/zh/products/999          /zh/products/wallpaper-adhesive  301
+/en/products/999          /en/products/wallpaper-adhesive  301
+/ru/products/999          /ru/products/wallpaper-adhesive  301
+/vi/products/999          /vi/products/wallpaper-adhesive  301
+/th/products/999          /th/products/wallpaper-adhesive  301
+/id/products/999          /id/products/wallpaper-adhesive  301
+
+/zh/products/8840         /zh/products/construction-cms    301
+/en/products/8840         /en/products/construction-cms    301
+/ru/products/8840         /ru/products/construction-cms    301
+/vi/products/8840         /vi/products/construction-cms    301
+/th/products/8840         /th/products/construction-cms    301
+/id/products/8840         /id/products/construction-cms    301
+
+/zh/products/K6           /zh/products/textile-cms         301
+/en/products/K6           /en/products/textile-cms         301
+/ru/products/K6           /ru/products/textile-cms         301
+/vi/products/K6           /vi/products/textile-cms         301
+/th/products/K6           /th/products/textile-cms         301
+/id/products/K6           /id/products/textile-cms         301
 
 # SPA routing for all other routes (frontend + admin)
 /*    /index.html   200

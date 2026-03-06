@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LazyImage } from '@/components/LazyImage';
+import { getLocalProductSlug } from '@/data/products-data';
 
 interface Product {
   id: number;
@@ -92,7 +93,7 @@ export const ProductsSection = memo(function ProductsSection({
                   })()}
                 </p>
                 <Link 
-                  to={`/${lang}/products/${product.product_code}`}
+                  to={`/${lang}/products/${getLocalProductSlug(product.product_code) || product.product_code}`}
                   className="mt-4 inline-flex items-center text-sm font-medium text-[#047857] hover:text-[#10B981] transition-colors"
                 >
                   {t('cta.learn_more')}

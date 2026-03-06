@@ -15,6 +15,7 @@ import {
 
 import { SEOHelmet } from '@/components/SEOHelmet';
 import { StructuredData } from '@/components/StructuredData';
+import BreadcrumbNavigation from '@/components/BreadcrumbNavigation';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
@@ -98,6 +99,11 @@ export default function SolutionsPage() {
           }}
         />
       )}
+
+      {/* Breadcrumb Navigation */}
+      <div className="container mx-auto px-4 pt-4">
+        <BreadcrumbNavigation />
+      </div>
 
       <section className="bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-600 text-white py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">

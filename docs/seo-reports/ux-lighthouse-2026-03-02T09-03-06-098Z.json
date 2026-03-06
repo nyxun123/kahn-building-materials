@@ -1,0 +1,35 @@
+{
+  "generatedAt": "2026-03-02T09:03:57.510Z",
+  "site": "https://13cb3697.kahn-building-materials.pages.dev",
+  "summary": {
+    "errors": 0,
+    "warnings": 3,
+    "pages": 2
+  },
+  "pages": [
+    {
+      "path": "/zh/products",
+      "performance": 87,
+      "accessibility": 94,
+      "bestPractices": 100,
+      "seo": 69,
+      "lcp": "3.2 s",
+      "tbt": "20 ms"
+    },
+    {
+      "path": "/zh/products/K6",
+      "performance": 66,
+      "accessibility": 85,
+      "bestPractices": 100,
+      "seo": 69,
+      "lcp": "8.0 s",
+      "tbt": "20 ms"
+    }
+  ],
+  "warnings": [
+    "/zh/products: seo score 69 < 90",
+    "/zh/products/K6: accessibility score 85 < 90",
+    "/zh/products/K6: seo score 69 < 90"
+  ],
+  "errors": []
+}

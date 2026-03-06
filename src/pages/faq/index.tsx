@@ -1,6 +1,6 @@
 import { useState } from 'react';
+import { Navigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Helmet } from 'react-helmet-async';
 import { SEOHelmet } from '@/components/SEOHelmet';
 import { StructuredData } from '@/components/StructuredData';
 import { OptimizedImage } from '@/components/OptimizedImage';
@@ -11,12 +11,20 @@ interface FAQItem {
   category: string;
 }
 
+const FAQ_SUPPORTED_LANGS = ['zh', 'en', 'ru'] as const;
+type FAQSupportedLanguage = typeof FAQ_SUPPORTED_LANGS[number];
+
 export default function FAQPage() {
   const { t, i18n } = useTranslation();
+  const { lang } = useParams<{ lang: string }>();
   const [activeCategory, setActiveCategory] = useState('all');
   const [expandedItems, setExpandedItems] = useState<number[]>([]);
 
-  const currentLang = i18n.language;
+  const requestedLang = (lang || i18n.language || 'en').split('-')[0].toLowerCase();
+  const isSupportedLang = FAQ_SUPPORTED_LANGS.includes(requestedLang as FAQSupportedLanguage);
+  const currentLang: FAQSupportedLanguage = isSupportedLang
+    ? (requestedLang as FAQSupportedLanguage)
+    : 'en';
 
   // 多语言FAQ数据
   const faqData: Record<string, FAQItem[]> = {
@@ -257,6 +265,10 @@ export default function FAQPage() {
     }))
   };
 
+  if (!isSupportedLang) {
+    return <Navigate to="/en/faq" replace />;
+  }
+
   return (
     <>
       <SEOHelmet
@@ -264,7 +276,9 @@ export default function FAQPage() {
         description={t('faq.description', '查找关于羧甲基淀粉(CMS)产品、订购、技术等常见问题的答案')}
         keywords={t('faq.keywords', 'CMS,羧甲基淀粉,常见问题,FAQ,技术支持,产品咨询')}
         type="website"
-        lang={currentLang as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
+        lang={currentLang}
+        supportedLangs={[...FAQ_SUPPORTED_LANGS]}
+        canonicalUrl={`/${currentLang}/faq`}
       />
 
       <StructuredData schema={faqSchema} />

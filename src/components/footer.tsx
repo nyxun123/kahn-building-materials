@@ -1,4 +1,4 @@
-import React from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -9,7 +9,12 @@ import {
   Instagram,
   Facebook,
 } from 'lucide-react';
-import { SEOKeywordsCloud } from '@/components/SEOKeywordsCloud';
+
+const LazySEOKeywordsCloud = lazy(() =>
+  import('@/components/SEOKeywordsCloud').then((module) => ({
+    default: module.SEOKeywordsCloud,
+  }))
+);
 
 interface FooterProps {
   forceUpdate?: number;
@@ -18,6 +23,43 @@ interface FooterProps {
 export function Footer({ forceUpdate }: FooterProps = {}) {
   const { t } = useTranslation("common");
   const { lang = 'en' } = useParams<{ lang: string }>();
+  const [shouldLoadKeywords, setShouldLoadKeywords] = useState(false);
+
+  useEffect(() => {
+    const triggerLoad = () => setShouldLoadKeywords((current) => current || true);
+
+    const onScroll = () => {
+      if (window.scrollY > 320) {
+        triggerLoad();
+        window.removeEventListener('scroll', onScroll);
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    const win = window as Window & {
+      requestIdleCallback?: (cb: IdleRequestCallback, opts?: IdleRequestOptions) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    let idleId: number | null = null;
+
+    if (typeof win.requestIdleCallback === 'function') {
+      idleId = win.requestIdleCallback(() => triggerLoad(), { timeout: 2600 });
+    } else {
+      timeoutId = setTimeout(() => triggerLoad(), 1800);
+    }
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      if (typeof idleId === 'number' && typeof win.cancelIdleCallback === 'function') {
+        win.cancelIdleCallback(idleId);
+      }
+    };
+  }, []);
 
   return (
     <footer key={`footer-${lang}-${forceUpdate}`} className="bg-white text-gray-800 border-t border-gray-200">
@@ -149,16 +191,16 @@ export function Footer({ forceUpdate }: FooterProps = {}) {
                     TradeKey B2B
                   </a>
                   <a
-                    href="https://www.google.com"
+                    href="https://www.exporthub.com"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center text-sm text-gray-600 hover:text-[#047857] transition-colors duration-200 py-1.5 group"
                   >
                     <ChevronRight className="h-4 w-4 mr-2 text-[#047857] group-hover:translate-x-1 transition-transform" />
-                    Google Search
+                    ExportHub B2B
                   </a>
                   {/* 预留位置给未来的友链 */}
-                  <span className="text-xs text-gray-400 italic mt-2 block">
+                  <span className="text-xs text-gray-500 italic mt-2 block">
                     {t('footer.partners_welcome')}
                   </span>
                 </div>
@@ -226,8 +268,14 @@ export function Footer({ forceUpdate }: FooterProps = {}) {
         </div>
       </div>
 
-      {/* SEO Keywords Cloud */}
-      <SEOKeywordsCloud />
+      {/* SEO Keywords Cloud - lazy loaded to avoid blocking first paint */}
+      {shouldLoadKeywords ? (
+        <Suspense fallback={<div className="border-t border-gray-100 mt-8" aria-hidden="true" />}>
+          <LazySEOKeywordsCloud />
+        </Suspense>
+      ) : (
+        <div className="border-t border-gray-100 mt-8" aria-hidden="true" />
+      )}
 
       {/* 版权信息 - 页脚最底部 */}
       <div className="border-t border-gray-200 bg-gray-50 py-6">
@@ -238,12 +286,12 @@ export function Footer({ forceUpdate }: FooterProps = {}) {
                 {t('footer.copyright')}
               </p>
               <div className="flex items-center justify-center space-x-6 text-sm text-gray-600 mt-3">
-                <a href="#" className="hover:text-[#047857] transition-colors duration-200">
+                <Link to={`/${lang}/privacy`} className="hover:text-[#047857] transition-colors duration-200">
                   {t('footer.bottom_links.privacy')}
-                </a>
-                <a href="#" className="hover:text-[#047857] transition-colors duration-200">
+                </Link>
+                <Link to={`/${lang}/terms`} className="hover:text-[#047857] transition-colors duration-200">
                   {t('footer.bottom_links.terms')}
-                </a>
+                </Link>
               </div>
             </div>
           </div>

@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-03-02T06:05:52.199Z",
+  "summary": {
+    "errors": 0,
+    "warnings": 2,
+    "referencedLocalImages": 16,
+    "referencedExternalImages": 0
+  },
+  "errors": [],
+  "warnings": [
+    {
+      "type": "low_resolution_cover",
+      "where": "blog:industrial-grade-cms-ink-pigment-paper",
+      "message": "Cover image is below 1200x630: /images/blog/cms-ink-paper-cover.jpg (1024x1024)"
+    },
+    {
+      "type": "low_resolution_cover",
+      "where": "blog:eco-friendly-wallpaper-glue-guide",
+      "message": "Cover image is below 1200x630: /images/blog/professional_wallpaper_glue_powder_packaging.jpg (1169x1280)"
+    }
+  ]
+}

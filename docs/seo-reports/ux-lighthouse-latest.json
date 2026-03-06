@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-03-02T10:08:31.820Z",
+  "site": "https://kn-wallpaperglue.com",
+  "summary": {
+    "errors": 0,
+    "warnings": 0,
+    "pages": 1
+  },
+  "pages": [
+    {
+      "path": "/en/applications",
+      "performance": 87,
+      "accessibility": 93,
+      "bestPractices": 100,
+      "seo": 100,
+      "lcp": "3.3 s",
+      "tbt": "80 ms"
+    }
+  ],
+  "warnings": [],
+  "errors": []
+}

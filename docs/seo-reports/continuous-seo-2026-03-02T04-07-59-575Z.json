@@ -1,0 +1,1287 @@
+{
+  "generatedAt": "2026-03-02T04:07:59.575Z",
+  "site": "https://kn-wallpaperglue.com",
+  "summary": {
+    "score": 76,
+    "critical": 0,
+    "warning": 8,
+    "auditedPages": 80,
+    "auditedSitemaps": 8
+  },
+  "findings": {
+    "critical": [],
+    "warning": [
+      "Sitemap lastmod too old (61 days): https://kn-wallpaperglue.com/sitemap-zh.xml",
+      "Sitemap lastmod too old (61 days): https://kn-wallpaperglue.com/sitemap-en.xml",
+      "Sitemap lastmod too old (61 days): https://kn-wallpaperglue.com/sitemap-ru.xml",
+      "Sitemap lastmod too old (61 days): https://kn-wallpaperglue.com/sitemap-vi.xml",
+      "Sitemap lastmod too old (61 days): https://kn-wallpaperglue.com/sitemap-th.xml",
+      "Sitemap lastmod too old (61 days): https://kn-wallpaperglue.com/sitemap-id.xml",
+      "Sitemap lastmod too old (61 days): https://kn-wallpaperglue.com/sitemap-products.xml",
+      "Sitemap lastmod too old (61 days): https://kn-wallpaperglue.com/sitemap-blog.xml"
+    ]
+  },
+  "sitemapReports": [
+    {
+      "url": "https://kn-wallpaperglue.com/sitemap-zh.xml",
+      "status": 200,
+      "lastmod": "2025-12-31T03:30:00Z",
+      "staleDays": 61,
+      "urlCount": 15
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/sitemap-en.xml",
+      "status": 200,
+      "lastmod": "2025-12-31T03:30:00Z",
+      "staleDays": 61,
+      "urlCount": 15
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/sitemap-ru.xml",
+      "status": 200,
+      "lastmod": "2025-12-31T03:30:00Z",
+      "staleDays": 61,
+      "urlCount": 15
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/sitemap-vi.xml",
+      "status": 200,
+      "lastmod": "2025-12-31T03:30:00Z",
+      "staleDays": 61,
+      "urlCount": 14
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/sitemap-th.xml",
+      "status": 200,
+      "lastmod": "2025-12-31T03:30:00Z",
+      "staleDays": 61,
+      "urlCount": 14
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/sitemap-id.xml",
+      "status": 200,
+      "lastmod": "2025-12-31T03:30:00Z",
+      "staleDays": 61,
+      "urlCount": 14
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/sitemap-products.xml",
+      "status": 200,
+      "lastmod": "2025-12-31T03:30:00Z",
+      "staleDays": 61,
+      "urlCount": 42
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/sitemap-blog.xml",
+      "status": 200,
+      "lastmod": "2025-12-31T03:30:00Z",
+      "staleDays": 61,
+      "urlCount": 15
+    }
+  ],
+  "pageChecks": [
+    {
+      "url": "https://kn-wallpaperglue.com/zh",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/zh/products",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/zh/applications",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/zh/oem",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/zh/about",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/zh/contact",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/zh/solutions",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/zh/blog",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/en",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/en/products",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/en/applications",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/en/oem",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/en/about",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/en/contact",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/en/solutions",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/en/blog",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/ru",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/ru/products",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/ru/applications",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/ru/oem",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/ru/about",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/ru/contact",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/ru/solutions",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/ru/blog",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/vi",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/vi/products",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/vi/applications",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/vi/oem",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/vi/about",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/vi/contact",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/vi/solutions",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/vi/blog",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/th",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/th/products",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/th/applications",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/th/oem",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/th/about",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/th/contact",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/th/solutions",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/th/blog",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/id",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/id/products",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/id/applications",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/id/oem",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/id/about",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/id/contact",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/id/solutions",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/id/blog",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/zh/products/wallpaper-adhesive",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/zh/products/construction-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/zh/products/textile-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/zh/products/coating-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/zh/products/paper-dyeing-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/zh/products/desiccant-gel",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/zh/products/oem-service",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/en/products/wallpaper-adhesive",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/en/products/construction-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/en/products/textile-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/en/products/coating-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/en/products/paper-dyeing-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/en/products/desiccant-gel",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/en/products/oem-service",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/ru/products/wallpaper-adhesive",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/ru/products/construction-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/ru/products/textile-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/ru/products/coating-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/ru/products/paper-dyeing-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/ru/products/desiccant-gel",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/ru/products/oem-service",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/vi/products/wallpaper-adhesive",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/vi/products/construction-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/vi/products/textile-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/vi/products/coating-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/vi/products/paper-dyeing-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/vi/products/desiccant-gel",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/vi/products/oem-service",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/th/products/wallpaper-adhesive",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/th/products/construction-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/th/products/textile-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    },
+    {
+      "url": "https://kn-wallpaperglue.com/th/products/coating-cms",
+      "status": 200,
+      "indexable": true,
+      "checks": {
+        "hasTitle": true,
+        "hasDescription": true,
+        "hasCanonical": true,
+        "noindex": false,
+        "hreflangCount": 4,
+        "jsonLdCount": 2,
+        "wordCount": 14
+      },
+      "issues": []
+    }
+  ],
+  "actions": [
+    "Regenerate sitemaps after each content update to keep lastmod fresh."
+  ]
+}

@@ -1,0 +1,44 @@
+name: Site Ops Commander
+
+on:
+  schedule:
+    - cron: '45 1 * * *'
+  workflow_dispatch:
+    inputs:
+      site_url:
+        description: 'Site URL to monitor'
+        required: false
+        default: 'https://kn-wallpaperglue.com'
+
+jobs:
+  ops-commander:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run site ops commander
+        env:
+          OPS_SITE_URL: ${{ github.event.inputs.site_url || 'https://kn-wallpaperglue.com' }}
+        run: pnpm ops:agent -- --site="$OPS_SITE_URL" --no-fail
+
+      - name: Upload ops reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-ops-reports
+          path: docs/seo-reports
+          if-no-files-found: warn

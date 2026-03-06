@@ -1,0 +1,50 @@
+name: Continuous SEO Audit
+
+on:
+  schedule:
+    - cron: '20 1 * * *'
+  workflow_dispatch:
+    inputs:
+      site_url:
+        description: 'Site URL to audit'
+        required: false
+        default: 'https://kn-wallpaperglue.com'
+
+jobs:
+  seo-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate sitemaps
+        run: pnpm seo:sitemaps:generate
+
+      - name: Run image quality check
+        run: pnpm seo:images:check
+
+      - name: Run continuous SEO audit
+        env:
+          SEO_SITE_URL: ${{ github.event.inputs.site_url || 'https://kn-wallpaperglue.com' }}
+        run: pnpm seo:audit:continuous --site="$SEO_SITE_URL"
+
+      - name: Upload SEO reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-reports
+          path: docs/seo-reports
+          if-no-files-found: warn

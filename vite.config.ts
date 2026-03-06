@@ -275,11 +275,9 @@ export default defineConfig({
             '@radix-ui/react-tabs',
             '@radix-ui/react-toast'
           ],
-          'ui-components': [
-            'react-hot-toast', 
-            'react-helmet-async',
-            '@tremor/react',
-            'framer-motion'
+          'ui-core': [
+            'react-hot-toast',
+            'react-helmet-async'
           ],
           // 图标库分离
           'icons-vendor': ['react-icons', 'lucide-react', '@radix-ui/react-icons'],
@@ -304,12 +302,6 @@ export default defineConfig({
             'class-variance-authority',
             'date-fns'
           ],
-          // Admin专用chunk
-          'admin-vendor': [
-            'pdfmake',
-            'recharts',
-            'jsonwebtoken'
-          ]
         },
         // 优化文件名，增加缓存策略
         chunkFileNames: (chunkInfo) => {
