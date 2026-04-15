@@ -275,6 +275,7 @@ export default function HomePage() {
         lang={i18n.language as 'zh' | 'en' | 'ru' | 'vi' | 'th' | 'id'}
         image="/images/IMG_1412.jpg"
         logo="/images/logo.png"
+        canonicalUrl={`/${i18n.language || 'en'}`}
       />
       <StructuredData
         schema={{
@@ -319,9 +320,9 @@ export default function HomePage() {
           url: 'https://kn-wallpaperglue.com',
           logo: '/images/logo.png',
           potentialAction: {
-            type: 'SearchAction',
+            '@type': 'SearchAction',
             target: {
-              type: 'EntryPoint',
+              '@type': 'EntryPoint',
               urlTemplate: 'https://kn-wallpaperglue.com/{lang}/products?q={search_term_string}',
             },
             'query-input': 'required name=search_term_string',

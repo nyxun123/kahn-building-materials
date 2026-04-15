@@ -73,9 +73,11 @@ export function SEOHelmet({
     ? lang
     : activeLanguages[0];
 
+  // Strip query params from canonical URL (WordPress remnants like ?page_id=3738 pollute it)
+  const cleanPathname = location.pathname.replace(/\/+$/, '');
   const currentUrl = canonicalUrl
     ? toAbsoluteUrl(canonicalUrl)
-    : `${SITE_URL}${location.pathname}${location.search}`;
+    : `${SITE_URL}${cleanPathname}`;
   const canonicalLocation = new URL(currentUrl);
 
   // 生成多语言URL

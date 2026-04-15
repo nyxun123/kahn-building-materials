@@ -381,10 +381,10 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  // 重定向路由
+  // 根路径直接渲染首页（英文），避免 Google soft-404
   {
     path: '/',
-    element: <Navigate to="/en" replace />,
+    element: <HomePage />,
   },
   {
     path: '/products/:productCode',

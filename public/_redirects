@@ -22,8 +22,8 @@
 /manifest.json      /manifest.json      200
 /robots.txt         /robots.txt         200
 
-# Canonical entry points
-/                    /en                             301
+# Canonical entry points (root path serves SPA directly to avoid soft-404)
+# / now falls through to SPA catch-all below — React Router handles language redirect client-side
 /products            /en/products                    301
 /applications        /en/applications                301
 /oem                 /en/oem                         301
