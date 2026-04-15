@@ -141,8 +141,8 @@ export default function BlogPage() {
     return (
         <>
             <SEOHelmet
-                title={t('blog:title', 'Blog & News')}
-                description={t('blog:meta_description', 'Latest news, industry insights, and product guides from Kahn Building Materials')}
+                title={t('blog:title', 'CMS行业博客 - 羧甲基淀粉技术与应用指南')}
+                description={t('blog:meta_description', 'Latest news, industry insights, and product guides from Hangzhou Karn Building Materials')}
                 keywords="blog, news, industry, CMS, carboxymethyl starch, wallpaper adhesive"
                 type="website"
                 lang={currentLang}

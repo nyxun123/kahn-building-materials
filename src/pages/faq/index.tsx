@@ -273,7 +273,7 @@ export default function FAQPage() {
     <>
       <SEOHelmet
         title={t('faq.title', '常见问题解答')}
-        description={t('faq.description', '查找关于羧甲基淀粉(CMS)产品、订购、技术等常见问题的答案')}
+        description={t('faq.description', '杭州卡恩新型建材常见问题解答：涵盖CMS羧甲基淀粉产品规格、订购流程、包装运输、质量控制、技术参数及OEM代工服务，帮助您快速了解我们的产品与解决方案。')}
         keywords={t('faq.keywords', 'CMS,羧甲基淀粉,常见问题,FAQ,技术支持,产品咨询')}
         type="website"
         lang={currentLang}

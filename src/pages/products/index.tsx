@@ -486,7 +486,7 @@ const ProductsPage = memo(function ProductsPage() {
   return (
     <>
       <SEOHelmet
-        title={t('nav.products')}
+        title={i18n.language === 'zh' ? 'CMS产品目录 - 羧甲基淀粉全系列产品' : i18n.language === 'en' ? 'CMS Product Catalog - Full Carboxymethyl Starch Range' : i18n.language === 'ru' ? 'Каталог продукции КМС — весь ассортимент карбоксиметилкрахмала' : t('nav.products') + ' - Hangzhou Karn'}
         description={t('products:meta_description')}
         keywords={t('products:keywords') + ", heavy duty wallpaper adhesive, vinyl wallpaper glue, methyl cellulose adhesive"}
         type="website"

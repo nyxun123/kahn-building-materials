@@ -147,7 +147,13 @@ export default function ContactPage() {
           ? '联系我们 - 杭州卡恩羧甲基淀粉供应商'
           : i18n.language === 'en'
             ? 'Contact Us - Hangzhou Karn CMS Supplier'
-            : t('nav.contact')}
+            : i18n.language === 'ru'
+              ? 'Связаться с Hangzhou Karn — поставщик КМС'
+            : i18n.language === 'vi'
+              ? 'Liên hệ Hangzhou Karn — Nhà cung cấp CMS'
+            : i18n.language === 'th'
+              ? 'ติดต่อ Hangzhou Karn — จำหนัด CMS'
+              : 'Hubungi Hangzhou Karn — Pemasok CMS'}
         description={t('contact:meta_description')}
         keywords={t('contact:keywords')}
         type="website"

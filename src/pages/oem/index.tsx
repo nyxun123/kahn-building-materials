@@ -27,7 +27,7 @@ export default function OemPage() {
   return (
     <>
       <SEOHelmet
-        title={t('nav.oem')}
+        title={i18n.language === 'zh' ? 'OEM代工服务 - CMS定制生产与包装' : i18n.language === 'en' ? 'OEM/ODM Services - Custom CMS Manufacturing' : t('nav.oem') + ' - Hangzhou Karn'}
         description={t('oem:meta_description')}
         keywords="OEM定制,ODM服务,墙纸胶粉代工,小包装定制,品牌代工,wallpaper adhesive OEM,private label,custom packaging, wallpaper glue manufacturer china, 墙纸胶代加工, производство клея для обоев под стм"
         type="website"

@@ -26,7 +26,7 @@ export default function AboutPage() {
   return (
     <>
       <SEOHelmet
-        title={t('nav.about')}
+        title={i18n.language === 'zh' ? '关于杭州卡恩 - CMS制造商企业介绍' : i18n.language === 'en' ? 'About Hangzhou Karn - CMS Manufacturer Profile' : i18n.language === 'ru' ? 'О компании Hangzhou Karn — производитель КМС' : t('nav.about') + ' - Hangzhou Karn'}
         description={t('about:meta_description')}
         keywords={t('about:keywords')}
         type="website"

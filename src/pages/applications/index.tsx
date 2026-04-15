@@ -126,7 +126,7 @@ export default function ApplicationsPage() {
   return (
     <>
       <SEOHelmet
-        title={t('nav.applications')}
+        title={i18n.language === 'zh' ? 'CMS应用领域 - 羧甲基淀粉6大行业解决方案' : i18n.language === 'en' ? 'CMS Application Fields - 6 Industry Solutions' : t('nav.applications') + ' - Hangzhou Karn'}
         description={t('applications:meta_description')}
         keywords={t('applications:keywords') + ", textile sizing agent, construction putty additive, paper coating adhesive, 纺织上浆剂, 建筑腻子添加剂, 造纸涂布胶, шлихтующий агент для текстиля, добавка для шпатлевки"}
         type="website"
