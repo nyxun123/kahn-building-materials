@@ -12,7 +12,6 @@ import { SEOHelmet } from '@/components/SEOHelmet';
 import { StructuredData } from '@/components/StructuredData';
 import BreadcrumbNavigation from '@/components/BreadcrumbNavigation';
 import { LocalBusinessSchema } from '@/components/LocalBusinessSchema';
-import { GeoMetaTags } from '@/components/GeoMetaTags';
 import { OptimizedMap } from '@/components/OptimizedMap';
 import { getApiUrl, API_CONFIG } from '@/lib/config';
 import { COMPANY_PROFILE } from '@/lib/company-profile';
@@ -185,14 +184,6 @@ export default function ContactPage() {
 
       {/* LocalBusiness Schema */}
       <LocalBusinessSchema language={i18n.language as 'zh' | 'en' | 'ru'} />
-
-      {/* GEO Meta Tags */}
-      <GeoMetaTags
-        latitude={30.39}
-        longitude={120.17}
-        placename={i18n.language === 'zh' ? '杭州' : 'Hangzhou'}
-        region="CN-ZJ"
-      />
 
       {/* Breadcrumb Navigation */}
       <div className="container mx-auto px-4 pt-4">

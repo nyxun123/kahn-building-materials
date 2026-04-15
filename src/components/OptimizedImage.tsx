@@ -227,21 +227,7 @@ export function OptimizedImage({
         </div>
       )}
 
-      {/* SEO结构化数据 */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'ImageObject',
-            contentUrl: src.startsWith('http') ? src : `${SITE_URL}${src}`,
-            description: alt,
-            width: width,
-            height: height,
-            inLanguage: i18n.language
-          })
-        }}
-      />
+      {/* ImageObject schema 由页面级 Product/WebPage schema 统一管理，不在每张图片重复注入 */}
     </div>
   );
 }

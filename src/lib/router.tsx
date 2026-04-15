@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { Layout } from '@/components/layout';
 import { ProductDetailRedirect } from '@/components/ProductDetailRedirect';
+import { NotFoundPage } from '@/pages/not-found';
 
 // 延迟加载组件
 const HomePage = lazy(() => import('@/pages/home'));
@@ -431,6 +432,10 @@ export const router = createBrowserRouter([
   },
   {
     path: '*',
-    element: <Navigate to="/en" replace />,
+    element: (
+      <Suspense fallback={<LoadingFallback />}>
+        <NotFoundPage />
+      </Suspense>
+    ),
   },
 ]);

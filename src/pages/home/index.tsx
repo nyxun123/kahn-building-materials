@@ -318,6 +318,14 @@ export default function HomePage() {
           name: 'Hangzhou Karn New Building Materials Co., Ltd',
           url: 'https://kn-wallpaperglue.com',
           logo: '/images/logo.png',
+          potentialAction: {
+            type: 'SearchAction',
+            target: {
+              type: 'EntryPoint',
+              urlTemplate: 'https://kn-wallpaperglue.com/{lang}/products?q={search_term_string}',
+            },
+            'query-input': 'required name=search_term_string',
+          },
         }}
       />
 

@@ -40,7 +40,7 @@ export function LocalBusinessSchema({ language = 'zh' }: LocalBusinessProps) {
                 description: info.description,
                 url: 'https://kn-wallpaperglue.com',
                 logo: '/favicon-192x192-v8.png',
-                telephone: '+86-133957111877',
+                telephone: '+86-13216156841',
                 email: 'kahn@kn-wallpaperglue.com',
                 address: {
                     streetAddress: info.streetAddress,
@@ -64,7 +64,7 @@ export function LocalBusinessSchema({ language = 'zh' }: LocalBusinessProps) {
                 contactPoint: [
                     {
                         contactType: 'Sales',
-                        telephone: '+86-133957111877',
+                        telephone: '+86-13216156841',
                         email: 'kahn@kn-wallpaperglue.com',
                         areaServed: language === 'zh'
                             ? ['全球']

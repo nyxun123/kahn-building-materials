@@ -125,7 +125,7 @@ export function SEOHelmet({
 
       {/* 多语言Hreflang标签 */}
       {alternateLinks.map(({ lang: langCode, url }) => (
-        <link key={langCode} rel="alternate" hrefLang={langCode} href={url} />
+        <link key={langCode} rel="alternate" hrefLang={LOCALE_MAP[langCode] || langCode} href={url} />
       ))}
       <link rel="alternate" hrefLang="x-default" href={xDefaultUrl} />
 
