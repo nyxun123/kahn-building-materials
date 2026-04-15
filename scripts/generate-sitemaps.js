@@ -38,7 +38,7 @@ const priorityByPath = {
 
 function toUrl(lang, slug = '') {
   const normalized = slug ? `/${slug.replace(/^\//, '')}` : '';
-  return `${siteUrl}/${lang}${normalized}`;
+  return `${siteUrl}/${lang}${normalized}/`;
 }
 
 function escapeXml(value) {
@@ -213,7 +213,7 @@ for (const lang of blogLanguages) {
 writeFile('sitemap-blog.xml', renderUrlSet(blogItems));
 
 const rootItems = languages.map((lang) => ({
-  loc: `${siteUrl}/${lang}`,
+  loc: `${siteUrl}/${lang}/`,
   lastmod: nowIso,
   changefreq: 'weekly',
   priority: lang === 'zh' || lang === 'en' || lang === 'ru' ? '1.0' : '0.8',

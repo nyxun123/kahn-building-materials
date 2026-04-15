@@ -222,7 +222,7 @@ function buildAlternateUrls(routePath, supportedLangs) {
     }
     return {
       lang,
-      url: `${siteUrl}/${newParts.join('/')}${search ? `?${search}` : ''}`,
+      url: `${siteUrl}/${newParts.join('/')}/${search ? `?${search}` : ''}`,
     };
   });
 
@@ -230,7 +230,9 @@ function buildAlternateUrls(routePath, supportedLangs) {
 }
 
 function renderSeoBlock(snapshot) {
-  const currentUrl = `${siteUrl}${snapshot.route}`;
+  // Ensure trailing slash for Cloudflare Pages directory-based serving
+  const routeWithSlash = snapshot.route.endsWith('/') ? snapshot.route : `${snapshot.route}/`;
+  const currentUrl = `${siteUrl}${routeWithSlash}`;
   const fullTitle = createFullTitle(snapshot.title);
   const absoluteImage = toAbsoluteUrl(snapshot.image);
   const activeLangs = snapshot.supportedLangs?.length ? snapshot.supportedLangs : languages;
